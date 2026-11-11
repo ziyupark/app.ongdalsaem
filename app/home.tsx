@@ -188,6 +188,23 @@ export default function HomeScreen() {
     () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now), excludeCreator: myId }),
     [pool, myId, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
   );
+  // Today's pick acorn: whether I gave one (from my marks) + my change since load, so the count moves at once.
+  const [pickAcorn, setPickAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });
+  useEffect(() => {
+    if (!pick) return;
+    let alive = true;
+    setPickAcorn({ id: pick.id, given: false, delta: 0 });
+    fetchMyMarks([pick.id]).then((m) => alive && setPickAcorn({ id: pick.id, given: m.given.has(pick.id), delta: 0 })).catch(() => undefined);
+    return () => { alive = false; };
+  }, [pick?.id]);
+  const pickMark = pickAcorn.id === pick?.id ? pickAcorn : { given: false, delta: 0 };
+  const togglePickAcorn = () => {
+    if (!pick) return;
+    const on = !pickMark.given;
+    const step = on ? 1 : -1;
+    setPickAcorn((a) => ({ ...a, given: on, delta: a.delta + step }));
+    setAcorn(pick.id, on).catch(() => setPickAcorn((a) => ({ ...a, given: !on, delta: a.delta - step })));
+  };
   const pickByline = pick ? [pick.creator.name, [pick.neighborhood, pick.city].filter(Boolean).join(', '), timeAgo(pick.createdAt, t)].filter(Boolean).join(' · ') : '';
   const pickInitial = (pick?.creator.name ?? '?').slice(0, 1).toUpperCase();
 
@@ -262,7 +279,9 @@ export default function HomeScreen() {
                   byline={pickByline}
                   mood={pick.mood ?? FALLBACK_MOOD}
                   tempC={pick.tempC ?? 0}
-                  acorns={pick.acorns}
+                  acorns={pick.acorns + pickMark.delta}
+                  given={pickMark.given}
+                  onAcorn={togglePickAcorn}
                   onPress={() => router.push(`/dish/${pick.id}`)}
                 />
               ) : null}
@@ -300,7 +319,9 @@ export default function HomeScreen() {
                     cookInitial={pickInitial}
                     mood={pick.mood ?? f?.mood ?? FALLBACK_MOOD}
                     tempC={pick.tempC ?? f?.tempC ?? 0}
-                    acorns={pick.acorns}
+                    acorns={pick.acorns + pickMark.delta}
+                    given={pickMark.given}
+                    onAcorn={togglePickAcorn}
                     onPress={() => router.push(`/dish/${pick.id}`)}
                   />
                   <NearbyCard photo={{ uri: pick.photo }} title={t('home.similarBites')} meta={t('home.similarBitesMeta')} onPress={() => router.push({ pathname: '/nearby', params: { dish: pick.name, photo: pick.photo } })} />

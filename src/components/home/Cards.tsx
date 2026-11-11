@@ -28,10 +28,23 @@ function CardScrim() {
 type StoryProps = {
   title: string; statement: string; photo: Pic; cookAvatar?: Pic; cookInitial: string;
   mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void;
+  /** Acorn Tag becomes a toggle: `given` fills the acorn, `onAcorn` gives / takes back. */
+  given?: boolean; onAcorn?: () => void;
 };
 
+/** Acorn Tag that gives / takes back an acorn when `onPress` is set (filled = given); a plain tag otherwise. */
+function AcornToggle({ count, given, onPress }: { count: number; given?: boolean; onPress?: () => void }) {
+  const { t } = useTranslation();
+  if (!onPress) return <AcornTag count={count} given={given} />;
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={t('home.acorns', { count })} accessibilityState={{ selected: !!given }} hitSlop={space[8]} onPress={onPress}>
+      <AcornTag count={count} given={given} />
+    </Pressable>
+  );
+}
+
 /** Story Card 41:493 (Home: 350×273, Show focus/byline Off) — photo fill + Card scrim, padding 24, space-between. */
-export function StoryCard({ title, statement, photo, cookAvatar, cookInitial, mood, tempC, acorns, onPress }: StoryProps) {
+export function StoryCard({ title, statement, photo, cookAvatar, cookInitial, mood, tempC, acorns, onPress, given, onAcorn }: StoryProps) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
@@ -52,7 +65,7 @@ export function StoryCard({ title, statement, photo, cookAvatar, cookInitial, mo
         </View>
         <View style={styles.tags}>
           <WeatherTag mood={mood} tempC={tempC} condition={t(`weather.${mood}`)} />
-          <AcornTag count={acorns} />
+          <AcornToggle count={acorns} given={given} onPress={onAcorn} />
         </View>
       </View>
     </Pressable>
@@ -77,7 +90,7 @@ export function NearbyCard({ photo, title, meta, onPress }: { photo: Pic; title:
 }
 
 /** Pick Card 54:554 (2.5: 350×366) — photo, bottom scrim 190 (ink 0 → 82 %), padding 20, gap 14, aligned to the bottom. */
-export function PickCard({ photo, title, byline, mood, tempC, acorns, onPress }: { photo: Pic; title: string; byline: string; mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void }) {
+export function PickCard({ photo, title, byline, mood, tempC, acorns, onPress, given, onAcorn }: { photo: Pic; title: string; byline: string; mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void; given?: boolean; onAcorn?: () => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const ink = color('static/ink');
@@ -91,7 +104,7 @@ export function PickCard({ photo, title, byline, mood, tempC, acorns, onPress }:
       </View>
       <View style={styles.tags}>
         <WeatherTag mood={mood} tempC={tempC} condition={t(`weather.${mood}`)} />
-        <AcornTag count={acorns} />
+        <AcornToggle count={acorns} given={given} onPress={onAcorn} />
       </View>
     </Pressable>
   );
