@@ -739,7 +739,10 @@
   "community": {
     "title": "Cộng đồng",
     "global": "Toàn cầu",
-    "nearby": "Gần đây",
+    "explore": "Khám phá",
+    "ourArea": "Khu phố của bạn",
+    "seeAll": "Xem thêm",
+    "turnOnLocation": "Bật vị trí để xem món ăn quanh khu bạn ở.",
     "following": "Đang theo dõi",
     "rightNow": "{{place}} · ngay lúc này",
     "noPlace": "Chọn thành phố để xem món gần đây",

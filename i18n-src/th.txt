@@ -610,7 +610,10 @@ youCooked=คุณทำเมนูนี้
 [community]
 title=ชุมชน
 global=ทั่วโลก
-nearby=ใกล้ฉัน
+explore=สำรวจ
+ourArea=ย่านของคุณ
+seeAll=ดูเพิ่มเติม
+turnOnLocation=เปิดตำแหน่งเพื่อดูอาหารในย่านของคุณ
 following=กำลังติดตาม
 rightNow={{place}} · ตอนนี้
 noPlace=เลือกเมืองเพื่อดูเมนูใกล้ ๆ

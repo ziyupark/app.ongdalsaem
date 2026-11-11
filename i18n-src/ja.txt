@@ -610,7 +610,10 @@ youCooked=あなたが作った料理
 [community]
 title=コミュニティ
 global=グローバル
-nearby=近く
+explore=探索
+ourArea=近所
+seeAll=もっと見る
+turnOnLocation=位置情報をオンにすると、近所の料理が見られます。
 following=フォロー中
 rightNow={{place}} · いま
 noPlace=街を選ぶと近くの料理が表示されます

@@ -739,7 +739,10 @@
   "community": {
     "title": "社群",
     "global": "全球",
-    "nearby": "附近",
+    "explore": "探索",
+    "ourArea": "你附近",
+    "seeAll": "查看更多",
+    "turnOnLocation": "開啟定位，就能看到你附近的料理。",
     "following": "追蹤中",
     "rightNow": "{{place}} · 現在",
     "noPlace": "選擇城市即可看到附近的料理",

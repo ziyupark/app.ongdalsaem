@@ -749,7 +749,10 @@
   "community": {
     "title": "커뮤니티",
     "global": "글로벌",
-    "nearby": "근처",
+    "explore": "탐색",
+    "ourArea": "우리 동네",
+    "seeAll": "더 보기",
+    "turnOnLocation": "위치를 켜면 우리 동네 요리를 볼 수 있어요",
     "following": "팔로잉",
     "rightNow": "{{place}} · 지금",
     "noPlace": "도시를 선택하면 근처 요리를 볼 수 있어요",

@@ -749,7 +749,10 @@
   "community": {
     "title": "Comunidad",
     "global": "Global",
-    "nearby": "Cerca",
+    "explore": "Explorar",
+    "ourArea": "Tu barrio",
+    "seeAll": "Ver más",
+    "turnOnLocation": "Activa la ubicación para ver platos de tu barrio.",
     "following": "Siguiendo",
     "rightNow": "{{place}} · ahora mismo",
     "noPlace": "Elige una ciudad para ver platos cercanos",

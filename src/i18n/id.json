@@ -739,7 +739,10 @@
   "community": {
     "title": "Komunitas",
     "global": "Global",
-    "nearby": "Terdekat",
+    "explore": "Jelajahi",
+    "ourArea": "Sekitarmu",
+    "seeAll": "Lihat lainnya",
+    "turnOnLocation": "Aktifkan lokasi untuk melihat masakan di sekitarmu.",
     "following": "Diikuti",
     "rightNow": "{{place}} · saat ini",
     "noPlace": "Pilih kota untuk melihat masakan di sekitar",

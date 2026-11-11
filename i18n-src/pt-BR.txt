@@ -619,7 +619,10 @@ youCooked=Você cozinhou isto
 [community]
 title=Comunidade
 global=Global
-nearby=Por perto
+explore=Explorar
+ourArea=Seu bairro
+seeAll=Ver mais
+turnOnLocation=Ative a localização para ver pratos do seu bairro.
 following=Seguindo
 rightNow={{place}} · agora
 noPlace=Escolha uma cidade para ver pratos por perto

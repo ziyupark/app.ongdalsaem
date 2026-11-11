@@ -1,17 +1,16 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Clock, Send, CloudRain, Cookie, Moon, Plus, Search, Star, Sun, Users, Utensils, X, type LucideIcon } from 'lucide-react-native';
-import { MessageCircle } from '../src/components/icons/custom';
+import { ChevronRight, Send, Cookie, Moon, Plus, Star, Sun, Users, Utensils, type LucideIcon } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { Button } from '../src/components/Button';
 import { Chip } from '../src/components/Chip';
 import {
-  Avatar, CookTile, EmptyState, FoodGrid, FoodRow, FollowButton, ListCard, PhotoCard, QuestionCard, SearchField, SectionHeader, WeatherNow, FlagTag, useByline,
+  Avatar, CookTile, EmptyState, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag,
 } from '../src/components/community/Parts';
 import { FeedPost } from '../src/components/home/FeedPost';
 import { ChallengesTab } from '../src/components/community/ChallengesTab';
+import { NearbySearch, OurArea } from '../src/components/community/Nearby';
 import { upcomingFestive } from '../src/lib/holidays';
 import { FestiveCard } from '../src/components/community/FestiveCard';
 import { Icon } from '../src/components/Icon';
@@ -25,23 +24,20 @@ import { UnderlineTabs } from '../src/components/UnderlineTabs';
 import { Text } from '../src/components/Text';
 import { CUSTOM_MOOD_ICON, LANDSCAPES, MOOD_TAGS } from '../src/lib/tags';
 import { timeAgo } from '../src/lib/time';
-import { cellsAround } from '../src/lib/geohash';
 import { useHere } from '../src/lib/useHere';
 import { follow } from '../src/services/activity';
 import { hasUnreadMessages } from '../src/services/messages';
 import {
-  fetchChallenges, fetchCooksInWeather, fetchFollowingFeed, fetchGlobal, fetchMyTables, fetchNearby, fetchNearbyQuestions, fetchStoryOfTheDay,
-  fetchTrendingByCountry, searchSuggestions, setMeToo, timeLeft, topTags, type CardDish, type Challenge, type CookCard, type FollowingItem, type Question, type Table,
+  fetchChallenges, fetchCooksInWeather, fetchFollowingFeed, fetchGlobal, fetchMyTables, fetchStoryOfTheDay,
+  fetchTrendingByCountry, timeLeft, topTags, type CardDish, type Challenge, type CookCard, type FollowingItem, type Table,
 } from '../src/services/community';
 import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
-import { radius, space, useTheme, WEATHER_ICON, type WeatherMood } from '../src/theme';
+import { radius, space, useTheme, type WeatherMood } from '../src/theme';
 
 /** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
 const FESTIVE_CAROUSEL = 8;
 
-type Seg = 'global' | 'nearby' | 'following' | 'challenges';
-type Area = 'all' | 'near' | 'area' | 'weather';
-const RECENT_KEY = 'community.recentSearches';
+type Seg = 'global' | 'following' | 'challenges';
 
 /**
  * Community (Figma 3.1 Nearby 19:663 · 3.2 empty · 3.3 no results · 3.4 typing · 3.5 results · 3.6 area · 4.1 Global 19:818 ·
@@ -98,8 +94,7 @@ export default function Community() {
             value={seg}
             onChange={setSeg}
             items={[
-              { key: 'global', label: t('community.global') },
-              { key: 'nearby', label: t('community.nearby') },
+              { key: 'global', label: t('community.explore') },
               { key: 'following', label: t('community.following') },
               { key: 'challenges', label: t('community.challengesTab') },
             ]}
@@ -107,7 +102,6 @@ export default function Community() {
         </View>
         {/* Tabs stay mounted once opened — switching only swaps what's under the tabs (no reload, data and images kept). */}
         {visited.has('global') ? <View style={seg === 'global' ? null : styles.gone}><Global /></View> : null}
-        {visited.has('nearby') ? <View style={seg === 'nearby' ? null : styles.gone}><Nearby here={here} /></View> : null}
         {visited.has('following') ? <View style={seg === 'following' ? null : styles.gone}><Following mood={mood} tempC={here.forecast?.tempC ?? null} /></View> : null}
         {visited.has('challenges') ? <View style={seg === 'challenges' ? null : styles.gone}><ChallengesTab /></View> : null}
         </Animated.View>
@@ -117,208 +111,7 @@ export default function Community() {
   );
 }
 
-// ------------------------------------------------------------------------------------------------ Nearby (3.x)
-
-function Nearby({ here }: { here: ReturnType<typeof useHere>['here'] }) {
-  const { color } = useTheme();
-  const { t } = useTranslation();
-  const { width } = useWindowDimensions();
-  const byline = useByline();
-  const f = here.forecast;
-  const city = here.place?.city ?? f?.city ?? null;
-  const district = here.place?.district ?? null;
-  const [area, setArea] = useState<Area>('all');
-  const [dishes, setDishes] = useState<CardDish[] | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [query, setQuery] = useState('');
-  const [submitted, setSubmitted] = useState('');
-  const [focused, setFocused] = useState(false);
-  const [suggest, setSuggest] = useState<{ name: string; n: number }[]>([]);
-  const [recent, setRecent] = useState<string[]>([]);
-
-  useEffect(() => {
-    AsyncStorage.getItem(RECENT_KEY).then((v) => v && setRecent(JSON.parse(v))).catch(() => undefined);
-  }, []);
-
-  const load = useCallback(async () => {
-    if (here.status === 'loading') return;
-    setDishes(null);
-    try {
-      const list = await fetchNearby({
-        city,
-        neighborhood: area === 'area' ? district : null,
-        cells: area === 'near' && here.coords ? cellsAround(here.coords.latitude, here.coords.longitude) : null,
-        mood: area === 'weather' ? f?.mood ?? null : null,
-        query: submitted,
-      });
-      // "best in <weather> first": same-weather dishes lead, then newest.
-      setDishes(f?.mood ? [...list.filter((d) => d.mood === f.mood), ...list.filter((d) => d.mood !== f.mood)] : list);
-    } catch {
-      setDishes([]);
-    }
-  }, [here.status, here.coords, city, district, area, f?.mood, submitted]);
-
-  useFocusEffect(useCallback(() => { load(); }, [load]));
-  useFocusEffect(
-    useCallback(() => {
-      if (!here.cell) return;
-      fetchNearbyQuestions(here.cell, 3).then(setQuestions).catch(() => setQuestions([]));
-    }, [here.cell]),
-  );
-
-  useEffect(() => {
-    if (!focused || query.trim().length < 2) return setSuggest([]);
-    const h = setTimeout(() => searchSuggestions(query, city).then(setSuggest).catch(() => setSuggest([])), 250);
-    return () => clearTimeout(h);
-  }, [query, focused, city]);
-
-  const run = (term: string) => {
-    const v = term.trim();
-    setQuery(v);
-    setSubmitted(v);
-    setFocused(false);
-    Keyboard.dismiss();
-    if (!v) return;
-    const next = [v, ...recent.filter((r) => r !== v)].slice(0, 6);
-    setRecent(next);
-    AsyncStorage.setItem(RECENT_KEY, JSON.stringify(next)).catch(() => undefined);
-  };
-  const forget = (v: string) => {
-    const next = recent.filter((r) => r !== v);
-    setRecent(next);
-    AsyncStorage.setItem(RECENT_KEY, JSON.stringify(next)).catch(() => undefined);
-  };
-
-  const meToo = async (q: Question) => {
-    const on = !q.meTooByMe;
-    setQuestions((l) => l.map((x) => (x.id === q.id ? { ...x, meTooByMe: on, meToo: x.meToo + (on ? 1 : -1) } : x)));
-    try { await setMeToo(q.id, on); } catch { setQuestions((l) => l.map((x) => (x.id === q.id ? q : x))); }
-  };
-
-  const placeLabel = [district, city].filter(Boolean).join(', ');
-  const typing = focused && (query.length > 0 || recent.length > 0);
-  const condition = f ? t(`weather.${f.mood}`).toLowerCase() : '';
-
-  return (
-    <View>
-      <View style={styles.nowWrap}>
-        <WeatherNow mood={f?.mood ?? null} tempC={f?.tempC ?? null} place={placeLabel ? t('community.rightNow', { place: placeLabel }) : t('community.noPlace')} hi={f?.hi} lo={f?.lo} />
-      </View>
-      <View style={styles.searchWrap}>
-        <SearchField
-          value={query}
-          onChangeText={(v) => { setQuery(v); if (!v) setSubmitted(''); }}
-          placeholder={t('community.searchPlaceholder')}
-          focused={focused}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          onSubmit={() => run(query)}
-        />
-      </View>
-
-      {typing ? (
-        // 3.4 Search · Typing
-        <View style={styles.typing}>
-          {suggest.length ? (
-            <>
-              <Text variant="Overline" color="fg/muted" style={styles.overline}>{t('community.suggestions')}</Text>
-              <ListCard>
-                {suggest.map((s, i) => (
-                  <Pressable key={s.name} accessibilityRole="button" onPress={() => run(s.name)} style={[styles.sugRow, i < suggest.length - 1 && { borderBottomWidth: 1, borderBottomColor: color('border/default') }]}>
-                    <Icon icon={Search} size={18} color="fg/secondary" />
-                    <Text variant="Body/M" style={styles.flex} numberOfLines={1}>
-                      {(() => {
-                        // 3.4 — the typed part in Body/M Strong.
-                        const at = s.name.toLowerCase().indexOf(query.trim().toLowerCase());
-                        if (at < 0 || !query.trim()) return s.name;
-                        const end = at + query.trim().length;
-                        return <>{s.name.slice(0, at)}<Text variant="Body/M Strong">{s.name.slice(at, end)}</Text>{s.name.slice(end)}</>;
-                      })()}
-                    </Text>
-                    <Text variant="Caption" color="fg/muted">{t('community.nearYou', { n: s.n })}</Text>
-                  </Pressable>
-                ))}
-              </ListCard>
-            </>
-          ) : null}
-          {recent.length ? (
-            <>
-              <Text variant="Overline" color="fg/muted" style={styles.overline}>{t('community.recent')}</Text>
-              <ListCard>
-                {recent.map((r, i) => (
-                  <Pressable key={r} accessibilityRole="button" onPress={() => run(r)} style={[styles.sugRow, i < recent.length - 1 && { borderBottomWidth: 1, borderBottomColor: color('border/default') }]}>
-                    <Icon icon={Clock} size={18} color="fg/secondary" />
-                    <Text variant="Body/M" style={styles.flex} numberOfLines={1}>{r}</Text>
-                    <Pressable accessibilityRole="button" accessibilityLabel={t('common.clear')} hitSlop={space[8]} onPress={() => forget(r)}>
-                      <Icon icon={X} size={18} color="fg/secondary" />
-                    </Pressable>
-                  </Pressable>
-                ))}
-              </ListCard>
-            </>
-          ) : null}
-          <Text variant="Caption" color="fg/muted">{t('community.searchHint')}</Text>
-        </View>
-      ) : (
-        <>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} keyboardShouldPersistTaps="handled">
-            <Chip label={t('community.all')} selected={area === 'all'} onPress={() => setArea('all')} />
-            {here.coords ? <Chip label={t('community.within1km')} selected={area === 'near'} onPress={() => setArea('near')} /> : null}
-            {district ? <Chip label={district} selected={area === 'area'} onPress={() => setArea('area')} /> : null}
-            {f ? <Chip label={t('community.sameWeather')} selected={area === 'weather'} onPress={() => setArea('weather')} /> : null}
-          </ScrollView>
-
-          <View style={styles.body}>
-            {f ? (
-              <View style={styles.ctx}>
-                <Icon icon={CloudRain} size={16} color="fg/accent" />
-                <Text variant="Body/S Strong" color="fg/accent" numberOfLines={1}>
-                  {submitted && dishes ? t('community.resultsCtx', { count: dishes.length, weather: condition }) : t('community.cookedNear')}
-                </Text>
-              </View>
-            ) : null}
-
-            {!submitted ? (
-              <View style={styles.qs}>
-                <Pressable accessibilityRole="button" onPress={() => router.push('/ask')} style={[styles.askBar, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-                  <Icon icon={MessageCircle} size={20} color="fg/secondary" />
-                  <Text variant="Body/S" color="fg/muted">{t('community.askPlaceholder')}</Text>
-                </Pressable>
-                {questions.slice(0, 1).map((q) => <QuestionCard key={q.id} q={q} onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
-              </View>
-            ) : null}
-          </View>
-
-          {dishes == null ? (
-            <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
-          ) : dishes.length ? (
-            <FoodGrid dishes={dishes} width={width} byline={(d) => byline(d)} onOpen={(d) => router.push(`/dish/${d.id}`)} />
-          ) : submitted ? (
-            // 3.3 No results — offer weather / mood tags instead.
-            <EmptyState size="L" icon={Search} title={t('community.noResultsTitle', { q: submitted })} body={t('community.noResultsBody')}>
-              <View style={styles.wrap}>
-                {f ? <Chip label={t(`weather.${f.mood}`)} onPress={() => { setQuery(''); setSubmitted(''); setArea('weather'); }} /> : null}
-                {['cozy', 'comforting', 'spicy'].map((m) => <Chip key={m} label={`#${m}`} onPress={() => router.push(`/tag/${m}`)} />)}
-              </View>
-            </EmptyState>
-          ) : (
-            // 3.2 Nearby is empty
-            <EmptyState
-              size="L"
-              icon={f ? WEATHER_ICON[f.mood] : CloudRain}
-              title={t('community.emptyTitle', { weather: condition || t('community.weatherFallback') })}
-              body={t('community.emptyBody', { place: city ?? t('community.yourArea') })}
-            >
-              <Button label={t('profile.shareFirst')} size="M" onPress={() => router.push('/share/pick')} />
-            </EmptyState>
-          )}
-        </>
-      )}
-    </View>
-  );
-}
-
-// ------------------------------------------------------------------------------------------------ Global (4.1)
+// ------------------------------------------------------------------------------------------------ Explore (4.1 Global + Nearby)
 
 function Global() {
   const { color } = useTheme();
@@ -331,6 +124,11 @@ function Global() {
   const [story, setStory] = useState<CardDish | null>(null);
   const [tag, setTag] = useState<string | null>(null);
   const [saved, setSavedIds] = useState<Set<string>>(new Set());
+  // Dishes already in "Our area" — Explore Together leaves them out.
+  const [areaIds, setAreaIds] = useState<string[]>([]);
+  const { here } = useHere();
+  const city = here.place?.city ?? here.forecast?.city ?? null;
+  const together = useMemo(() => (explore ? explore.filter((d) => !areaIds.includes(d.id)) : null), [explore, areaIds]);
 
   useFocusEffect(
     useCallback(() => {
@@ -378,9 +176,10 @@ function Global() {
     />
   );
 
-  // 4.1 Community · Global (19:818): Story of the day → Trending Bites → Holidays around the world → Trending tags → Explore Together.
+  // Explore: Search → Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
+  // A search opens the full nearby list (app/nearby-feed) with that term; while typing, the 3.4 panel replaces the sections.
   return (
-    <View>
+    <NearbySearch city={city} onSubmit={(q) => { if (q) router.push({ pathname: '/nearby-feed', params: { q } }); }}>
       {/* Group 88:3081 — p32 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
         <View style={[styles.sectionS, styles.px]}>
@@ -407,6 +206,9 @@ function Global() {
           </PhotoCard>
         </View>
       ) : null}
+
+      {/* Our area — range chips · nearby dishes · questions · See all (or turn location on). */}
+      <OurArea onShown={setAreaIds} />
 
       {/* Trending Bites 88:3078 — p32 · gap 6: header → Country Cards 280×180, gap 12. */}
       {countries.length ? (
@@ -449,18 +251,18 @@ function Global() {
 
       {/* Explore Together 676:20621 — p32 · gap 9: All · landscape chips → Food Cards of that landscape. */}
       <View style={styles.sectionM}>
-        <SectionHeader title={t('community.exploreTogether')} action={!showAll && (explore?.length ?? 0) > 4 ? t('dish.seeAll') : undefined} onAction={() => setShowAll(true)} />
+        <SectionHeader title={t('community.exploreTogether')} action={!showAll && (together?.length ?? 0) > 4 ? t('dish.seeAll') : undefined} onAction={() => setShowAll(true)} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
           <Chip label={t('community.all')} selected={!scape} onPress={() => setScape(null)} />
           {LANDSCAPES.map((l) => <Chip key={l.key} label={t(`landscape.${l.key}`)} selected={scape === l.key} onPress={() => setScape(l.key)} />)}
         </ScrollView>
-        {explore == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : explore.length ? (
-          <View style={styles.rows}>{explore.slice(0, showAll ? 20 : 4).map(row)}</View>
+        {together == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : together.length ? (
+          <View style={styles.rows}>{together.slice(0, showAll ? 20 : 4).map(row)}</View>
         ) : (
           <View style={styles.px}><Text variant="Body/S" color="fg/muted">{t('community.emptyBody')}</Text></View>
         )}
       </View>
-    </View>
+    </NearbySearch>
   );
 }
 
@@ -610,18 +412,8 @@ const styles = StyleSheet.create({
   tabRow: { gap: space[24], paddingHorizontal: space[20] },
   actions: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
   dot: { position: 'absolute', right: -2, top: -2, width: 8, height: 8, borderRadius: 4 },
-  nowWrap: { paddingTop: space[12], paddingBottom: space[4], paddingHorizontal: space[20] },
-  searchWrap: { paddingTop: space[10], paddingHorizontal: space[20] },
-  typing: { paddingHorizontal: space[20], paddingTop: space[16], gap: space[10] },
-  overline: { marginTop: space[6] },
-  sugRow: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[16], paddingVertical: space[14] },
-  chips: { gap: space[8], paddingHorizontal: space[20], paddingTop: space[16] },
   chipsTop: { paddingTop: space[16] },
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
-  body: { paddingHorizontal: space[20], paddingTop: space[16], paddingBottom: space[12], gap: space[12] },
-  ctx: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
-  qs: { gap: space[10] },
-  askBar: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[14], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1 },
   loading: { marginTop: space[40] },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], justifyContent: 'center', marginTop: space[8] },
   section: { paddingTop: space[24], gap: space[12] },
