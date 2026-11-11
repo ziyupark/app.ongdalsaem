@@ -117,25 +117,37 @@ export function pickForSlot(pool: PoolDish[], meal: Meal, ctx: Ctx, exclude: Set
   return null;
 }
 
-/** Today's pick only shows dishes posted within this many degrees of the current temperature. */
+/** Today's pick prefers dishes posted within this many degrees of the current temperature. */
 export const PICK_TEMP_RANGE = 1;
 
 /**
- * §6.2 Today's pick. Candidates = dishes from today's weather family (rain · snow · clear · grey) posted at a
- * temperature within ±PICK_TEMP_RANGE °C of now (dishes without a temperature are left out); inside it:
- * weather closeness × current meal × place/acorns/freshness. No candidate → null (Home hides the card).
+ * §6.2 Today's pick. Candidates, first non-empty wins:
+ * 1. today's weather family (rain · snow · clear · grey) within ±PICK_TEMP_RANGE °C of now;
+ * 2. otherwise the same family at the closest temperature to now;
+ * 3. otherwise (no dish in the family) any dish at the closest temperature — so the card never disappears.
+ * Inside the candidates: same exact weather × current meal × place/acorns/freshness.
  * Location off (2.5) → the chosen city's best. No weather (2.6) → every dish is a candidate.
  * `excludeCreator` = my user id: my own dishes are never my pick.
  */
 export function pickToday(all: PoolDish[], ctx: Ctx & { meal?: Meal; excludeCreator?: string | null }): PoolDish | null {
   const { mood, tempC } = ctx;
   const pool = ctx.excludeCreator ? all.filter((d) => d.creator.id !== ctx.excludeCreator) : all;
-  if (!mood) return best(pool, (d) => score(d, ctx.place) * (ctx.meal && fitsMeal(d, ctx.meal) && d.meals.length ? 1.3 : 1));
-  const inRange = (d: PoolDish) => tempC == null || (d.tempC != null && Math.abs(d.tempC - tempC) <= PICK_TEMP_RANGE);
-  const candidates = pool.filter((d) => sameGroup(d.mood, mood) && inRange(d));
-  return best(candidates, (d) =>
+  const weight = (d: PoolDish) =>
     score(d, ctx.place) *
-    (d.mood === mood ? 1.6 : 1) *
-    (ctx.meal && fitsMeal(d, ctx.meal) && d.meals.length ? 1.3 : 1),
-  );
+    (mood && d.mood === mood ? 1.6 : 1) *
+    (ctx.meal && fitsMeal(d, ctx.meal) && d.meals.length ? 1.3 : 1);
+  if (!mood) return best(pool, weight);
+
+  const family = pool.filter((d) => sameGroup(d.mood, mood));
+  if (tempC == null) return best(family.length ? family : pool, weight);
+
+  const gap = (d: PoolDish) => (d.tempC == null ? Infinity : Math.abs(d.tempC - tempC));
+  const inRange = family.filter((d) => gap(d) <= PICK_TEMP_RANGE);
+  if (inRange.length) return best(inRange, weight);
+  /** Dishes at the smallest temperature gap in a list (all of them when none has a temperature). */
+  const closest = (list: PoolDish[]) => {
+    const min = Math.min(...list.map(gap));
+    return min === Infinity ? list : list.filter((d) => gap(d) === min);
+  };
+  return best(closest(family.length ? family : pool), weight);
 }
