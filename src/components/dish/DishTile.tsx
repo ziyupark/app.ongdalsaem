@@ -15,7 +15,8 @@ export const tileMediaHeight = (width: number) => Math.round((width * 208) / 167
  * Used everywhere a dish grid or rail appears: 6.1 Profile, 4.5 Cook profile, 7.1 "More from", tables, challenges.
  */
 /** `onAcorn` turns the Acorn Tag into a give / take-back toggle (`given` = filled); `acorns` overrides the count. */
-export function DishTile({ dish, width, onPress, given, onAcorn, acorns }: { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number }) {
+/** `rounded`: photo corner radius token (default xl; Explore · Our area uses 2xl like the other photo cards there). */
+export function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded = 'xl' }: { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number; rounded?: 'xl' | '2xl' }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const mood = dish.moods?.[0];
@@ -23,7 +24,7 @@ export function DishTile({ dish, width, onPress, given, onAcorn, acorns }: { dis
   const byline = [mood && t(`share.moods.${mood}`, { defaultValue: mood }), meal && t(`share.meals.${meal}`, { defaultValue: meal })].filter(Boolean).join(' · ');
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={dish.name} onPress={onPress} style={[styles.tile, { width }]}>
-      <View style={[styles.media, { height: tileMediaHeight(width), backgroundColor: color('bg/muted') }]}>
+      <View style={[styles.media, { height: tileMediaHeight(width), borderRadius: radius[rounded], backgroundColor: color('bg/muted') }]}>
         <Image source={{ uri: dish.photo }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} recyclingKey={dish.id} />
         {dish.mood && dish.tempC != null ? (
           <View style={styles.tl}>

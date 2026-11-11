@@ -179,11 +179,11 @@ export function NearbySearch({ city, initial = '', onSubmit, children }: { city:
 // ------------------------------------------------------------------------------------------------ area chips
 
 /** Range chips: (All) · Within 1 km · <district> · Same weather — each only when it can apply. */
-export function AreaChips({ here, area, onChange, withAll }: { here: Here; area: Area; onChange: (a: Area) => void; withAll?: boolean }) {
+export function AreaChips({ here, area, onChange, withAll, tight }: { here: Here; area: Area; onChange: (a: Area) => void; withAll?: boolean; tight?: boolean }) {
   const { t } = useTranslation();
   const { district } = placeOf(here);
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} keyboardShouldPersistTaps="handled">
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.chips, tight && styles.chipsTight]} keyboardShouldPersistTaps="handled">
       {withAll ? <Chip label={t('community.all')} selected={area === 'all'} onPress={() => onChange('all')} /> : null}
       {here.coords ? <Chip label={t('community.within1km')} selected={area === 'near'} onPress={() => onChange('near')} /> : null}
       {district ? <Chip label={district} selected={area === 'area'} onPress={() => onChange('area')} /> : null}
@@ -247,16 +247,14 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
   return (
     <View style={styles.section}>
       <SectionHeader title={t('community.ourArea')} />
-      <AreaChips here={here} area={area} onChange={setArea} />
+      <AreaChips here={here} area={area} onChange={setArea} tight />
       {dishes == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
       ) : shown.length ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
-          {shown.map((d) => <DishTile key={d.id} dish={d} width={tileW} onPress={() => router.push(`/dish/${d.id}`)} />)}
+          {shown.map((d) => <DishTile key={d.id} dish={d} width={tileW} rounded="2xl" onPress={() => router.push(`/dish/${d.id}`)} />)}
         </ScrollView>
-      ) : (
-        <View style={styles.px}><Text variant="Body/S" color="fg/muted">{t('community.emptyBody', { place: placeOf(here).city ?? t('community.yourArea') })}</Text></View>
-      )}
+      ) : null}
       {questions.length ? (
         <View style={[styles.px, styles.qs]}>
           {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
@@ -354,8 +352,9 @@ const styles = StyleSheet.create({
   loading: { marginTop: space[40] },
   loadingS: { marginVertical: space[24] },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], justifyContent: 'center', marginTop: space[8] },
-  // Our area — same rhythm as the other Explore sections (p32 · gap 8).
-  section: { paddingTop: space[32], gap: space[8] },
+  // Our area — same rhythm as Trending Bites (p32 · gap 6: title → chips).
+  section: { paddingTop: space[32], gap: space[6] },
+  chipsTight: { paddingTop: 0 },
   tiles: { gap: space[16], paddingHorizontal: space[20], paddingTop: space[8] },
   more: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[4], paddingVertical: space[8] },
   offCard: { alignItems: 'center', gap: space[12], padding: space[20], borderRadius: radius['2xl'], borderWidth: 1 },
