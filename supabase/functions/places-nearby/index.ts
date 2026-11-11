@@ -63,6 +63,19 @@ function meters(a: { lat: number; lon: number }, b: { latitude: number; longitud
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 
+// Circle (center + radius m) → the bounding rectangle for locationRestriction (Text Search takes rectangles only).
+// Longitudes wrap past ±180; Google reads low.longitude > high.longitude as crossing the antimeridian.
+function rectangle(lat: number, lon: number, radius: number) {
+  const dLat = radius / 111_320;
+  const dLon = radius / (111_320 * Math.max(Math.cos((lat * Math.PI) / 180), 0.01));
+  const wrap = (x: number) => ((((x + 180) % 360) + 360) % 360) - 180;
+  const clampLat = (x: number) => Math.min(Math.max(x, -90), 90);
+  return {
+    low: { latitude: clampLat(lat - dLat), longitude: dLon >= 180 ? -180 : wrap(lon - dLon) },
+    high: { latitude: clampLat(lat + dLat), longitude: dLon >= 180 ? 180 : wrap(lon + dLon) },
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (!KEY) return Response.json({ error: "missing_key" }, { status: 500, headers: cors });
@@ -89,14 +102,18 @@ Deno.serve(async (req) => {
   const withDistance = (list: any[]) => list
     .map((p) => ({ ...p, distance: p.lat != null ? meters({ lat, lon }, { latitude: p.lat, longitude: p.lon }) : null }))
     .map((p) => ({ ...p, walkMin: p.distance == null ? null : Math.max(1, Math.round(p.distance / 80)) }))
-    .sort((a, b) => (a.distance ?? 1e9) - (b.distance ?? 1e9));
+    // Second guard: the rectangle's corners reach past the circle, and a cached row is for a ~1 km cell — drop
+    // anything farther than the radius (or without a position) from where the user actually is.
+    .filter((p) => p.distance != null && p.distance <= radius)
+    .sort((a, b) => a.distance! - b.distance!);
 
   for (const q of tries) {
-    // Cache: same search in the same ~1 km cell → reuse (24 h; 30 min for "Open now"). "v2" drops pre-fallback rows.
-    const key = ["v2", q.toLowerCase().slice(0, 80), lang, lat.toFixed(2), lon.toFixed(2), radius, body.openNow ? 1 : 0, body.maxPrice ?? 0].join("|");
+    // Cache: same search in the same ~1 km cell → reuse (24 h; 30 min for "Open now"). "v3" drops pre-restriction rows.
+    const key = ["v3", q.toLowerCase().slice(0, 80), lang, lat.toFixed(2), lon.toFixed(2), radius, body.openNow ? 1 : 0, body.maxPrice ?? 0].join("|");
     const { data: hit } = await db.from("places_cache").select("places, created_at").eq("key", key).maybeSingle();
     if (hit && Date.now() - new Date(hit.created_at).getTime() < ttl) {
-      if ((hit.places as any[]).length) return Response.json({ places: withDistance(hit.places as any[]), cached: true, ...note(q) }, { headers: cors });
+      const near = withDistance(hit.places as any[]);
+      if (near.length) return Response.json({ places: near, cached: true, ...note(q) }, { headers: cors });
       continue;
     }
     // Every cache miss writes (or refreshes) one row, so rows touched since 00:00 UTC = Google calls today.
@@ -108,7 +125,8 @@ Deno.serve(async (req) => {
       maxResultCount: 10,
       rankPreference: "DISTANCE",
       languageCode: lang,
-      locationBias: { circle: { center: { latitude: lat, longitude: lon }, radius } },
+      // Restriction, not bias: a bias lets far-away (even other-country) matches in when nothing is close.
+      locationRestriction: { rectangle: rectangle(lat, lon, radius) },
     };
     // Short fallback words ("bowl", "roll") are ambiguous on their own, so keep those to restaurants.
     if (q !== tries[0] && q !== catQuery) search.includedType = "restaurant";
@@ -135,7 +153,8 @@ Deno.serve(async (req) => {
       openNow: null, closesAt: null, rating: null, ratings: 0, priceLevel: null, priceFrom: null, priceTo: null, summary: null, photo: null, photoAttribution: null,
     }));
     await db.from("places_cache").upsert({ key, places, created_at: new Date().toISOString() });
-    if (places.length) return Response.json({ places: withDistance(places), ...note(q) }, { headers: cors });
+    const near = withDistance(places);
+    if (near.length) return Response.json({ places: near, ...note(q) }, { headers: cors });
   }
   return Response.json({ places: [] }, { headers: cors });
 });
