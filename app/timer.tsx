@@ -13,7 +13,7 @@ import { Text } from '../src/components/Text';
 import { TimerRing } from '../src/components/timer/TimerRing';
 import { useWashScroll } from '../src/lib/useWashScroll';
 import {
-  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, secondsLeft, startTimer, useNow, useTimers, type KitchenTimer,
+  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, startTimer, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
 import { elevation, radius, space, useTheme } from '../src/theme';
 
@@ -31,19 +31,26 @@ export default function KitchenTimerScreen() {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const timers = useTimers();
-  const now = useNow();
+  const tick = useNow();
+  // A ring that empties between ticks moves `now` up to that moment, so the finished state shows on the same frame.
+  const [endedAt, setEndedAt] = useState(0);
+  const now = Math.max(tick, endedAt);
+  const onRingEnd = (id: string) => {
+    setEndedAt(Date.now());
+    ringFinished(id);
+  };
   const [featuredId, setFeaturedId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const bar = useTabBarScroll();
 
   // A timer that just started anywhere (Add Timer, a preset, a recipe step) takes the big ring, so “Food Name”
   // follows the newest timer instead of staying on an older pinned or finished one. Start time = the id's
-  // timestamp (startTimer makes `t-<ms>`); one started moments before this screen opened (a recipe step's
+  // timestamp (startTimer makes `t-<ms>-<rand>`); one started moments before this screen opened (a recipe step's
   // "Start timer" → /timer) counts too.
   const lastStart = useRef<number | null>(null);
   useEffect(() => {
     if (!timers.length) return;
-    const startOf = (x: KitchenTimer) => Number(x.id.slice(2)) || 0;
+    const startOf = (x: KitchenTimer) => Number(x.id.split('-')[1]) || 0;
     const newest = timers.reduce((a, b) => (startOf(b) > startOf(a) ? b : a));
     const at = startOf(newest);
     const fresh = lastStart.current == null ? Date.now() - at < JUST_STARTED_MS : at > lastStart.current;
@@ -114,7 +121,16 @@ export default function KitchenTimerScreen() {
         {/* Block · Active timer 88:3084 — p30 20 0: “Food Name” → 13 → ring → 24 → controls → Frame 11 (p20 0 12, Add Timer). */}
         <View style={[styles.active, { paddingTop: done ? space[20] : 30 }]}>
           {food ? <Text variant="Display/M" numberOfLines={1} style={styles.food}>{`“${food}”`}</Text> : null}
-          <TimerRing mirror size={196.8} stroke={10} progress={featured ? (done ? 1 : left / Math.max(1, featured.totalSec)) : 0} done={done}>
+          <TimerRing
+            mirror
+            size={196.8}
+            stroke={10}
+            endAt={featured?.endAt ?? null}
+            leftSec={left}
+            totalSec={featured?.totalSec ?? 1}
+            done={done}
+            onComplete={featured ? () => onRingEnd(featured.id) : undefined}
+          >
             <View style={styles.mid}>
               {/* mid 20:799 — only the time, centred in the ring (the name above the number is gone; “Food Name” sits above the ring). */}
               {/* 5.2 finished (676:22872): "Simmer the stew — done" above the time. */}
@@ -188,7 +204,7 @@ export default function KitchenTimerScreen() {
               const on = x.endAt != null && l > 0;
               return (
                 <Pressable key={x.id} accessibilityRole="button" onPress={() => setFeaturedId(x.id)} onLongPress={() => removeAsk(x)} style={[styles.card, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
-                  <TimerRing size={52} stroke={5} progress={l / Math.max(1, x.totalSec)} done={l === 0} />
+                  <TimerRing size={52} stroke={5} endAt={x.endAt} leftSec={l} totalSec={x.totalSec} done={l === 0} onComplete={() => onRingEnd(x.id)} />
                   <View style={styles.flex}>
                     <Text variant="Body/S Strong" color="fg/muted" numberOfLines={1}>{foodOf(x) && foodOf(x) !== x.label ? `${foodOf(x)} · ${x.label}` : x.label}</Text>
                     <Text variant="Numeric/L" color={l === 0 ? 'fg/done' : 'fg/default'} style={styles.tabular}>{fmt(l)}</Text>

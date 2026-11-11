@@ -1,7 +1,9 @@
 // Kitchen timers (5.1) — app-wide, survive restarts (AsyncStorage) and ring as a local notification when the app is closed.
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 import * as Notifications from 'expo-notifications';
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { AppState } from 'react-native';
 import { getPrefs } from './prefs';
 
 export type TimerSource = { foodId: string; dishName: string; step: number; stepCount: number; next?: string };
@@ -46,8 +48,24 @@ async function load() {
   }
 }
 
+// App open (iPhone Clock style): the banner + sound still show in the foreground…
 Notifications.setNotificationHandler({
   handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false }),
+});
+
+const buzzed = new Set<string>();
+/** …and the phone buzzes 3× (Success). Once per run of a timer, whether the ring or the notification sees the end first. */
+export function ringFinished(id: string) {
+  const t = timers.find((x) => x.id === id);
+  if (!t) return;
+  const key = `${id}:${t.endAt}`;
+  if (buzzed.has(key)) return;
+  buzzed.add(key);
+  [0, 400, 800].forEach((ms) => setTimeout(() => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined); }, ms));
+}
+Notifications.addNotificationReceivedListener((n) => {
+  const id = n.request.content.data?.timerId;
+  if (typeof id === 'string') ringFinished(id);
 });
 
 async function schedule(t: KitchenTimer, seconds: number) {
@@ -59,15 +77,35 @@ async function schedule(t: KitchenTimer, seconds: number) {
       if (!asked.granted) return undefined;
     }
     return await Notifications.scheduleNotificationAsync({
-      content: { title: t.foodName ? `${t.foodName} · ${t.label}` : t.label, body: t.source ? `${t.source.dishName} · ${t.source.step}/${t.source.stepCount}` : undefined, sound: true },
+      content: { title: t.foodName ? `${t.foodName} · ${t.label}` : t.label, body: t.source ? `${t.source.dishName} · ${t.source.step}/${t.source.stepCount}` : undefined, data: { timerId: t.id }, sound: 'default', interruptionLevel: 'timeSensitive' },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: Math.max(1, Math.round(seconds)) },
     });
   } catch {
     return undefined;
   }
 }
+
+// Each schedule / cancel bumps the timer's generation; a schedule that resolves after a later pause / reset / remove
+// (or a newer schedule) is stale and its notification is cancelled straight away.
+const gens = new Map<string, number>();
+const bump = (id: string) => { const g = (gens.get(id) ?? 0) + 1; gens.set(id, g); return g; };
+const cancelId = (nid: string) => { Notifications.cancelScheduledNotificationAsync(nid).catch(() => undefined); };
+
 function cancel(t: KitchenTimer) {
-  if (t.notificationId) Notifications.cancelScheduledNotificationAsync(t.notificationId).catch(() => undefined);
+  bump(t.id);
+  if (t.notificationId) cancelId(t.notificationId);
+}
+
+async function arm(t: KitchenTimer, seconds: number) {
+  const gen = bump(t.id);
+  const nid = await schedule(t, seconds);
+  if (!nid) return;
+  const cur = timers.find((x) => x.id === t.id);
+  if (gens.get(t.id) !== gen || !cur || cur.endAt !== t.endAt) {
+    cancelId(nid);
+    return;
+  }
+  replace(t.id, { ...cur, notificationId: nid });
 }
 
 function replace(id: string, next: KitchenTimer | null) {
@@ -82,11 +120,10 @@ export const isRunning = (t: KitchenTimer, now = Date.now()) => t.endAt != null 
 export const isFinished = (t: KitchenTimer, now = Date.now()) => secondsLeft(t, now) === 0;
 
 export async function startTimer(label: string, seconds: number, source?: TimerSource, foodName?: string) {
-  const t: KitchenTimer = { id: `t-${Date.now()}`, label, totalSec: seconds, endAt: Date.now() + seconds * 1000, leftSec: seconds, source, foodName: foodName?.trim() || undefined };
+  const t: KitchenTimer = { id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, label, totalSec: seconds, endAt: Date.now() + seconds * 1000, leftSec: seconds, source, foodName: foodName?.trim() || undefined };
   timers = [t, ...timers];
   emit();
-  const nid = await schedule(t, seconds);
-  if (nid) replace(t.id, { ...(timers.find((x) => x.id === t.id) ?? t), notificationId: nid });
+  await arm(t, seconds);
   return t.id;
 }
 
@@ -102,8 +139,7 @@ export async function resumeTimer(id: string) {
   if (!t || t.endAt != null || t.leftSec <= 0) return;
   const next = { ...t, endAt: Date.now() + t.leftSec * 1000 };
   replace(id, next);
-  const nid = await schedule(next, t.leftSec);
-  if (nid) replace(id, { ...next, notificationId: nid });
+  await arm(next, t.leftSec);
 }
 
 export async function resetTimer(id: string) {
@@ -113,7 +149,10 @@ export async function resetTimer(id: string) {
   replace(id, { ...t, endAt: null, leftSec: t.totalSec, notificationId: undefined });
 }
 
-/** Add time (5.1 "15s +" = 15, done banner "+1 min" = 60) — also revives a finished timer, which starts running again. */
+/**
+ * Add time (5.1 "15s +" = 15, done banner "+1 min" = 60) — also revives a finished timer, which starts running again.
+ * Only the time left grows; totalSec stays, so the ring caps at full (min(1, left / total)).
+ */
 export async function addTime(id: string, sec: number) {
   const t = timers.find((x) => x.id === id);
   if (!t) return;
@@ -121,12 +160,9 @@ export async function addTime(id: string, sec: number) {
   const before = secondsLeft(t);
   const left = before + sec;
   const running = t.endAt != null || before === 0;
-  const next: KitchenTimer = { ...t, totalSec: t.totalSec + sec, leftSec: left, endAt: running ? Date.now() + left * 1000 : null, notificationId: undefined };
+  const next: KitchenTimer = { ...t, leftSec: left, endAt: running ? Date.now() + left * 1000 : null, notificationId: undefined };
   replace(id, next);
-  if (running) {
-    const nid = await schedule(next, left);
-    if (nid) replace(id, { ...next, notificationId: nid });
-  }
+  if (running) await arm(next, left);
 }
 
 export const addMinute = (id: string) => addTime(id, 60);
@@ -142,14 +178,35 @@ export function useTimers() {
   return useSyncExternalStore((l) => { listeners.add(l); return () => { listeners.delete(l); }; }, () => timers);
 }
 
-/** Re-render every second while mounted. */
-export function useNow(intervalMs = 1000) {
+/** Re-render on every second boundary while mounted; stops while the app is in the background. */
+export function useNow() {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
-    const h = setInterval(() => setNow(Date.now()), intervalMs);
-    return () => clearInterval(h);
-  }, [intervalMs]);
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const stop = () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+      timeout = interval = undefined;
+    };
+    const start = () => {
+      stop();
+      setNow(Date.now());
+      timeout = setTimeout(() => {
+        setNow(Date.now());
+        interval = setInterval(() => setNow(Date.now()), 1000);
+      }, 1000 - (Date.now() % 1000));
+    };
+    if (AppState.currentState !== 'background') start();
+    const sub = AppState.addEventListener('change', (s) => (s === 'active' ? start() : s === 'background' ? stop() : undefined));
+    return () => {
+      stop();
+      sub.remove();
+    };
+  }, []);
   return now;
 }
 
-export const fmt = (sec: number) => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+const pad = (n: number) => String(n).padStart(2, '0');
+/** MM:SS, or H:MM:SS from an hour up. */
+export const fmt = (sec: number) => (sec >= 3600 ? `${Math.floor(sec / 3600)}:${pad(Math.floor((sec % 3600) / 60))}:${pad(sec % 60)}` : `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`);
