@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { getMyProfile } from '../services/profile';
 import { hasLocationPermission, requestDeviceLocation, reverseGeocodeCity, type Coordinates, type Place } from '../services/location';
@@ -24,7 +25,25 @@ let current: Here = { status: 'loading', coords: null, place: null, forecast: nu
 let loadedAt = 0;
 let inflight: Promise<boolean> | null = null;
 const subs = new Set<(h: Here) => void>();
-const publish = (h: Here) => { current = h; subs.forEach((s) => s(h)); };
+const publish = (h: Here) => {
+  current = h;
+  subs.forEach((s) => s(h));
+  // Last place + weather (never coordinates) so the next launch shows the same header at once.
+  if (h.status !== 'loading') AsyncStorage.setItem(LAST_KEY, JSON.stringify({ place: h.place, forecast: h.forecast })).catch(() => undefined);
+};
+
+/**
+ * Cached reading from the last launch: shown (still `status: 'loading'`) until the fresh one arrives, so the
+ * header and the wash don't start blank. Dates in the forecast are revived.
+ */
+const LAST_KEY = 'here.last';
+AsyncStorage.getItem(LAST_KEY)
+  .then((raw) => {
+    if (!raw || current.status !== 'loading' || current.forecast) return;
+    const last = JSON.parse(raw, (k, v) => ((k === 'until' || k === 'at') && typeof v === 'string' ? new Date(v) : v)) as Pick<Here, 'place' | 'forecast'>;
+    publish({ ...current, place: last.place ?? null, forecast: last.forecast ?? null });
+  })
+  .catch(() => undefined);
 
 async function read(ask: boolean): Promise<boolean> {
   const me = await getMyProfile().catch(() => null);

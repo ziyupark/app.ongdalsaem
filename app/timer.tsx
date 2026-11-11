@@ -1,15 +1,17 @@
 import { router } from 'expo-router';
-import { Bell, Check, Clock, Pause, Play, Plus, RotateCcw, Timer } from 'lucide-react-native';
+import { Check, Clock, Pause, Play, Plus, RotateCcw, Timer } from 'lucide-react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { Chip } from '../src/components/Chip';
 import { Icon } from '../src/components/Icon';
+import { ScreenHeader, ScreenWash } from '../src/components/ScreenHeader';
 import { TimerSheet } from '../src/components/share/TimerSheet';
 import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
 import { TimerRing } from '../src/components/timer/TimerRing';
+import { useWashScroll } from '../src/lib/useWashScroll';
 import {
   addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, secondsLeft, startTimer, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
@@ -28,7 +30,6 @@ const PRESETS = [
 export default function KitchenTimerScreen() {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
-  const insets = useSafeAreaInsets();
   const timers = useTimers();
   const now = useNow();
   const [featuredId, setFeaturedId] = useState<string | null>(null);
@@ -65,8 +66,11 @@ export default function KitchenTimerScreen() {
     if (k === 'community') router.replace('/community');
     if (k === 'profile') router.replace('/profile');
   };
+  // Same scrolling as Home: header + wash travel up with the content, the wash fades out, the tab bar hides.
+  const wash = useWashScroll();
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
+    wash.onY(y);
     bar.onY(y);
   };
 
@@ -85,18 +89,11 @@ export default function KitchenTimerScreen() {
     ]);
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
+    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
+      <ScreenWash scrollStyle={wash.style} />
       <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
-        <View style={styles.top}>
-          <Text variant="Display/L">
-            {t('timer.titleA')}
-            <Text variant="Display/L" color="fg/disabled">{t('timer.titleB')}</Text>
-          </Text>
-          <Pressable accessibilityRole="button" accessibilityLabel={t('home.notifications')} hitSlop={space[8]} onPress={() => router.push('/notifications')}>
-            <Icon icon={Bell} size={24} />
-          </Pressable>
-        </View>
-
+        <ScreenHeader right="none" />
+        <Animated.View entering={FadeIn.duration(150)}>
         {done && featured ? (
           <View style={styles.bannerWrap}>
             <View style={[styles.banner, elevation['Elevation/4 Overlay'], { backgroundColor: color('bg/done-subtle'), borderColor: color('border/done') }]}>
@@ -205,6 +202,7 @@ export default function KitchenTimerScreen() {
           )}
           {timers.length > 0 ? <Text variant="Caption" color="fg/muted">{t('timer.holdToRemove')}</Text> : null}
         </View>
+        </Animated.View>
       </ScrollView>
 
       <TabBar active="timer" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
@@ -246,7 +244,6 @@ function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label:
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  top: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', paddingHorizontal: space[20], paddingVertical: space[12] },
   bannerWrap: { paddingTop: space[12], paddingHorizontal: space[20] },
   banner: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[16], paddingRight: space[12], paddingVertical: space[12], borderRadius: radius.xl, borderWidth: 1 },
   smallBtn: { height: 36, paddingHorizontal: space[14], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },

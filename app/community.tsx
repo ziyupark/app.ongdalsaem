@@ -1,16 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Bell, ChevronRight, Clock, Send, CloudRain, Cookie, Moon, Plus, Search, Star, Sun, Users, Utensils, X, type LucideIcon } from 'lucide-react-native';
+import { ChevronRight, Clock, Send, CloudRain, Cookie, Moon, Plus, Search, Star, Sun, Users, Utensils, X, type LucideIcon } from 'lucide-react-native';
 import { MessageCircle } from '../src/components/icons/custom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../src/components/Button';
 import { Chip } from '../src/components/Chip';
 import {
-  Avatar, CookTile, EmptyState, FoodGrid, FoodRow, FollowButton, ListCard, PhotoCard, QuestionCard, SearchField, SectionHeader, Tabs, WeatherNow, FlagTag, useByline,
+  Avatar, CookTile, EmptyState, FoodGrid, FoodRow, FollowButton, ListCard, PhotoCard, QuestionCard, SearchField, SectionHeader, WeatherNow, FlagTag, useByline,
 } from '../src/components/community/Parts';
 import { FeedPost } from '../src/components/home/FeedPost';
 import { ChallengesTab } from '../src/components/community/ChallengesTab';
@@ -18,12 +16,12 @@ import { upcomingFestive } from '../src/lib/holidays';
 import { FestiveCard } from '../src/components/community/FestiveCard';
 import { Icon } from '../src/components/Icon';
 import { MoodGradient } from '../src/components/MoodGradient';
-import { WeatherFx } from '../src/components/WeatherFx';
+import { ScreenHeader, ScreenWash, useScreenInk } from '../src/components/ScreenHeader';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useWashScroll } from '../src/lib/useWashScroll';
-import { useWashInk } from '../src/theme/washInk';
 import { AcornTag, WeatherTag } from '../src/components/PhotoTags';
 import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
+import { UnderlineTabs } from '../src/components/UnderlineTabs';
 import { Text } from '../src/components/Text';
 import { CUSTOM_MOOD_ICON, LANDSCAPES, MOOD_TAGS } from '../src/lib/tags';
 import { timeAgo } from '../src/lib/time';
@@ -47,13 +45,12 @@ const RECENT_KEY = 'community.recentSearches';
 
 /**
  * Community (Figma 3.1 Nearby 19:663 · 3.2 empty · 3.3 no results · 3.4 typing · 3.5 results · 3.6 area · 4.1 Global 19:818 ·
- * 4.4 Following 183:5713 · 4.4b empty). TopBar Large "Community" + bell → Tabs → content.
+ * 4.4 Following 183:5713 · 4.4b empty). ScreenHeader (bell) → Tabs → content.
  */
 export default function Community() {
   const params = useLocalSearchParams<{ tab?: Seg }>();
-  const { color, scheme } = useTheme();
+  const { color } = useTheme();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const [seg, setSegState] = useState<Seg>(params.tab ?? 'global');
   const [visited, setVisited] = useState<Set<Seg>>(() => new Set([params.tab ?? 'global']));
   const setSeg = (k: Seg) => {
@@ -63,14 +60,10 @@ export default function Community() {
   const bar = useTabBarScroll();
   const { here } = useHere();
   const mood = here.forecast?.mood ?? null;
-  // Mood wash — exactly Home's / Profile's: same weather, 420 tall at 85 %, overcast until the weather is known,
-  // none when location is off; it scrolls away with the content and fades out (~300 pt). Every tab.
-  const washOn = here.status === 'ready' || !!here.place?.city;
-  const washMood: WeatherMood = mood ?? 'overcast';
+  // Header + mood wash = the shared ScreenHeader / ScreenWash (same as Home · Timer · Profile); it scrolls away with
+  // the content and fades out (~300 pt). Tabs sit ≈ 55 % down the 420 wash, under the header.
   const wash = useWashScroll();
-  // Header text over the wash: title ≈ 20 % down the 420 wash, tabs ≈ 35 %.
-  const titleInk = useWashInk(washOn ? washMood : null, 0.2, 0.85);
-  const tabInk = useWashInk(washOn ? washMood : null, 0.35, 0.85);
+  const tabInk = useScreenInk(0.55);
   const [unreadDm, setUnreadDm] = useState(false);
   useFocusEffect(useCallback(() => { hasUnreadMessages().then(setUnreadDm); }, []));
 
@@ -88,32 +81,20 @@ export default function Community() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <StatusBar style={titleInk?.bar ?? (scheme === 'dark' ? 'light' : 'dark')} />
-      {washOn ? (
-        <Animated.View entering={FadeIn.duration(200)} pointerEvents="none" style={[styles.wash, wash.style]}>
-          <MoodGradient mood={washMood} opacity={0.85} />
-          <WeatherFx mood={washMood} />
-        </Animated.View>
-      ) : null}
+      <ScreenWash scrollStyle={wash.style} />
       <ScrollView
-        contentContainerStyle={{ paddingTop: insets.top, paddingBottom: 110 + space[24] }}
+        contentContainerStyle={{ paddingBottom: 110 + space[24] }}
         onScroll={onScroll}
         scrollEventThrottle={16}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.topBar}>
-          <Text variant="Display/L" color={titleInk?.strong ?? 'fg/default'}>{t('community.title')}</Text>
-          <View style={styles.actions}>
-            <Pressable accessibilityRole="button" accessibilityLabel={t('notifications.title')} hitSlop={space[8]} onPress={() => router.push('/notifications')}>
-              <Icon icon={Bell} size={24} color={titleInk?.strong ?? 'fg/default'} />
-            </Pressable>
-          </View>
-        </View>
+        <ScreenHeader right="notifications" />
+        <Animated.View entering={FadeIn.duration(150)}>
         {/* Block · Tabs 330:7325 — no fill: the mood wash runs behind the title and the tabs. */}
         <View>
-          <Tabs
+          <UnderlineTabs
             ink={tabInk}
-            style={styles.tabs}
+            contentStyle={styles.tabRow}
             value={seg}
             onChange={setSeg}
             items={[
@@ -129,6 +110,7 @@ export default function Community() {
         {visited.has('nearby') ? <View style={seg === 'nearby' ? null : styles.gone}><Nearby here={here} /></View> : null}
         {visited.has('following') ? <View style={seg === 'following' ? null : styles.gone}><Following mood={mood} tempC={here.forecast?.tempC ?? null} /></View> : null}
         {visited.has('challenges') ? <View style={seg === 'challenges' ? null : styles.gone}><ChallengesTab /></View> : null}
+        </Animated.View>
       </ScrollView>
       <TabBar active="community" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
     </View>
@@ -625,9 +607,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
-  wash: { position: 'absolute', left: 0, right: 0, top: 0, height: 420 },
-  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[20], paddingVertical: space[12] },
-  tabs: { paddingTop: space[12] },
+  tabRow: { gap: space[24], paddingHorizontal: space[20] },
   actions: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
   dot: { position: 'absolute', right: -2, top: -2, width: 8, height: 8, borderRadius: 4 },
   nowWrap: { paddingTop: space[12], paddingBottom: space[4], paddingHorizontal: space[20] },

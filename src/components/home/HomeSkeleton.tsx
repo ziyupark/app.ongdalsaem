@@ -12,7 +12,7 @@ function Bone({ style, t }: { style: ViewStyle; t: SharedValue<number> }) {
   return <Animated.View style={[style, anim]} />;
 }
 
-/** 2.7 State · Loading 76:2961 — same positions and sizes as 2.1, below the real Mood wash. */
+/** 2.7 State · Loading 76:2961 — Home's body (weather card → pick → feed) at 2.1's positions, under the real header and wash. */
 export function HomeSkeleton() {
   const { color } = useTheme();
   const t = useSharedValue(0);
@@ -22,13 +22,8 @@ export function HomeSkeleton() {
   const card = { backgroundColor: color('bg/subtle'), borderColor: color('border/default') };
   return (
     <View accessibilityLabel="Loading" accessibilityRole="progressbar">
-      <View style={styles.header}>
-        <Bone t={t} style={{ width: 125, height: 26, borderRadius: radius.sm }} />
-        <Bone t={t} style={{ width: 40, height: 40, borderRadius: radius.full }} />
-      </View>
+      {/* The header (logo · date · title) is the real ScreenHeader above — only the body shimmers. */}
       <View style={styles.weather}>
-        <Bone t={t} style={{ width: 172, height: 14, borderRadius: radius.full }} />
-        <Bone t={t} style={{ width: 250, height: 49, borderRadius: radius.md }} />
         <View style={[styles.weatherCard, card]}>
           <View style={styles.now}>
             <Bone t={t} style={{ width: 96, height: 56, borderRadius: radius.md }} />
@@ -84,8 +79,7 @@ export function HomeSkeleton() {
 }
 
 const styles = StyleSheet.create({
-  header: { height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[20] },
-  weather: { paddingTop: space[20], paddingHorizontal: space[20], gap: space[12] },
+  weather: { paddingHorizontal: space[20] },
   weatherCard: { height: 239, borderRadius: radius['2xl'], borderWidth: 1, padding: space[20], justifyContent: 'space-between' },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
   divider: { height: 1 },

@@ -1,39 +1,31 @@
 import { router, useFocusEffect } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { Bell } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../src/lib/supabase';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useWashScroll } from '../src/lib/useWashScroll';
 import { syncPush } from '../src/lib/push';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconButton } from '../src/components/IconButton';
-import { Logo } from '../src/components/Logo';
-import { MoodGradient } from '../src/components/MoodGradient';
-import { WeatherFx } from '../src/components/WeatherFx';
+import { ScreenHeader, ScreenWash } from '../src/components/ScreenHeader';
 import { TabBar, useTabBarScroll } from '../src/components/TabBar';
-import { Text } from '../src/components/Text';
 import { LocationCard, NearbyCard, PickCard, StoryCard } from '../src/components/home/Cards';
 import { FeedLoader } from '../src/components/home/FeedLoader';
 import { FeedPost, type FeedPostData } from '../src/components/home/FeedPost';
 import { HomeSkeleton } from '../src/components/home/HomeSkeleton';
 import { WeatherCard, type SlotView } from '../src/components/home/WeatherCard';
 import { Toast } from '../src/components/Toast';
-import { dayPart, mealAt, mealTimeline, type Meal } from '../src/lib/meals';
+import { mealAt, mealTimeline, type Meal } from '../src/lib/meals';
 import { resetShareDraft, updateShareDraft } from '../src/lib/shareDraft';
 import { fetchPool, pickForSlot, pickToday, sameGroup, type Ctx, type PoolDish } from '../src/services/recommend';
 import { resetOnboardingForDev, signOut } from '../src/services/auth';
 import { fetchFeed, fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
-import { hasUnread } from '../src/services/activity';
 import { timeAgo } from '../src/lib/time';
 import { displayTemp, usePrefs } from '../src/lib/prefs';
 import { getHere, placeLabel, useHere } from '../src/lib/useHere';
 import { fetchMyFavoriteTags, saveLocationChoice } from '../src/services/profile';
 import { tempAt, type Forecast } from '../src/services/weather';
 import { space, useTheme, type WeatherMood } from '../src/theme';
-import { bwOn, useWashInk } from '../src/theme/washInk';
 
 type HomeState =
   | { kind: 'loading' }
@@ -50,12 +42,10 @@ const shareTag = (m: Meal) => (m === 'late' ? 'dinner' : m === 'dawn' ? 'breakfa
 /** 2.1 Home · 2.7 Loading · 2.5 Location off — docs/04-screens/02-home.md. Dishes come from services/recommend (§6.1–6.2). */
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { color, scheme } = useTheme();
+  const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const bar = useTabBarScroll();
   usePrefs(); // re-render on °C / °F change
-  const [unread, setUnread] = useState(false);
-  useFocusEffect(useCallback(() => { hasUnread().then(setUnread).catch(() => undefined); }, []));
   const [realPosts, setRealPosts] = useState<FeedPostData[]>([]);
   const [pool, setPool] = useState<PoolDish[]>([]);
   // My user id — Today's pick leaves out my own dishes.
@@ -106,7 +96,8 @@ export default function HomeScreen() {
   // Weather + place come from the shared reading (lib/useHere) — the same one Profile and Community show.
   const { here, allow, reload } = useHere();
   // Skeleton never flashes for less than 600 ms (2.7).
-  const [minShown, setMinShown] = useState(false);
+  // Already read (coming back from another tab): no skeleton.
+  const [minShown, setMinShown] = useState(() => getHere().status !== 'loading');
   useEffect(() => { const h = setTimeout(() => setMinShown(true), 600); return () => clearTimeout(h); }, []);
   const state: HomeState =
     here.status === 'loading' || !minShown
@@ -139,13 +130,6 @@ export default function HomeScreen() {
   const now = useMemo(() => new Date(), [state]);
   const ready = state.kind === 'ready' ? state : null;
   const f = ready?.forecast ?? null;
-  const washMood: WeatherMood = f?.mood ?? FALLBACK_MOOD;
-  // Header over the 420 wash at 85 %: logo ≈ 12 %, overline ≈ 26 %, title ≈ 33 % down.
-  const washOn = state.kind !== 'location-off';
-  const logoInk = useWashInk(washOn ? washMood : null, 0.12, 0.85);
-  const overInk = useWashInk(washOn ? washMood : null, 0.26, 0.85);
-  const titleInk = useWashInk(washOn ? washMood : null, 0.33, 0.85);
-  const dateLabel = now.toLocaleDateString(i18n.language, { weekday: 'short', month: 'short', day: 'numeric' });
 
   const place = ready ? { city: ready.city, neighborhood: ready.district } : state.kind === 'location-off' ? { city: state.city } : undefined;
   const timeline = useMemo(() => mealTimeline(now), [now]);
@@ -228,49 +212,28 @@ export default function HomeScreen() {
     ]);
   };
 
-  const header = (
-    <View style={styles.header}>
-      <Pressable onLongPress={devMenu} delayLongPress={600} accessible={false}>
-        <Logo lockup="Compact" tone={logoInk?.light ? 'light' : 'ink'} />
-      </Pressable>
-      <IconButton icon={Bell} accessibilityLabel={t('home.notifications')} dot={unread} onPress={() => router.push('/notifications')} />
-    </View>
-  );
-
-  const titleA = ready ? `${t(`home.titleMood.${washMood}`)} ` : '';
-  const titleB = ready ? t(`home.dayPart.${dayPart(now)}`) : '';
   const detail = f
     ? `${t('home.hiLo', { hi: displayTemp(f.hi), lo: displayTemp(f.lo) })}${f.until ? t('home.until', { time: f.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : ''}`
     : t('home.retry');
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <StatusBar style={washOn && logoInk ? logoInk.bar : scheme === 'dark' ? 'light' : 'dark'} />
-      {state.kind !== 'location-off' ? (
-        <Animated.View entering={FadeIn.duration(200)} style={[styles.wash, wash.style]} pointerEvents="none">
-          <MoodGradient mood={washMood} opacity={0.85} />
-          <WeatherFx mood={washMood} />
-        </Animated.View>
-      ) : null}
+      <ScreenWash scrollStyle={wash.style} />
 
       <ScrollView
         onScroll={onScroll}
         scrollEventThrottle={16}
         scrollEnabled={state.kind !== 'loading'}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingTop: insets.top }}
       >
+        <ScreenHeader right="settings" onLogoLongPress={devMenu} />
         {state.kind === 'loading' ? (
-          <HomeSkeleton />
+          <Animated.View entering={FadeIn.duration(150)}>
+            <HomeSkeleton />
+          </Animated.View>
         ) : state.kind === 'location-off' ? (
-          <Animated.View entering={FadeIn.duration(200)}>
-            {header}
-            <View style={styles.titleBlock}>
-              <Text variant="Overline" color="fg/muted">{t('home.locationOff.overline', { city: state.city })}</Text>
-              <Text variant="Display/XL" accessibilityRole="header">
-                {t('home.locationOff.titleA')}
-                <Text variant="Display/XL" color="fg/disabled">{t('home.locationOff.titleB')}</Text>
-              </Text>
+          <Animated.View entering={FadeIn.duration(150)}>
+            <View style={styles.px}>
               <LocationCard onChooseCity={() => router.push('/settings/city')} onAllowLocation={allowLocation} busy={allowing} />
             </View>
             <View style={styles.pickBlock}>
@@ -291,14 +254,8 @@ export default function HomeScreen() {
             <View style={{ height: 110 }} />
           </Animated.View>
         ) : (
-          <Animated.View entering={FadeIn.duration(250)}>
-            {header}
-            <View style={styles.titleBlock}>
-              <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))}>{ready?.place ? `${dateLabel} · ${ready.place}` : dateLabel}</Text>
-              <Text variant="Display/XL" accessibilityRole="header" numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
-                {titleA}
-                <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{titleB}</Text>
-              </Text>
+          <Animated.View entering={FadeIn.duration(150)}>
+            <View style={styles.px}>
               <WeatherCard
                 tempC={f?.tempC}
                 mood={f?.mood}
@@ -357,9 +314,8 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  wash: { position: 'absolute', left: 0, right: 0, top: 0, height: 420 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[20] },
-  titleBlock: { paddingTop: space[20], paddingHorizontal: space[20], gap: space[12] },
+  // Body under ScreenHeader (its 12 bottom = the old title → card gap).
+  px: { paddingHorizontal: space[20] },
   pickBlock: { paddingTop: space[16], paddingHorizontal: space[20], gap: space[16] },
   // Block · feed: padding-top 40, gap 24 between Feed Posts (each also keeps its own 24 bottom padding).
   feed: { paddingTop: space[40], gap: space[24] },

@@ -2,30 +2,25 @@ import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useFocusEffect } from 'expo-router';
-import { ChevronLeft, NotebookPen, Settings, Utensils, type LucideIcon } from 'lucide-react-native';
+import { NotebookPen, Utensils, type LucideIcon } from 'lucide-react-native';
 import { Bookmark } from '../icons/custom';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AcornIcon } from '../AcornIcon';
 import { BottomSheet } from '../BottomSheet';
 import { Button } from '../Button';
-import { Logo } from '../Logo';
 import { DishTile } from '../dish/DishTile';
 import { DiaryView } from './DiaryView';
 import { SavedView } from './SavedView';
 import { WifiOff } from 'lucide-react-native';
 import { Icon } from '../Icon';
 import { TabBar, useTabBarScroll, type TabKey } from '../TabBar';
+import { ScreenHeader, ScreenWash } from '../ScreenHeader';
 import { Text } from '../Text';
+import { UnderlineTabs } from '../UnderlineTabs';
 import { cached } from '../../lib/cache';
-import { placeLabel, useHere } from '../../lib/useHere';
-import { dayPart } from '../../lib/meals';
-import { bwOn, useWashInk } from '../../theme/washInk';
-import { MoodGradient } from '../MoodGradient';
-import { WeatherFx } from '../WeatherFx';
-import { StatusBar } from 'expo-status-bar';
+import { useHere } from '../../lib/useHere';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useWashScroll } from '../../lib/useWashScroll';
 import { displayTemp, usePrefs } from '../../lib/prefs';
@@ -53,10 +48,9 @@ type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: D
  */
 export function ProfileScreen({ userId }: { userId?: string }) {
   const isMe = !userId;
-  const { color, scheme } = useTheme();
+  const { color } = useTheme();
   const { t, i18n } = useTranslation();
   usePrefs(); // re-render on °C / °F change
-  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [me, setMe] = useState<MyProfile | null>(null);
   const [acorns, setAcorns] = useState<number | null>(null);
@@ -64,13 +58,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const { here } = useHere();
   const f = here.forecast;
   const now: Now | null = f ? { mood: f.mood, tempC: f.tempC, hi: f.hi, lo: f.lo, until: f.until } : null;
-  const place = placeLabel(here.place) || f?.city || null;
-  // Mood wash — exactly Home's: same weather, 420 tall at 85 %, overcast until the weather is known, none when location is off.
-  const washOn = here.status === 'ready' || !!here.place?.city;
-  const washMood: WeatherMood = f?.mood ?? 'overcast';
-  const logoInk = useWashInk(washOn ? washMood : null, 0.12, 0.85);
-  const overInk = useWashInk(washOn ? washMood : null, 0.22, 0.85);
-  const titleInk = useWashInk(washOn ? washMood : null, 0.3, 0.85);
   const [tab, setTab] = useState<ProfileTab>('dishes');
   const tabs = isMe ? TABS : OTHER_TABS;
   const [following, setFollowing] = useState(false);
@@ -118,8 +105,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     if (k === 'timer') router.replace('/timer');
     if (k === 'community') router.replace('/community');
   };
-
-  const openSettings = () => router.push('/settings');
 
   // Another cook: their public profile + whether I follow them. Opening yourself goes to the real Profile tab.
   const loadOther = async (id: string): Promise<MyProfile | null> => {
@@ -216,33 +201,11 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     ? `${t('home.hiLo', { hi: displayTemp(now.hi), lo: displayTemp(now.lo) })}${now.until ? t('home.until', { time: now.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : ''}`
     : t('home.retry');
 
-  // 6.1 Profile 657:16468 — row 39 (logo · settings 24) → p20 → [date·place → 12 → title] → 13 → [card → 12 → tabs] → 20 → grid.
+  // 6.1 Profile 657:16468 — ScreenHeader (shared with Home · Community · Timer) → [card → 12 → tabs] → 20 → grid.
   const header = (
-    <View style={styles.header}>
-      <View style={styles.topRow}>
-        {isMe ? (
-          <>
-            <Logo lockup="Compact" tone={logoInk?.light ? 'light' : 'ink'} />
-            <Pressable accessibilityRole="button" accessibilityLabel={t('profile.settings')} hitSlop={space[10]} onPress={openSettings}>
-              <Icon icon={Settings} size={24} color={logoInk?.strong ?? 'fg/default'} />
-            </Pressable>
-          </>
-        ) : (
-          <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[10]} onPress={() => (router.canGoBack() ? router.back() : router.replace('/community'))}>
-            <Icon icon={ChevronLeft} size={24} color={logoInk?.strong ?? 'fg/default'} />
-          </Pressable>
-        )}
-      </View>
-      {/* Frame 9 — gap 12. */}
-      <View style={styles.titleBlock}>
-      {/* Frame 9 — "Tue, Oct 27 · Mapo, Seoul" (Overline): pure black or white, whichever reads on the background. */}
-      <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))}>{[new Date().toLocaleDateString(i18n.language, { weekday: 'short', month: 'short', day: 'numeric' }), place].filter(Boolean).join(' · ')}</Text>
-      {/* "Rainy evening" — Display/XL, weather word fg/default + day part fg/disabled (same as Home 2.1). */}
-      <Text variant="Display/XL" accessibilityRole="header" numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
-        {now ? `${t(`home.titleMood.${now.mood}`)} ` : ''}
-        <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{t(`home.dayPart.${dayPart(new Date())}`)}</Text>
-      </Text>
-      </View>
+    <>
+    <ScreenHeader right={isMe ? 'settings' : 'none'} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
+    <Animated.View entering={FadeIn.duration(150)} style={styles.header}>
       {/* Frame 10 — card → 12 → tabs. */}
       <View style={styles.cardGroup}>
       <View style={[styles.card, { borderColor: color('bg/subtle') }]}>
@@ -296,23 +259,18 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           </View>
         )}
       </View>
-      <View style={styles.tabs}>
-        {tabs.map((k) => {
-          const on = k === tab;
-          const label = k === 'dishes' && dishesCount != null ? t('profile.tabs.dishesCount', { n: dishesCount }) : t(`profile.tabs.${k}`);
-          return (
-            <Pressable key={k} accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: on }} onPress={() => setTab(k)} style={styles.tab}>
-              {/* My profile: icon tabs (the dish count is on the chip above). Other cooks keep the "Dishes N" label. */}
-              {isMe ? (
-                <Icon icon={TAB_ICON[k]} size={22} color={on ? 'fg/default' : 'fg/muted'} />
-              ) : (
-                <Text variant={on ? 'Title/S' : 'Body/M'} color={on ? 'fg/default' : 'fg/muted'}>{label}</Text>
-              )}
-              <View style={[styles.indicator, on && { backgroundColor: color('bg/primary') }]} />
-            </Pressable>
-          );
-        })}
-      </View>
+      {/* My profile: icon tabs (the dish count is on the chip above). Other cooks keep the "Dishes N" label. */}
+      <UnderlineTabs
+        style={styles.tabs}
+        contentStyle={styles.tabRow}
+        value={tab}
+        onChange={setTab}
+        items={tabs.map((k) => ({
+          key: k,
+          label: k === 'dishes' && dishesCount != null ? t('profile.tabs.dishesCount', { n: dishesCount }) : t(`profile.tabs.${k}`),
+          icon: isMe ? TAB_ICON[k] : undefined,
+        }))}
+      />
       </View>
       {offline ? (
         <View style={[styles.offline, { backgroundColor: color('bg/inverse') }]}>
@@ -320,18 +278,13 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           <Text variant="Body/S Strong" color="fg/inverse" style={styles.flex1}>{t('profile.offline')}</Text>
         </View>
       ) : null}
-    </View>
+    </Animated.View>
+    </>
   );
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <StatusBar style={washOn && logoInk ? logoInk.bar : scheme === 'dark' ? 'light' : 'dark'} />
-      {washOn ? (
-        <Animated.View entering={FadeIn.duration(200)} style={[styles.wash, wash.style]} pointerEvents="none">
-          <MoodGradient mood={washMood} opacity={0.85} />
-          <WeatherFx mood={washMood} />
-        </Animated.View>
-      ) : null}
+      <ScreenWash scrollStyle={wash.style} />
       <FlatList
         data={tab === 'dishes' ? data ?? [] : []}
         extraData={[given, acornDelta]} // re-render tiles when an acorn is given / taken back
@@ -339,7 +292,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         numColumns={2}
         ListHeaderComponent={header}
         columnWrapperStyle={{ gap: GAP, paddingHorizontal: space[20], marginBottom: ROW_GAP }}
-        contentContainerStyle={[styles.grid, { paddingTop: insets.top }]}
+        contentContainerStyle={styles.grid}
         onScroll={onScroll}
         scrollEventThrottle={16}
         ListFooterComponent={tab === 'saved' ? <SavedView onOffline={onOffline} /> : tab === 'diary' ? <DiaryView onOffline={onOffline} /> : undefined}
@@ -385,13 +338,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  wash: { position: 'absolute', left: 0, right: 0, top: 0, height: 420 },
-  // Group 93: p20 · gap 13 · 8 between the tabs and the first Dish Tiles (Figma 16, tightened on request).
+  // Body under ScreenHeader: p20 · gap 13 · 8 between the tabs and the first Dish Tiles (Figma 16, tightened on request).
   header: { paddingHorizontal: space[20], paddingBottom: space[8], gap: 13 },
-  // Group 54: 39 tall, Row 26 centred (logo · settings 24, space-between).
-  topRow: { height: 39, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  // 13 (header gap) + 7 = the group's 20 top padding; Frame 9 gap 12.
-  titleBlock: { paddingTop: 7, gap: space[12] },
   cardGroup: { gap: space[12] },
   center: { alignItems: 'center', justifyContent: 'center' },
   camera: { position: 'absolute', right: 0, bottom: 0, width: 28, height: 28, borderRadius: radius.full, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
@@ -411,9 +359,9 @@ const styles = StyleSheet.create({
   name: { flex: 1, minWidth: 97, gap: 11, justifyContent: 'center', opacity: 0.8 },
   nameText: { gap: space[6] },
   acorns: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[8], paddingVertical: space[6], borderRadius: radius.full, alignSelf: 'flex-start' },
-  tabs: { flexDirection: 'row', gap: 28, paddingHorizontal: space[20] },
-  tab: { height: 43, paddingTop: space[10], paddingHorizontal: space[2], gap: space[8], alignItems: 'center', justifyContent: 'center' },
-  indicator: { width: 24, height: 3, borderRadius: 2 },
+  // Full screen width (cancels the header's p20) so the hairline runs edge to edge; tabs keep their x (20 + 20).
+  tabs: { marginHorizontal: -space[20] },
+  tabRow: { gap: 28, paddingHorizontal: space[40] },
   offline: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.full }, // Inline Banner · Neutral
   flex1: { flex: 1 },
   grid: { paddingBottom: 96 + space[24] },
