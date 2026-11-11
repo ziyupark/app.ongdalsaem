@@ -1,16 +1,43 @@
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Toast } from '../src/components/Toast';
 import '../src/i18n';
 import { fontFiles, ThemeProvider, useTheme } from '../src/theme';
 import { loadPrefs, usePrefs } from '../src/lib/prefs';
 import { usePushSync } from '../src/lib/push';
+import { dismissDone, focusTimer, useDoneQueue, useTimers } from '../src/lib/timers';
 
 SplashScreen.preventAutoHideAsync();
+
+/** App open: a finished timer shows "<label> — done" for 3 s, one at a time; tap → Timer screen with it on the big ring. */
+function TimerDoneToast() {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const queue = useDoneQueue();
+  const timers = useTimers();
+  const id = queue[0];
+  const timer = id ? timers.find((x) => x.id === id) : undefined;
+  useEffect(() => { if (id && !timer) dismissDone(id); }, [id, timer]);
+  const hide = useCallback(() => { if (id) dismissDone(id); }, [id]);
+  if (!timer) return null;
+  return (
+    <Toast
+      key={timer.id}
+      visible
+      duration={3000}
+      message={t('timer.labelDone', { label: timer.label })}
+      onHide={hide}
+      onPress={() => { hide(); focusTimer(timer.id); router.navigate('/timer'); }}
+      bottom={insets.bottom + 96}
+    />
+  );
+}
 
 function Root() {
   const { color, scheme } = useTheme();
@@ -34,6 +61,7 @@ function Root() {
         <Stack.Screen name="share/pick" options={{ animation: 'slide_from_bottom', gestureEnabled: false }} />
         <Stack.Screen name="share/details" options={{ gestureEnabled: false }} />
       </Stack>
+      <TimerDoneToast />
     </>
   );
 }

@@ -15,7 +15,7 @@ import { Text } from '../src/components/Text';
 import { TimerRing } from '../src/components/timer/TimerRing';
 import { useWashScroll } from '../src/lib/useWashScroll';
 import {
-  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useNow, useTimers, type KitchenTimer,
+  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useFocusRequest, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
 import { elevation, radius, space, useTheme } from '../src/theme';
 
@@ -53,6 +53,9 @@ export default function KitchenTimerScreen() {
   };
   const [featuredId, setFeaturedId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  // Tapping a "— done" toast (anywhere in the app) brings that timer to the big ring.
+  const focusReq = useFocusRequest();
+  useEffect(() => { if (focusReq) setFeaturedId(focusReq.id); }, [focusReq]);
   const bar = useTabBarScroll();
 
   // A timer that just started anywhere (Add Timer, a preset, a recipe step) takes the big ring, so “Food Name”
@@ -169,25 +172,8 @@ export default function KitchenTimerScreen() {
       <ScrollView onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <ScreenHeader right="none" />
         <Animated.View entering={FadeIn.duration(150)}>
-        {done && featured ? (
-          <View style={styles.bannerWrap}>
-            <View style={[styles.banner, elevation['Elevation/4 Overlay'], { backgroundColor: color('bg/done-subtle'), borderColor: color('border/done') }]}>
-              <Icon icon={Check} size={20} color="fg/done" />
-              <View style={styles.flex}>
-                <Text variant="Body/M Strong" numberOfLines={1}>{t('timer.ready', { label: featured.label })}</Text>
-                {featured.source ? (
-                  <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('timer.stepOf', { dish: featured.source.dishName, n: featured.source.step, total: featured.source.stepCount })}</Text>
-                ) : null}
-              </View>
-              <Pressable accessibilityRole="button" onPress={() => { pin(); addMinute(featured.id); }} style={[styles.smallBtn, elevation['Elevation/2 Raised'], { backgroundColor: color('bg/subtle') }]}>
-                <Text variant="Button/M">{t('timer.plusMin')}</Text>
-              </Pressable>
-            </View>
-          </View>
-        ) : null}
-
         {/* Block · Active timer 88:3084 — p30 20 0: “Food Name” → 13 → ring → 24 → controls → Frame 11 (p20 0 12, Add Timer). */}
-        <View style={[styles.active, { paddingTop: done ? space[20] : 30 }]}>
+        <View style={[styles.active, { paddingTop: 30 }]}>
           {food ? <Text variant="Display/M" numberOfLines={1} style={styles.food}>{`“${food}”`}</Text> : null}
           <GestureDetector gesture={ringPan}>
           <View collapsable={false}>
@@ -333,9 +319,6 @@ function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label:
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  bannerWrap: { paddingTop: space[12], paddingHorizontal: space[20] },
-  banner: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[16], paddingRight: space[12], paddingVertical: space[12], borderRadius: radius.xl, borderWidth: 1 },
-  smallBtn: { height: 36, paddingHorizontal: space[14], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   active: { alignItems: 'center', paddingHorizontal: space[20] },
   // Inner circle is 196.8 − 2×10 ≈ 176 wide; the light numerals overhang their box, so give them side room.
   mid: { alignItems: 'center', gap: space[2], width: 172 },

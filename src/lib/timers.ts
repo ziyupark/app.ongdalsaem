@@ -32,6 +32,7 @@ const listeners = new Set<() => void>();
 
 const emit = () => {
   listeners.forEach((l) => l());
+  watchEnds();
   AsyncStorage.setItem(KEY, JSON.stringify(timers)).catch(() => undefined);
 };
 
@@ -43,18 +44,46 @@ async function load() {
     const list = raw ? (JSON.parse(raw) as KitchenTimer[]) : [];
     if (Array.isArray(list)) timers = list;
     listeners.forEach((l) => l());
+    watchEnds();
   } catch {
     // start empty
   }
 }
 
-// App open (iPhone Clock style): the banner + sound still show in the foreground…
+// App open: a timer's notification only plays its sound — the in-app "— done" toast stands in for the banner.
+// Other notifications (and timers ringing while the app is closed) are unchanged.
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false }),
+  handleNotification: async (n) => {
+    const timer = typeof n.request.content.data?.timerId === 'string';
+    return { shouldShowBanner: !timer, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false };
+  },
 });
 
+// Tiny stores: finished timers waiting for their toast (one at a time, oldest first) and the latest "show this timer" request.
+const uiListeners = new Set<() => void>();
+const uiEmit = () => uiListeners.forEach((l) => l());
+const uiSub = (l: () => void) => { uiListeners.add(l); return () => { uiListeners.delete(l); }; };
+let doneQueue: string[] = [];
+let focusReq: { id: string } | null = null;
+
+export function useDoneQueue() {
+  useEffect(() => { load(); }, []);
+  return useSyncExternalStore(uiSub, () => doneQueue);
+}
+export function dismissDone(id: string) {
+  if (!doneQueue.includes(id)) return;
+  doneQueue = doneQueue.filter((x) => x !== id);
+  uiEmit();
+}
+/** Ask the Timer screen to put this timer on the big ring (a new object each time, so the same id works twice). */
+export function focusTimer(id: string) {
+  focusReq = { id };
+  uiEmit();
+}
+export const useFocusRequest = () => useSyncExternalStore(uiSub, () => focusReq);
+
 const buzzed = new Set<string>();
-/** …and the phone buzzes 3× (Success). Once per run of a timer, whether the ring or the notification sees the end first. */
+/** The phone buzzes 3× (Success) and, with the app open, a "— done" toast queues. Once per run of a timer, whether the ring, the notification or the foreground watch sees the end first. */
 export function ringFinished(id: string) {
   const t = timers.find((x) => x.id === id);
   if (!t) return;
@@ -62,11 +91,32 @@ export function ringFinished(id: string) {
   if (buzzed.has(key)) return;
   buzzed.add(key);
   [0, 400, 800].forEach((ms) => setTimeout(() => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined); }, ms));
+  if (AppState.currentState === 'active' && !doneQueue.includes(id)) {
+    doneQueue = [...doneQueue, id];
+    uiEmit();
+  }
 }
 Notifications.addNotificationReceivedListener((n) => {
   const id = n.request.content.data?.timerId;
   if (typeof id === 'string') ringFinished(id);
 });
+
+// While the app is open, catch each end on any screen (also with timer notifications off).
+let watch: ReturnType<typeof setTimeout> | undefined;
+function watchEnds() {
+  clearTimeout(watch);
+  watch = undefined;
+  if (AppState.currentState !== 'active') return;
+  const now = Date.now();
+  const next = timers.reduce((m, t) => (t.endAt != null && t.endAt > now ? Math.min(m, t.endAt) : m), Infinity);
+  if (next === Infinity) return;
+  watch = setTimeout(() => {
+    const at = Date.now();
+    timers.forEach((t) => { if (t.endAt != null && t.endAt <= at) ringFinished(t.id); });
+    watchEnds();
+  }, Math.min(next - now + 50, 2 ** 31 - 1));
+}
+AppState.addEventListener('change', watchEnds);
 
 async function schedule(t: KitchenTimer, seconds: number) {
   if (!getPrefs().notify.timer) return undefined;
