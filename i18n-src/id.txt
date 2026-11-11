@@ -960,3 +960,11 @@ searchLanguages=Cari bahasa
 [home]
 feedTitle={{dish}} & kawan-kawan
 feedTitleFresh=Baru saja dibagikan
+[fridge]
+title=Kulkas
+placeholder=Tambah bahan
+add=Tambah
+empty=Kulkas masih kosong. Catat bahan yang baru kamu simpan.
+today=Disimpan hari ini
+daysAgo_other=Disimpan {{count}} hari lalu
+remove=Hapus {{name}}

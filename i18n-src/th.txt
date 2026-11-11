@@ -960,3 +960,11 @@ searchLanguages=ค้นหาภาษา
 [home]
 feedTitle={{dish}} และผองเพื่อน
 feedTitleFresh=เมนูที่เพิ่งแชร์
+[fridge]
+title=ตู้เย็น
+placeholder=เพิ่มวัตถุดิบ
+add=เพิ่ม
+empty=ตู้เย็นยังว่างอยู่ จดวัตถุดิบที่เพิ่งใส่ไว้ได้เลย
+today=ใส่วันนี้
+daysAgo_other=ใส่เมื่อ {{count}} วันก่อน
+remove=ลบ {{name}}

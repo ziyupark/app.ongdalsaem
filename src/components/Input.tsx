@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 import { radius, space, text, useTheme } from '../theme';
 import { Text } from './Text';
 
-type Props = Omit<TextInputProps, 'style'> & { label: string; helper?: string; error?: string };
+type Props = Omit<TextInputProps, 'style'> & { label?: string; helper?: string; error?: string };
 
 /**
  * Input 6:337 — label (Body/S Strong) → field 56 high, radius 20, bg/subtle, px 16 → helper (Caption).
@@ -15,11 +15,11 @@ export function Input({ label, helper, error, onFocus, onBlur, ...rest }: Props)
   const borderColor = error ? color('fg/destructive') : focused ? color('border/focus') : color('border/default');
   return (
     <View style={styles.root}>
-      <Text variant="Body/S Strong">{label}</Text>
+      {label ? <Text variant="Body/S Strong">{label}</Text> : null}
       <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor, borderWidth: focused && !error ? 2 : 1 }]}>
         <TextInput
           {...rest}
-          accessibilityLabel={label}
+          accessibilityLabel={label ?? rest.placeholder}
           placeholderTextColor={color('fg/muted')}
           selectionColor={color('border/focus')}
           onFocus={(e) => { setFocused(true); onFocus?.(e); }}

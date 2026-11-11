@@ -699,6 +699,16 @@
     "youCooked": "You cooked this",
     "youAte": "You ate this"
   },
+  "fridge": {
+    "title": "Fridge",
+    "placeholder": "Add an ingredient",
+    "add": "Add",
+    "empty": "Nothing in the fridge yet. Add what you just put in.",
+    "today": "Put in today",
+    "daysAgo_one": "Put in {{count}} day ago",
+    "daysAgo_other": "Put in {{count}} days ago",
+    "remove": "Remove {{name}}"
+  },
   "community": {
     "title": "Community",
     "global": "Global",

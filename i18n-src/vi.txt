@@ -960,3 +960,11 @@ searchLanguages=Tìm ngôn ngữ
 [home]
 feedTitle={{dish}} & những người bạn
 feedTitleFresh=Món vừa lên mâm
+[fridge]
+title=Tủ lạnh
+placeholder=Thêm nguyên liệu
+add=Thêm
+empty=Tủ lạnh còn trống. Ghi lại nguyên liệu bạn vừa cất vào.
+today=Cất hôm nay
+daysAgo_other=Cất {{count}} ngày trước
+remove=Xóa {{name}}

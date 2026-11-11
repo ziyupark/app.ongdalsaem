@@ -699,6 +699,16 @@
     "youCooked": "Cocinaste esto",
     "youAte": "Comiste esto"
   },
+  "fridge": {
+    "title": "Nevera",
+    "placeholder": "Añade un ingrediente",
+    "add": "Añadir",
+    "empty": "La nevera está vacía. Anota lo que acabas de guardar.",
+    "today": "Guardado hoy",
+    "daysAgo_one": "Guardado hace {{count}} día",
+    "daysAgo_other": "Guardado hace {{count}} días",
+    "remove": "Quitar {{name}}"
+  },
   "community": {
     "title": "Comunidad",
     "global": "Global",

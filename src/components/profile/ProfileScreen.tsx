@@ -40,7 +40,7 @@ import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type Wea
 const GAP = 16;
 const ROW_GAP = 20;
 const { lineHeight: _lh, ...bioField } = text['Body/M'];
-const TABS: ProfileTab[] = ['dishes', 'saved', 'diary'];
+const TABS: ProfileTab[] = ['dishes', 'diary', 'saved'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
 const TAB_ICON: Record<ProfileTab, LucideIcon> = { dishes: Utensils, saved: Bookmark, diary: NotebookPen };
 type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: Date };

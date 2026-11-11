@@ -975,3 +975,12 @@ searchLanguages=Buscar idiomas
 [home]
 feedTitle={{dish}} e companhia
 feedTitleFresh=Acabou de sair
+[fridge]
+title=Geladeira
+placeholder=Adicione um ingrediente
+add=Adicionar
+empty=A geladeira está vazia. Anote o que você acabou de guardar.
+today=Guardado hoje
+daysAgo_one=Guardado há {{count}} dia
+daysAgo_other=Guardado há {{count}} dias
+remove=Remover {{name}}

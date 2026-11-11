@@ -699,6 +699,16 @@
     "youCooked": "내가 만든 요리",
     "youAte": "내가 먹은 요리"
   },
+  "fridge": {
+    "title": "냉장고",
+    "placeholder": "재료 이름",
+    "add": "추가",
+    "empty": "냉장고가 비어 있어요. 방금 넣은 재료를 적어 두세요.",
+    "today": "오늘 넣음",
+    "daysAgo_one": "{{count}}일 전 넣음",
+    "daysAgo_other": "{{count}}일 전 넣음",
+    "remove": "{{name}} 삭제"
+  },
   "community": {
     "title": "커뮤니티",
     "global": "글로벌",

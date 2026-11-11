@@ -690,6 +690,15 @@
     "youCooked": "Bạn đã nấu món này",
     "youAte": "Bạn đã ăn món này"
   },
+  "fridge": {
+    "title": "Tủ lạnh",
+    "placeholder": "Thêm nguyên liệu",
+    "add": "Thêm",
+    "empty": "Tủ lạnh còn trống. Ghi lại nguyên liệu bạn vừa cất vào.",
+    "today": "Cất hôm nay",
+    "daysAgo_other": "Cất {{count}} ngày trước",
+    "remove": "Xóa {{name}}"
+  },
   "community": {
     "title": "Cộng đồng",
     "global": "Toàn cầu",

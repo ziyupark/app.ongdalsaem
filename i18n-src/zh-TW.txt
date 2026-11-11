@@ -960,3 +960,11 @@ searchLanguages=搜尋語言
 [home]
 feedTitle={{dish}}和它的朋友們
 feedTitleFresh=剛上桌的料理
+[fridge]
+title=冰箱
+placeholder=新增食材
+add=新增
+empty=冰箱還是空的。記下剛放進去的食材吧。
+today=今天放入
+daysAgo_other={{count}} 天前放入
+remove=刪除{{name}}
