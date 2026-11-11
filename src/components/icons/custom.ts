@@ -6,7 +6,7 @@ import { createLucideIcon } from 'lucide-react-native';
  * icon/bookmark 3:42 · icon/share 3:47 · icon/message-circle 3:50
  */
 export const Bookmark = createLucideIcon('bookmark', [
-  ['path', { d: 'M19 20L12 15.6667L5 20V5.66667C5 5.22464 5.21071 4.80072 5.58579 4.48816C5.96086 4.17559 6.46957 4 7 4H17C17.5304 4 18.0391 4.17559 18.4142 4.48816C18.7893 4.80072 19 5.22464 19 5.66667V20Z', key: 'b' }],
+  ['path', { d: 'M19 21 L12 16.125 L5 21 L5 4.875 C5 4.3777 5.2107 3.9008 5.5858 3.5492 C5.9609 3.1975 6.4696 3 7 3 L17 3 C17.5304 3 18.0391 3.1975 18.4142 3.5492 C18.7893 3.9008 19 4.3777 19 4.875 L19 21Z', key: 'b' }],
 ]);
 
 export const Share = createLucideIcon('share', [
