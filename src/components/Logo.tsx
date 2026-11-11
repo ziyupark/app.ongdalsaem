@@ -60,7 +60,8 @@ export function Logo({ lockup, tagline, tone = 'ink' }: Props) {
           </Svg>
         ) : null}
       </View>
-      {tagline ? <Text variant="Tagline" color="fg/muted">{tagline}</Text> : null}
+      {/* Letter spacing also lands after the last letter; pull that trailing gap back so the tagline centres on its glyphs. */}
+      {tagline ? <Text variant="Tagline" color="fg/muted" style={{ marginRight: -Number(text.Tagline.letterSpacing) }}>{tagline}</Text> : null}
     </View>
   );
 }
