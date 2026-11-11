@@ -24,7 +24,7 @@ const JUST_STARTED_MS = 10_000;
 
 // Big ring (Active timer) — size / stroke are also the drag geometry.
 const RING = 196.8;
-const RING_STROKE = 10;
+const RING_STROKE = 18;
 /** Hold the ring this long, then drag around it to change the time. */
 const HOLD_MS = 350;
 /** Touches this close to the ring's centre line (pt) count as on the ring. */
@@ -268,7 +268,7 @@ export default function KitchenTimerScreen() {
               const on = x.endAt != null && l > 0;
               return (
                 <Pressable key={x.id} accessibilityRole="button" onPress={() => setFeaturedId(x.id)} onLongPress={() => removeAsk(x)} style={[styles.card, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
-                  <TimerRing size={52} stroke={5} endAt={x.endAt} leftSec={l} totalSec={x.totalSec} done={l === 0} onComplete={() => onRingEnd(x.id)} />
+                  <TimerRing size={52} stroke={9} endAt={x.endAt} leftSec={l} totalSec={x.totalSec} done={l === 0} onComplete={() => onRingEnd(x.id)} />
                   <View style={styles.flex}>
                     <Text variant="Body/S Strong" color="fg/muted" numberOfLines={1}>{foodOf(x) && foodOf(x) !== x.label ? `${foodOf(x)} · ${x.label}` : x.label}</Text>
                     <Text variant="Numeric/L" color={l === 0 ? 'fg/done' : 'fg/default'} style={styles.tabular}>{fmt(l)}</Text>
@@ -325,8 +325,8 @@ function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label:
 const styles = StyleSheet.create({
   root: { flex: 1 },
   active: { alignItems: 'center', paddingHorizontal: space[20] },
-  // Inner circle is 196.8 − 2×10 ≈ 176 wide; the light numerals overhang their box, so give them side room.
-  mid: { alignItems: 'center', gap: space[2], width: 172 },
+  // Inner circle is 196.8 − 2×18 ≈ 160 wide; the light numerals overhang their box, so give them side room.
+  mid: { alignItems: 'center', gap: space[2], width: 152 },
   time: { paddingHorizontal: space[4] },
   tabular: { fontVariant: ['tabular-nums'] },
   controls: { width: 196, marginTop: space[24], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
