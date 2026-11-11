@@ -19,9 +19,9 @@ import { EmptyState, FoodGrid, ListCard, QuestionCard, SectionHeader, SearchFiel
 
 export type Area = 'all' | 'near' | 'area' | 'weather';
 const RECENT_KEY = 'community.recentSearches';
-/** "Our area" on Explore: up to 6 dishes, 2 questions. */
+/** "Our area" on Explore: up to 6 dishes, 3 questions. */
 const AREA_DISHES = 6;
-const AREA_QUESTIONS = 2;
+const AREA_QUESTIONS = 3;
 
 const placeOf = (here: Here) => ({
   city: here.place?.city ?? here.forecast?.city ?? null,
