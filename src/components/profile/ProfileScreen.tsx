@@ -347,8 +347,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   wash: { position: 'absolute', left: 0, right: 0, top: 0, height: 420 },
-  // Group 93: p20 · gap 13 · 16 between the tabs and the first Dish Tiles (Grid 670:20275).
-  header: { paddingHorizontal: space[20], paddingBottom: space[16], gap: 13 },
+  // Group 93: p20 · gap 13 · 8 between the tabs and the first Dish Tiles (Figma 16, tightened on request).
+  header: { paddingHorizontal: space[20], paddingBottom: space[8], gap: 13 },
   // Group 54: 39 tall, Row 26 centred (logo · settings 24, space-between).
   topRow: { height: 39, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   // 13 (header gap) + 7 = the group's 20 top padding; Frame 9 gap 12.
