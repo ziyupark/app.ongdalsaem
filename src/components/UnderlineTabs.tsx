@@ -93,7 +93,8 @@ export function UnderlineTabs<K extends string>({ items, value, onChange, style,
 }
 
 const styles = StyleSheet.create({
-  hairline: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 1 },
+  // border/default at 30 % so the hairline doesn't glare over the mood wash.
+  hairline: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 1, opacity: 0.3 },
   row: { flexDirection: 'row' },
   tab: { height: 43, paddingTop: space[10], paddingBottom: space[12], paddingHorizontal: space[2], alignItems: 'center', justifyContent: 'center' },
   bar: { position: 'absolute', left: 0, bottom: 0, height: 3, borderRadius: radius.full },
