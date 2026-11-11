@@ -427,6 +427,7 @@
     "ofDone": "of {{total}} · done at {{at}}",
     "paused": "of {{total}} · paused",
     "labelDone": "{{label}} — done",
+    "doneBadge": "Done",
     "next": "Next: {{text}}",
     "ready": "{{label}} is ready",
     "stepOf": "{{dish}} · step {{n}} of {{total}}",

@@ -86,7 +86,8 @@ export default function KitchenTimerScreen() {
     if (done) return done;
     return [...timers].sort((a, b) => secondsLeft(a, now) - secondsLeft(b, now))[0];
   }, [timers, featuredId, now]);
-  const others = timers.filter((x) => x.id !== featured?.id);
+  // Finished timers first, then the rest in their usual order.
+  const others = timers.filter((x) => x.id !== featured?.id).sort((a, b) => Number(secondsLeft(b, now) === 0) - Number(secondsLeft(a, now) === 0));
 
   const onTab = (k: TabKey) => {
     if (k === 'home') router.replace('/home');
@@ -266,12 +267,21 @@ export default function KitchenTimerScreen() {
             others.map((x) => {
               const l = secondsLeft(x, now);
               const on = x.endAt != null && l > 0;
+              const finished = l === 0;
               return (
-                <Pressable key={x.id} accessibilityRole="button" onPress={() => setFeaturedId(x.id)} onLongPress={() => removeAsk(x)} style={[styles.card, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
-                  <TimerRing size={52} stroke={9} endAt={x.endAt} leftSec={l} totalSec={x.totalSec} done={l === 0} onComplete={() => onRingEnd(x.id)} />
+                <Pressable key={x.id} accessibilityRole="button" onPress={() => setFeaturedId(x.id)} onLongPress={() => removeAsk(x)} style={[styles.card, { backgroundColor: color('bg/default'), borderColor: color(finished ? 'fg/done' : 'border/default') }]}>
+                  <TimerRing size={52} stroke={9} endAt={x.endAt} leftSec={l} totalSec={x.totalSec} done={finished} onComplete={() => onRingEnd(x.id)} />
                   <View style={styles.flex}>
-                    <Text variant="Body/S Strong" color="fg/muted" numberOfLines={1}>{foodOf(x) && foodOf(x) !== x.label ? `${foodOf(x)} · ${x.label}` : x.label}</Text>
-                    <Text variant="Numeric/L" color={l === 0 ? 'fg/done' : 'fg/default'} style={styles.tabular}>{fmt(l)}</Text>
+                    <View style={styles.nameRow}>
+                      <Text variant="Body/S Strong" color="fg/muted" numberOfLines={1} style={styles.shrink}>{foodOf(x) && foodOf(x) !== x.label ? `${foodOf(x)} · ${x.label}` : x.label}</Text>
+                      {finished ? (
+                        <View style={[styles.doneBadge, { backgroundColor: color('bg/success-subtle') }]}>
+                          <Text variant="Caption Strong" color="fg/done">{t('timer.doneBadge')}</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                    {/* Finished: "Done" in place of 00:00. */}
+                    <Text variant="Numeric/L" color={finished ? 'fg/done' : 'fg/default'} numberOfLines={1} style={styles.tabular}>{finished ? t('timer.doneBadge') : fmt(l)}</Text>
                   </View>
                   <Pressable accessibilityRole="button" accessibilityLabel={t(on ? 'timer.pause' : 'timer.resume')} onPress={() => (on ? pauseTimer(x.id) : l === 0 ? addMinute(x.id) : resumeTimer(x.id))} style={[styles.cardBtn, { backgroundColor: color('bg/inverse') }]}>
                     <Icon icon={on ? Pause : l === 0 ? Plus : Play} size={20} color="fg/inverse" />
@@ -345,6 +355,9 @@ const styles = StyleSheet.create({
   addLineV: { position: 'absolute', width: 1.6, height: 48, borderRadius: 1 },
   sectionHead: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: -2 },
   card: { height: 88, flexDirection: 'row', alignItems: 'center', gap: space[14], paddingHorizontal: 18, borderRadius: radius.xl, borderWidth: 1 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
+  shrink: { flexShrink: 1 },
+  doneBadge: { paddingHorizontal: space[6], paddingVertical: space[2], borderRadius: radius.xs },
   cardBtn: { width: 44, height: 44, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   flex: { flex: 1, gap: space[2] },
 });

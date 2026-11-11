@@ -422,6 +422,7 @@
     "ofDone": "{{total}}中 · {{at}}に完了",
     "paused": "{{total}}中 · 一時停止中",
     "labelDone": "{{label}} — 完了",
+    "doneBadge": "完了",
     "next": "次：{{text}}",
     "ready": "{{label}}ができました",
     "stepOf": "{{dish}} · 手順 {{n}}/{{total}}",

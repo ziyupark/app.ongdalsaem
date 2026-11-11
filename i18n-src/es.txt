@@ -354,6 +354,7 @@ idleHint=Elige uno abajo o añade un temporizador
 ofDone=de {{total}} · termina a las {{at}}
 paused=de {{total}} · en pausa
 labelDone={{label}}: listo
+doneBadge=Listo
 next=Siguiente: {{text}}
 ready={{label}} está listo
 stepOf={{dish}} · paso {{n}} de {{total}}

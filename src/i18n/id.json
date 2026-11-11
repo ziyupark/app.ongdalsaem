@@ -422,6 +422,7 @@
     "ofDone": "dari {{total}} · selesai pukul {{at}}",
     "paused": "dari {{total}} · dijeda",
     "labelDone": "{{label}} — selesai",
+    "doneBadge": "Selesai",
     "next": "Berikutnya: {{text}}",
     "ready": "{{label}} sudah siap",
     "stepOf": "{{dish}} · langkah {{n}} dari {{total}}",

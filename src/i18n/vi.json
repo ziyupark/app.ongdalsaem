@@ -422,6 +422,7 @@
     "ofDone": "trên {{total}} · xong lúc {{at}}",
     "paused": "trên {{total}} · đã tạm dừng",
     "labelDone": "{{label}} — xong",
+    "doneBadge": "Xong",
     "next": "Tiếp theo: {{text}}",
     "ready": "{{label}} đã xong",
     "stepOf": "{{dish}} · bước {{n}}/{{total}}",

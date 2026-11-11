@@ -349,6 +349,7 @@ idleHint=เลือกด้านล่างหรือเพิ่มต�
 ofDone=จาก {{total}} · เสร็จเวลา {{at}}
 paused=จาก {{total}} · หยุดชั่วคราว
 labelDone={{label}} — เสร็จแล้ว
+doneBadge=เสร็จแล้ว
 next=ถัดไป: {{text}}
 ready={{label}}พร้อมแล้ว
 stepOf={{dish}} · ขั้นตอนที่ {{n}} จาก {{total}}

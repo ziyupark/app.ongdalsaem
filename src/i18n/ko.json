@@ -427,6 +427,7 @@
     "ofDone": "{{total}} 중 · {{at}} 완료",
     "paused": "{{total}} 중 · 일시정지",
     "labelDone": "{{label}} — 완료",
+    "doneBadge": "완료",
     "next": "다음: {{text}}",
     "ready": "{{label}} 완료!",
     "stepOf": "{{dish}} · {{total}}단계 중 {{n}}",
