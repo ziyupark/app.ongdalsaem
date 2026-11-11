@@ -262,8 +262,13 @@ export function QuestionCard({ q, onPress, onMeToo, showImage, rounded = 'lg' }:
         <View style={styles.flex}>
           <Text variant="Body/S Strong" numberOfLines={1}>{q.author.handle ?? q.author.name}</Text>
           <View style={styles.qPlace}>
-            {q.place ? <Icon icon={MapPin} size={12} color="fg/muted" /> : null}
-            <Text variant="Caption" color="fg/muted" numberOfLines={1}>{[q.place, timeAgo(q.createdAt, t)].filter(Boolean).join(' · ')}</Text>
+            {q.place || q.range ? <Icon icon={MapPin} size={12} color="fg/muted" /> : null}
+            {/* `range`: a question from a wider range than your cell (Our area) — its district / city, set apart. */}
+            <Text variant="Caption" color="fg/muted" numberOfLines={1}>
+              {q.range ? <Text variant="Caption Strong" color="fg/secondary">{q.range}</Text> : null}
+              {q.range ? ' · ' : ''}
+              {[q.range ? null : q.place, timeAgo(q.createdAt, t)].filter(Boolean).join(' · ')}
+            </Text>
           </View>
         </View>
         <View style={[styles.qCat, { backgroundColor: color('bg/accent-subtle') }]}>

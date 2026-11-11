@@ -315,6 +315,8 @@ export type QuestionCategory = (typeof QUESTION_CATEGORIES)[number];
 export type Question = {
   id: string; body: string; category: QuestionCategory; imageUrl: string | null; place: string | null;
   author: Person; answers: number; meToo: number; mine: boolean; meTooByMe: boolean; bestAnswerId: string | null; createdAt: Date;
+  /** Set when a question came from a wider range than your area cell (Explore · Our area), e.g. "Dongjak-gu", "Seoul". */
+  range?: string;
 };
 export type Answer = { id: string; body: string; author: Person; helpful: number; helpfulByMe: boolean; place: string | null; createdAt: Date };
 
@@ -342,6 +344,41 @@ export async function fetchNearbyQuestions(geohash: string, limit = 10): Promise
   const { data, error } = await supabase.rpc('nearby_questions', { p_geohash: geohash, p_limit: limit });
   if (error) throw error;
   return decorateQuestions((data ?? []) as Row[]);
+}
+
+/**
+ * Explore · Our area: questions in your area cell, topped up to `min` (never past `max`) from wider ranges, skipping ids
+ * already in — neighbouring cells (one geohash level wider) → same district → same city → newest anywhere. Questions
+ * from a wider range carry `range`: the district / city of that step, or the question's own place for the others.
+ */
+export async function fetchAreaQuestions(
+  geohash: string, at: { district?: string | null; city?: string | null }, min = 3, max = 5,
+): Promise<Question[]> {
+  const own = await fetchNearbyQuestions(geohash, max);
+  if (own.length >= min) return own;
+  const open = () => supabase.from('questions').select('*').is('table_id', null).order('created_at', { ascending: false }).limit(max + 5);
+  const steps: { load: () => PromiseLike<{ data: unknown; error: unknown }>; range?: string }[] = [
+    { load: () => supabase.rpc('nearby_questions_wide', { p_geohash: geohash, p_limit: max + 5 }) },
+  ];
+  if (at.district) steps.push({ load: () => (at.city ? open().eq('city', at.city) : open()).eq('neighborhood', at.district!), range: at.district });
+  if (at.city) steps.push({ load: () => open().eq('city', at.city!), range: at.city });
+  steps.push({ load: () => open() });
+
+  const seen = new Set(own.map((q) => q.id));
+  const rows: { row: Row; range?: string }[] = [];
+  for (const step of steps) {
+    if (own.length + rows.length >= min) break;
+    const { data, error } = await Promise.resolve(step.load()).catch((e) => ({ data: null, error: e }));
+    if (error) continue; // e.g. the wide RPC isn't on the server yet — try the next range
+    for (const row of (data ?? []) as Row[]) {
+      if (own.length + rows.length >= min) break;
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      rows.push({ row, range: step.range });
+    }
+  }
+  const extra = await decorateQuestions(rows.map((r) => r.row));
+  return [...own, ...extra.map((q, i) => ({ ...q, range: rows[i].range ?? q.place ?? undefined }))];
 }
 
 export async function fetchQuestion(id: string): Promise<Question | null> {

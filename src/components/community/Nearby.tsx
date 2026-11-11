@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
-import { fetchNearby, fetchNearbyQuestions, searchSuggestions, setMeToo, type CardDish, type Question } from '../../services/community';
+import { fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, searchSuggestions, setMeToo, type CardDish, type Question } from '../../services/community';
 import { saveLocationChoice } from '../../services/profile';
 import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
 import { Button } from '../Button';
@@ -19,9 +19,9 @@ import { EmptyState, FoodGrid, ListCard, QuestionCard, SectionHeader, SearchFiel
 
 export type Area = 'all' | 'near' | 'area' | 'weather';
 const RECENT_KEY = 'community.recentSearches';
-/** "Our area" on Explore: up to 6 dishes, 3 questions. */
+/** "Our area" on Explore: up to 6 dishes, 3–5 questions (fewer in your cell → filled from wider ranges). */
 const AREA_DISHES = 6;
-const AREA_QUESTIONS = 3;
+const AREA_QUESTIONS = 5;
 /** Fewer than this in the chosen range → fill from wider ranges (district → city → same weather, newest). */
 const AREA_MIN = 3;
 
@@ -95,14 +95,16 @@ function useAreaFill(here: Here, area: Area, dishes: CardDish[] | null) {
   return extra;
 }
 
-/** Questions asked in my area cell, with optimistic "me too". */
-export function useNearbyQuestions(here: Here, n: number) {
+/** Questions asked in my area cell, with optimistic "me too". `fill`: top up to AREA_MIN from wider ranges (Our area). */
+export function useNearbyQuestions(here: Here, n: number, fill?: boolean) {
   const [questions, setQuestions] = useState<Question[]>([]);
+  const { city, district } = placeOf(here);
   useFocusEffect(
     useCallback(() => {
       if (!here.cell) return;
-      fetchNearbyQuestions(here.cell, n).then(setQuestions).catch(() => setQuestions([]));
-    }, [here.cell, n]),
+      const load = fill ? fetchAreaQuestions(here.cell, { district, city }, AREA_MIN, n) : fetchNearbyQuestions(here.cell, n);
+      load.then(setQuestions).catch(() => setQuestions([]));
+    }, [here.cell, n, fill, district, city]),
   );
   const meToo = async (q: Question) => {
     const on = !q.meTooByMe;
@@ -237,7 +239,7 @@ const firstArea = (here: Here): Area => (here.coords ? 'near' : here.place?.dist
 // ------------------------------------------------------------------------------------------------ Our area (Explore)
 
 /**
- * Explore · "Our area": range chips → up to 6 nearby dishes (horizontal Dish Tiles) → up to 2 nearby questions →
+ * Explore · "Our area": range chips → up to 6 nearby dishes (horizontal Dish Tiles) → 3–5 nearby questions (topped up from wider ranges) →
  * See all (app/nearby-feed). Location off → a card to turn it on. `onShown` gets the dish ids shown here (Explore
  * Together leaves them out).
  */
@@ -253,7 +255,7 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
     if (!ok) setArea(firstArea(here));
   }, [here, area]);
   const dishes = useNearbyDishes(here, area, '');
-  const { questions, meToo } = useNearbyQuestions(here, AREA_QUESTIONS);
+  const { questions, meToo } = useNearbyQuestions(here, AREA_QUESTIONS, true);
   const extra = useAreaFill(here, area, dishes);
   const shown = [...(dishes ?? []).map((dish) => ({ dish, place: undefined as string | undefined })), ...extra].slice(0, AREA_DISHES);
   const ids = shown.map((s) => s.dish.id).join(',');
