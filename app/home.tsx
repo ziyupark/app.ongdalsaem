@@ -2,6 +2,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Bell } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { supabase } from '../src/lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -57,6 +58,9 @@ export default function HomeScreen() {
   useFocusEffect(useCallback(() => { hasUnread().then(setUnread).catch(() => undefined); }, []));
   const [realPosts, setRealPosts] = useState<FeedPostData[]>([]);
   const [pool, setPool] = useState<PoolDish[]>([]);
+  // My user id — Today's pick leaves out my own dishes.
+  const [myId, setMyId] = useState<string | null>(null);
+  useEffect(() => { supabase.auth.getSession().then(({ data }) => setMyId(data.session?.user.id ?? null)); }, []);
   useFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, []));
   useFocusEffect(
     useCallback(() => {
@@ -181,8 +185,8 @@ export default function HomeScreen() {
 
   // §6.2 Today's pick — today's weather family within ±1 °C, then meal · place · acorns · freshness (the mood prompt was removed in 2.1 19:191).
   const pick = useMemo(
-    () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now) }),
-    [pool, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
+    () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now), excludeCreator: myId }),
+    [pool, myId, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
   );
   const pickByline = pick ? [pick.creator.name, [pick.neighborhood, pick.city].filter(Boolean).join(', '), timeAgo(pick.createdAt, t)].filter(Boolean).join(' · ') : '';
   const pickInitial = (pick?.creator.name ?? '?').slice(0, 1).toUpperCase();

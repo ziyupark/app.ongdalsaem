@@ -125,9 +125,11 @@ export const PICK_TEMP_RANGE = 1;
  * temperature within ±PICK_TEMP_RANGE °C of now (dishes without a temperature are left out); inside it:
  * weather closeness × current meal × place/acorns/freshness. No candidate → null (Home hides the card).
  * Location off (2.5) → the chosen city's best. No weather (2.6) → every dish is a candidate.
+ * `excludeCreator` = my user id: my own dishes are never my pick.
  */
-export function pickToday(pool: PoolDish[], ctx: Ctx & { meal?: Meal }): PoolDish | null {
+export function pickToday(all: PoolDish[], ctx: Ctx & { meal?: Meal; excludeCreator?: string | null }): PoolDish | null {
   const { mood, tempC } = ctx;
+  const pool = ctx.excludeCreator ? all.filter((d) => d.creator.id !== ctx.excludeCreator) : all;
   if (!mood) return best(pool, (d) => score(d, ctx.place) * (ctx.meal && fitsMeal(d, ctx.meal) && d.meals.length ? 1.3 : 1));
   const inRange = (d: PoolDish) => tempC == null || (d.tempC != null && Math.abs(d.tempC - tempC) <= PICK_TEMP_RANGE);
   const candidates = pool.filter((d) => sameGroup(d.mood, mood) && inRange(d));
