@@ -448,12 +448,19 @@
     "remove": "Remover",
     "presets": {
       "softEgg": "Ovo mole",
-      "rice": "Arroz",
-      "tea": "Chá"
+      "hardEgg": "Ovo cozido",
+      "ramen": "Lámen",
+      "cupNoodle": "Miojo de copo",
+      "pasta": "Massa",
+      "dumplings": "Guioza",
+      "tea": "Chá",
+      "coffee": "Café"
     },
     "newOverline": "Novo timer",
     "newTitle": "Quanto tempo?",
-    "defaultLabel": "Timer"
+    "defaultLabel": "Timer",
+    "presetMin": "{{n}} min",
+    "presetMinSec": "{{m}} min {{s}} s"
   },
   "report": {
     "title": "Qual é o problema com este prato?",

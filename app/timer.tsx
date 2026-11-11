@@ -33,9 +33,14 @@ const DRAG_STEP = 5;
 const DRAG_MAX = 24 * 3600 - DRAG_STEP;
 
 const PRESETS = [
-  { key: 'softEgg', sec: 390 },
-  { key: 'rice', sec: 900 },
+  { key: 'softEgg', sec: 420 },
+  { key: 'hardEgg', sec: 600 },
+  { key: 'ramen', sec: 270 },
+  { key: 'cupNoodle', sec: 180 },
+  { key: 'pasta', sec: 540 },
+  { key: 'dumplings', sec: 480 },
   { key: 'tea', sec: 180 },
+  { key: 'coffee', sec: 240 },
 ] as const;
 
 /** 5.1 Kitchen timer + 5.1b Add timer sheet + 5.2 Timer finished (Figma 20:748 · 669:11033 · 76:3268). */
@@ -240,7 +245,7 @@ export default function KitchenTimerScreen() {
         {/* Block · presets 88:3085 — p0 0 20. */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.presets}>
           {PRESETS.map((p) => (
-            <Chip key={p.key} icon={Clock} label={`${t(`timer.presets.${p.key}`)} ${fmt(p.sec).replace(/^0/, '')}`} onPress={async () => { const name = t(`timer.presets.${p.key}`); const id = await startTimer(name, p.sec, undefined, name); setFeaturedId(id); }} />
+            <Chip key={p.key} icon={Clock} label={`${t(`timer.presets.${p.key}`)} · ${p.sec % 60 ? t('timer.presetMinSec', { m: Math.floor(p.sec / 60), s: p.sec % 60 }) : t('timer.presetMin', { n: p.sec / 60 })}`} onPress={async () => { const name = t(`timer.presets.${p.key}`); const id = await startTimer(name, p.sec, undefined, name); setFeaturedId(id); }} />
           ))}
         </ScrollView>
 

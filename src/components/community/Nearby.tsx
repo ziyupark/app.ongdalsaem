@@ -22,6 +22,8 @@ const RECENT_KEY = 'community.recentSearches';
 /** "Our area" on Explore: up to 6 dishes, 3 questions. */
 const AREA_DISHES = 6;
 const AREA_QUESTIONS = 3;
+/** Fewer than this in the chosen range → fill from wider ranges (district → city → same weather, newest). */
+const AREA_MIN = 3;
 
 const placeOf = (here: Here) => ({
   city: here.place?.city ?? here.forecast?.city ?? null,
@@ -54,6 +56,43 @@ export function useNearbyDishes(here: Here, area: Area, query: string) {
   }, [here.status, here.coords, city, district, area, f?.mood, query]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
   return dishes;
+}
+
+/**
+ * Our area: the chosen range's dishes, topped up to AREA_MIN from wider ranges — same district → same city → same
+ * weather (newest) — skipping ids already shown. Filled dishes carry a place label (district / city / "Same weather").
+ */
+function useAreaFill(here: Here, area: Area, dishes: CardDish[] | null) {
+  const { t } = useTranslation();
+  const f = here.forecast;
+  const { city, district } = placeOf(here);
+  const [extra, setExtra] = useState<{ dish: CardDish; place: string }[]>([]);
+  useEffect(() => {
+    setExtra([]);
+    if (!dishes || dishes.length >= AREA_MIN) return;
+    let live = true;
+    const steps: { filter: Parameters<typeof fetchNearby>[0]; place: string }[] = [];
+    if (district && area !== 'area') steps.push({ filter: { city, neighborhood: district }, place: district });
+    if (city) steps.push({ filter: { city }, place: city });
+    if (f?.mood) steps.push({ filter: { mood: f.mood }, place: t('community.sameWeather') });
+    (async () => {
+      const seen = new Set(dishes.map((d) => d.id));
+      const out: { dish: CardDish; place: string }[] = [];
+      for (const step of steps) {
+        if (dishes.length + out.length >= AREA_MIN) break;
+        const list = await fetchNearby(step.filter).catch(() => [] as CardDish[]);
+        for (const d of list) {
+          if (dishes.length + out.length >= AREA_MIN) break;
+          if (seen.has(d.id)) continue;
+          seen.add(d.id);
+          out.push({ dish: d, place: step.place });
+        }
+      }
+      if (live) setExtra(out);
+    })();
+    return () => { live = false; };
+  }, [dishes, area, city, district, f?.mood, t]);
+  return extra;
 }
 
 /** Questions asked in my area cell, with optimistic "me too". */
@@ -215,8 +254,9 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
   }, [here, area]);
   const dishes = useNearbyDishes(here, area, '');
   const { questions, meToo } = useNearbyQuestions(here, AREA_QUESTIONS);
-  const shown = (dishes ?? []).slice(0, AREA_DISHES);
-  const ids = shown.map((d) => d.id).join(',');
+  const extra = useAreaFill(here, area, dishes);
+  const shown = [...(dishes ?? []).map((dish) => ({ dish, place: undefined as string | undefined })), ...extra].slice(0, AREA_DISHES);
+  const ids = shown.map((s) => s.dish.id).join(',');
   useEffect(() => { onShown?.(ids ? ids.split(',') : []); }, [ids]); // eslint-disable-line react-hooks/exhaustive-deps
   const [busy, setBusy] = useState(false);
   const tileW = (width - space[20] * 2 - space[16]) / 2;
@@ -252,7 +292,7 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
         <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
       ) : shown.length ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
-          {shown.map((d) => <DishTile key={d.id} dish={d} width={tileW} rounded="2xl" onPress={() => router.push(`/dish/${d.id}`)} />)}
+          {shown.map(({ dish: d, place }) => <DishTile key={d.id} dish={d} place={place} width={tileW} rounded="2xl" onPress={() => router.push(`/dish/${d.id}`)} />)}
         </ScrollView>
       ) : null}
       {questions.length ? (

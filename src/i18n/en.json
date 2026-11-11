@@ -448,12 +448,19 @@
     "remove": "Remove",
     "presets": {
       "softEgg": "Soft egg",
-      "rice": "Rice",
-      "tea": "Tea"
+      "hardEgg": "Hard egg",
+      "ramen": "Ramen",
+      "cupNoodle": "Cup noodles",
+      "pasta": "Pasta",
+      "dumplings": "Dumplings",
+      "tea": "Tea",
+      "coffee": "Coffee"
     },
     "newOverline": "New timer",
     "newTitle": "How long?",
-    "defaultLabel": "Timer"
+    "defaultLabel": "Timer",
+    "presetMin": "{{n}} min",
+    "presetMinSec": "{{m}} min {{s}} s"
   },
   "report": {
     "title": "What’s wrong with this dish?",

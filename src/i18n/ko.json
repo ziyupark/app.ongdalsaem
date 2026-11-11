@@ -448,12 +448,19 @@
     "remove": "삭제",
     "presets": {
       "softEgg": "반숙 달걀",
-      "rice": "밥",
-      "tea": "차"
+      "hardEgg": "완숙 달걀",
+      "ramen": "라면",
+      "cupNoodle": "컵라면",
+      "pasta": "파스타",
+      "dumplings": "만두",
+      "tea": "차",
+      "coffee": "커피"
     },
     "newOverline": "새 타이머",
     "newTitle": "몇 분 동안?",
-    "defaultLabel": "타이머"
+    "defaultLabel": "타이머",
+    "presetMin": "{{n}}분",
+    "presetMinSec": "{{m}}분 {{s}}초"
   },
   "report": {
     "title": "이 요리에 어떤 문제가 있나요?",

@@ -15,8 +15,9 @@ export const tileMediaHeight = (width: number) => Math.round((width * 208) / 167
  * Used everywhere a dish grid or rail appears: 6.1 Profile, 4.5 Cook profile, 7.1 "More from", tables, challenges.
  */
 /** `onAcorn` turns the Acorn Tag into a give / take-back toggle (`given` = filled); `acorns` overrides the count. */
+/** `place`: small label before the byline (Explore · Our area marks dishes from a wider range, e.g. "Mapo-gu"). */
 /** `rounded`: photo corner radius token (default xl; Explore · Our area uses 2xl like the other photo cards there). */
-export function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded = 'xl' }: { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number; rounded?: 'xl' | '2xl' }) {
+export function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded = 'xl', place }: { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number; rounded?: 'xl' | '2xl'; place?: string }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const mood = dish.moods?.[0];
@@ -43,7 +44,13 @@ export function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded
       </View>
       <View style={styles.text}>
         <Text variant="Title/S" numberOfLines={1}>{dish.name}</Text>
-        {byline ? <Text variant="Caption" color="fg/muted" numberOfLines={1}>{byline}</Text> : null}
+        {byline || place ? (
+          <Text variant="Caption" color="fg/muted" numberOfLines={1}>
+            {place ? <Text variant="Caption Strong" color="fg/secondary">{place}</Text> : null}
+            {place && byline ? ' · ' : ''}
+            {byline}
+          </Text>
+        ) : null}
       </View>
     </Pressable>
   );

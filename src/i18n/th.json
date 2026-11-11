@@ -443,12 +443,19 @@
     "remove": "ลบ",
     "presets": {
       "softEgg": "ไข่ลวก",
-      "rice": "ข้าว",
-      "tea": "ชา"
+      "hardEgg": "ไข่ต้มสุก",
+      "ramen": "ราเมง",
+      "cupNoodle": "บะหมี่ถ้วย",
+      "pasta": "พาสต้า",
+      "dumplings": "เกี๊ยว",
+      "tea": "ชา",
+      "coffee": "กาแฟ"
     },
     "newOverline": "ตัวจับเวลาใหม่",
     "newTitle": "นานแค่ไหน?",
-    "defaultLabel": "ตัวจับเวลา"
+    "defaultLabel": "ตัวจับเวลา",
+    "presetMin": "{{n}} นาที",
+    "presetMinSec": "{{m}} นาที {{s}} วินาที"
   },
   "report": {
     "title": "เมนูนี้มีปัญหาอะไร?",

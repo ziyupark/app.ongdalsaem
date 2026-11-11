@@ -448,12 +448,19 @@
     "remove": "Quitar",
     "presets": {
       "softEgg": "Huevo pasado por agua",
-      "rice": "Arroz",
-      "tea": "Té"
+      "hardEgg": "Huevo duro",
+      "ramen": "Ramen",
+      "cupNoodle": "Fideos instantáneos",
+      "pasta": "Pasta",
+      "dumplings": "Empanadillas",
+      "tea": "Té",
+      "coffee": "Café"
     },
     "newOverline": "Nuevo temporizador",
     "newTitle": "¿Cuánto tiempo?",
-    "defaultLabel": "Temporizador"
+    "defaultLabel": "Temporizador",
+    "presetMin": "{{n}} min",
+    "presetMinSec": "{{m}} min {{s}} s"
   },
   "report": {
     "title": "¿Qué le pasa a este plato?",

@@ -443,12 +443,19 @@
     "remove": "Xóa",
     "presets": {
       "softEgg": "Trứng lòng đào",
-      "rice": "Cơm",
-      "tea": "Trà"
+      "hardEgg": "Trứng luộc chín",
+      "ramen": "Mì ramen",
+      "cupNoodle": "Mì ly",
+      "pasta": "Mì Ý",
+      "dumplings": "Há cảo",
+      "tea": "Trà",
+      "coffee": "Cà phê"
     },
     "newOverline": "Hẹn giờ mới",
     "newTitle": "Bao lâu?",
-    "defaultLabel": "Hẹn giờ"
+    "defaultLabel": "Hẹn giờ",
+    "presetMin": "{{n}} phút",
+    "presetMinSec": "{{m}} phút {{s}} giây"
   },
   "report": {
     "title": "Món này có vấn đề gì?",

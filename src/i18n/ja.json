@@ -443,12 +443,19 @@
     "remove": "削除",
     "presets": {
       "softEgg": "半熟卵",
-      "rice": "ごはん",
-      "tea": "お茶"
+      "hardEgg": "固ゆで卵",
+      "ramen": "ラーメン",
+      "cupNoodle": "カップ麺",
+      "pasta": "パスタ",
+      "dumplings": "餃子",
+      "tea": "お茶",
+      "coffee": "コーヒー"
     },
     "newOverline": "新しいタイマー",
     "newTitle": "何分にしますか？",
-    "defaultLabel": "タイマー"
+    "defaultLabel": "タイマー",
+    "presetMin": "{{n}}分",
+    "presetMinSec": "{{m}}分{{s}}秒"
   },
   "report": {
     "title": "この料理のどこに問題がありますか？",

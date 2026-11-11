@@ -443,12 +443,19 @@
     "remove": "Hapus",
     "presets": {
       "softEgg": "Telur setengah matang",
-      "rice": "Nasi",
-      "tea": "Teh"
+      "hardEgg": "Telur rebus matang",
+      "ramen": "Ramen",
+      "cupNoodle": "Mi cup",
+      "pasta": "Pasta",
+      "dumplings": "Pangsit",
+      "tea": "Teh",
+      "coffee": "Kopi"
     },
     "newOverline": "Timer baru",
     "newTitle": "Berapa lama?",
-    "defaultLabel": "Timer"
+    "defaultLabel": "Timer",
+    "presetMin": "{{n}} mnt",
+    "presetMinSec": "{{m}} mnt {{s}} dtk"
   },
   "report": {
     "title": "Ada masalah apa dengan masakan ini?",
