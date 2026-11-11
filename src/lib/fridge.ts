@@ -2,7 +2,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSyncExternalStore } from 'react';
 
-export type FridgeItem = { id: string; name: string; /** ISO time it went in. */ addedAt: string };
+export type FridgeZone = 'fridge' | 'freezer';
+export type FridgeItem = { id: string; name: string; /** ISO time it went in. */ addedAt: string; zone: FridgeZone };
 
 const KEY = 'ongdalsaem.fridge';
 let items: FridgeItem[] = [];
@@ -14,7 +15,8 @@ async function load() {
   loaded = true;
   try {
     const raw = await AsyncStorage.getItem(KEY);
-    if (raw) items = [...(JSON.parse(raw) as FridgeItem[]), ...items];
+    // Items saved before zones existed have none → fridge.
+    if (raw) items = [...(JSON.parse(raw) as Partial<FridgeItem>[]).map((i) => ({ ...i, zone: i.zone ?? 'fridge' }) as FridgeItem), ...items];
   } catch {
     // keep whatever is in memory
   }
@@ -30,10 +32,10 @@ function save(next: FridgeItem[]) {
 export function getFridge() {
   return items;
 }
-export function addFridge(name: string) {
+export function addFridge(name: string, zone: FridgeZone = 'fridge') {
   const n = name.trim();
   if (!n) return;
-  save([{ id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name: n, addedAt: new Date().toISOString() }, ...items]);
+  save([{ id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name: n, addedAt: new Date().toISOString(), zone }, ...items]);
 }
 export function removeFridge(id: string) {
   save(items.filter((i) => i.id !== id));

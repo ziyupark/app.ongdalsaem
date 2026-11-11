@@ -968,3 +968,6 @@ empty=冰箱還是空的。記下剛放進去的食材吧。
 today=今天放入
 daysAgo_other={{count}} 天前放入
 remove=刪除{{name}}
+fridgeZone=冷藏
+freezerZone=冷凍
+removeAsk=要刪除{{name}}嗎？

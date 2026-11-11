@@ -697,7 +697,10 @@
     "empty": "Tủ lạnh còn trống. Ghi lại nguyên liệu bạn vừa cất vào.",
     "today": "Cất hôm nay",
     "daysAgo_other": "Cất {{count}} ngày trước",
-    "remove": "Xóa {{name}}"
+    "remove": "Xóa {{name}}",
+    "fridgeZone": "Ngăn mát",
+    "freezerZone": "Ngăn đá",
+    "removeAsk": "Xóa {{name}}?"
   },
   "community": {
     "title": "Cộng đồng",

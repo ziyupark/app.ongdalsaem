@@ -968,3 +968,6 @@ empty=冷蔵庫はまだ空です。入れたばかりの食材をメモしま�
 today=今日入れた
 daysAgo_other={{count}}日前に入れた
 remove={{name}}を削除
+fridgeZone=冷蔵室
+freezerZone=冷凍室
+removeAsk={{name}}を削除しますか？

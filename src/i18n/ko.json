@@ -707,7 +707,10 @@
     "today": "오늘 넣음",
     "daysAgo_one": "{{count}}일 전 넣음",
     "daysAgo_other": "{{count}}일 전 넣음",
-    "remove": "{{name}} 삭제"
+    "remove": "{{name}} 삭제",
+    "fridgeZone": "냉장실",
+    "freezerZone": "냉동실",
+    "removeAsk": "{{name}}을(를) 뺄까요?"
   },
   "community": {
     "title": "커뮤니티",

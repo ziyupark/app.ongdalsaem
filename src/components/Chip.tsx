@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react-native';
 import { Pressable, StyleSheet } from 'react-native';
-import { radius, space, useTheme } from '../theme';
+import { radius, space, useTheme, type ColorToken } from '../theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
 
@@ -15,13 +15,16 @@ type Props = {
   onLongPress?: () => void;
   /** Read-only tag (7.1 dish tags). */
   static?: boolean;
+  /** Border colour override for the default chip (fridge memo: fg/accent when older than 7 days). */
+  borderColor?: ColorToken;
+  accessibilityLabel?: string;
 };
 
 /**
  * Chip 6:245 — 36 high, padding 0 16, radius full.
  * Default = bg/subtle + 1px border/strong · Selected = bg/inverse + fg/inverse · Add = bg/subtle + 1px dashed border/focus, fg/accent.
  */
-export function Chip({ label, selected, icon, variant = 'default', onPress, onLongPress, static: readOnly }: Props) {
+export function Chip({ label, selected, icon, variant = 'default', onPress, onLongPress, static: readOnly, borderColor, accessibilityLabel }: Props) {
   const { color } = useTheme();
   const add = variant === 'add';
   const glass = variant === 'glass';
@@ -29,6 +32,7 @@ export function Chip({ label, selected, icon, variant = 'default', onPress, onLo
   return (
     <Pressable
       accessibilityRole={readOnly ? 'text' : 'button'}
+      accessibilityLabel={accessibilityLabel}
       accessibilityState={readOnly ? undefined : { selected: !!selected }}
       disabled={readOnly}
       onPress={onPress}
@@ -39,7 +43,7 @@ export function Chip({ label, selected, icon, variant = 'default', onPress, onLo
           ? { backgroundColor: color('bg/inverse') }
           : glass
           ? { backgroundColor: color('glass/fill-strong'), borderWidth: 1, borderColor: color('glass/stroke') }
-          : { backgroundColor: color('bg/subtle'), borderWidth: 1, borderColor: color(add ? 'border/focus' : 'border/strong'), borderStyle: add ? 'dashed' : 'solid' },
+          : { backgroundColor: color('bg/subtle'), borderWidth: 1, borderColor: color(borderColor ?? (add ? 'border/focus' : 'border/strong')), borderStyle: add ? 'dashed' : 'solid' },
         pressed && !readOnly && { opacity: 0.8 },
       ]}
     >

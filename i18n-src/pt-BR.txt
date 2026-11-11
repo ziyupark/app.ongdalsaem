@@ -984,3 +984,6 @@ today=Guardado hoje
 daysAgo_one=Guardado há {{count}} dia
 daysAgo_other=Guardado há {{count}} dias
 remove=Remover {{name}}
+fridgeZone=Geladeira
+freezerZone=Freezer
+removeAsk=Remover {{name}}?

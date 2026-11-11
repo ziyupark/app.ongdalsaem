@@ -968,3 +968,6 @@ empty=Kulkas masih kosong. Catat bahan yang baru kamu simpan.
 today=Disimpan hari ini
 daysAgo_other=Disimpan {{count}} hari lalu
 remove=Hapus {{name}}
+fridgeZone=Kulkas
+freezerZone=Freezer
+removeAsk=Hapus {{name}}?

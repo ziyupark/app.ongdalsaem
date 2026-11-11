@@ -707,7 +707,10 @@
     "today": "Put in today",
     "daysAgo_one": "Put in {{count}} day ago",
     "daysAgo_other": "Put in {{count}} days ago",
-    "remove": "Remove {{name}}"
+    "remove": "Remove {{name}}",
+    "fridgeZone": "Fridge",
+    "freezerZone": "Freezer",
+    "removeAsk": "Remove {{name}}?"
   },
   "community": {
     "title": "Community",

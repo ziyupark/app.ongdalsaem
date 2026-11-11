@@ -968,3 +968,6 @@ empty=ตู้เย็นยังว่างอยู่ จดวัตถ�
 today=ใส่วันนี้
 daysAgo_other=ใส่เมื่อ {{count}} วันก่อน
 remove=ลบ {{name}}
+fridgeZone=ช่องแช่เย็น
+freezerZone=ช่องแช่แข็ง
+removeAsk=ลบ {{name}} ไหม
