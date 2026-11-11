@@ -2,7 +2,7 @@ import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useFocusEffect } from 'expo-router';
-import { ChevronLeft, Settings, Utensils } from 'lucide-react-native';
+import { Bookmark, ChevronLeft, NotebookPen, Settings, Utensils, type LucideIcon } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -40,6 +40,7 @@ const ROW_GAP = 20;
 const { lineHeight: _lh, ...bioField } = text['Body/M'];
 const TABS: ProfileTab[] = ['dishes', 'saved', 'diary'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
+const TAB_ICON: Record<ProfileTab, LucideIcon> = { dishes: Utensils, saved: Bookmark, diary: NotebookPen };
 type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: Date };
 
 /**
@@ -271,8 +272,13 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           const on = k === tab;
           const label = k === 'dishes' && dishesCount != null ? t('profile.tabs.dishesCount', { n: dishesCount }) : t(`profile.tabs.${k}`);
           return (
-            <Pressable key={k} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => setTab(k)} style={styles.tab}>
-              <Text variant={on ? 'Title/S' : 'Body/M'} color={on ? 'fg/default' : 'fg/muted'}>{label}</Text>
+            <Pressable key={k} accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: on }} onPress={() => setTab(k)} style={styles.tab}>
+              {/* My profile: icon tabs (the dish count is on the chip above). Other cooks keep the "Dishes N" label. */}
+              {isMe ? (
+                <Icon icon={TAB_ICON[k]} size={22} color={on ? 'fg/default' : 'fg/muted'} />
+              ) : (
+                <Text variant={on ? 'Title/S' : 'Body/M'} color={on ? 'fg/default' : 'fg/muted'}>{label}</Text>
+              )}
               <View style={[styles.indicator, on && { backgroundColor: color('bg/primary') }]} />
             </Pressable>
           );
