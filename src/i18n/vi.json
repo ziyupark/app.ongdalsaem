@@ -362,6 +362,8 @@
     "settings": "Cài đặt",
     "signOut": "Đăng xuất",
     "acorns_other": "{{count}} hạt sồi",
+    "totalDishes_other": "{{count}} món",
+    "totalAcorns_other": "Tổng {{count}} hạt sồi",
     "tabs": {
       "dishes": "Món ăn",
       "dishesCount": "Món ăn {{n}}",

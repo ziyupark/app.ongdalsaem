@@ -366,6 +366,10 @@
     "signOut": "로그아웃",
     "acorns_one": "도토리 {{count}}개",
     "acorns_other": "도토리 {{count}}개",
+    "totalDishes_one": "요리 {{count}}개",
+    "totalDishes_other": "요리 {{count}}개",
+    "totalAcorns_one": "총 도토리 {{count}}개",
+    "totalAcorns_other": "총 도토리 {{count}}개",
     "tabs": {
       "dishes": "요리",
       "dishesCount": "요리 {{n}}",

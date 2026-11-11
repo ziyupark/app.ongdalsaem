@@ -2,7 +2,7 @@ import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useFocusEffect } from 'expo-router';
-import { ChevronLeft, Settings } from 'lucide-react-native';
+import { ChevronLeft, Settings, Utensils } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -239,9 +239,15 @@ export function ProfileScreen({ userId }: { userId?: string }) {
               <Text variant="Display/M" numberOfLines={1}>{me?.displayName ?? ' '}</Text>
               {me?.username ? <Text variant="Body/S" color="fg/muted">{`@${me.username}`}</Text> : null}
             </View>
-            <View style={[styles.acorns, { backgroundColor: color('bg/muted') }]}>
-              <AcornIcon size={16} filled />
-              <Text variant="Caption Strong">{t('profile.acorns', { count: acorns ?? 0 })}</Text>
+            <View style={styles.chips}>
+              <View style={[styles.acorns, { backgroundColor: color('bg/muted') }]}>
+                <Icon icon={Utensils} size={16} color="fg/secondary" />
+                <Text variant="Caption Strong">{t('profile.totalDishes', { count: dishesCount ?? 0 })}</Text>
+              </View>
+              <View style={[styles.acorns, { backgroundColor: color('bg/muted') }]}>
+                <AcornIcon size={16} filled />
+                <Text variant="Caption Strong">{t('profile.totalAcorns', { count: acorns ?? 0 })}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -359,6 +365,7 @@ const styles = StyleSheet.create({
   avatar: { width: 88, height: 88, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   name: { flex: 1, minWidth: 97, gap: 11, justifyContent: 'center', opacity: 0.8 },
   nameText: { gap: space[6] },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[6] },
   acorns: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[8], paddingVertical: space[6], borderRadius: radius.full, alignSelf: 'flex-start' },
   tabs: { flexDirection: 'row', gap: 28, paddingHorizontal: space[20] },
   tab: { height: 43, paddingTop: space[10], paddingHorizontal: space[2], gap: space[8], alignItems: 'center', justifyContent: 'center' },
