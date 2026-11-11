@@ -82,6 +82,7 @@ export default function Privacy() {
     <SettingsScreen title={t('settings.privacyLocation')}>
       <View style={[styles.summary, { backgroundColor: color('bg/default') }]}>
         <Text variant="Caption Strong">{t('settings.summaryDishes', { v: t(a.defaultVisibility === 'everyone' ? 'settings.everyone' : 'settings.onlyMe') })}</Text>
+        <Text variant="Caption Strong">{t('settings.summaryMessages', { v: t(a.messagePolicy === 'everyone' ? 'settings.everyone' : 'settings.following') })}</Text>
         <Text variant="Caption Strong">{t('settings.summaryShown', { v: t(`settings.precisions.${a.sharedPrecision}`) })}</Text>
         <Text variant="Caption Strong">{t('settings.summaryBlocked', { n: blocked.length })}</Text>
       </View>
@@ -90,6 +91,11 @@ export default function Privacy() {
         {radioRow(a.defaultVisibility === 'everyone', t('settings.everyone'), () => set({ defaultVisibility: 'everyone' }, { default_visibility: 'everyone' }))}
         {radioRow(a.defaultVisibility === 'only_me', t('settings.onlyMe'), () => set({ defaultVisibility: 'only_me' }, { default_visibility: 'only_me' }))}
         <SettingsRow icon={MessageCircle} label={t('share.allowComments')} right={<Toggle accessibilityLabel={t('share.allowComments')} value={a.defaultAllowComments} onValueChange={(v) => set({ defaultAllowComments: v }, { default_allow_comments: v })} />} />
+      </SettingsGroup>
+
+      <SettingsGroup label={t('settings.whoMessages')} note={t('settings.messagesNote')}>
+        {radioRow(a.messagePolicy === 'everyone', t('settings.everyone'), () => set({ messagePolicy: 'everyone' }, { message_policy: 'everyone' }))}
+        {radioRow(a.messagePolicy === 'following', t('settings.peopleIFollow'), () => set({ messagePolicy: 'following' }, { message_policy: 'following' }))}
       </SettingsGroup>
 
       <SettingsGroup label={t('settings.location')} note={t('settings.locationNote')}>

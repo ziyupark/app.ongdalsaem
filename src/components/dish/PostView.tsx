@@ -21,6 +21,7 @@ type Props = {
   onAcorn: () => void;
   onComments: () => void;
   onShare: () => void;
+  onDirect: () => void;
   onSave: () => void;
   onMore: () => void;
   onAuthor?: () => void;
@@ -45,7 +46,7 @@ const MEDIA_HEIGHT = 440;
  * 7.1 Post detail (Figma 601:12935) — Cook row → photos 440 (Weather Tag + counter) → actions → title (Display/L) · caption
  * → tags → recipe → action bar → comments → More from.
  */
-export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onSave, onMore, onAuthor, onBack, onStartTimer, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
+export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onDirect, onSave, onMore, onAuthor, onBack, onStartTimer, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { color } = useTheme();

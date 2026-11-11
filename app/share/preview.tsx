@@ -82,6 +82,7 @@ export default function SharePreview() {
         onAcorn={() => undefined}
         onComments={() => undefined}
         onShare={() => undefined}
+        onDirect={() => undefined}
         onSave={() => undefined}
         onMore={() => undefined}
         onBack={() => router.back()}
