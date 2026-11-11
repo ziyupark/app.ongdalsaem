@@ -3,22 +3,33 @@ import { withEntitlementsPlist, type ConfigPlugin } from 'expo/config-plugins';
 
 /**
  * FREE_APPLE_TEAM=1 → a build a free Apple ID (Personal Team) can sign, for trying the app on your own iPhone.
- * Free teams can't use Push Notifications or Sign in with Apple, so this build drops both entitlements,
- * hides the Apple button, and skips push registration. Timer alerts (local notifications) still work.
- * Without the flag, app.json is used as is.
+ * Free teams can't use Push Notifications, Sign in with Apple or Time Sensitive Notifications, so this build drops
+ * those entitlements, hides the Apple button, and skips push registration. Timer alerts (local notifications) still
+ * work, just without breaking through Focus.
+ * Without the flag, app.json is used as is, plus the time-sensitive entitlement below.
  */
 const FREE_TEAM = process.env.FREE_APPLE_TEAM === '1';
+
+/** Timer alerts use interruptionLevel 'timeSensitive' — iOS only honours it with this entitlement. */
+const TIME_SENSITIVE = 'com.apple.developer.usernotifications.time-sensitive';
+
+const withTimeSensitive: ConfigPlugin = (config) =>
+  withEntitlementsPlist(config, (c) => {
+    c.modResults[TIME_SENSITIVE] = true;
+    return c;
+  });
 
 const withoutPaidEntitlements: ConfigPlugin = (config) =>
   withEntitlementsPlist(config, (c) => {
     delete c.modResults['aps-environment'];
     delete c.modResults['com.apple.developer.applesignin'];
+    delete c.modResults[TIME_SENSITIVE];
     return c;
   });
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const base = config as ExpoConfig;
-  if (!FREE_TEAM) return base;
+  if (!FREE_TEAM) return withTimeSensitive(base);
   const withFlag: ExpoConfig = {
     ...base,
     ios: { ...base.ios, usesAppleSignIn: false },
