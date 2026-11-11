@@ -23,6 +23,8 @@ const FLAGS: Record<string, number> = {
   IN: require('../../../assets/flags/IN.png'), IT: require('../../../assets/flags/IT.png'), JP: require('../../../assets/flags/JP.png'),
   KR: require('../../../assets/flags/KR.png'), MX: require('../../../assets/flags/MX.png'), TH: require('../../../assets/flags/TH.png'),
   US: require('../../../assets/flags/US.png'), VN: require('../../../assets/flags/VN.png'),
+  AU: require('../../../assets/flags/AU.png'), BR: require('../../../assets/flags/BR.png'), CL: require('../../../assets/flags/CL.png'),
+  IR: require('../../../assets/flags/IR.png'), NZ: require('../../../assets/flags/NZ.png'), SE: require('../../../assets/flags/SE.png'),
 };
 export const hasFlag = (code: string | null | undefined) => !!code && code.toUpperCase() in FLAGS;
 /** Flag image for an ISO country code (20×14 assets), or undefined. */

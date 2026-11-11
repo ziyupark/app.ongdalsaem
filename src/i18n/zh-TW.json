@@ -723,29 +723,189 @@
     "storyTitle": "{{name}} 的{{dish}}",
     "latestEverywhere": "來自各地的新料理",
     "holidays": {
-      "halloween": {
-        "name": "萬聖節",
-        "food": "南瓜湯、靈魂蛋糕"
+      "seollal": {
+        "name": "韓國春節",
+        "food": "年糕湯、煎餅、燉排骨"
       },
-      "christmas": {
-        "name": "聖誕節",
-        "food": "烤肉、史多倫、樹幹蛋糕"
+      "lunar_new_year": {
+        "name": "春節",
+        "food": "餃子、年糕、清蒸魚"
+      },
+      "tet": {
+        "name": "越南新年",
+        "food": "粽子、越南火腿、醃洋蔥"
+      },
+      "daeboreum": {
+        "name": "正月大滿月",
+        "food": "五穀飯、堅果、乾野菜"
+      },
+      "lantern": {
+        "name": "元宵節",
+        "food": "湯圓"
+      },
+      "dano": {
+        "name": "韓國端午",
+        "food": "艾草糕、櫻桃花菜"
+      },
+      "duanwu": {
+        "name": "端午節",
+        "food": "粽子"
       },
       "chuseok": {
+        "name": "韓國中秋",
+        "food": "松糕、煎餅、芋頭湯"
+      },
+      "mid_autumn": {
         "name": "中秋節",
-        "food": "月餅、松餅"
+        "food": "月餅、柚子"
       },
-      "seollal": {
-        "name": "農曆新年",
-        "food": "年糕湯、餃子"
+      "dongji": {
+        "name": "韓國冬至",
+        "food": "紅豆粥"
       },
-      "valentine": {
-        "name": "情人節",
-        "food": "巧克力、草莓"
+      "chobok": {
+        "name": "初伏",
+        "food": "蔘雞湯"
+      },
+      "oshogatsu": {
+        "name": "日本新年",
+        "food": "御節料理、年糕湯"
+      },
+      "setsubun": {
+        "name": "節分",
+        "food": "惠方卷、炒黃豆"
+      },
+      "hinamatsuri": {
+        "name": "女兒節",
+        "food": "散壽司、菱餅"
+      },
+      "hanami": {
+        "name": "賞櫻",
+        "food": "賞花糰子、賞櫻便當"
+      },
+      "obon": {
+        "name": "盂蘭盆節",
+        "food": "素麵、精進料理"
+      },
+      "omisoka": {
+        "name": "日本除夕",
+        "food": "跨年蕎麥麵"
+      },
+      "songkran": {
+        "name": "潑水節",
+        "food": "芒果糯米飯、冰水飯"
+      },
+      "loy_krathong": {
+        "name": "水燈節",
+        "food": "椰奶小煎餅、蕉葉甜點"
+      },
+      "pongal": {
+        "name": "豐收節",
+        "food": "甜粥(米、牛奶、粗糖)"
+      },
+      "onam": {
+        "name": "歐南節",
+        "food": "蕉葉宴"
       },
       "diwali": {
         "name": "排燈節",
-        "food": "甜點、豆糊、咖哩角"
+        "food": "印度甜點、豆糊、咖哩角"
+      },
+      "nowruz": {
+        "name": "波斯新年",
+        "food": "香草飯配魚、麥芽布丁"
+      },
+      "new_year": {
+        "name": "元旦",
+        "food": "各地新年料理"
+      },
+      "valentine": {
+        "name": "情人節",
+        "food": "巧克力"
+      },
+      "carnival": {
+        "name": "嘉年華",
+        "food": "黑豆燉肉、巧克力球"
+      },
+      "mardi_gras": {
+        "name": "狂歡節",
+        "food": "國王蛋糕、秋葵濃湯"
+      },
+      "st_patrick": {
+        "name": "聖派翠克節",
+        "food": "愛爾蘭燉肉、蘇打麵包"
+      },
+      "anzac": {
+        "name": "澳紐軍團日",
+        "food": "澳紐軍團餅乾"
+      },
+      "midsummer": {
+        "name": "仲夏節",
+        "food": "醃鯡魚、新馬鈴薯、草莓蛋糕"
+      },
+      "matariki": {
+        "name": "馬塔里基",
+        "food": "地灶料理"
+      },
+      "july4": {
+        "name": "美國獨立紀念日",
+        "food": "烤肉、熱狗、蘋果派"
+      },
+      "fiestas_patrias": {
+        "name": "智利國慶",
+        "food": "餡餃、烤肉"
+      },
+      "oktoberfest": {
+        "name": "啤酒節",
+        "food": "蝴蝶餅、香腸、德國豬腳"
+      },
+      "thanksgiving_ca": {
+        "name": "加拿大感恩節",
+        "food": "火雞、南瓜派"
+      },
+      "halloween": {
+        "name": "萬聖節",
+        "food": "南瓜派、糖蘋果"
+      },
+      "dia_muertos": {
+        "name": "亡靈節",
+        "food": "亡者麵包、玉米粽"
+      },
+      "thanksgiving_us": {
+        "name": "感恩節",
+        "food": "火雞、南瓜派、蔓越莓醬"
+      },
+      "kwanzaa": {
+        "name": "寬扎節",
+        "food": "西非燉飯、地瓜派"
+      },
+      "christmas": {
+        "name": "聖誕節",
+        "food": "烤肉、史多倫麵包、樹幹蛋糕"
+      },
+      "nye": {
+        "name": "跨年夜",
+        "food": "十二顆葡萄、起司火鍋"
+      },
+      "samgyeopsal": {
+        "name": "五花肉節",
+        "food": "烤五花肉"
+      },
+      "pi_day": {
+        "name": "圓周率日",
+        "food": "派"
+      },
+      "black_day": {
+        "name": "黑色情人節",
+        "food": "炸醬麵"
+      },
+      "pasta_day": {
+        "name": "世界義大利麵日",
+        "food": "義大利麵"
+      },
+      "pepero": {
+        "name": "Pepero節",
+        "food": "Pepero巧克力棒、條狀年糕"
       }
     },
     "followingTitle": "來自你追蹤的人和餐桌",

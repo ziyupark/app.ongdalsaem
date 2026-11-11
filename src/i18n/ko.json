@@ -734,29 +734,189 @@
     "storyTitle": "{{name}}의 {{dish}}",
     "latestEverywhere": "세계 곳곳의 새 요리",
     "holidays": {
+      "seollal": {
+        "name": "설날",
+        "food": "떡국, 전, 갈비찜, 식혜"
+      },
+      "lunar_new_year": {
+        "name": "춘절",
+        "food": "교자, 니엔가오, 생선찜"
+      },
+      "tet": {
+        "name": "뗏",
+        "food": "반쯩, 저루어, 절인 양파"
+      },
+      "daeboreum": {
+        "name": "정월대보름",
+        "food": "오곡밥, 부럼, 묵은 나물"
+      },
+      "lantern": {
+        "name": "원소절",
+        "food": "탕위안"
+      },
+      "dano": {
+        "name": "단오",
+        "food": "수리취떡, 앵두화채"
+      },
+      "duanwu": {
+        "name": "단오절",
+        "food": "쭝쯔"
+      },
+      "chuseok": {
+        "name": "추석",
+        "food": "송편, 전, 토란국, 갈비찜"
+      },
+      "mid_autumn": {
+        "name": "중추절",
+        "food": "월병, 포멜로"
+      },
+      "dongji": {
+        "name": "동지",
+        "food": "팥죽"
+      },
+      "chobok": {
+        "name": "초복",
+        "food": "삼계탕"
+      },
+      "oshogatsu": {
+        "name": "오쇼가쓰",
+        "food": "오세치, 오조니"
+      },
+      "setsubun": {
+        "name": "세쓰분",
+        "food": "에호마키, 볶은 콩"
+      },
+      "hinamatsuri": {
+        "name": "히나마쓰리",
+        "food": "치라시즈시, 히시모치"
+      },
+      "hanami": {
+        "name": "하나미",
+        "food": "하나미 당고, 벚꽃 도시락"
+      },
+      "obon": {
+        "name": "오봉",
+        "food": "소면, 쇼진 요리"
+      },
+      "omisoka": {
+        "name": "오미소카",
+        "food": "도시코시 소바"
+      },
+      "songkran": {
+        "name": "송끄란",
+        "food": "망고 찹쌀밥, 카오채"
+      },
+      "loy_krathong": {
+        "name": "로이끄라통",
+        "food": "카놈 크록, 바나나잎 디저트"
+      },
+      "pongal": {
+        "name": "퐁갈",
+        "food": "퐁갈(쌀·우유·재거리 죽)"
+      },
+      "onam": {
+        "name": "오남",
+        "food": "사디야(바나나잎 한상)"
+      },
+      "diwali": {
+        "name": "디왈리",
+        "food": "미타이, 달, 사모사"
+      },
+      "nowruz": {
+        "name": "노루즈",
+        "food": "사브지 폴로 마히, 사마누"
+      },
+      "new_year": {
+        "name": "신정",
+        "food": "지역별 새해 음식"
+      },
+      "valentine": {
+        "name": "발렌타인데이",
+        "food": "초콜릿"
+      },
+      "carnival": {
+        "name": "카니발",
+        "food": "페이조아다, 브리가데이루"
+      },
+      "mardi_gras": {
+        "name": "마디그라",
+        "food": "킹 케이크, 검보"
+      },
+      "st_patrick": {
+        "name": "성 패트릭의 날",
+        "food": "아이리시 스튜, 소다브레드"
+      },
+      "anzac": {
+        "name": "앤잭 데이",
+        "food": "앤잭 비스킷"
+      },
+      "midsummer": {
+        "name": "미드서머",
+        "food": "청어절임, 햇감자, 딸기 케이크"
+      },
+      "matariki": {
+        "name": "마타리키",
+        "food": "항이(땅속 찜 요리)"
+      },
+      "july4": {
+        "name": "미국 독립기념일",
+        "food": "바비큐, 핫도그, 애플파이"
+      },
+      "fiestas_patrias": {
+        "name": "칠레 독립기념일",
+        "food": "엠파나다, 아사도"
+      },
+      "oktoberfest": {
+        "name": "옥토버페스트",
+        "food": "프레첼, 소시지, 학센"
+      },
+      "thanksgiving_ca": {
+        "name": "캐나다 추수감사절",
+        "food": "칠면조, 호박파이"
+      },
       "halloween": {
-        "name": "핼러윈",
-        "food": "호박 수프, 소울 케이크"
+        "name": "할로윈",
+        "food": "호박파이, 캔디애플"
+      },
+      "dia_muertos": {
+        "name": "망자의 날",
+        "food": "판 데 무에르토, 타말레스"
+      },
+      "thanksgiving_us": {
+        "name": "추수감사절",
+        "food": "칠면조, 호박파이, 크랜베리 소스"
+      },
+      "kwanzaa": {
+        "name": "콴자",
+        "food": "졸로프 라이스, 고구마 파이"
       },
       "christmas": {
         "name": "크리스마스",
         "food": "로스트, 슈톨렌, 부쉬 드 노엘"
       },
-      "chuseok": {
-        "name": "중추절",
-        "food": "월병, 송편"
+      "nye": {
+        "name": "새해 전야",
+        "food": "12알 포도, 퐁뒤"
       },
-      "seollal": {
-        "name": "음력 설",
-        "food": "떡국, 만두"
+      "samgyeopsal": {
+        "name": "삼겹살데이",
+        "food": "삼겹살"
       },
-      "valentine": {
-        "name": "밸런타인데이",
-        "food": "초콜릿, 딸기"
+      "pi_day": {
+        "name": "파이 데이",
+        "food": "파이"
       },
-      "diwali": {
-        "name": "디왈리",
-        "food": "과자, 달, 사모사"
+      "black_day": {
+        "name": "블랙데이",
+        "food": "짜장면"
+      },
+      "pasta_day": {
+        "name": "세계 파스타의 날",
+        "food": "파스타"
+      },
+      "pepero": {
+        "name": "빼빼로데이",
+        "food": "빼빼로, 가래떡"
       }
     },
     "followingTitle": "팔로우한 사람과 테이블의 소식",

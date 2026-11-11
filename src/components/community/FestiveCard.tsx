@@ -1,11 +1,12 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { Globe } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { UpcomingFestive } from '../../lib/holidays';
 import { radius, space, useTheme } from '../../theme';
-import { MoodGradient } from '../MoodGradient';
+import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { flagSource } from './Parts';
 
@@ -18,14 +19,14 @@ export function FestiveCard({ h, width = 168, height = 196 }: { h: UpcomingFesti
   const { t, i18n } = useTranslation();
   const days = Math.round((h.at.getTime() - new Date().setHours(0, 0, 0, 0)) / 864e5);
   const date = h.at.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' }).toUpperCase();
-  const flag = flagSource(h.country);
+  const flag = h.country ? flagSource(h.country) : undefined;
   return (
     <Pressable accessibilityRole="button" onPress={() => router.push(`/tag/${h.tag}`)} style={[styles.card, { width, height }]}>
-      {h.image ? <Image source={h.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} /> : <MoodGradient mood={h.mood} style={StyleSheet.absoluteFill} />}
+      <Image source={h.photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
       <LinearGradient colors={['transparent', color('overlay/scrim-strong')]} locations={[0.35, 1]} style={StyleSheet.absoluteFill} />
-      {/* Badge 36 (glass) — the holiday's country flag instead of an icon. */}
+      {/* Badge 36 (glass) — the holiday's country flag; a globe for worldwide holidays. */}
       <View style={[styles.badge, { backgroundColor: color('glass/surface') }]}>
-        {flag ? <Image source={flag} style={styles.flag} contentFit="cover" /> : null}
+        {flag ? <Image source={flag} style={styles.flag} contentFit="cover" /> : <Icon icon={Globe} size={18} />}
       </View>
       <View style={styles.flex} />
       <Text variant="Overline" color="fg/on-photo-secondary">{days <= 1 ? `${date} · ${t(days === 0 ? 'community.today' : 'community.tomorrow').toUpperCase()}` : date}</Text>

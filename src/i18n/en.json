@@ -734,29 +734,189 @@
     "storyTitle": "{{dish}}, {{name}}’s way",
     "latestEverywhere": "Fresh from everywhere",
     "holidays": {
-      "halloween": {
-        "name": "Halloween",
-        "food": "Pumpkin soup, soul cakes"
+      "seollal": {
+        "name": "Seollal",
+        "food": "Tteokguk, jeon, galbi-jjim, sikhye"
       },
-      "christmas": {
-        "name": "Christmas",
-        "food": "Roast, stollen, bûche"
+      "lunar_new_year": {
+        "name": "Chinese New Year",
+        "food": "Jiaozi, nian gao, steamed fish"
+      },
+      "tet": {
+        "name": "Tết",
+        "food": "Bánh chưng, giò lụa, pickled onions"
+      },
+      "daeboreum": {
+        "name": "Jeongwol Daeboreum",
+        "food": "Five-grain rice, nuts, dried greens"
+      },
+      "lantern": {
+        "name": "Lantern Festival",
+        "food": "Tangyuan"
+      },
+      "dano": {
+        "name": "Dano",
+        "food": "Surichwi-tteok, cherry punch"
+      },
+      "duanwu": {
+        "name": "Dragon Boat Festival",
+        "food": "Zongzi"
       },
       "chuseok": {
+        "name": "Chuseok",
+        "food": "Songpyeon, jeon, taro soup, galbi-jjim"
+      },
+      "mid_autumn": {
         "name": "Mid-Autumn Festival",
-        "food": "Mooncakes, songpyeon"
+        "food": "Mooncakes, pomelo"
       },
-      "seollal": {
-        "name": "Lunar New Year",
-        "food": "Rice-cake soup, dumplings"
+      "dongji": {
+        "name": "Dongji",
+        "food": "Red bean porridge"
       },
-      "valentine": {
-        "name": "Valentine’s Day",
-        "food": "Chocolate, strawberries"
+      "chobok": {
+        "name": "Chobok",
+        "food": "Samgyetang"
+      },
+      "oshogatsu": {
+        "name": "Japanese New Year",
+        "food": "Osechi, ozoni"
+      },
+      "setsubun": {
+        "name": "Setsubun",
+        "food": "Ehomaki, roasted soybeans"
+      },
+      "hinamatsuri": {
+        "name": "Hinamatsuri",
+        "food": "Chirashi sushi, hishi mochi"
+      },
+      "hanami": {
+        "name": "Hanami",
+        "food": "Hanami dango, cherry-blossom bento"
+      },
+      "obon": {
+        "name": "Obon",
+        "food": "Somen, shojin cuisine"
+      },
+      "omisoka": {
+        "name": "Ōmisoka",
+        "food": "Toshikoshi soba"
+      },
+      "songkran": {
+        "name": "Songkran",
+        "food": "Mango sticky rice, khao chae"
+      },
+      "loy_krathong": {
+        "name": "Loy Krathong",
+        "food": "Khanom krok, banana-leaf sweets"
+      },
+      "pongal": {
+        "name": "Pongal",
+        "food": "Pongal (rice, milk and jaggery)"
+      },
+      "onam": {
+        "name": "Onam",
+        "food": "Sadya (banana-leaf feast)"
       },
       "diwali": {
         "name": "Diwali",
-        "food": "Sweets, dal, samosa"
+        "food": "Mithai, dal, samosa"
+      },
+      "nowruz": {
+        "name": "Nowruz",
+        "food": "Sabzi polo mahi, samanu"
+      },
+      "new_year": {
+        "name": "New Year's Day",
+        "food": "New Year dishes from every region"
+      },
+      "valentine": {
+        "name": "Valentine's Day",
+        "food": "Chocolate"
+      },
+      "carnival": {
+        "name": "Carnival",
+        "food": "Feijoada, brigadeiro"
+      },
+      "mardi_gras": {
+        "name": "Mardi Gras",
+        "food": "King cake, gumbo"
+      },
+      "st_patrick": {
+        "name": "St. Patrick's Day",
+        "food": "Irish stew, soda bread"
+      },
+      "anzac": {
+        "name": "ANZAC Day",
+        "food": "Anzac biscuits"
+      },
+      "midsummer": {
+        "name": "Midsummer",
+        "food": "Pickled herring, new potatoes, strawberry cake"
+      },
+      "matariki": {
+        "name": "Matariki",
+        "food": "Hāngī (earth-oven feast)"
+      },
+      "july4": {
+        "name": "Independence Day",
+        "food": "Barbecue, hot dogs, apple pie"
+      },
+      "fiestas_patrias": {
+        "name": "Fiestas Patrias",
+        "food": "Empanadas, asado"
+      },
+      "oktoberfest": {
+        "name": "Oktoberfest",
+        "food": "Pretzels, sausages, schweinshaxe"
+      },
+      "thanksgiving_ca": {
+        "name": "Thanksgiving (Canada)",
+        "food": "Turkey, pumpkin pie"
+      },
+      "halloween": {
+        "name": "Halloween",
+        "food": "Pumpkin pie, candy apples"
+      },
+      "dia_muertos": {
+        "name": "Día de Muertos",
+        "food": "Pan de muerto, tamales"
+      },
+      "thanksgiving_us": {
+        "name": "Thanksgiving",
+        "food": "Turkey, pumpkin pie, cranberry sauce"
+      },
+      "kwanzaa": {
+        "name": "Kwanzaa",
+        "food": "Jollof rice, sweet potato pie"
+      },
+      "christmas": {
+        "name": "Christmas",
+        "food": "Roast, stollen, bûche de Noël"
+      },
+      "nye": {
+        "name": "New Year's Eve",
+        "food": "Twelve grapes, fondue"
+      },
+      "samgyeopsal": {
+        "name": "Samgyeopsal Day",
+        "food": "Grilled pork belly"
+      },
+      "pi_day": {
+        "name": "Pi Day",
+        "food": "Pie"
+      },
+      "black_day": {
+        "name": "Black Day",
+        "food": "Jajangmyeon"
+      },
+      "pasta_day": {
+        "name": "World Pasta Day",
+        "food": "Pasta"
+      },
+      "pepero": {
+        "name": "Pepero Day",
+        "food": "Pepero, garae-tteok"
       }
     },
     "followingTitle": "From people and tables you follow",

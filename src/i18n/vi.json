@@ -723,29 +723,189 @@
     "storyTitle": "{{dish}} theo cách của {{name}}",
     "latestEverywhere": "Mới nhất từ khắp nơi",
     "holidays": {
-      "halloween": {
-        "name": "Halloween",
-        "food": "Súp bí đỏ, bánh soul cake"
+      "seollal": {
+        "name": "Seollal",
+        "food": "Tteokguk, jeon, galbi-jjim"
       },
-      "christmas": {
-        "name": "Giáng sinh",
-        "food": "Thịt quay, stollen, bánh khúc cây"
+      "lunar_new_year": {
+        "name": "Tết Nguyên Đán (Trung Quốc)",
+        "food": "Sủi cảo, bánh tổ, cá hấp"
+      },
+      "tet": {
+        "name": "Tết Nguyên Đán",
+        "food": "Bánh chưng, giò lụa, dưa hành"
+      },
+      "daeboreum": {
+        "name": "Rằm tháng Giêng (Hàn)",
+        "food": "Cơm ngũ cốc, các loại hạt"
+      },
+      "lantern": {
+        "name": "Tết Nguyên Tiêu",
+        "food": "Bánh trôi"
+      },
+      "dano": {
+        "name": "Tết Đoan Ngọ (Hàn)",
+        "food": "Bánh surichwi, nước anh đào"
+      },
+      "duanwu": {
+        "name": "Tết Đoan Ngọ",
+        "food": "Bánh ú"
       },
       "chuseok": {
+        "name": "Chuseok",
+        "food": "Bánh songpyeon, jeon, canh khoai môn"
+      },
+      "mid_autumn": {
         "name": "Tết Trung Thu",
-        "food": "Bánh trung thu, songpyeon"
+        "food": "Bánh trung thu, bưởi"
       },
-      "seollal": {
-        "name": "Tết Nguyên Đán",
-        "food": "Canh bánh gạo, sủi cảo"
+      "dongji": {
+        "name": "Đông chí (Hàn)",
+        "food": "Cháo đậu đỏ"
       },
-      "valentine": {
-        "name": "Lễ Tình nhân",
-        "food": "Sô-cô-la, dâu tây"
+      "chobok": {
+        "name": "Chobok",
+        "food": "Gà hầm sâm"
+      },
+      "oshogatsu": {
+        "name": "Tết Nhật Bản",
+        "food": "Osechi, ozoni"
+      },
+      "setsubun": {
+        "name": "Setsubun",
+        "food": "Ehomaki, đậu nành rang"
+      },
+      "hinamatsuri": {
+        "name": "Hinamatsuri",
+        "food": "Chirashi sushi, bánh hishi mochi"
+      },
+      "hanami": {
+        "name": "Hanami",
+        "food": "Bánh dango, cơm hộp hoa anh đào"
+      },
+      "obon": {
+        "name": "Obon",
+        "food": "Mì somen, món chay shojin"
+      },
+      "omisoka": {
+        "name": "Ōmisoka",
+        "food": "Mì soba cuối năm"
+      },
+      "songkran": {
+        "name": "Songkran",
+        "food": "Xôi xoài, khao chae"
+      },
+      "loy_krathong": {
+        "name": "Loy Krathong",
+        "food": "Bánh khanom krok, bánh lá chuối"
+      },
+      "pongal": {
+        "name": "Pongal",
+        "food": "Cháo pongal (gạo, sữa, đường thốt nốt)"
+      },
+      "onam": {
+        "name": "Onam",
+        "food": "Sadya (mâm cơm lá chuối)"
       },
       "diwali": {
         "name": "Diwali",
-        "food": "Đồ ngọt, dal, samosa"
+        "food": "Mithai, dal, samosa"
+      },
+      "nowruz": {
+        "name": "Nowruz",
+        "food": "Cơm thảo mộc cá, samanu"
+      },
+      "new_year": {
+        "name": "Năm mới",
+        "food": "Món ăn năm mới khắp nơi"
+      },
+      "valentine": {
+        "name": "Ngày Valentine",
+        "food": "Sô-cô-la"
+      },
+      "carnival": {
+        "name": "Lễ hội Carnival",
+        "food": "Feijoada, brigadeiro"
+      },
+      "mardi_gras": {
+        "name": "Mardi Gras",
+        "food": "Bánh king cake, súp gumbo"
+      },
+      "st_patrick": {
+        "name": "Ngày Thánh Patrick",
+        "food": "Thịt hầm Ireland, bánh mì soda"
+      },
+      "anzac": {
+        "name": "Ngày ANZAC",
+        "food": "Bánh quy Anzac"
+      },
+      "midsummer": {
+        "name": "Lễ hội Giữa hè",
+        "food": "Cá trích muối, khoai tây non, bánh dâu"
+      },
+      "matariki": {
+        "name": "Matariki",
+        "food": "Hāngī (món nướng lò đất)"
+      },
+      "july4": {
+        "name": "Quốc khánh Mỹ",
+        "food": "Thịt nướng, xúc xích, bánh táo"
+      },
+      "fiestas_patrias": {
+        "name": "Quốc khánh Chile",
+        "food": "Bánh empanada, thịt nướng asado"
+      },
+      "oktoberfest": {
+        "name": "Oktoberfest",
+        "food": "Bánh pretzel, xúc xích, giò heo"
+      },
+      "thanksgiving_ca": {
+        "name": "Lễ Tạ ơn (Canada)",
+        "food": "Gà tây, bánh bí ngô"
+      },
+      "halloween": {
+        "name": "Halloween",
+        "food": "Bánh bí ngô, táo bọc kẹo"
+      },
+      "dia_muertos": {
+        "name": "Ngày của người chết",
+        "food": "Bánh pan de muerto, tamales"
+      },
+      "thanksgiving_us": {
+        "name": "Lễ Tạ ơn",
+        "food": "Gà tây, bánh bí ngô, sốt việt quất"
+      },
+      "kwanzaa": {
+        "name": "Kwanzaa",
+        "food": "Cơm jollof, bánh khoai lang"
+      },
+      "christmas": {
+        "name": "Giáng sinh",
+        "food": "Thịt quay, bánh stollen, bánh khúc cây"
+      },
+      "nye": {
+        "name": "Đêm giao thừa",
+        "food": "Mười hai quả nho, lẩu fondue"
+      },
+      "samgyeopsal": {
+        "name": "Ngày Samgyeopsal",
+        "food": "Thịt ba chỉ nướng"
+      },
+      "pi_day": {
+        "name": "Ngày Pi",
+        "food": "Bánh pie"
+      },
+      "black_day": {
+        "name": "Ngày Đen",
+        "food": "Mì tương đen"
+      },
+      "pasta_day": {
+        "name": "Ngày Pasta Thế giới",
+        "food": "Mì Ý"
+      },
+      "pepero": {
+        "name": "Ngày Pepero",
+        "food": "Bánh Pepero, bánh gạo garae-tteok"
       }
     },
     "followingTitle": "Từ những người và bàn ăn bạn theo dõi",

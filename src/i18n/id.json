@@ -723,29 +723,189 @@
     "storyTitle": "{{dish}} ala {{name}}",
     "latestEverywhere": "Terbaru dari mana-mana",
     "holidays": {
-      "halloween": {
-        "name": "Halloween",
-        "food": "Sup labu, soul cake"
+      "seollal": {
+        "name": "Seollal",
+        "food": "Tteokguk, jeon, galbi-jjim"
       },
-      "christmas": {
-        "name": "Natal",
-        "food": "Panggang, stollen, bûche"
+      "lunar_new_year": {
+        "name": "Imlek",
+        "food": "Jiaozi, kue keranjang, ikan kukus"
+      },
+      "tet": {
+        "name": "Tết",
+        "food": "Bánh chưng, giò lụa, acar bawang"
+      },
+      "daeboreum": {
+        "name": "Daeboreum",
+        "food": "Nasi lima biji-bijian, kacang"
+      },
+      "lantern": {
+        "name": "Cap Go Meh",
+        "food": "Tangyuan"
+      },
+      "dano": {
+        "name": "Dano",
+        "food": "Surichwi-tteok, punch ceri"
+      },
+      "duanwu": {
+        "name": "Festival Perahu Naga",
+        "food": "Bakcang"
       },
       "chuseok": {
-        "name": "Festival Pertengahan Musim Gugur",
-        "food": "Kue bulan, songpyeon"
+        "name": "Chuseok",
+        "food": "Songpyeon, jeon, sup talas"
       },
-      "seollal": {
-        "name": "Tahun Baru Imlek",
-        "food": "Sup kue beras, pangsit"
+      "mid_autumn": {
+        "name": "Festival Kue Bulan",
+        "food": "Kue bulan, jeruk bali"
       },
-      "valentine": {
-        "name": "Hari Valentine",
-        "food": "Cokelat, stroberi"
+      "dongji": {
+        "name": "Dongji",
+        "food": "Bubur kacang merah"
+      },
+      "chobok": {
+        "name": "Chobok",
+        "food": "Samgyetang"
+      },
+      "oshogatsu": {
+        "name": "Tahun Baru Jepang",
+        "food": "Osechi, ozoni"
+      },
+      "setsubun": {
+        "name": "Setsubun",
+        "food": "Ehomaki, kedelai sangrai"
+      },
+      "hinamatsuri": {
+        "name": "Hinamatsuri",
+        "food": "Chirashi sushi, hishi mochi"
+      },
+      "hanami": {
+        "name": "Hanami",
+        "food": "Dango, bento sakura"
+      },
+      "obon": {
+        "name": "Obon",
+        "food": "Somen, masakan shojin"
+      },
+      "omisoka": {
+        "name": "Ōmisoka",
+        "food": "Toshikoshi soba"
+      },
+      "songkran": {
+        "name": "Songkran",
+        "food": "Ketan mangga, khao chae"
+      },
+      "loy_krathong": {
+        "name": "Loy Krathong",
+        "food": "Khanom krok, kue daun pisang"
+      },
+      "pongal": {
+        "name": "Pongal",
+        "food": "Pongal (nasi, susu, gula aren)"
+      },
+      "onam": {
+        "name": "Onam",
+        "food": "Sadya (hidangan daun pisang)"
       },
       "diwali": {
         "name": "Diwali",
-        "food": "Manisan, dal, samosa"
+        "food": "Mithai, dal, samosa"
+      },
+      "nowruz": {
+        "name": "Nowruz",
+        "food": "Sabzi polo mahi, samanu"
+      },
+      "new_year": {
+        "name": "Tahun Baru",
+        "food": "Hidangan tahun baru dari berbagai daerah"
+      },
+      "valentine": {
+        "name": "Hari Valentine",
+        "food": "Cokelat"
+      },
+      "carnival": {
+        "name": "Karnaval",
+        "food": "Feijoada, brigadeiro"
+      },
+      "mardi_gras": {
+        "name": "Mardi Gras",
+        "food": "King cake, gumbo"
+      },
+      "st_patrick": {
+        "name": "Hari St. Patrick",
+        "food": "Semur Irlandia, roti soda"
+      },
+      "anzac": {
+        "name": "Hari ANZAC",
+        "food": "Biskuit Anzac"
+      },
+      "midsummer": {
+        "name": "Midsummer",
+        "food": "Herring acar, kentang muda, kue stroberi"
+      },
+      "matariki": {
+        "name": "Matariki",
+        "food": "Hāngī (masakan oven tanah)"
+      },
+      "july4": {
+        "name": "Hari Kemerdekaan AS",
+        "food": "Barbekyu, hot dog, pai apel"
+      },
+      "fiestas_patrias": {
+        "name": "Fiestas Patrias",
+        "food": "Empanada, asado"
+      },
+      "oktoberfest": {
+        "name": "Oktoberfest",
+        "food": "Pretzel, sosis, kaki babi"
+      },
+      "thanksgiving_ca": {
+        "name": "Thanksgiving Kanada",
+        "food": "Kalkun, pai labu"
+      },
+      "halloween": {
+        "name": "Halloween",
+        "food": "Pai labu, apel karamel"
+      },
+      "dia_muertos": {
+        "name": "Hari Orang Mati",
+        "food": "Pan de muerto, tamales"
+      },
+      "thanksgiving_us": {
+        "name": "Thanksgiving",
+        "food": "Kalkun, pai labu, saus cranberry"
+      },
+      "kwanzaa": {
+        "name": "Kwanzaa",
+        "food": "Nasi jollof, pai ubi"
+      },
+      "christmas": {
+        "name": "Natal",
+        "food": "Daging panggang, stollen, bûche de Noël"
+      },
+      "nye": {
+        "name": "Malam Tahun Baru",
+        "food": "Dua belas anggur, fondue"
+      },
+      "samgyeopsal": {
+        "name": "Hari Samgyeopsal",
+        "food": "Samcan panggang"
+      },
+      "pi_day": {
+        "name": "Hari Pi",
+        "food": "Pai"
+      },
+      "black_day": {
+        "name": "Black Day",
+        "food": "Jajangmyeon"
+      },
+      "pasta_day": {
+        "name": "Hari Pasta Sedunia",
+        "food": "Pasta"
+      },
+      "pepero": {
+        "name": "Hari Pepero",
+        "food": "Pepero, garae-tteok"
       }
     },
     "followingTitle": "Dari orang dan meja yang kamu ikuti",

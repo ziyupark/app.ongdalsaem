@@ -734,29 +734,189 @@
     "storyTitle": "{{dish}} do jeito de {{name}}",
     "latestEverywhere": "Novidades de todo lugar",
     "holidays": {
-      "halloween": {
-        "name": "Halloween",
-        "food": "Sopa de abóbora, soul cakes"
+      "seollal": {
+        "name": "Seollal",
+        "food": "Tteokguk, jeon, galbi-jjim"
       },
-      "christmas": {
-        "name": "Natal",
-        "food": "Assado, stollen, bûche"
+      "lunar_new_year": {
+        "name": "Ano-Novo Chinês",
+        "food": "Jiaozi, nian gao, peixe no vapor"
+      },
+      "tet": {
+        "name": "Tết",
+        "food": "Bánh chưng, giò lụa, cebola em conserva"
+      },
+      "daeboreum": {
+        "name": "Daeboreum",
+        "food": "Arroz de cinco grãos, castanhas"
+      },
+      "lantern": {
+        "name": "Festival das Lanternas",
+        "food": "Tangyuan"
+      },
+      "dano": {
+        "name": "Dano",
+        "food": "Surichwi-tteok, ponche de cereja"
+      },
+      "duanwu": {
+        "name": "Festival do Barco-Dragão",
+        "food": "Zongzi"
       },
       "chuseok": {
+        "name": "Chuseok",
+        "food": "Songpyeon, jeon, sopa de taro"
+      },
+      "mid_autumn": {
         "name": "Festival do Meio do Outono",
-        "food": "Bolos lunares, songpyeon"
+        "food": "Bolos lunares, pomelo"
       },
-      "seollal": {
-        "name": "Ano-Novo Lunar",
-        "food": "Sopa de bolinho de arroz, dumplings"
+      "dongji": {
+        "name": "Dongji",
+        "food": "Mingau de feijão-vermelho"
       },
-      "valentine": {
-        "name": "Dia dos Namorados",
-        "food": "Chocolate, morangos"
+      "chobok": {
+        "name": "Chobok",
+        "food": "Samgyetang"
+      },
+      "oshogatsu": {
+        "name": "Ano-Novo japonês",
+        "food": "Osechi, ozoni"
+      },
+      "setsubun": {
+        "name": "Setsubun",
+        "food": "Ehomaki, soja torrada"
+      },
+      "hinamatsuri": {
+        "name": "Hinamatsuri",
+        "food": "Chirashi sushi, hishi mochi"
+      },
+      "hanami": {
+        "name": "Hanami",
+        "food": "Dango, bentô das cerejeiras"
+      },
+      "obon": {
+        "name": "Obon",
+        "food": "Somen, culinária shojin"
+      },
+      "omisoka": {
+        "name": "Ōmisoka",
+        "food": "Toshikoshi soba"
+      },
+      "songkran": {
+        "name": "Songkran",
+        "food": "Arroz doce com manga"
+      },
+      "loy_krathong": {
+        "name": "Loy Krathong",
+        "food": "Khanom krok, doces na folha de bananeira"
+      },
+      "pongal": {
+        "name": "Pongal",
+        "food": "Pongal (arroz, leite e jaggery)"
+      },
+      "onam": {
+        "name": "Onam",
+        "food": "Sadya (banquete na folha de bananeira)"
       },
       "diwali": {
         "name": "Diwali",
-        "food": "Doces, dal, samosas"
+        "food": "Mithai, dal, samosas"
+      },
+      "nowruz": {
+        "name": "Nowruz",
+        "food": "Sabzi polo mahi, samanu"
+      },
+      "new_year": {
+        "name": "Ano-Novo",
+        "food": "Pratos de Ano-Novo pelo mundo"
+      },
+      "valentine": {
+        "name": "Dia dos Namorados (Valentim)",
+        "food": "Chocolate"
+      },
+      "carnival": {
+        "name": "Carnaval",
+        "food": "Feijoada, brigadeiro"
+      },
+      "mardi_gras": {
+        "name": "Mardi Gras",
+        "food": "King cake, gumbo"
+      },
+      "st_patrick": {
+        "name": "Dia de São Patrício",
+        "food": "Ensopado irlandês, pão de soda"
+      },
+      "anzac": {
+        "name": "Dia ANZAC",
+        "food": "Biscoitos Anzac"
+      },
+      "midsummer": {
+        "name": "Midsommar",
+        "food": "Arenque em conserva, batatas novas, bolo de morango"
+      },
+      "matariki": {
+        "name": "Matariki",
+        "food": "Hāngī (forno subterrâneo)"
+      },
+      "july4": {
+        "name": "Dia da Independência (EUA)",
+        "food": "Churrasco, cachorro-quente, torta de maçã"
+      },
+      "fiestas_patrias": {
+        "name": "Fiestas Patrias (Chile)",
+        "food": "Empanadas, churrasco"
+      },
+      "oktoberfest": {
+        "name": "Oktoberfest",
+        "food": "Pretzels, salsichas, joelho de porco"
+      },
+      "thanksgiving_ca": {
+        "name": "Ação de Graças (Canadá)",
+        "food": "Peru, torta de abóbora"
+      },
+      "halloween": {
+        "name": "Halloween",
+        "food": "Torta de abóbora, maçã do amor"
+      },
+      "dia_muertos": {
+        "name": "Dia dos Mortos",
+        "food": "Pan de muerto, tamales"
+      },
+      "thanksgiving_us": {
+        "name": "Ação de Graças",
+        "food": "Peru, torta de abóbora, molho de cranberry"
+      },
+      "kwanzaa": {
+        "name": "Kwanzaa",
+        "food": "Arroz jollof, torta de batata-doce"
+      },
+      "christmas": {
+        "name": "Natal",
+        "food": "Assado, stollen, bûche de Noël"
+      },
+      "nye": {
+        "name": "Réveillon",
+        "food": "Doze uvas, fondue"
+      },
+      "samgyeopsal": {
+        "name": "Dia do Samgyeopsal",
+        "food": "Barriga de porco grelhada"
+      },
+      "pi_day": {
+        "name": "Dia do Pi",
+        "food": "Torta"
+      },
+      "black_day": {
+        "name": "Black Day",
+        "food": "Jajangmyeon"
+      },
+      "pasta_day": {
+        "name": "Dia Mundial da Massa",
+        "food": "Massa"
+      },
+      "pepero": {
+        "name": "Dia do Pepero",
+        "food": "Pepero, garae-tteok"
       }
     },
     "followingTitle": "De pessoas e mesas que você segue",

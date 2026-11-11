@@ -38,6 +38,9 @@ import {
 import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
 import { radius, space, useTheme, WEATHER_ICON, type WeatherMood } from '../src/theme';
 
+/** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
+const FESTIVE_CAROUSEL = 8;
+
 type Seg = 'global' | 'nearby' | 'following' | 'challenges';
 type Area = 'all' | 'near' | 'area' | 'weather';
 const RECENT_KEY = 'community.recentSearches';
@@ -373,7 +376,8 @@ function Global() {
   useEffect(() => { if (tags.length && (!tag || !tags.includes(tag))) setTag(tags[0]); }, [tags, tag]);
   const tagged = (dishes ?? []).filter((d) => tag && d.moods.includes(tag)).slice(0, 2);
   const tagLabel = (k: string) => (i18n.exists(`share.moods.${k}`) ? t(`share.moods.${k}`) : k);
-  const festive = useMemo(() => upcomingFestive(), []);
+  // The carousel shows the nearest few; the more button opens every holiday (app/holidays.tsx).
+  const festive = useMemo(() => upcomingFestive().slice(0, FESTIVE_CAROUSEL), []);
 
   const toggleSave = async (id: string) => {
     const on = !saved.has(id);

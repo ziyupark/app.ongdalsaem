@@ -723,29 +723,189 @@
     "storyTitle": "{{name}}さん流の{{dish}}",
     "latestEverywhere": "世界中の新着",
     "holidays": {
+      "seollal": {
+        "name": "ソルラル",
+        "food": "トックク、チヂミ、カルビチム"
+      },
+      "lunar_new_year": {
+        "name": "春節",
+        "food": "餃子、年糕、蒸し魚"
+      },
+      "tet": {
+        "name": "テト",
+        "food": "バインチュン、ゾールア、玉ねぎの漬物"
+      },
+      "daeboreum": {
+        "name": "テボルム",
+        "food": "五穀飯、ナッツ、干し野菜のナムル"
+      },
+      "lantern": {
+        "name": "元宵節",
+        "food": "湯円"
+      },
+      "dano": {
+        "name": "端午(タノ)",
+        "food": "スリチトック、さくらんぼのファチェ"
+      },
+      "duanwu": {
+        "name": "端午節",
+        "food": "ちまき"
+      },
+      "chuseok": {
+        "name": "チュソク",
+        "food": "ソンピョン、チヂミ、里芋スープ"
+      },
+      "mid_autumn": {
+        "name": "中秋節",
+        "food": "月餅、ザボン"
+      },
+      "dongji": {
+        "name": "冬至(トンジ)",
+        "food": "小豆粥"
+      },
+      "chobok": {
+        "name": "初伏(チョボク)",
+        "food": "サムゲタン"
+      },
+      "oshogatsu": {
+        "name": "お正月",
+        "food": "おせち、お雑煮"
+      },
+      "setsubun": {
+        "name": "節分",
+        "food": "恵方巻、炒り豆"
+      },
+      "hinamatsuri": {
+        "name": "ひな祭り",
+        "food": "ちらし寿司、菱餅"
+      },
+      "hanami": {
+        "name": "花見",
+        "food": "花見団子、花見弁当"
+      },
+      "obon": {
+        "name": "お盆",
+        "food": "そうめん、精進料理"
+      },
+      "omisoka": {
+        "name": "大晦日",
+        "food": "年越しそば"
+      },
+      "songkran": {
+        "name": "ソンクラーン",
+        "food": "マンゴーもち米、カオチェ"
+      },
+      "loy_krathong": {
+        "name": "ロイクラトン",
+        "food": "カノムクロック、バナナの葉のお菓子"
+      },
+      "pongal": {
+        "name": "ポンガル",
+        "food": "ポンガル(米・牛乳・ジャガリー)"
+      },
+      "onam": {
+        "name": "オーナム",
+        "food": "サディヤ(バナナの葉の膳)"
+      },
+      "diwali": {
+        "name": "ディワリ",
+        "food": "ミターイ、ダール、サモサ"
+      },
+      "nowruz": {
+        "name": "ノウルーズ",
+        "food": "サブズィ・ポロ・マヒ、サマヌ"
+      },
+      "new_year": {
+        "name": "元日",
+        "food": "世界各地の新年料理"
+      },
+      "valentine": {
+        "name": "バレンタインデー",
+        "food": "チョコレート"
+      },
+      "carnival": {
+        "name": "カーニバル",
+        "food": "フェイジョアーダ、ブリガデイロ"
+      },
+      "mardi_gras": {
+        "name": "マルディグラ",
+        "food": "キングケーキ、ガンボ"
+      },
+      "st_patrick": {
+        "name": "聖パトリックの日",
+        "food": "アイリッシュシチュー、ソーダブレッド"
+      },
+      "anzac": {
+        "name": "アンザック・デー",
+        "food": "アンザック・ビスケット"
+      },
+      "midsummer": {
+        "name": "夏至祭",
+        "food": "ニシンの酢漬け、新じゃが、苺ケーキ"
+      },
+      "matariki": {
+        "name": "マタリキ",
+        "food": "ハンギ(地中の蒸し焼き)"
+      },
+      "july4": {
+        "name": "アメリカ独立記念日",
+        "food": "バーベキュー、ホットドッグ、アップルパイ"
+      },
+      "fiestas_patrias": {
+        "name": "チリ独立記念日",
+        "food": "エンパナーダ、アサード"
+      },
+      "oktoberfest": {
+        "name": "オクトーバーフェスト",
+        "food": "プレッツェル、ソーセージ、ハクセ"
+      },
+      "thanksgiving_ca": {
+        "name": "カナダの感謝祭",
+        "food": "七面鳥、パンプキンパイ"
+      },
       "halloween": {
         "name": "ハロウィン",
-        "food": "パンプキンスープ、ソウルケーキ"
+        "food": "パンプキンパイ、キャンディアップル"
+      },
+      "dia_muertos": {
+        "name": "死者の日",
+        "food": "パン・デ・ムエルト、タマレス"
+      },
+      "thanksgiving_us": {
+        "name": "感謝祭",
+        "food": "七面鳥、パンプキンパイ、クランベリーソース"
+      },
+      "kwanzaa": {
+        "name": "クワンザ",
+        "food": "ジョロフライス、スイートポテトパイ"
       },
       "christmas": {
         "name": "クリスマス",
         "food": "ロースト、シュトーレン、ブッシュ・ド・ノエル"
       },
-      "chuseok": {
-        "name": "中秋節",
-        "food": "月餅、ソンピョン"
+      "nye": {
+        "name": "大晦日(スペイン)",
+        "food": "12粒のぶどう、フォンデュ"
       },
-      "seollal": {
-        "name": "旧正月",
-        "food": "お餅のスープ、餃子"
+      "samgyeopsal": {
+        "name": "サムギョプサルデー",
+        "food": "サムギョプサル"
       },
-      "valentine": {
-        "name": "バレンタインデー",
-        "food": "チョコレート、いちご"
+      "pi_day": {
+        "name": "パイの日",
+        "food": "パイ"
       },
-      "diwali": {
-        "name": "ディワリ",
-        "food": "スイーツ、ダール、サモサ"
+      "black_day": {
+        "name": "ブラックデー",
+        "food": "ジャージャー麺"
+      },
+      "pasta_day": {
+        "name": "世界パスタデー",
+        "food": "パスタ"
+      },
+      "pepero": {
+        "name": "ペペロデー",
+        "food": "ペペロ、カレトック"
       }
     },
     "followingTitle": "フォロー中の人や食卓から",
