@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { Bell, Check, Clock, Pause, Play, Plus, RotateCcw, Timer } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +14,9 @@ import {
   addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, secondsLeft, startTimer, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
 import { elevation, radius, space, useTheme } from '../src/theme';
+
+/** A timer started this recently before the screen opened is treated as new and takes the big ring. */
+const JUST_STARTED_MS = 10_000;
 
 const PRESETS = [
   { key: 'softEgg', sec: 390 },
@@ -32,7 +35,22 @@ export default function KitchenTimerScreen() {
   const [adding, setAdding] = useState(false);
   const bar = useTabBarScroll();
 
-  // Featured = the one tapped, else the first finished, else the soonest to ring.
+  // A timer that just started anywhere (Add Timer, a preset, a recipe step) takes the big ring, so “Food Name”
+  // follows the newest timer instead of staying on an older pinned or finished one. Start time = the id's
+  // timestamp (startTimer makes `t-<ms>`); one started moments before this screen opened (a recipe step's
+  // "Start timer" → /timer) counts too.
+  const lastStart = useRef<number | null>(null);
+  useEffect(() => {
+    if (!timers.length) return;
+    const startOf = (x: KitchenTimer) => Number(x.id.slice(2)) || 0;
+    const newest = timers.reduce((a, b) => (startOf(b) > startOf(a) ? b : a));
+    const at = startOf(newest);
+    const fresh = lastStart.current == null ? Date.now() - at < JUST_STARTED_MS : at > lastStart.current;
+    if (fresh) setFeaturedId(newest.id);
+    lastStart.current = Math.max(lastStart.current ?? 0, at);
+  }, [timers]);
+
+  // Featured = the one tapped (or just started), else the first finished, else the soonest to ring.
   const featured = useMemo<KitchenTimer | undefined>(() => {
     const picked = timers.find((x) => x.id === featuredId);
     if (picked) return picked;
