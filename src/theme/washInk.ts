@@ -35,7 +35,6 @@ export type WashInk = {
   disabled: ColorToken;
   /** Indicator / hairline colour as a string (no token covers both polarities). */
   line: string;
-  rule: string;
   /** For expo-status-bar. */
   bar: 'light' | 'dark';
   /** true when the on-photo (light) inks are in use. */
@@ -72,7 +71,6 @@ export function washInkFor(mood: WeatherMood, at: number, opacity: number, color
     muted: role(2),
     disabled: role(3),
     line: light ? '#FFFFFF' : color('bg/primary'),
-    rule: light ? '#FFFFFF33' : color('border/default'),
     bar: light || scheme === 'dark' ? 'light' : 'dark',
     light,
     bw: bwOnRgb(bg),

@@ -118,7 +118,6 @@ export default function Community() {
               { key: 'challenges', label: t('community.challengesTab') },
             ]}
           />
-          <View style={[styles.rule, { backgroundColor: tabInk?.rule ?? color('border/default') }]} />
         </View>
         {/* Tabs stay mounted once opened — switching only swaps what's under the tabs (no reload, data and images kept). */}
         {visited.has('global') ? <View style={seg === 'global' ? null : styles.gone}><Global /></View> : null}
@@ -634,7 +633,6 @@ const styles = StyleSheet.create({
   wash: { position: 'absolute', left: 0, right: 0, top: 0, height: 420 },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[20], paddingVertical: space[12] },
   tabs: { paddingTop: space[12] },
-  rule: { height: 1 },
   actions: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
   dot: { position: 'absolute', right: -2, top: -2, width: 8, height: 8, borderRadius: 4 },
   nowWrap: { paddingTop: space[12], paddingBottom: space[4], paddingHorizontal: space[20] },
