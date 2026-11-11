@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { router, useFocusEffect } from 'expo-router';
 import { ChevronLeft, NotebookPen, Settings, Utensils, type LucideIcon } from 'lucide-react-native';
 import { Bookmark } from '../icons/custom';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,7 +29,7 @@ import { StatusBar } from 'expo-status-bar';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useWashScroll } from '../../lib/useWashScroll';
 import { displayTemp, usePrefs } from '../../lib/prefs';
-import { fetchAcornTotal, fetchProfileDishes, type DishSummary, type ProfileTab } from '../../services/foods';
+import { fetchAcornTotal, fetchMyMarks, fetchProfileDishes, setAcorn, type DishSummary, type ProfileTab } from '../../services/foods';
 import { getMyProfile, MAX_BIO, updateMyAvatar, updateMyBio, type MyProfile } from '../../services/profile';
 import { supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
@@ -188,6 +188,28 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   };
 
   const data = lists[tab];
+
+  // Acorns on the dish tiles: which ones I gave (my marks) + my changes since load, so counts move at once.
+  const [given, setGiven] = useState<Set<string>>(new Set());
+  const [acornDelta, setAcornDelta] = useState<Record<string, number>>({});
+  const dishIds = (lists.dishes ?? []).map((d) => d.id).join(',');
+  useEffect(() => {
+    if (!dishIds) return;
+    let alive = true;
+    fetchMyMarks(dishIds.split(',')).then((m) => { if (alive) { setGiven(m.given); setAcornDelta({}); } }).catch(() => undefined);
+    return () => { alive = false; };
+  }, [dishIds]);
+  const toggleAcorn = (id: string) => {
+    const on = !given.has(id);
+    const step = on ? 1 : -1;
+    const apply = (sign: number) => {
+      setGiven((s) => { const n = new Set(s); if (on === sign > 0) n.add(id); else n.delete(id); return n; });
+      setAcornDelta((d) => ({ ...d, [id]: (d[id] ?? 0) + step * sign }));
+      if (isMe) setAcorns((n) => (n == null ? n : n + step * sign)); // my total counts acorns on my own dishes
+    };
+    apply(1);
+    setAcorn(id, on).catch(() => apply(-1));
+  };
   const dishesCount = lists.dishes?.length;
 
   const nowDetail = now
@@ -312,6 +334,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       ) : null}
       <FlatList
         data={tab === 'dishes' ? data ?? [] : []}
+        extraData={[given, acornDelta]} // re-render tiles when an acorn is given / taken back
         keyExtractor={(d) => d.id}
         numColumns={2}
         ListHeaderComponent={header}
@@ -328,7 +351,16 @@ export function ProfileScreen({ userId }: { userId?: string }) {
             </View>
           )
         }
-        renderItem={({ item }) => <DishTile dish={item} width={tileW} onPress={() => router.push(`/dish/${item.id}`)} />}
+        renderItem={({ item }) => (
+          <DishTile
+            dish={item}
+            width={tileW}
+            onPress={() => router.push(`/dish/${item.id}`)}
+            given={given.has(item.id)}
+            acorns={item.acorns + (acornDelta[item.id] ?? 0)}
+            onAcorn={() => toggleAcorn(item.id)}
+          />
+        )}
       />
       <BottomSheet visible={bioOpen} onClose={() => setBioOpen(false)} title={t('profile.statusTitle')}>
         <View style={[styles.bioField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>

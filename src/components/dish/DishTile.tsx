@@ -14,7 +14,8 @@ export const tileMediaHeight = (width: number) => Math.round((width * 208) / 167
  * gap 6 → Text (px 20): Title (Title/S) · Byline "Comfort · Dinner" (Caption, fg/muted).
  * Used everywhere a dish grid or rail appears: 6.1 Profile, 4.5 Cook profile, 7.1 "More from", tables, challenges.
  */
-export function DishTile({ dish, width, onPress }: { dish: DishSummary; width: number; onPress?: () => void }) {
+/** `onAcorn` turns the Acorn Tag into a give / take-back toggle (`given` = filled); `acorns` overrides the count. */
+export function DishTile({ dish, width, onPress, given, onAcorn, acorns }: { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const mood = dish.moods?.[0];
@@ -30,7 +31,13 @@ export function DishTile({ dish, width, onPress }: { dish: DishSummary; width: n
           </View>
         ) : null}
         <View style={styles.bl}>
-          <AcornTag count={dish.acorns} size="XL" />
+          {onAcorn ? (
+            <Pressable accessibilityRole="button" accessibilityLabel={t('home.acorns', { count: acorns ?? dish.acorns })} accessibilityState={{ selected: !!given }} hitSlop={space[8]} onPress={onAcorn}>
+              <AcornTag count={acorns ?? dish.acorns} size="XL" given={given} />
+            </Pressable>
+          ) : (
+            <AcornTag count={acorns ?? dish.acorns} size="XL" given={given} />
+          )}
         </View>
       </View>
       <View style={styles.text}>
