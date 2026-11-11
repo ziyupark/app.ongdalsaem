@@ -687,8 +687,7 @@
     "cooked_other": "เดือนนี้คุณทำอาหาร {{count}} ครั้ง",
     "cookedRain_other": "คุณทำอาหาร {{count}} ครั้ง — {{rainy}} ครั้งในวันฝนตก",
     "cookedSnow_other": "คุณทำอาหาร {{count}} ครั้ง — {{snowy}} ครั้งในวันหิมะตก",
-    "youCooked": "คุณทำเมนูนี้",
-    "youAte": "คุณกินเมนูนี้"
+    "youCooked": "คุณทำเมนูนี้"
   },
   "fridge": {
     "title": "ตู้เย็น",

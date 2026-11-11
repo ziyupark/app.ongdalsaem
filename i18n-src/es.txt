@@ -616,7 +616,6 @@ cookedRain_other=Cocinaste {{count}} veces, {{rainy}} de ellas con lluvia.
 cookedSnow_one=Cocinaste una vez, con nieve.
 cookedSnow_other=Cocinaste {{count}} veces, {{snowy}} de ellas con nieve.
 youCooked=Cocinaste esto
-youAte=Comiste esto
 [community]
 title=Comunidad
 global=Global

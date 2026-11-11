@@ -607,7 +607,6 @@ cooked_other=Kamu memasak {{count}} kali bulan ini.
 cookedRain_other=Kamu memasak {{count}} kali — {{rainy}} di antaranya saat hujan.
 cookedSnow_other=Kamu memasak {{count}} kali — {{snowy}} di antaranya saat bersalju.
 youCooked=Kamu memasak ini
-youAte=Kamu makan ini
 [community]
 title=Komunitas
 global=Global

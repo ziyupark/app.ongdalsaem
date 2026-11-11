@@ -687,8 +687,7 @@
     "cooked_other": "今月は{{count}}回料理しました。",
     "cookedRain_other": "{{count}}回料理しました — そのうち{{rainy}}回は雨の日。",
     "cookedSnow_other": "{{count}}回料理しました — そのうち{{snowy}}回は雪の日。",
-    "youCooked": "あなたが作った料理",
-    "youAte": "あなたが食べた料理"
+    "youCooked": "あなたが作った料理"
   },
   "fridge": {
     "title": "冷蔵庫",

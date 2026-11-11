@@ -687,8 +687,7 @@
     "cooked_other": "Tháng này bạn đã nấu {{count}} lần.",
     "cookedRain_other": "Bạn đã nấu {{count}} lần — {{rainy}} lần trong mưa.",
     "cookedSnow_other": "Bạn đã nấu {{count}} lần — {{snowy}} lần trong tuyết.",
-    "youCooked": "Bạn đã nấu món này",
-    "youAte": "Bạn đã ăn món này"
+    "youCooked": "Bạn đã nấu món này"
   },
   "fridge": {
     "title": "Tủ lạnh",

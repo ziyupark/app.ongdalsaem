@@ -607,7 +607,6 @@ cooked_other=เดือนนี้คุณทำอาหาร {{count}} �
 cookedRain_other=คุณทำอาหาร {{count}} ครั้ง — {{rainy}} ครั้งในวันฝนตก
 cookedSnow_other=คุณทำอาหาร {{count}} ครั้ง — {{snowy}} ครั้งในวันหิมะตก
 youCooked=คุณทำเมนูนี้
-youAte=คุณกินเมนูนี้
 [community]
 title=ชุมชน
 global=ทั่วโลก

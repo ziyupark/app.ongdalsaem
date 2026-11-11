@@ -14,7 +14,7 @@ const RAINY: WeatherMood[] = ['drizzle', 'rain', 'heavy-rain', 'shower', 'thunde
 const SNOWY: WeatherMood[] = ['sleet', 'flurries', 'snow', 'heavy-snow'];
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** 6.3 Profile · Diary (Figma 20:1110) — month calendar with the weather of each day I cooked or ate · monthly summary · that day's list. */
+/** 6.3 Profile · Diary (Figma 20:1110) — month calendar with the weather of each day I cooked · monthly summary · that day's list. */
 export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void }) {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -71,7 +71,7 @@ export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void })
           const k = `${ym.y}-${pad(ym.m + 1)}-${pad(d)}`;
           const info = byDate.get(k);
           const on = picked === k;
-          const photo = info ? info.cooked[0]?.photo ?? info.ate.find((a) => a.photo)?.photo ?? null : null;
+          const photo = info?.cooked[0]?.photo ?? null;
           return (
             <Pressable key={k} accessibilityRole="button" accessibilityLabel={String(d)} disabled={!info} onPress={() => setPicked(on ? null : k)} style={[styles.cell, { width: cw }, on && { borderWidth: 2, borderColor: color('border/focus') }]}>
               {photo ? (
@@ -104,12 +104,6 @@ export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void })
             <Pressable key={c.id} onPress={() => router.push(`/dish/${c.id}`)} style={styles.item}>
               <Image source={{ uri: c.photo }} style={[styles.thumb, { backgroundColor: color('bg/muted') }]} contentFit="cover" />
               <View style={styles.flex}><Text variant="Body/M Strong" numberOfLines={1}>{c.name}</Text><Text variant="Caption" color="fg/muted">{t('diary.youCooked')}</Text></View>
-            </Pressable>
-          ))}
-          {sel.ate.map((a) => (
-            <Pressable key={a.id} disabled={!a.foodId} onPress={() => a.foodId && router.push(`/dish/${a.foodId}`)} style={styles.item}>
-              {a.photo ? <Image source={{ uri: a.photo }} style={[styles.thumb, { backgroundColor: color('bg/muted') }]} contentFit="cover" /> : <View style={[styles.thumb, { backgroundColor: color('bg/muted') }]} />}
-              <View style={styles.flex}><Text variant="Body/M Strong" numberOfLines={1}>{a.name}</Text><Text variant="Caption" color="fg/muted">{t('diary.youAte')}</Text></View>
             </Pressable>
           ))}
         </View>

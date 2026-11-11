@@ -459,8 +459,8 @@ export async function setInCollection(collectionId: string, saveId: string, on: 
   if (error && error.code !== UNIQUE_VIOLATION) throw error;
 }
 
-export type DiaryDay = { date: string; mood: WeatherMood | null; cooked: DishSummary[]; ate: DiaryEntry[] };
-/** One month of my kitchen: dishes I posted (any visibility) + "I ate this" logs, grouped by local day. */
+export type DiaryDay = { date: string; mood: WeatherMood | null; cooked: DishSummary[] };
+/** One month of my kitchen: dishes I posted (any visibility), grouped by local day. */
 export async function fetchDiaryMonth(year: number, month: number): Promise<DiaryDay[]> {
   const uid = await myId();
   if (!uid) return [];
@@ -468,21 +468,15 @@ export async function fetchDiaryMonth(year: number, month: number): Promise<Diar
   const end = new Date(year, month + 1, 1);
   const pad = (n: number) => String(n).padStart(2, '0');
   const key = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-  const [foods, logs] = await Promise.all([
-    supabase.from('foods').select(`${SUMMARY_SELECT}, created_at, taken_at`).eq('creator_id', uid).gte('created_at', start.toISOString()).lt('created_at', end.toISOString()),
-    supabase.from('food_eaten_logs').select('id, food_id, food_name_snapshot, food_image_snapshot, eaten_at, review').eq('user_id', uid).gte('eaten_at', key(start)).lt('eaten_at', key(end)),
-  ]);
+  const foods = await supabase.from('foods').select(`${SUMMARY_SELECT}, created_at, taken_at`).eq('creator_id', uid).gte('created_at', start.toISOString()).lt('created_at', end.toISOString());
   if (foods.error) throw foods.error;
   const days = new Map<string, DiaryDay>();
-  const day = (k: string) => days.get(k) ?? (days.set(k, { date: k, mood: null, cooked: [], ate: [] }), days.get(k)!);
+  const day = (k: string) => days.get(k) ?? (days.set(k, { date: k, mood: null, cooked: [] }), days.get(k)!);
   for (const r of (foods.data ?? []) as Row[]) {
     const d = day(key(new Date(r.taken_at ?? r.created_at)));
     const s = toSummary(r);
     d.cooked.push(s);
     d.mood = d.mood ?? s.mood;
-  }
-  for (const r of (logs.data ?? []) as Row[]) {
-    day(r.eaten_at).ate.push({ id: r.id, foodId: r.food_id, name: r.food_name_snapshot, photo: r.food_image_snapshot, eatenAt: r.eaten_at, review: r.review });
   }
   return [...days.values()].sort((a, b) => a.date.localeCompare(b.date));
 }

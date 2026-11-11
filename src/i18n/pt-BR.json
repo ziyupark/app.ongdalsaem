@@ -696,8 +696,7 @@
     "cookedRain_other": "Você cozinhou {{count}} vezes — {{rainy}} delas na chuva.",
     "cookedSnow_one": "Você cozinhou uma vez — na neve.",
     "cookedSnow_other": "Você cozinhou {{count}} vezes — {{snowy}} delas na neve.",
-    "youCooked": "Você cozinhou isto",
-    "youAte": "Você comeu isto"
+    "youCooked": "Você cozinhou isto"
   },
   "fridge": {
     "title": "Geladeira",
