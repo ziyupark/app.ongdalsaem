@@ -1,0 +1,55 @@
+# Screens 01 · Sign in & setup
+
+> 블록 순서 = DOM 순서. 공통 골격·컴포넌트는 [02-components](../02-components.md), 이동 전체 표는 [03-ia-and-flows](../03-ia-and-flows.md). 색인 → [README](../README.md)
+
+## 01 Sign in & setup — [섹션 59:2359](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2359)
+
+1.2 Sign in(Welcome) · 1.3 Profile setup · 1.4 Location (가로 배치, 이 순서). 로그인은 **Apple · Google만**(이메일 로그인 1.2b · 1.3 · 1.4 · 1.4b는 [99-removed-in-v1](99-removed-in-v1.md)).
+
+**공통 규칙(01 전 화면)**: TopBar가 있는 화면의 제목은 Display/L, 시작 위치 y 118(1.3 · 1.4는 STEP Overline이 118). 가운데 정렬 블록(아바타 · 오브 · 도시 · 하단 링크)은 패딩이 아니라 정렬(center)로 맞춘다.
+
+**버튼 위치 규칙(01 전 화면 공통)**: 주 버튼(검정 Primary L, 56)은 항상 **화면 아래 y 744–800**에 고정한다(Home Indicator 위 10). 보조 버튼이 있으면 그 위에 쌓는다(1.4 "Choose a city instead" 680–736, gap 8 · 1.2 Apple 698–744 · Google 754–800, gap 10). 레이어 = `Block · Button (fixed)`(absolute, 고정 요소 — 스크롤·키보드와 관계없이 같은 자리). 키보드가 올라오면 버튼은 키보드 바로 위로 함께 올라간다(구현).
+
+**흐름 원칙(짧게)**: 신규 = 1.2(Apple/Google) → 1.3(이름 미리 채움) → 1.4 → 2.1, 최대 3화면. 기존 사용자 = 1.2 → 2.1.
+
+### 1.2 Sign in (Welcome) — [14:67](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-67)
+- 앱을 처음 열었을 때 보는 **보편적인 시작 화면**: 위 사진, 아래 로그인 버튼 2개(Apple · Google). 이메일 · 비밀번호 입력은 없다.
+- 레이아웃(자유 배치, 스크롤 없음):
+  0. 프레임 배경 = bg/default(크림)
+  1. [A] 음식 사진 `photo:welcome` 390×420 + 아래 Fade(270–420, 투명 → bg/default) + 위 Scrim top(0–120, ink 45% → 0, StatusBar 가독성). 글은 사진 위가 아니라 크림 배경 위에 둔다.
+  2. StatusBar(Tone=Light)
+  3. Logo(Compact) "ongdalsaem"(x 20, y 424) → 10 → **Display/L**(다른 01 화면 제목과 같은 스타일) **"What’s the weather / on your table?"** → 8 → Body/M fg/secondary "Share what you cook in every kind of weather — and find what to eat next."(아래 끝 586)
+  4. [고정] Block · Button(y 672–800, gap 10): Caption 가운데 "By continuing, you agree to our **Terms** and **Privacy Policy**."(두 단어 Caption Strong fg/secondary, 탭 → 9.8c 문서 시트) → **Auth Button(Apple)** "Continue with Apple"(698–744) → **Auth Button(Google)** "Continue with Google"(**y 754–800**, 01의 주 버튼 자리). 이메일 버튼은 없다.
+  5. [A] Home Indicator
+- 이동: Apple/Google → **1.3**(첫 로그인) 또는 2.1(기존 계정).
+- Apple·Google 버튼은 각 사 브랜드 규정(로고·문구·크기)을 따른다([07-assets-licenses](../07-assets-licenses.md)). Apple 버튼 외곽선 = 검정 1px(Auth Button 컴포넌트 값, HIG White with outline).
+- 로그인 처리(Supabase Auth): **Apple** = iOS 기본 Apple 로그인 시트 → identity token + nonce로 세션 생성(Android는 웹 로그인). Apple이 처음 한 번만 주는 이름은 계정 메타데이터에 저장해 1.3에 미리 채운다. **Google** = Supabase OAuth를 앱 안 인증 창으로 열고 `ongdalsaem://auth-callback`으로 돌아와 코드 교환(PKCE).
+- 요청 중에는 누른 버튼이 흐려지고 두 버튼 모두 비활성. 실패하면 Caption 자리에 fg/destructive "Sign-in is napping — tap to try again."
+
+### 1.3 Profile setup — [14:260](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-260)
+- 블록: StatusBar → TopBar(Inline) → Overline "STEP 1 OF 2"(fg/accent) + 8 + 제목 "How should we / call you?" → 24 → **Avatar edit** 96×96(Avatar 88 + 오른쪽 아래 카메라 배지 32, 9.2와 같은 구성 — 탭하여 사진 선택(정사각 자르기), 사진이 없으면 이름 첫 글자) → 32 → Input(Focus) Display name "Jiyu", helper "Shown on dishes you share." → 16 → Caption(fg/muted, handle만 Caption Strong fg/default) "Your handle will be **@jiyu_4821** — you can change it anytime in Settings." → [고정] Button Primary L "Continue"(744–800).
+- 사진은 Continue 때 512px JPEG로 줄여 Storage `avatars/<uid>/`에 올린다.
+- **입력은 Display name 하나만**. username 입력 칸은 두지 않는다(가입 마찰·중복 오류 제거).
+  - Display name 미리 채우기: Apple/Google 로그인에서 받은 이름(Apple에서 이름을 가렸거나 없으면 빈 칸). 1–30자, 중복 허용, 비어 있으면 Continue Disabled.
+  - **username 자동 생성**: display name을 소문자 로마자로 바꾸고(한글은 로마자 변환, 실패 시 `cook`) 허용 문자 `a–z 0–9 . _`만 남긴 뒤 `_` + 4자리 숫자를 붙인다(예: Jiyu → `jiyu_4821`). 중복이면 숫자를 다시 뽑는다. 3–20자. Display name을 고치면 캡션의 handle도 실시간으로 바뀐다.
+  - username 변경은 9.2에서만. 처음 @멘션이나 프로필 공유를 할 때 "Pick your handle?" 제안을 1회만 띄운다(건너뛰기 가능).
+- 이동: 뒤로 → BACK · Continue → 1.4.
+
+### 1.4 Location — [14:314](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-314)
+- 블록: StatusBar → TopBar(Inline) → "STEP 2 OF 2" + 제목 "Let the weather / help you choose." + 본문 "We use your city’s forecast to suggest what others cooked in the same weather. Only your city is shared — never your exact location."(gap 12) → 40 → **날씨 오브** 220 원(지금 날씨의 3D 날씨 아이콘 `assets/weather3d/weather3d_{mood}.png`, 없는 무드는 `clear`) → 28 → **도시 pill**(bg/default + 1px border/default, radius full, padding 12 16, gap 10): `map-pin` 20 fg/accent · "Seoul, KR"(Body/M Strong) · "· 17° Clear"(Body/S fg/muted, 상태 이름 = Weather Tag 짧은 영어) → [고정] Button Ghost L "Choose a city instead"(680–736) + Button Primary L `navigation` "Use my location"(744–800).
+- 도시 pill은 위치 권한이 이미 있으면 기기 도시, 없으면 기본 도시(Seoul)의 지금 날씨를 보여 준다.
+- 이동: 뒤로 → BACK · Use my location → (권한 요청) → 2.7 → 2.1 · Choose a city instead / 권한 거부 → 2.5.
+- 개인정보: 서버에는 **도시/구 단위만** 전송(profiles.city · country · location_enabled). 좌표는 기기 안에서 도시 이름 · 날씨 조회에만 쓴다.
+
+---
+
+### STATES · 버튼 비활성(Disabled) — 섹션 아래 줄
+입력이 준비되기 전에는 주 버튼이 **Disabled**(같은 자리 744–800, 탭해도 반응 없음, 프로토타입 연결 없음). 버튼 바로 위에 Caption(가운데, fg/muted)으로 **무엇이 부족한지** 한 줄 알려 준다. 조건이 채워지면 즉시 Default로 바뀐다(검증은 입력할 때마다, 오류 표시는 칸을 벗어날 때).
+
+| 화면 | 상태 | 버튼이 켜지는 조건 | 안내 문구 |
+|---|---|---|---|
+| 1.3 State · No name | Display name 빈 칸, handle 미리보기 숨김 | 1자 이상 | "Add a display name to continue." |
+
+- 1.2 · 1.4는 입력이 없어 항상 활성.
+- 서버 요청 중(Sign in · Create account · Send reset link · Save and sign in)에는 버튼 안 글자 대신 로딩 점 3개 + 버튼 Disabled(두 번 누름 방지).
+

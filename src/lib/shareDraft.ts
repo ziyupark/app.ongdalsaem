@@ -1,0 +1,101 @@
+// In-memory draft shared by 8.1 Pick → 8.2 Details → 8.3 Preview. Cleared on share or discard.
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSyncExternalStore } from 'react';
+import type { Place } from '../services/location';
+import type { WeatherMood } from '../theme';
+
+export type DraftPhoto = {
+  /** Media-library asset id, or `camera-<ts>` for a new shot. */
+  id: string;
+  /** Display uri (ph:// or file://). */
+  uri: string;
+  /** Local file uri used for upload (resolved when leaving 8.1). */
+  fileUri?: string;
+  width: number;
+  height: number;
+  takenAt?: Date;
+  location?: { latitude: number; longitude: number };
+};
+
+export type DraftContext = {
+  mood: WeatherMood;
+  tempC: number;
+  place: Place | null;
+  takenAt: Date;
+  /** 'photo' = location came from the photo, 'device' = from the phone right now. */
+  from: 'photo' | 'device' | 'place';
+  /** Where — only a ~1 km geohash cell of it is stored (3.6 Within 1 km). */
+  coords?: { latitude: number; longitude: number };
+};
+
+export type DraftIngredient = { name: string; amount: string };
+export type DraftStep = { text: string; timerSec?: number };
+
+export type ShareDraft = {
+  photos: DraftPhoto[];
+  context: DraftContext | null;
+  contextState: 'idle' | 'loading' | 'ready' | 'none';
+  type: 'home' | 'travel';
+  name: string;
+  placeName: string;
+  description: string;
+  meals: string[];
+  moods: string[];
+  isPublic: boolean;
+  allowComments: boolean;
+  /** 8.2a Recipe (home-cooked only). Calories kept as typed text, parsed on share. */
+  ingredients: DraftIngredient[];
+  steps: DraftStep[];
+  calories: string;
+  /** 8.2d: the cook picked the place by hand → weather_source 'place-edited'. */
+  placeEdited: boolean;
+  /** 8.4: index of the photo that failed to upload on the last try (null = none). */
+  uploadFailed: number | null;
+  /** 4.10b "Post my entry": the shared dish is entered into this challenge. */
+  challenge: { id: string; tag: string } | null;
+  /** Optional landscape (forest / sea / …). */
+  landscape: string | null;
+};
+
+const empty = (): ShareDraft => ({
+  photos: [], context: null, contextState: 'idle', type: 'home', name: '', placeName: '', description: '',
+  meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', placeEdited: false, uploadFailed: null, challenge: null, landscape: null,
+});
+
+let draft = empty();
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
+
+export function getShareDraft() {
+  return draft;
+}
+export function updateShareDraft(patch: Partial<ShareDraft> | ((d: ShareDraft) => Partial<ShareDraft>)) {
+  draft = { ...draft, ...(typeof patch === 'function' ? patch(draft) : patch) };
+  emit();
+}
+export function resetShareDraft() {
+  draft = empty();
+  emit();
+}
+export function useShareDraft() {
+  return useSyncExternalStore((l) => { listeners.add(l); return () => { listeners.delete(l); }; }, getShareDraft);
+}
+
+// ---- "Add your own" moods — remembered on this device so they come back next time (8.2b). ----
+const CUSTOM_KEY = 'ongdalsaem.customMoods';
+export async function loadCustomMoods(): Promise<string[]> {
+  try {
+    const raw = await AsyncStorage.getItem(CUSTOM_KEY);
+    const v = raw ? JSON.parse(raw) : [];
+    return Array.isArray(v) ? v.filter((x) => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+export async function saveCustomMoods(list: string[]) {
+  try {
+    await AsyncStorage.setItem(CUSTOM_KEY, JSON.stringify(list));
+  } catch {
+    // Not critical — the tag still works for this post.
+  }
+}

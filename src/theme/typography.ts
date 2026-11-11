@@ -1,0 +1,72 @@
+// Text styles — generated from Figma text styles. docs/01-foundations.md §2.3.
+// Fonts: Fraunces (display), Outfit (UI), Noto Sans KR (Korean / CJK fallback), Gaegu (1.1b handwriting). All SIL OFL.
+import type { TextStyle } from 'react-native';
+
+export const fontFiles = {
+  'Fraunces-SemiBold': require('@expo-google-fonts/fraunces/600SemiBold/Fraunces_600SemiBold.ttf'),
+  'Fraunces-Bold': require('@expo-google-fonts/fraunces/700Bold/Fraunces_700Bold.ttf'),
+  'Outfit-Light': require('@expo-google-fonts/outfit/300Light/Outfit_300Light.ttf'),
+  'Outfit-Regular': require('@expo-google-fonts/outfit/400Regular/Outfit_400Regular.ttf'),
+  'Outfit-Medium': require('@expo-google-fonts/outfit/500Medium/Outfit_500Medium.ttf'),
+  'NotoSansKR-Regular': require('@expo-google-fonts/noto-sans-kr/400Regular/NotoSansKR_400Regular.ttf'),
+  'NotoSansKR-Medium': require('@expo-google-fonts/noto-sans-kr/500Medium/NotoSansKR_500Medium.ttf'),
+  'Gaegu-Bold': require('@expo-google-fonts/gaegu/700Bold/Gaegu_700Bold.ttf'),
+  // Sign in with Google branding font (Auth Button · Google only).
+  'GoogleSans-Medium': require('@expo-google-fonts/google-sans/500Medium/GoogleSans_500Medium.ttf'),
+};
+
+type T = Pick<TextStyle, 'fontFamily' | 'fontSize' | 'lineHeight' | 'letterSpacing' | 'textTransform'>;
+const t = (fontFamily: string, fontSize: number, lineHeight: number, letterSpacing = 0, upper = false): T => ({
+  fontFamily, fontSize, lineHeight, letterSpacing, ...(upper ? { textTransform: 'uppercase' as const } : {}),
+});
+
+/** hhea ascent / descent per em (read from the bundled .ttf files) — used to keep tight line heights from clipping glyphs. */
+export const FONT_METRICS: Record<string, { ascent: number; descent: number }> = {
+  'Fraunces-SemiBold': { ascent: 0.978, descent: 0.255 },
+  'Fraunces-Bold': { ascent: 0.978, descent: 0.255 },
+  'Outfit-Light': { ascent: 1, descent: 0.26 },
+  'Outfit-Regular': { ascent: 1, descent: 0.26 },
+  'Outfit-Medium': { ascent: 1, descent: 0.26 },
+  'NotoSansKR-Regular': { ascent: 1.16, descent: 0.288 },
+  'NotoSansKR-Medium': { ascent: 1.16, descent: 0.288 },
+};
+
+export const text = {
+  'Display/XL': t('Fraunces-Bold', 46, 49, -1.5),
+  'Display/L': t('Fraunces-Bold', 34, 37, -0.9),
+  'Display/M': t('Fraunces-SemiBold', 26, 29, -0.45),
+  'Display/Quote': t('Fraunces-SemiBold', 22, 29, -0.25),
+  'Title/L': t('Outfit-Medium', 22, 27, -0.35),
+  'Title/M': t('Outfit-Medium', 18, 23, -0.2),
+  'Title/S': t('Outfit-Medium', 16, 21, -0.1),
+  'Body/L': t('Outfit-Regular', 17, 25, -0.15),
+  'Body/M': t('Outfit-Regular', 15, 22, -0.05),
+  'Body/M Strong': t('Outfit-Medium', 15, 21, -0.1),
+  'Body/S': t('Outfit-Regular', 13, 16),
+  'Body/S Strong': t('Outfit-Medium', 13, 18),
+  Caption: t('Outfit-Regular', 12, 16, 0.1),
+  'Caption Strong': t('Outfit-Medium', 12, 15, 0.1),
+  Overline: t('Outfit-Regular', 11, 14, 1.3, true),
+  'Numeric/XL': t('Outfit-Light', 64, 64, -2.6),
+  'Numeric/L': t('Outfit-Medium', 28, 31, -0.7),
+  'Numeric/M': t('Outfit-Medium', 17, 21, -0.25),
+  'Numeric/S': t('Outfit-Medium', 12, 15, 0.3),
+  'Numeric/Timer': t('Outfit-Light', 52, 52, -2.2),
+  Statement: t('Outfit-Medium', 24, 29, -0.45),
+  'Button/L': t('Outfit-Medium', 17, 22, -0.15),
+  'Button/M': t('Outfit-Medium', 15, 20, -0.05),
+  'Tab label': t('Outfit-Regular', 11, 13, 0.2),
+  'Nav label': t('Outfit-Regular', 11, 13, -0.2),
+  Wordmark: t('Outfit-Medium', 34, 36, -1.2),
+  Tagline: t('Outfit-Regular', 11, 14, 2.4, true),
+  /** Compact logo wordmark (Logo Lockup=Compact). */
+  'Wordmark/Compact': t('Outfit-Medium', 24, 26, -0.8),
+  /** 1.1b letter signature only. */
+  Handwriting: t('Gaegu-Bold', 20, 24),
+  /** Auth Button · Google — Google Sans Medium, 14/20 at 40 tall scaled to the 44 button (Google branding guidelines). */
+  'Auth label/Google': t('GoogleSans-Medium', 15, 22),
+  /** Auth Button · Apple (custom button) — same font as Google; size = 43% of the 44 button height (Apple HIG). */
+  'Auth label/Apple': t('GoogleSans-Medium', 19, 23),
+} as const;
+
+export type TextVariant = keyof typeof text;

@@ -1,0 +1,84 @@
+import { useEffect, useState } from 'react';
+import { getMyProfile } from '../services/profile';
+import { hasLocationPermission, requestDeviceLocation, reverseGeocodeCity, type Coordinates, type Place } from '../services/location';
+import { fetchForecast, type Forecast } from '../services/weather';
+import { geohash } from './geohash';
+
+export type Here = {
+  /** loading → ready (device location) · off (no location: the chosen city, or nothing when none was chosen). */
+  status: 'loading' | 'ready' | 'off';
+  coords: Coordinates | null;
+  place: Place | null;
+  forecast: Forecast | null;
+  /** 5-char area cell for questions (null when location is off). */
+  cell: string | null;
+};
+
+/**
+ * Where am I + weather now — ONE shared reading for Home, Profile and Community, so the weather never differs
+ * between screens. Device location only when already allowed (no prompt) — `allow()` asks. Without it, the city
+ * chosen in 9.7 / onboarding. Re-read after 10 minutes, on `reload()`, or when the city changes (`refreshHere`).
+ */
+const TTL = 10 * 60_000;
+let current: Here = { status: 'loading', coords: null, place: null, forecast: null, cell: null };
+let loadedAt = 0;
+let inflight: Promise<boolean> | null = null;
+const subs = new Set<(h: Here) => void>();
+const publish = (h: Here) => { current = h; subs.forEach((s) => s(h)); };
+
+async function read(ask: boolean): Promise<boolean> {
+  const me = await getMyProfile().catch(() => null);
+  // A city picked in 9.7 turns location off for the app even when the OS permission is still granted.
+  const allowed = ask || (me?.locationEnabled !== false && (await hasLocationPermission()));
+  const coords = allowed ? await requestDeviceLocation() : null;
+  if (coords) {
+    const [place, forecast] = await Promise.all([reverseGeocodeCity(coords).catch(() => null), fetchForecast(coords).catch(() => null)]);
+    publish({ status: 'ready', coords, place, forecast, cell: geohash(coords.latitude, coords.longitude) });
+    return true;
+  }
+  const forecast = me?.city ? await fetchForecast({ city: me.city }).catch(() => null) : null;
+  publish({ status: 'off', coords: null, place: me?.city ? { city: me.city } : null, forecast, cell: null });
+  return false;
+}
+
+function load({ ask = false, force = false } = {}): Promise<boolean> {
+  if (inflight && !ask) return inflight;
+  if (!ask && !force && loadedAt && Date.now() - loadedAt < TTL) return Promise.resolve(current.status === 'ready');
+  inflight = read(ask)
+    .then((ok) => { loadedAt = Date.now(); return ok; })
+    .finally(() => { inflight = null; });
+  return inflight;
+}
+
+/** The latest shared reading (outside React). */
+export function getHere() {
+  return current;
+}
+
+/** Subscribe outside React without triggering a read (push sync). Returns an unsubscribe. */
+export function onHere(cb: (h: Here) => void) {
+  subs.add(cb);
+  return () => { subs.delete(cb); };
+}
+
+/** Call after the city or location permission changes (9.7 Choose city, onboarding). */
+export function refreshHere() {
+  return load({ force: true });
+}
+
+/** "Mapo-gu, Seoul" — ward + city when known. */
+export function placeLabel(p: Place | null | undefined) {
+  return p ? [p.district, p.city].filter(Boolean).join(', ') : '';
+}
+
+export function useHere() {
+  const [here, setHere] = useState<Here>(current);
+  useEffect(() => {
+    subs.add(setHere);
+    setHere(current);
+    load();
+    return () => { subs.delete(setHere); };
+  }, []);
+  return { here, allow: () => load({ ask: true }), reload: () => load({ force: true }) };
+}
+

@@ -1,0 +1,482 @@
+// Dishes (foods + food_images + likes/saves/comments) — docs/06-data-model.md, DB = supabase/migrations.
+// Acorns = rows in `likes`. Images live in bucket `food-illustrations/<uid>/<foodId>-<n>.jpg`.
+import * as Crypto from 'expo-crypto';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { supabase } from '../lib/supabase';
+import type { ShareDraft } from '../lib/shareDraft';
+import { geohash } from '../lib/geohash';
+import { temperatureTag } from '../lib/tags';
+import { WEATHER_MOODS, type WeatherMood } from '../theme';
+
+const BUCKET = 'food-illustrations';
+const MAX_EDGE = 1440;
+const UNIQUE_VIOLATION = '23505';
+
+export type Person = { id: string; name: string; handle: string | null; avatarUrl: string | null };
+export type Ingredient = { name: string; amount: string };
+export type Step = { text: string; timerSec?: number };
+
+export type DishSummary = {
+  id: string; name: string; photo: string; mood: WeatherMood | null; tempC: number | null; acorns: number;
+  /** 8.2 tags — Dish Tile byline "Comfort · Dinner" (first mood · first meal). */
+  moods?: string[]; meals?: string[];
+};
+
+export type Dish = DishSummary & {
+  creator: Person;
+  photos: string[];
+  description: string;
+  meals: string[];
+  moods: string[];
+  ingredients: Ingredient[];
+  steps: Step[];
+  calories: number | null;
+  city: string | null;
+  neighborhood: string | null;
+  placeName: string | null;
+  createdAt: Date;
+  comments: number;
+  eaten: number;
+  allowComments: boolean;
+  isPublic: boolean;
+};
+
+/** Thrown by createDish when one photo keeps failing (8.4). */
+export class UploadError extends Error {
+  constructor(public index: number) { super(`photo ${index} upload failed`); }
+}
+
+export type Comment = { id: string; body: string; createdAt: Date; author: Person; likes: number; liked: boolean };
+
+// `!creator_id` / `!user_id`: foods↔profiles also meet through likes/saves/comments, so the direct FK is named.
+export const SUMMARY_SELECT = 'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, likes(count)';
+const DISH_SELECT =
+  'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, ' +
+  'city, neighborhood, place_name, created_at, allow_comments, visibility, ' +
+  'creator:profiles!creator_id(id, display_name, username, avatar_url), food_images(image_url, display_order), likes(count), comments(count), food_eaten_counts(count)';
+
+export type Row = Record<string, any>;
+
+const asMood = (v: unknown): WeatherMood | null => (typeof v === 'string' && (WEATHER_MOODS as readonly string[]).includes(v) ? (v as WeatherMood) : null);
+export const countOf = (v: unknown) => (Array.isArray(v) && v[0] && typeof v[0].count === 'number' ? v[0].count : 0);
+export const toPerson = (p: Row | null | undefined, fallbackId = ''): Person => ({
+  id: p?.id ?? fallbackId,
+  name: p?.display_name || p?.username || '—',
+  handle: p?.username ?? null,
+  avatarUrl: p?.avatar_url ?? null,
+});
+
+export function toSummary(r: Row): DishSummary {
+  return {
+    id: r.id,
+    name: r.name,
+    photo: r.image_url,
+    mood: asMood(r.weather_condition),
+    tempC: r.temperature_c == null ? null : Math.round(Number(r.temperature_c)),
+    acorns: countOf(r.likes),
+    moods: Array.isArray(r.mood_tags) ? r.mood_tags : [],
+    meals: Array.isArray(r.meal_type) ? r.meal_type : [],
+  };
+}
+
+function toDish(r: Row): Dish {
+  const images = ((r.food_images ?? []) as Row[]).sort((a, b) => a.display_order - b.display_order).map((i) => i.image_url as string);
+  const ingredients = Array.isArray(r.ingredients)
+    ? (r.ingredients as Row[]).map((i) => ({ name: String(i?.name ?? ''), amount: String(i?.amount ?? i?.quantity ?? '') })).filter((i) => i.name)
+    : [];
+  const steps = Array.isArray(r.steps)
+    ? (r.steps as unknown[]).map((s) => (typeof s === 'string' ? { text: s } : { text: String((s as Row)?.text ?? ''), timerSec: (s as Row)?.timer_sec ?? undefined })).filter((s) => s.text)
+    : [];
+  return {
+    ...toSummary(r),
+    creator: toPerson(r.creator, r.creator_id),
+    photos: images.length ? images : [r.image_url],
+    description: r.description ?? '',
+    meals: r.meal_type ?? [],
+    moods: r.mood_tags ?? [],
+    ingredients,
+    steps,
+    calories: r.calories ?? null,
+    city: r.city ?? null,
+    neighborhood: r.neighborhood ?? null,
+    placeName: r.place_name ?? null,
+    createdAt: new Date(r.created_at),
+    comments: countOf(r.comments),
+    eaten: countOf(r.food_eaten_counts),
+    allowComments: r.allow_comments ?? true,
+    isPublic: r.visibility === 'everyone',
+  };
+}
+
+async function myId() {
+  const { data } = await supabase.auth.getUser();
+  return data.user?.id ?? null;
+}
+
+// ---------------------------------------------------------------------------------------------- reads
+
+/** Latest public dishes for the Home feed. */
+export async function fetchFeed(limit = 10): Promise<Dish[]> {
+  const { data, error } = await supabase
+    .from('foods')
+    .select(DISH_SELECT)
+    .eq('visibility', 'everyone')
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data as Row[]).map(toDish);
+}
+
+export async function fetchDish(id: string): Promise<Dish | null> {
+  const { data, error } = await supabase.from('foods').select(DISH_SELECT).eq('id', id).maybeSingle();
+  if (error) throw error;
+  return data ? toDish(data as Row) : null;
+}
+
+/** "More from …" row on 7.1. */
+export async function fetchMoreFrom(creatorId: string, excludeId: string, limit = 8): Promise<DishSummary[]> {
+  const { data, error } = await supabase
+    .from('foods')
+    .select(SUMMARY_SELECT)
+    .eq('creator_id', creatorId)
+    .eq('visibility', 'everyone')
+    .eq('status', 'published')
+    .neq('id', excludeId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data as Row[]).map(toSummary);
+}
+
+export type ProfileTab = 'dishes' | 'saved' | 'diary';
+
+/** 6.1 grids. Dishes = shared publicly · Diary = only-me posts · Saved = bookmarked by me. */
+export async function fetchProfileDishes(userId: string, tab: ProfileTab): Promise<DishSummary[]> {
+  if (tab === 'saved') {
+    const { data, error } = await supabase
+      .from('saves')
+      .select(`created_at, food:foods(${SUMMARY_SELECT})`)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data as Row[]).map((r) => r.food).filter(Boolean).map(toSummary);
+  }
+  const { data, error } = await supabase
+    .from('foods')
+    .select(SUMMARY_SELECT)
+    .eq('creator_id', userId)
+    .eq('status', 'published')
+    .eq('visibility', tab === 'dishes' ? 'everyone' : 'only_me')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data as Row[]).map(toSummary);
+}
+
+/** Total acorns received on everything this cook shared (6.1 "312 acorns"). */
+export async function fetchAcornTotal(userId: string) {
+  const { count, error } = await supabase
+    .from('likes')
+    .select('id, food:foods!inner(creator_id)', { count: 'exact', head: true })
+    .eq('food.creator_id', userId);
+  if (error) throw error;
+  return count ?? 0;
+}
+
+/** Which of these dishes I gave an acorn to / saved. */
+export async function fetchMyMarks(foodIds: string[]) {
+  const uid = await myId();
+  if (!uid || foodIds.length === 0) return { given: new Set<string>(), saved: new Set<string>() };
+  const [likes, saves] = await Promise.all([
+    supabase.from('likes').select('food_id').eq('user_id', uid).in('food_id', foodIds),
+    supabase.from('saves').select('food_id').eq('user_id', uid).in('food_id', foodIds),
+  ]);
+  return {
+    given: new Set(((likes.data ?? []) as Row[]).map((r) => r.food_id as string)),
+    saved: new Set(((saves.data ?? []) as Row[]).map((r) => r.food_id as string)),
+  };
+}
+
+const COMMENT_SELECT = 'id, body, created_at, user_id, author:profiles!user_id(id, display_name, username, avatar_url), comment_likes(count)';
+
+export async function fetchComments(foodId: string): Promise<Comment[]> {
+  const uid = await myId();
+  const { data, error } = await supabase.from('comments').select(COMMENT_SELECT).eq('food_id', foodId).order('created_at', { ascending: false }).limit(200);
+  if (error) throw error;
+  const rows = data as Row[];
+  let liked = new Set<string>();
+  if (uid && rows.length) {
+    const { data: mine } = await supabase.from('comment_likes').select('comment_id').eq('user_id', uid).in('comment_id', rows.map((r) => r.id));
+    liked = new Set(((mine ?? []) as Row[]).map((r) => r.comment_id as string));
+  }
+  return rows.map((r) => ({ id: r.id, body: r.body, createdAt: new Date(r.created_at), author: toPerson(r.author, r.user_id), likes: countOf(r.comment_likes), liked: liked.has(r.id) }));
+}
+
+/** Did I log this dish today ("I ate this" state, 7.1b)? */
+export async function ateToday(foodId: string) {
+  const uid = await myId();
+  if (!uid) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  const { count } = await supabase.from('food_eaten_logs').select('id', { count: 'exact', head: true }).eq('user_id', uid).eq('food_id', foodId).eq('eaten_at', today);
+  return (count ?? 0) > 0;
+}
+
+export type DiaryEntry = { id: string; foodId: string | null; name: string; photo: string | null; eatenAt: string; review: string | null };
+/** 6.3 Diary — what I ate, newest day first. */
+export async function fetchDiary(): Promise<DiaryEntry[]> {
+  const uid = await myId();
+  if (!uid) return [];
+  const { data, error } = await supabase
+    .from('food_eaten_logs')
+    .select('id, food_id, food_name_snapshot, food_image_snapshot, eaten_at, review')
+    .eq('user_id', uid)
+    .order('eaten_at', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(300);
+  if (error) throw error;
+  return (data as Row[]).map((r) => ({ id: r.id, foodId: r.food_id, name: r.food_name_snapshot, photo: r.food_image_snapshot, eatenAt: r.eaten_at, review: r.review }));
+}
+
+// --------------------------------------------------------------------------------------------- writes
+
+export async function setAcorn(foodId: string, on: boolean) {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  if (on) {
+    const { error } = await supabase.from('likes').insert({ food_id: foodId, user_id: uid });
+    if (error && error.code !== UNIQUE_VIOLATION) throw error;
+  } else {
+    const { error } = await supabase.from('likes').delete().eq('food_id', foodId).eq('user_id', uid);
+    if (error) throw error;
+  }
+}
+
+export async function setSaved(foodId: string, on: boolean) {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  if (on) {
+    const { error } = await supabase.from('saves').insert({ food_id: foodId, user_id: uid });
+    if (error && error.code !== UNIQUE_VIOLATION) throw error;
+  } else {
+    const { error } = await supabase.from('saves').delete().eq('food_id', foodId).eq('user_id', uid);
+    if (error) throw error;
+  }
+}
+
+export async function addComment(foodId: string, body: string): Promise<Comment> {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  const { data, error } = await supabase.from('comments').insert({ food_id: foodId, user_id: uid, body: body.trim() }).select(COMMENT_SELECT).single();
+  if (error) throw error;
+  const r = data as Row;
+  return { id: r.id, body: r.body, createdAt: new Date(r.created_at), author: toPerson(r.author, r.user_id), likes: 0, liked: false };
+}
+
+export async function deleteComment(commentId: string) {
+  const { error } = await supabase.from('comments').delete().eq('id', commentId);
+  if (error) throw error;
+}
+
+export async function setCommentLike(commentId: string, on: boolean) {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  const q = on
+    ? supabase.from('comment_likes').insert({ comment_id: commentId, user_id: uid })
+    : supabase.from('comment_likes').delete().eq('comment_id', commentId).eq('user_id', uid);
+  const { error } = await q;
+  if (error && error.code !== UNIQUE_VIOLATION) throw error;
+}
+
+/** Undo today's "I ate this". */
+export async function unlogEaten(foodId: string) {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  const today = new Date().toISOString().slice(0, 10);
+  const { error } = await supabase.from('food_eaten_logs').delete().eq('user_id', uid).eq('food_id', foodId).eq('eaten_at', today);
+  if (error) throw error;
+}
+
+/** "I ate this" → today's Diary entry. Returns false when it was already logged today. */
+export async function logEaten(dish: Pick<Dish, 'id' | 'name' | 'photo'>) {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  const { error } = await supabase
+    .from('food_eaten_logs')
+    .insert({ user_id: uid, food_id: dish.id, food_name_snapshot: dish.name, food_image_snapshot: dish.photo });
+  if (error?.code === UNIQUE_VIOLATION) return false;
+  if (error) throw error;
+  return true;
+}
+
+export async function deleteDish(foodId: string) {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  const { error } = await supabase.from('foods').delete().eq('id', foodId).eq('creator_id', uid);
+  if (error) throw error;
+  // Files are best-effort: the row (and its food_images) is already gone. Paths are `<uid>/<foodId>-<0..9>.jpg`.
+  await supabase.storage.from(BUCKET).remove(Array.from({ length: 10 }, (_, i) => `${uid}/${foodId}-${i}.jpg`));
+}
+
+/** 8.3 "Share to ongdalsaem": upload photos → foods row → food_images rows. Returns the new dish id. */
+export async function createDish(draft: ShareDraft): Promise<string> {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  if (draft.photos.length === 0) throw new Error('No photos');
+  const foodId = Crypto.randomUUID();
+  const paths: string[] = [];
+  const urls: string[] = [];
+
+  try {
+    for (const [i, p] of draft.photos.entries()) {
+      const long = Math.max(p.width, p.height) || MAX_EDGE;
+      const resize = long > MAX_EDGE ? [{ resize: p.width >= p.height ? { width: MAX_EDGE } : { height: MAX_EDGE } }] : [];
+      const path = `${uid}/${foodId}-${i}.jpg`;
+      let uploaded = false;
+      for (let attempt = 0; attempt < 2 && !uploaded; attempt++) {
+        try {
+          const out = await ImageManipulator.manipulateAsync(p.fileUri ?? p.uri, resize, { compress: 0.82, format: ImageManipulator.SaveFormat.JPEG });
+          const body = await (await fetch(out.uri)).arrayBuffer();
+      // upsert: false — every path is new (fresh foodId), and upsert would also need a SELECT policy on storage.objects,
+      // which food-illustrations doesn't have (→ "new row violates row-level security policy").
+          const { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: 'image/jpeg', upsert: false });
+          if (error) throw error;
+          uploaded = true;
+        } catch {
+          // retry once
+        }
+      }
+      if (!uploaded) throw new UploadError(i);
+      paths.push(path);
+      urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
+    }
+
+    const ctx = draft.context;
+    const row: Record<string, unknown> = {
+      id: foodId,
+      creator_id: uid,
+      image_url: urls[0],
+      image_type: 'photo',
+      name: draft.name.trim(),
+      description: draft.description.trim() || null,
+      weather_condition: ctx?.mood ?? null,
+      temperature_c: ctx?.tempC ?? null,
+      weather_tags: ctx ? [ctx.mood] : [],
+      temperature_tags: ctx ? [temperatureTag(ctx.tempC)] : [],
+      mood_tags: draft.moods,
+      meal_type: draft.meals,
+      city: ctx?.place?.city ?? null,
+      country: ctx?.place?.countryCode ?? ctx?.place?.country ?? null,
+      neighborhood: ctx?.place?.district ?? null,
+      // 6-char geohash ≈ 1.2 × 0.6 km — never the exact point.
+      landscape: draft.landscape ?? null,
+      geohash6: ctx?.coords ? geohash(ctx.coords.latitude, ctx.coords.longitude, 6) : null,
+      taken_at: (ctx?.takenAt ?? draft.photos[0].takenAt ?? new Date()).toISOString(),
+      weather_source: draft.placeEdited ? 'place-edited' : 'auto',
+      visibility: draft.isPublic ? 'everyone' : 'only_me',
+      status: 'published',
+      allow_comments: draft.allowComments,
+      dish_type: draft.type,
+      place_name: draft.type === 'travel' && draft.placeName.trim() ? draft.placeName.trim() : null,
+      // A travel dish has no recipe (8.2e).
+      ingredients: draft.type === 'home' ? draft.ingredients.map((i) => ({ name: i.name.trim(), amount: i.amount.trim() })) : [],
+      steps: draft.type === 'home' ? draft.steps.map((st) => (st.timerSec ? { text: st.text.trim(), timer_sec: st.timerSec } : { text: st.text.trim() })) : [],
+      calories: draft.type === 'home' && /^\d+$/.test(draft.calories.trim()) ? Number(draft.calories.trim()) : null,
+    };
+    let { error: foodError } = await supabase.from('foods').insert(row);
+    // PGRST204 = unknown column: migration 20261106010000 (taken_at · weather_source · neighborhood) not applied yet.
+    if (foodError?.code === 'PGRST204') {
+      console.warn('[share] foods is missing new columns — apply supabase/migrations/20261106010000_foods_taken_at_source_neighborhood.sql', foodError.message);
+      const { taken_at: _a, weather_source: _b, neighborhood: _c, geohash6: _d, landscape: _e, ...legacy } = row;
+      ({ error: foodError } = await supabase.from('foods').insert(legacy));
+    }
+    if (foodError) throw foodError;
+
+    const { error: imgError } = await supabase
+      .from('food_images')
+      .insert(urls.map((image_url, display_order) => ({ food_id: foodId, user_id: uid, image_url, image_type: 'photo', display_order })));
+    if (imgError) {
+      await supabase.from('foods').delete().eq('id', foodId);
+      throw imgError;
+    }
+    return foodId;
+  } catch (e) {
+    if (paths.length) await supabase.storage.from(BUCKET).remove(paths);
+    throw e;
+  }
+}
+
+// ------------------------------------------------------------------------------------- 6.2 Saved · 6.3 Diary
+
+export type SavedDish = DishSummary & { saveId: string; savedAt: Date; cook: string; collectionIds: string[] };
+export type Collection = { id: string; name: string };
+
+export async function fetchSavedDishes(): Promise<SavedDish[]> {
+  const uid = await myId();
+  if (!uid) return [];
+  const { data, error } = await supabase
+    .from('saves')
+    .select(`id, created_at, collection_items(collection_id), food:foods(${SUMMARY_SELECT}, creator:profiles!creator_id(display_name, username))`)
+    .eq('user_id', uid)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data as Row[])
+    .filter((r) => r.food)
+    .map((r) => ({
+      ...toSummary(r.food),
+      saveId: r.id,
+      savedAt: new Date(r.created_at),
+      cook: r.food.creator?.display_name || r.food.creator?.username || '—',
+      collectionIds: ((r.collection_items ?? []) as Row[]).map((c) => c.collection_id as string),
+    }));
+}
+
+export async function fetchCollections(): Promise<Collection[]> {
+  const uid = await myId();
+  if (!uid) return [];
+  const { data, error } = await supabase.from('collections').select('id, name').eq('owner_id', uid).order('created_at');
+  if (error) throw error;
+  return (data ?? []) as Collection[];
+}
+
+export async function createCollection(name: string): Promise<Collection> {
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  const { data, error } = await supabase.from('collections').insert({ owner_id: uid, name: name.trim().slice(0, 30) }).select('id, name').single();
+  if (error) throw error;
+  return data as Collection;
+}
+
+export async function setInCollection(collectionId: string, saveId: string, on: boolean) {
+  const { error } = on
+    ? await supabase.from('collection_items').insert({ collection_id: collectionId, save_id: saveId })
+    : await supabase.from('collection_items').delete().eq('collection_id', collectionId).eq('save_id', saveId);
+  if (error && error.code !== UNIQUE_VIOLATION) throw error;
+}
+
+export type DiaryDay = { date: string; mood: WeatherMood | null; cooked: DishSummary[]; ate: DiaryEntry[] };
+/** One month of my kitchen: dishes I posted (any visibility) + "I ate this" logs, grouped by local day. */
+export async function fetchDiaryMonth(year: number, month: number): Promise<DiaryDay[]> {
+  const uid = await myId();
+  if (!uid) return [];
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 1);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const key = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const [foods, logs] = await Promise.all([
+    supabase.from('foods').select(`${SUMMARY_SELECT}, created_at, taken_at`).eq('creator_id', uid).gte('created_at', start.toISOString()).lt('created_at', end.toISOString()),
+    supabase.from('food_eaten_logs').select('id, food_id, food_name_snapshot, food_image_snapshot, eaten_at, review').eq('user_id', uid).gte('eaten_at', key(start)).lt('eaten_at', key(end)),
+  ]);
+  if (foods.error) throw foods.error;
+  const days = new Map<string, DiaryDay>();
+  const day = (k: string) => days.get(k) ?? (days.set(k, { date: k, mood: null, cooked: [], ate: [] }), days.get(k)!);
+  for (const r of (foods.data ?? []) as Row[]) {
+    const d = day(key(new Date(r.taken_at ?? r.created_at)));
+    const s = toSummary(r);
+    d.cooked.push(s);
+    d.mood = d.mood ?? s.mood;
+  }
+  for (const r of (logs.data ?? []) as Row[]) {
+    day(r.eaten_at).ate.push({ id: r.id, foodId: r.food_id, name: r.food_name_snapshot, photo: r.food_image_snapshot, eatenAt: r.eaten_at, review: r.review });
+  }
+  return [...days.values()].sort((a, b) => a.date.localeCompare(b.date));
+}
