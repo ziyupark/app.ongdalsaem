@@ -257,7 +257,7 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
       ) : null}
       {questions.length ? (
         <View style={[styles.px, styles.qs]}>
-          {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
+          {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} rounded="2xl" onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
         </View>
       ) : null}
       <View style={styles.more}>

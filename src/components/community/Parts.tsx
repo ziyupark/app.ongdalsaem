@@ -251,11 +251,12 @@ export function Faces({ people, size = 24 }: { people: { id: string; avatarUrl: 
 }
 
 /** Question Card — author · place · time · category pill / body / answers · me too. */
-export function QuestionCard({ q, onPress, onMeToo, showImage }: { q: Question; onPress?: () => void; onMeToo?: () => void; showImage?: boolean }) {
+/** `rounded`: card corner radius token (default lg; Explore · Our area uses 2xl like the Story card there). */
+export function QuestionCard({ q, onPress, onMeToo, showImage, rounded = 'lg' }: { q: Question; onPress?: () => void; onMeToo?: () => void; showImage?: boolean; rounded?: 'lg' | '2xl' }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
-    <Pressable accessibilityRole="button" disabled={!onPress} onPress={onPress} style={[styles.qCard, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+    <Pressable accessibilityRole="button" disabled={!onPress} onPress={onPress} style={[styles.qCard, { borderRadius: radius[rounded], backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
       <View style={styles.qTop}>
         <Avatar url={q.author.avatarUrl} name={q.author.name} size={32} />
         <View style={styles.flex}>
