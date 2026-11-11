@@ -65,7 +65,11 @@ export function TabBar({ active, progress, onTab, onCreate }: Props) {
   const dot = useAnimatedStyle(() => ({ opacity: interpolate(p.value, [0.45, 1], [0, 1], Extrapolation.CLAMP) }));
   const plus = useAnimatedStyle(() => ({ transform: [{ scale: interpolate(p.value, [0, 1], [1, 0.84], Extrapolation.CLAMP) }] }));
 
-  const expand = () => { p.value = withTiming(0, { duration: 260, easing: Easing.out(Easing.cubic) }); };
+  const expand = () => {
+    const goal = GOALS.get(p);
+    if (goal) goal.current = 0;
+    p.value = withTiming(0, { duration: 260, easing: Easing.out(Easing.cubic) });
+  };
   const Active = TABS.find((x) => x.key === active)!;
 
   return (
@@ -131,7 +135,15 @@ function TabItem({ tab, label, active, onPress }: { tab: (typeof TABS)[number]; 
 }
 
 /** Scroll distance from expanded to minimized. */
-const TRAVEL = 80;
+const TRAVEL = 120;
+/**
+ * The bar trails the scroll instead of tracking it 1:1 — each scroll step eases toward the new target, so the shrink
+ * lags a beat behind the finger like an afterimage (docs/05-behavior.md: 250 ms ease-out).
+ */
+const FOLLOW = { duration: 250, easing: Easing.out(Easing.cubic) };
+const SETTLE = { duration: 320, easing: Easing.out(Easing.cubic) };
+/** Where each bar is heading (the value it eases toward), so tapping the minimized bar open resets it too. */
+const GOALS = new WeakMap<SharedValue<number>, { current: number }>();
 
 /**
  * Apple-style tab bar: scrolling down minimizes it (following the scroll), scrolling up opens it again; if the scroll
@@ -139,6 +151,8 @@ const TRAVEL = 80;
  */
 export function useTabBarScroll() {
   const progress = useSharedValue(0);
+  const target = useRef(0);
+  GOALS.set(progress, target);
   const last = useRef(0);
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (settle.current) clearTimeout(settle.current); }, []);
@@ -147,13 +161,21 @@ export function useTabBarScroll() {
     last.current = y;
     if (settle.current) clearTimeout(settle.current);
     if (y <= 0) {
-      progress.value = withTiming(0, { duration: 200, easing: Easing.out(Easing.cubic) });
+      target.current = 0;
+      progress.value = withTiming(0, SETTLE);
       return;
     }
-    progress.value = Math.min(1, Math.max(0, progress.value + dy / TRAVEL));
+    const next = Math.min(1, Math.max(0, target.current + dy / TRAVEL));
+    if (next !== target.current) {
+      target.current = next;
+      progress.value = withTiming(next, FOLLOW);
+    }
     settle.current = setTimeout(() => {
-      const v = progress.value;
-      if (v > 0 && v < 1) progress.value = withTiming(v > 0.5 ? 1 : 0, { duration: 240, easing: Easing.out(Easing.cubic) });
+      const v = target.current;
+      if (v > 0 && v < 1) {
+        target.current = v > 0.5 ? 1 : 0;
+        progress.value = withTiming(target.current, SETTLE);
+      }
     }, 140);
   }, [progress]);
   return { progress, onY };
