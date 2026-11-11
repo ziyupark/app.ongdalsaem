@@ -325,7 +325,6 @@ offlineCopy=Bạn đang ngoại tuyến — bản đã lưu này vẫn dùng đ�
 settings=Cài đặt
 signOut=Đăng xuất
 acorns_other={{count}} hạt sồi
-totalDishes_other={{count}} món
 totalAcorns_other=Tổng {{count}} hạt sồi
 tabs.dishes=Món ăn
 tabs.dishesCount=Món ăn {{n}}

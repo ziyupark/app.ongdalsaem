@@ -325,7 +325,6 @@ offlineCopy=คุณออฟไลน์อยู่ — สำเนาที
 settings=การตั้งค่า
 signOut=ออกจากระบบ
 acorns_other={{count}} ลูกโอ๊ก
-totalDishes_other={{count}} เมนู
 totalAcorns_other=รวม {{count}} ลูกโอ๊ก
 tabs.dishes=เมนู
 tabs.dishesCount=เมนู {{n}}

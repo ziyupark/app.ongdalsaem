@@ -325,7 +325,6 @@ offlineCopy=オフラインです — 保存済みのコピーは使えます。
 settings=設定
 signOut=サインアウト
 acorns_other=どんぐり {{count}}
-totalDishes_other=料理 {{count}}
 totalAcorns_other=どんぐり 合計{{count}}
 tabs.dishes=料理
 tabs.dishesCount=料理 {{n}}

@@ -366,8 +366,6 @@
     "signOut": "Sign out",
     "acorns_one": "{{count}} acorn",
     "acorns_other": "{{count}} acorns",
-    "totalDishes_one": "{{count}} dish",
-    "totalDishes_other": "{{count}} dishes",
     "totalAcorns_one": "{{count}} acorn total",
     "totalAcorns_other": "{{count}} acorns total",
     "tabs": {

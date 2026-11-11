@@ -366,8 +366,6 @@
     "signOut": "Sair",
     "acorns_one": "{{count}} bolota",
     "acorns_other": "{{count}} bolotas",
-    "totalDishes_one": "{{count}} prato",
-    "totalDishes_other": "{{count}} pratos",
     "totalAcorns_one": "{{count}} bolota no total",
     "totalAcorns_other": "{{count}} bolotas no total",
     "tabs": {

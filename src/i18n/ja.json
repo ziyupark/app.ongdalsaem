@@ -362,7 +362,6 @@
     "settings": "設定",
     "signOut": "サインアウト",
     "acorns_other": "どんぐり {{count}}",
-    "totalDishes_other": "料理 {{count}}",
     "totalAcorns_other": "どんぐり 合計{{count}}",
     "tabs": {
       "dishes": "料理",

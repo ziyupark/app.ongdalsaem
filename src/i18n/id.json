@@ -362,7 +362,6 @@
     "settings": "Pengaturan",
     "signOut": "Keluar",
     "acorns_other": "{{count}} biji ek",
-    "totalDishes_other": "{{count}} masakan",
     "totalAcorns_other": "Total {{count}} biji ek",
     "tabs": {
       "dishes": "Masakan",
