@@ -12,7 +12,6 @@ import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { fetchMyTables, fetchTables, setTableJoined, type Table } from '../src/services/community';
 import { radius, space, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 1 : 1).replace(/\.0$/, '')}k` : String(n));
 
@@ -48,7 +47,6 @@ export default function Tables() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <TopBar title={t('tables.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={[styles.body, { paddingBottom: 120 }]} keyboardShouldPersistTaps="handled">
         <Text variant="Body/S" color="fg/secondary">{t('tables.intro')}</Text>

@@ -12,7 +12,6 @@ import { useHere } from '../src/lib/useHere';
 import { follow } from '../src/services/activity';
 import { fetchCooksInWeather, type CookCard } from '../src/services/community';
 import { space, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 /** 4.6 Cooks in your weather (352:8601) — closest weather first, then acorns. Follow / Following toggles in place. */
 export default function CooksInWeather() {
@@ -37,7 +36,6 @@ export default function CooksInWeather() {
   const place = here.place?.district ?? here.place?.city ?? '';
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <TopBar title={t('cooksWeather.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + space[24] }]}>
         <Text variant="Body/S" color="fg/secondary">

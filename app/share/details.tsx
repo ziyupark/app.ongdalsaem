@@ -24,7 +24,6 @@ import { hasLocationPermission, reverseGeocodeCity, type Coordinates } from '../
 import { fetchCurrentWeather } from '../../src/services/weather';
 import { elevation, radius, space, text, useTheme, WEATHER_ICON } from '../../src/theme';
 import * as Location from 'expo-location';
-import { Paper } from '../../src/components/Paper';
 
 const MAX_DESCRIPTION = 150;
 const MAX_NAME = 60;
@@ -139,7 +138,6 @@ export default function ShareDetails() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <FlowTopBar step={2} total={2} onClose={close} />
       <ScrollView keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 112 + insets.bottom }}>
         <View style={styles.titleBlock}>

@@ -15,7 +15,6 @@ import { openMapsSearch } from '../src/lib/maps';
 import { useHere } from '../src/lib/useHere';
 import { formatDistance, formatPrice, PlacesError, searchNearbyPlaces, type NearbyPlace } from '../src/services/places';
 import { radius, space, useTheme, WEATHER_ICON } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 /** 2.4 Eat this nearby (99:3302) — "{dish} nearby" · Open now / Walkable / budget · place cards (Google Places). */
 export default function EatNearby() {
@@ -59,7 +58,6 @@ export default function EatNearby() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + space[8], paddingBottom: insets.bottom + space[24] }}>
         <View style={[styles.px, styles.backRow]}>
           <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => router.back()} />

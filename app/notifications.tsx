@@ -13,7 +13,6 @@ import { TopBar } from '../src/components/TopBar';
 import { timeAgo } from '../src/lib/time';
 import { fetchActivity, follow, lastSeen, markSeen, type Activity } from '../src/services/activity';
 import { radius, space, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 type Filter = 'all' | 'activity' | 'forYou';
 
@@ -63,7 +62,6 @@ export default function Notifications() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
-      <Paper />
       <TopBar title={t('notifications.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       {items == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loading} />

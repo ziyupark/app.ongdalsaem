@@ -14,7 +14,6 @@ import { DISH_LINK, fetchMessages, fetchThread, markSeen, sendMessage, subscribe
 import { blockUser } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, text, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 const { lineHeight: _lh, ...field } = text['Body/M'];
 const MAX = 1000;
@@ -76,7 +75,6 @@ export default function ThreadScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <View>
         <TopBar title={thread?.other.name ?? ''} onBack={() => router.back()} backLabel={t('common.back')} />
         {thread ? (

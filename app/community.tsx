@@ -38,7 +38,6 @@ import {
 } from '../src/services/community';
 import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
 import { radius, space, useTheme, WEATHER_ICON, type WeatherMood } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 type Seg = 'global' | 'nearby' | 'following' | 'challenges';
 type Area = 'all' | 'near' | 'area' | 'weather';
@@ -94,7 +93,6 @@ export default function Community() {
           <WeatherFx mood={washMood} />
         </Animated.View>
       ) : null}
-      <Paper />
       <ScrollView
         contentContainerStyle={{ paddingTop: insets.top, paddingBottom: 110 + space[24] }}
         onScroll={onScroll}

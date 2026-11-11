@@ -14,7 +14,6 @@ import { FlowTopBar } from '../../src/components/share/FlowTopBar';
 import { Text } from '../../src/components/Text';
 import { resetShareDraft, updateShareDraft, useShareDraft, type DraftPhoto } from '../../src/lib/shareDraft';
 import { FIXED_BUTTON_BOTTOM, radius, space, useTheme, withAlpha } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 const MAX_PHOTOS = 10;
 const PAGE = 60;
@@ -183,7 +182,6 @@ export default function PickPhotos() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <FlowTopBar step={1} total={2} onClose={close} action={t('share.next')} onAction={next} actionDisabled={selected.length === 0 || busy} />
       {perm === 'denied' ? (
         <View>

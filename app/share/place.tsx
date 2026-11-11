@@ -14,7 +14,6 @@ import { requestDeviceLocation, reverseGeocodeCity, type Place } from '../../src
 import { searchCities, type CityHit } from '../../src/services/settings';
 import { fetchCurrentWeather } from '../../src/services/weather';
 import { radius, space, text, useTheme, WEATHER_ICON, type WeatherMood } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 type Option = { key: string; place: Place; lat: number; lon: number; mood?: WeatherMood; tempC?: number };
 const { lineHeight: _lh, ...fieldText } = text['Body/M'];
@@ -92,7 +91,6 @@ export default function EditPlace() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
-      <Paper />
       <TopBar title={t('place.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       <View style={styles.searchWrap}>
         <View style={[styles.search, { backgroundColor: color('bg/default'), borderColor: color('border/focus') }]}>

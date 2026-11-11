@@ -12,7 +12,6 @@ import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
 import { updateShareDraft, useShareDraft, type DraftIngredient, type DraftStep } from '../../src/lib/shareDraft';
 import { radius, space, text, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 const MAX_INGREDIENTS = 30;
 const MAX_STEPS = 20;
@@ -204,7 +203,6 @@ export default function RecipeEditor() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
-      <Paper />
       <TopBar title={t('share.recipe')} onBack={done} backLabel={t('common.back')} />
       <ScrollView scrollEnabled={!dragging} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content, { paddingBottom: 120 + insets.bottom }]}>
         <View style={styles.intro}>

@@ -12,7 +12,6 @@ import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { fetchChallenges, timeLeft, type Challenge } from '../src/services/community';
 import { radius, space, useTheme, type WeatherMood } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 const THUMB_MOOD: Record<Challenge['phase'], WeatherMood> = { running: 'rain', soon: 'clear', ended: 'rain' };
 
@@ -41,7 +40,6 @@ export default function Challenges() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <TopBar title={t('challenge.listTitle')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + space[24] }]}>
         {list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : groups.length ? groups.map((g) => (

@@ -17,7 +17,6 @@ import { fetchTable, fetchTableFaces, fetchTablePosts, postToTable, setTableJoin
 import { fetchProfileDishes, type DishSummary, type Person } from '../../src/services/foods';
 import { getMyProfile } from '../../src/services/profile';
 import { elevation, radius, space, useTheme, withAlpha } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 const HERO = 240;
 const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k` : String(n));
@@ -70,7 +69,6 @@ export default function TableScreen() {
   if (table === null) {
     return (
       <View style={[styles.root, { paddingTop: insets.top + space[8], backgroundColor: color('bg/default') }]}>
-        <Paper />
         <View style={styles.px}><GlassIconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => router.back()} /></View>
         <EmptyState icon={Users} title={t('tables.missing')} />
       </View>
@@ -80,7 +78,6 @@ export default function TableScreen() {
   const cover = table.coverUrl ?? posts?.[0]?.photo ?? null;
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <View style={[styles.hero, { height: HERO, backgroundColor: color('bg/inverse') }]}>
           {cover ? <Image source={{ uri: cover }} style={StyleSheet.absoluteFill} contentFit="cover" /> : null}

@@ -17,7 +17,6 @@ import {
 import { reportAnswer } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, text, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 const MAX = 500;
 const { lineHeight: _lh, ...field } = text['Body/M'];
@@ -91,7 +90,6 @@ export default function QuestionScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <View>
         <TopBar title={t('ask.questionTitle')} onBack={() => router.back()} backLabel={t('common.back')} />
         {q?.mine ? (

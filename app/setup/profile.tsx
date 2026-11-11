@@ -14,7 +14,6 @@ import { useKeyboardHeight } from '../../src/hooks/useKeyboardHeight';
 import { saveProfileSetup } from '../../src/services/profile';
 import { makeHandle, randomHandleDigits } from '../../src/services/username';
 import { space, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 const MAX_NAME = 30;
 
@@ -61,7 +60,6 @@ export default function ProfileSetup() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default'), paddingTop: insets.top }]}>
-      <Paper />
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <TopBar onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 56 + space[40] + bottom }}>

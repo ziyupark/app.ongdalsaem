@@ -13,7 +13,6 @@ import { Icon } from '../src/components/Icon';
 import { Text } from '../src/components/Text';
 import { markWelcomeLetterSeen } from '../src/lib/flags';
 import { gradients, radius, space, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 const ONGI = require('../assets/ongi/ongi_clear.png');
 const ACORN = require('../assets/icons/acorn.svg');
@@ -39,7 +38,6 @@ export default function WelcomeLetter() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       <StatusBar style="light" />
       <LinearGradient
         colors={band.map((s) => s.color) as unknown as readonly [string, string, ...string[]]}

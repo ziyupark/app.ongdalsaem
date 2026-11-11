@@ -15,7 +15,6 @@ import { refreshHere } from '../../src/lib/useHere';
 import { saveLocationChoice } from '../../src/services/profile';
 import { fetchCurrentWeather, type CurrentWeather } from '../../src/services/weather';
 import { radius, space, useTheme, type WeatherMood } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 /** Default city when location is not known yet (docs/05-behavior.md 2.5 = Seoul). */
 const DEFAULT_CITY = 'Seoul';
@@ -84,7 +83,6 @@ export default function LocationStep() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default'), paddingTop: insets.top }]}>
-      <Paper />
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <TopBar onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={{ paddingBottom: 56 * 2 + space[8] + bottom + space[16] }}>

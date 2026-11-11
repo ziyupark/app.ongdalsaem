@@ -10,7 +10,6 @@ import { hasSeenWelcomeLetter } from '../src/lib/flags';
 import { supabase } from '../src/lib/supabase';
 import { getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { gradients, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 const SPLASH_MS = 1200;
 
@@ -46,7 +45,6 @@ export default function Splash() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <View pointerEvents="none" style={styles.glow}>
         {/* Soft edge of the Figma layer blur = the same stops fading to 0. */}

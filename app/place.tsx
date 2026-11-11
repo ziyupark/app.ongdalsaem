@@ -16,7 +16,6 @@ const Maps = loadMaps();
 import { useHere } from '../src/lib/useHere';
 import { formatDistance } from '../src/services/places';
 import { elevation, radius, space, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 type Params = { name: string; address?: string; kind?: string; lat: string; lon: string; mapsUri?: string; dish?: string; photo?: string };
 
@@ -75,7 +74,6 @@ export default function PlaceScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       {Maps ? (
       <Maps.default
         ref={map}

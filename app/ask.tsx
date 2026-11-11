@@ -14,7 +14,6 @@ import { TopBar } from '../src/components/TopBar';
 import { useHere } from '../src/lib/useHere';
 import { askQuestion, QUESTION_CATEGORIES, type QuestionCategory } from '../src/services/community';
 import { radius, space, text, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 const MIN = 5;
 const MAX = 200;
@@ -58,7 +57,6 @@ export default function Ask() {
   if (here.status === 'off') {
     return (
       <View style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + space[12], backgroundColor: color('bg/default') }]}>
-        <Paper />
         <TopBar title={t('ask.title')} onBack={() => router.back()} backLabel={t('common.back')} />
         {/* 3.7b — orb 72 bg/subtle, map-pin 30, Title/L, Body/S, from 96 below the bar. */}
         <View style={styles.off}>
@@ -75,7 +73,6 @@ export default function Ask() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <TopBar title={t('ask.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
         <View style={[styles.area, { backgroundColor: color('bg/subtle') }]}>

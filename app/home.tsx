@@ -33,7 +33,6 @@ import { saveLocationChoice } from '../src/services/profile';
 import { tempAt, type Forecast } from '../src/services/weather';
 import { space, useTheme, type WeatherMood } from '../src/theme';
 import { bwOn, useWashInk } from '../src/theme/washInk';
-import { Paper } from '../src/components/Paper';
 
 type HomeState =
   | { kind: 'loading' }
@@ -230,7 +229,6 @@ export default function HomeScreen() {
           <WeatherFx mood={washMood} />
         </Animated.View>
       ) : null}
-      <Paper />
 
       <ScrollView
         onScroll={onScroll}

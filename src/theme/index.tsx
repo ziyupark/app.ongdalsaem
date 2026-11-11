@@ -32,6 +32,3 @@ export function useTheme() {
   if (!t) throw new Error('useTheme must be used inside <ThemeProvider>');
   return t;
 }
-
-/** Background/Paper — opacity of the paper-grain tile (src/components/Paper.tsx). Light 5 %, dark 4 %. */
-export const paper = { light: 0.05, dark: 0.04 } as const;

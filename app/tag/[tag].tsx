@@ -13,7 +13,6 @@ import { TopBar } from '../../src/components/TopBar';
 import { useHere } from '../../src/lib/useHere';
 import { countries, fetchByTag, type CardDish } from '../../src/services/community';
 import { gradients, radius, space, useTheme, type WeatherMood } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 type Sort = 'popular' | 'latest' | 'near';
 
@@ -51,7 +50,6 @@ export default function TagScreen() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <TopBar title={`#${label}`} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={{ paddingTop: space[12], gap: space[16], paddingBottom: insets.bottom + space[24] }}>
         <View style={styles.px}>

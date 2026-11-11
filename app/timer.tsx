@@ -14,7 +14,6 @@ import {
   addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, secondsLeft, startTimer, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
 import { elevation, radius, space, useTheme } from '../src/theme';
-import { Paper } from '../src/components/Paper';
 
 const PRESETS = [
   { key: 'softEgg', sec: 390 },
@@ -69,7 +68,6 @@ export default function KitchenTimerScreen() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
-      <Paper />
       <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <View style={styles.top}>
           <Text variant="Display/L">

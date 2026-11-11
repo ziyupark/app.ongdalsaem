@@ -15,7 +15,6 @@ import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
 import { fetchChallenge, fetchChallengeEntries, fetchChallengeFaces, setChallengeJoined, timeLeft, type Challenge } from '../../src/services/community';
 import type { DishSummary, Person } from '../../src/services/foods';
 import { radius, space, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 /** 4.10 Challenge (470:10224) · 4.10b Joined (470:11467) · 4.10c Ended (502:12476). */
 export default function ChallengeScreen() {
@@ -43,7 +42,6 @@ export default function ChallengeScreen() {
   if (c === null) {
     return (
       <View style={[styles.root, { paddingTop: insets.top + space[8], backgroundColor: color('bg/default') }]}>
-        <Paper />
         <View style={styles.px}><GlassIconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => router.back()} /></View>
         <EmptyState icon={Trophy} title={t('challenge.missing')} />
       </View>
@@ -73,7 +71,6 @@ export default function ChallengeScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       <ScrollView contentContainerStyle={{ paddingBottom: c.phase === 'ended' ? insets.bottom + space[24] : 120 }}>
         {/* Hero 390×278 — Weather Mood wash, padding 56 20 24, gap 12: badges · Display/M · Body/M · stats. */}
         <View style={[styles.hero, { paddingTop: insets.top + 2 }]}>

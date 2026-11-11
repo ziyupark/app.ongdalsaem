@@ -10,7 +10,6 @@ import { TopBar } from '../../src/components/TopBar';
 import { timeAgo } from '../../src/lib/time';
 import { DISH_LINK, fetchInbox, type Thread } from '../../src/services/messages';
 import { radius, space, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 /** Messages inbox — conversations, then requests (people you don't follow yet). */
 export default function Inbox() {
@@ -58,7 +57,6 @@ export default function Inbox() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <TopBar title={t('messages.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView
         contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + space[24] }]}

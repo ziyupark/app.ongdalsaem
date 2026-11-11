@@ -24,7 +24,6 @@ import {
 } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 type State = { kind: 'loading' } | { kind: 'missing' } | { kind: 'ready'; dish: Dish };
 
@@ -178,7 +177,6 @@ export default function PostDetail() {
   if (state.kind !== 'ready' || !view || !dish) {
     return (
       <View style={[styles.root, { backgroundColor: color('bg/default'), paddingTop: insets.top }]}>
-        <Paper />
         <StatusBar style="auto" />
         <View style={styles.backRow}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[8]} onPress={() => router.back()}>
@@ -254,7 +252,6 @@ export default function PostDetail() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       <StatusBar style="auto" />
       <PostView
         dish={view}

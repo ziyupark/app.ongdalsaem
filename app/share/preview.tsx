@@ -14,7 +14,6 @@ import { enterChallenge } from '../../src/services/community';
 import { createDish, UploadError } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { space, useTheme } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 /** 8.3 Preview (Figma 618:15418) — the post exactly as others will see it, then "Share to ongdalsaem". */
 export default function SharePreview() {
@@ -75,7 +74,6 @@ export default function SharePreview() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <Paper />
       <StatusBar style="dark" />
       <PostView
         dish={view}

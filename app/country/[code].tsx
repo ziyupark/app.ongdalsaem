@@ -14,7 +14,6 @@ import { displayTemp } from '../../src/lib/prefs';
 import { fetchByCountry, topTags, type CardDish } from '../../src/services/community';
 import { fetchCurrentWeather, type CurrentWeather } from '../../src/services/weather';
 import { gradients, radius, space, useTheme, WEATHER_ICON } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 type Sort = 'popular' | 'latest' | 'weather';
 
@@ -66,7 +65,6 @@ export default function CountryScreen() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <Paper />
       <TopBar title={name} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={{ paddingTop: space[12], gap: space[16], paddingBottom: insets.bottom + space[24] }}>
         <View style={styles.px}>

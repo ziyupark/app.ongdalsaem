@@ -14,7 +14,6 @@ import { getMyProfile, saveLocationChoice } from '../../src/services/profile';
 import { searchCities, type CityHit } from '../../src/services/settings';
 import { fetchCurrentWeather } from '../../src/services/weather';
 import { radius, space, text, useTheme, WEATHER_ICON, type WeatherMood } from '../../src/theme';
-import { Paper } from '../../src/components/Paper';
 
 type Hit = CityHit & { tempC?: number; mood?: WeatherMood };
 const { lineHeight: _lh, ...fieldText } = text['Body/M'];
@@ -75,7 +74,6 @@ export default function ChooseCity() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
-      <Paper />
       <TopBar title={t('settings.chooseCity')} onBack={() => router.back()} backLabel={t('common.back')} />
       <View style={styles.searchWrap}>
         <View style={[styles.search, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>

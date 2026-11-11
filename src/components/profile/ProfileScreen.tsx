@@ -34,7 +34,6 @@ import { supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
 import { startThread } from '../../services/messages';
 import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
-import { Paper } from '../Paper';
 
 /** Grid 670:20275 — x20 · 2 columns · gap 16 · rows 20 apart. */
 const GAP = 16;
@@ -304,7 +303,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           <WeatherFx mood={washMood} />
         </Animated.View>
       ) : null}
-      <Paper />
       <FlatList
         data={tab === 'dishes' ? data ?? [] : []}
         keyExtractor={(d) => d.id}
