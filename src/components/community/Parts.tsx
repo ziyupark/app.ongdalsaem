@@ -203,13 +203,18 @@ export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress }: { dis
 }
 
 /** Photo card with Card scrim (Country Card 280×180 r32 / Story Card 350×400). */
-export function PhotoCard({ photo, width, height, children, onPress, label, style }: { photo: string; width: number; height: number; children: ReactNode; onPress: () => void; label: string; style?: StyleProp<ViewStyle> }) {
+/** `scrim`: 'story' = top + bottom shade (Story Card); 'bottom' = 120 pt fade to ink at the bottom only (Country Card). */
+export function PhotoCard({ photo, width, height, children, onPress, label, style, scrim = 'story' }: { photo: string; width: number; height: number; children: ReactNode; onPress: () => void; label: string; style?: StyleProp<ViewStyle>; scrim?: 'story' | 'bottom' }) {
   const { color } = useTheme();
   const ink = color('static/ink');
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={[styles.photoCard, { width, height, backgroundColor: color('bg/muted') }, style]}>
       <Image source={{ uri: photo }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
-      <LinearGradient colors={[withAlpha(ink, 0.45), withAlpha(ink, 0), withAlpha(ink, 0), withAlpha(ink, 0.82)]} locations={[0, 0.3, 0.5, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
+      {scrim === 'bottom' ? (
+        <LinearGradient colors={[withAlpha(ink, 0), withAlpha(ink, 0.7)]} style={styles.bottomScrim} pointerEvents="none" />
+      ) : (
+        <LinearGradient colors={[withAlpha(ink, 0.45), withAlpha(ink, 0), withAlpha(ink, 0), withAlpha(ink, 0.82)]} locations={[0, 0.3, 0.5, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
+      )}
       {children}
     </Pressable>
   );
@@ -382,6 +387,7 @@ const styles = StyleSheet.create({
   rowThumb: { width: 80, height: 80, borderRadius: radius.lg },
   rowMeta: { gap: 3 },
   photoCard: { borderRadius: radius['2xl'], overflow: 'hidden' },
+  bottomScrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 120 },
   faces: { flexDirection: 'row', alignItems: 'center' },
   qCard: { borderRadius: radius.lg, borderWidth: 1, padding: space[16], gap: space[12] },
   qTop: { flexDirection: 'row', alignItems: 'center', gap: space[10] },

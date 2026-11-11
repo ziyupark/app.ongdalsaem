@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Bell, Clock, Send, CloudRain, Cookie, Moon, Plus, Search, Star, Sun, Users, Utensils, X, type LucideIcon } from 'lucide-react-native';
+import { Bell, ChevronRight, Clock, Send, CloudRain, Cookie, Moon, Plus, Search, Star, Sun, Users, Utensils, X, type LucideIcon } from 'lucide-react-native';
 import { MessageCircle } from '../src/components/icons/custom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -401,13 +401,17 @@ function Global() {
     <View>
       {/* Group 88:3081 — p32 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
-        <View style={[styles.sectionL, styles.px]}>
+        <View style={[styles.sectionS, styles.px]}>
           <SectionHeader title={t('community.story')} />
           <PhotoCard photo={story.photo} width={0} height={400} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
-            <Text variant="Title/L" color="fg/on-photo" numberOfLines={1}>{t('community.storyTitle', { dish: story.name, name: story.creator.name })}</Text>
+            {/* Top: title (Title/L, 1 line) · chevron-right 20, gap 8. */}
+            <View style={styles.storyTop}>
+              <Text variant="Title/L" color="fg/on-photo" numberOfLines={1} style={styles.flex}>{t('community.storyTitle', { dish: story.name, name: story.creator.name })}</Text>
+              <Icon icon={ChevronRight} size={20} color="fg/on-photo" />
+            </View>
             <View style={styles.storyFoot}>
               <View style={styles.storyBody}>
-                <View style={[styles.flex, { gap: space[8] }]}>
+                <View style={[styles.flex, styles.storyText]}>
                   <Text variant="Statement" color="fg/on-photo" numberOfLines={3}>{story.description}</Text>
                   <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{[story.creator.name, story.city, timeAgo(story.createdAt, t)].filter(Boolean).join(' · ')}</Text>
                 </View>
@@ -422,20 +426,19 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Trending Bites 88:3078 — Country Cards 280×180, gap 12. */}
+      {/* Trending Bites 88:3078 — p32 · gap 6: header → Country Cards 280×180, gap 12. */}
       {countries.length ? (
-        <View style={styles.sectionL}>
+        <View style={styles.sectionS}>
           <SectionHeader title={t('community.trendingBites')} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
             {countries.map((d) => (
-              <PhotoCard key={d.id} photo={d.photo} width={280} height={180} label={d.name} onPress={() => router.push(`/country/${d.country}`)} style={styles.countryCard}>
-                <View style={styles.countryTop}>{d.country ? <FlagTag code={d.country} /> : null}</View>
-                <View style={styles.countryBottom}>
-                  <Text variant="Display/M" color="fg/on-photo" numberOfLines={1}>{d.name}</Text>
-                  <View style={styles.tagRow}>
-                    {d.mood && d.tempC != null ? <WeatherTag mood={d.mood} tempC={d.tempC} condition={t(`weather.${d.mood}`)} /> : <View />}
-                    <AcornTag count={d.acorns} />
-                  </View>
+              <PhotoCard key={d.id} photo={d.photo} width={280} height={180} label={d.name} onPress={() => router.push(`/country/${d.country}`)} style={styles.countryCard} scrim="bottom">
+                {/* Country Card: p14 18, content at the bottom (gap 10): Display/M name → tags; Flag Tag pinned at 18, 12. */}
+                {d.country ? <View style={styles.countryFlag}><FlagTag code={d.country} /></View> : null}
+                <Text variant="Display/M" color="fg/on-photo" numberOfLines={1}>{d.name}</Text>
+                <View style={styles.tagRow}>
+                  {d.mood && d.tempC != null ? <WeatherTag mood={d.mood} tempC={d.tempC} condition={t(`weather.${d.mood}`)} /> : <View />}
+                  <AcornTag count={d.acorns} />
                 </View>
               </PhotoCard>
             ))}
@@ -443,17 +446,17 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — eyebrow · title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
-      <View style={styles.sectionL}>
+      {/* Group · Festive 398:9710 — p32 · gap 6: eyebrow · title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
+      <View style={styles.sectionS}>
         <SectionHeader eyebrow={t('community.festiveEyebrow')} title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
           {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
         </ScrollView>
       </View>
 
-      {/* Trending tags 435:366 — chips → 2 Food Cards. */}
+      {/* Trending tags 435:366 — p32 · gap 9: header → chips → 2 Food Cards (rows inset p4, gap 12). */}
       {tags.length ? (
-        <View style={styles.sectionL}>
+        <View style={styles.sectionM}>
           <SectionHeader title={t('community.trendingTags')} action={tag ? t('dish.seeAll') : undefined} onAction={() => tag && router.push(`/tag/${tag}`)} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
             {tags.map((k) => <Chip key={k} label={tagLabel(k)} icon={MOOD_TAGS.find((m) => m.key === k)?.icon ?? CUSTOM_MOOD_ICON} selected={tag === k} onPress={() => setTag(k)} />)}
@@ -462,8 +465,8 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Explore Together 676:20621 — All · landscape chips → Food Cards of that landscape. */}
-      <View style={styles.sectionL}>
+      {/* Explore Together 676:20621 — p32 · gap 9: All · landscape chips → Food Cards of that landscape. */}
+      <View style={styles.sectionM}>
         <SectionHeader title={t('community.exploreTogether')} action={!showAll && (explore?.length ?? 0) > 4 ? t('dish.seeAll') : undefined} onAction={() => setShowAll(true)} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
           <Chip label={t('community.all')} selected={!scape} onPress={() => setScape(null)} />
@@ -642,16 +645,19 @@ const styles = StyleSheet.create({
   loading: { marginTop: space[40] },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], justifyContent: 'center', marginTop: space[8] },
   section: { paddingTop: space[24], gap: space[12] },
-  sectionL: { paddingTop: space[32], gap: space[12] },
+  // 4.1 groups: p32 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags · Explore).
+  sectionS: { paddingTop: space[32], gap: space[6] },
+  sectionM: { paddingTop: space[32], gap: space[8] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
-  countryCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'space-between' },
-  countryTop: { flexDirection: 'row' },
-  countryBottom: { gap: space[10] },
+  countryCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'flex-end', gap: space[10] },
+  countryFlag: { position: 'absolute', left: 18, top: space[12] },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
   story: { width: '100%', padding: space[24], justifyContent: 'space-between' },
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
+  storyTop: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  storyText: { gap: space[8] },
   challenge: { width: 220, height: 252, borderRadius: radius.xl, overflow: 'hidden', padding: space[16] },
   challengeTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   timeLeft: { flexDirection: 'row', alignItems: 'center', gap: space[6], paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
