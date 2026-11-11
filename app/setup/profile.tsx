@@ -46,7 +46,7 @@ export default function ProfileSetup() {
     setFailed(false);
     try {
       await saveProfileSetup({ displayName: trimmed, digits, avatarUri: photo });
-      router.push('/setup/location');
+      router.push('/setup/taste');
     } catch (e) {
       console.warn('[profile-setup]', e);
       setFailed(true);

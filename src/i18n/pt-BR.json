@@ -13,7 +13,20 @@
     "letter": "Criamos o ongdalsaem para lembrar as refeições que dividimos com as pessoas que nos fizeram felizes.\n\nUma mesa quentinha em casa, um prato de frente para um amigo, até o seu primeiro prato meio desajeitado — cada um guarda um pouquinho de tempo.\n\nCompartilhe aqui a sua refeição mais feliz.",
     "signature": "— da cozinha do ongdalsaem",
     "cta": "Compartilhar minha primeira refeição",
-    "note": "Você verá esta carta só uma vez · Leia de novo em Ajustes\n› Ajuda e políticas"
+    "note": "Você verá esta carta só uma vez · Leia de novo em Ajustes\n› Ajuda e políticas",
+    "introTitle": "Sua refeição do dia,\ncom o clima.",
+    "introBody": "Veja o que as pessoas cozinham num clima como o seu e decida o que comer hoje.",
+    "features": {
+      "weather": "Sugestão do clima de hoje",
+      "weatherBody": "Um prato para o céu de agora.",
+      "nearby": "Lugares por perto",
+      "nearbyBody": "Onde comer perto de você.",
+      "timer": "Timer de cozinha",
+      "timerBody": "Vários timers ao mesmo tempo.",
+      "holidays": "Festas do mundo",
+      "holidaysBody": "Pratos festivos do mundo todo."
+    },
+    "start": "Começar"
   },
   "signIn": {
     "title": "Como está o tempo\nna sua mesa?",
@@ -28,7 +41,7 @@
     "error": "O login está tirando um cochilo — toque para tentar de novo."
   },
   "profileSetup": {
-    "step": "Etapa 1 de 2",
+    "step": "Etapa 1 de 4",
     "title": "Como devemos\nchamar você?",
     "label": "Nome de exibição",
     "helper": "Aparece nos pratos que você compartilha.",
@@ -40,12 +53,30 @@
     "error": "Não salvou — toque em Continuar para tentar de novo."
   },
   "location": {
-    "step": "Etapa 2 de 2",
+    "step": "Etapa 3 de 4",
     "title": "Deixe o clima\najudar você a escolher.",
     "body": "Usamos a previsão da sua cidade para sugerir o que outras pessoas cozinharam no mesmo clima. Só a sua cidade é compartilhada — nunca a sua localização exata.",
     "chooseCity": "Escolher uma cidade",
     "useLocation": "Usar minha localização",
-    "now": "· {{temp}}° {{condition}}"
+    "now": "· {{temp}}° {{condition}}",
+    "whyTitle": "Por que precisamos disso?",
+    "whyBody": "Para o clima do seu bairro e lugares por perto. Nunca salvamos suas coordenadas exatas — usamos só a sua região."
+  },
+  "taste": {
+    "step": "Etapa 2 de 4",
+    "title": "Que tipo de refeição\nvocê ama?",
+    "body": "Escolha quantas quiser. Vamos levar seu gosto em conta.",
+    "skip": "Pular",
+    "continue": "Continuar",
+    "error": "Não salvou — toque em Continuar para tentar de novo."
+  },
+  "notify": {
+    "step": "Etapa 4 de 4",
+    "title": "Que horas enviamos\nsua sugestão diária?",
+    "body": "Um prato para o clima de hoje, todo dia neste horário. Você pode mudar em Ajustes.",
+    "skip": "Pular",
+    "continue": "Ativar notificações",
+    "wheel": "Horário da notificação"
   },
   "weather": {
     "clear": "Céu limpo",

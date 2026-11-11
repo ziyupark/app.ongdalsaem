@@ -117,6 +117,30 @@ export function pickForSlot(pool: PoolDish[], meal: Meal, ctx: Ctx, exclude: Set
   return null;
 }
 
+/** Taste bonus per favorite tag a dish carries (capped) — onboarding taste step, profiles.favorite_tags. */
+const TASTE_BONUS = 0.25;
+const TASTE_MAX = 2;
+const tasteOverlap = (d: PoolDish, fav: ReadonlySet<string>) =>
+  Math.min(TASTE_MAX, [...d.moods, ...d.meals].filter((k) => fav.has(k)).length);
+
+/**
+ * Today's pick ranking with taste. Weather stays first: a dish that matches the exact weather always beats one
+ * that doesn't; only among dishes on the same footing does the taste bonus apply on top of the usual weight.
+ */
+function bestByTaste(list: PoolDish[], weight: (d: PoolDish) => number, mood: WeatherMood | null, favorites?: readonly string[]) {
+  if (!favorites?.length) return best(list, weight);
+  const fav = new Set(favorites);
+  let top: PoolDish | null = null;
+  let topTier = -1;
+  let topScore = -1;
+  for (const d of list) {
+    const tier = mood && d.mood === mood ? 1 : 0;
+    const s = weight(d) * (1 + TASTE_BONUS * tasteOverlap(d, fav));
+    if (tier > topTier || (tier === topTier && s > topScore)) { top = d; topTier = tier; topScore = s; }
+  }
+  return top;
+}
+
 /** Today's pick prefers dishes posted within this many degrees of the current temperature. */
 export const PICK_TEMP_RANGE = 1;
 
@@ -128,26 +152,31 @@ export const PICK_TEMP_RANGE = 1;
  * Inside the candidates: same exact weather × current meal × place/acorns/freshness.
  * Location off (2.5) → the chosen city's best. No weather (2.6) → every dish is a candidate.
  * `excludeCreator` = my user id: my own dishes are never my pick.
+ * `favoriteTags` (profiles.favorite_tags) = taste bonus, only between dishes with the same exact-weather match.
  */
-export function pickToday(all: PoolDish[], ctx: Ctx & { meal?: Meal; excludeCreator?: string | null }): PoolDish | null {
+export function pickToday(
+  all: PoolDish[],
+  ctx: Ctx & { meal?: Meal; excludeCreator?: string | null; favoriteTags?: readonly string[] },
+): PoolDish | null {
   const { mood, tempC } = ctx;
   const pool = ctx.excludeCreator ? all.filter((d) => d.creator.id !== ctx.excludeCreator) : all;
   const weight = (d: PoolDish) =>
     score(d, ctx.place) *
     (mood && d.mood === mood ? 1.6 : 1) *
     (ctx.meal && fitsMeal(d, ctx.meal) && d.meals.length ? 1.3 : 1);
-  if (!mood) return best(pool, weight);
+  const rank = (list: PoolDish[]) => bestByTaste(list, weight, mood ?? null, ctx.favoriteTags);
+  if (!mood) return rank(pool);
 
   const family = pool.filter((d) => sameGroup(d.mood, mood));
-  if (tempC == null) return best(family.length ? family : pool, weight);
+  if (tempC == null) return rank(family.length ? family : pool);
 
   const gap = (d: PoolDish) => (d.tempC == null ? Infinity : Math.abs(d.tempC - tempC));
   const inRange = family.filter((d) => gap(d) <= PICK_TEMP_RANGE);
-  if (inRange.length) return best(inRange, weight);
+  if (inRange.length) return rank(inRange);
   /** Dishes at the smallest temperature gap in a list (all of them when none has a temperature). */
   const closest = (list: PoolDish[]) => {
     const min = Math.min(...list.map(gap));
     return min === Infinity ? list : list.filter((d) => gap(d) === min);
   };
-  return best(closest(family.length ? family : pool), weight);
+  return rank(closest(family.length ? family : pool));
 }

@@ -13,7 +13,20 @@
     "letter": "Kami membuat ongdalsaem untuk mengenang makanan yang kita santap bersama orang-orang yang membuat kita bahagia.\n\nMeja hangat di rumah, semangkuk makanan di depan sahabat, bahkan masakan pertamamu yang masih kikuk — masing-masing menyimpan sepotong waktu.\n\nBagikan makanan paling membahagiakanmu di sini.",
     "signature": "— dari dapur ongdalsaem",
     "cta": "Bagikan makanan pertamaku",
-    "note": "Surat ini hanya muncul sekali · Baca lagi di Pengaturan\n› Bantuan & kebijakan"
+    "note": "Surat ini hanya muncul sekali · Baca lagi di Pengaturan\n› Bantuan & kebijakan",
+    "introTitle": "Makan harianmu,\nsesuai cuaca.",
+    "introBody": "Lihat masakan orang di cuaca seperti cuacamu, lalu tentukan mau makan apa hari ini.",
+    "features": {
+      "weather": "Rekomendasi cuaca hari ini",
+      "weatherBody": "Hidangan yang pas dengan langit saat ini.",
+      "nearby": "Tempat terdekat",
+      "nearbyBody": "Tempat makan di dekatmu.",
+      "timer": "Timer dapur",
+      "timerBody": "Beberapa timer sekaligus saat memasak.",
+      "holidays": "Hari raya dunia",
+      "holidaysBody": "Hidangan perayaan dari seluruh dunia."
+    },
+    "start": "Mulai"
   },
   "signIn": {
     "title": "Bagaimana cuaca\ndi mejamu?",
@@ -28,7 +41,7 @@
     "error": "Proses masuk sedang tidur siang — ketuk untuk mencoba lagi."
   },
   "profileSetup": {
-    "step": "Langkah 1 dari 2",
+    "step": "Langkah 1 dari 4",
     "title": "Kami harus\nmemanggilmu apa?",
     "label": "Nama tampilan",
     "helper": "Ditampilkan di masakan yang kamu bagikan.",
@@ -40,12 +53,30 @@
     "error": "Gagal menyimpan — ketuk Lanjutkan untuk mencoba lagi."
   },
   "location": {
-    "step": "Langkah 2 dari 2",
+    "step": "Langkah 3 dari 4",
     "title": "Biar cuaca\nmembantumu memilih.",
     "body": "Kami memakai prakiraan cuaca kotamu untuk menyarankan apa yang dimasak orang lain di cuaca yang sama. Hanya kotamu yang dibagikan — tidak pernah lokasi persisnya.",
     "chooseCity": "Pilih kota saja",
     "useLocation": "Gunakan lokasiku",
-    "now": "· {{temp}}° {{condition}}"
+    "now": "· {{temp}}° {{condition}}",
+    "whyTitle": "Mengapa ini diperlukan?",
+    "whyBody": "Untuk cuaca di lingkunganmu dan tempat makan terdekat. Kami tidak pernah menyimpan koordinat persismu — hanya areamu yang dipakai."
+  },
+  "taste": {
+    "step": "Langkah 2 dari 4",
+    "title": "Makanan seperti apa\nyang kamu suka?",
+    "body": "Pilih sebanyak yang kamu mau. Rekomendasi akan menyesuaikan.",
+    "skip": "Lewati",
+    "continue": "Lanjutkan",
+    "error": "Gagal menyimpan — ketuk Lanjutkan untuk mencoba lagi."
+  },
+  "notify": {
+    "step": "Langkah 4 dari 4",
+    "title": "Jam berapa kami kirim\nrekomendasi harianmu?",
+    "body": "Satu hidangan untuk cuaca hari ini, setiap hari di jam ini. Bisa diubah di Pengaturan.",
+    "skip": "Lewati",
+    "continue": "Aktifkan notifikasi",
+    "wheel": "Waktu notifikasi"
   },
   "weather": {
     "clear": "Cerah",

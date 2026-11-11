@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { MapPin, Navigation } from 'lucide-react-native';
+import { MapPin, Navigation, ShieldCheck } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -51,7 +51,8 @@ export default function LocationStep() {
     return () => { alive = false; };
   }, []);
 
-  const goHome = () => router.replace('/home');
+  /** Next onboarding step (4/4 daily pick time); `location-off` is passed on to Home. */
+  const goNext = (locationOff = false) => router.push({ pathname: '/setup/notify', params: locationOff ? { state: 'location-off' } : {} });
 
   const useMyLocation = async () => {
     setBusy(true);
@@ -61,13 +62,13 @@ export default function LocationStep() {
         // Permission denied / location off → 2.5 Location off.
         await saveLocationChoice({ locationEnabled: false }).catch(() => undefined);
         refreshHere();
-        router.replace({ pathname: '/home', params: { state: 'location-off' } });
+        goNext(true);
         return;
       }
       const place = await reverseGeocodeCity(coords);
       await saveLocationChoice({ city: place?.city, country: place?.country, locationEnabled: true }).catch((e) => console.warn('[location]', e));
       refreshHere();
-      goHome();
+      goNext();
     } finally {
       setBusy(false);
     }
@@ -76,7 +77,7 @@ export default function LocationStep() {
   const chooseCity = async () => {
     await saveLocationChoice({ locationEnabled: false }).catch(() => undefined);
     refreshHere();
-    router.replace({ pathname: '/home', params: { state: 'location-off' } });
+    goNext(true);
   };
 
   const bottom = Math.max(insets.bottom, space[24]) + space[10];
@@ -111,6 +112,14 @@ export default function LocationStep() {
             <View style={styles.cityPlaceholder} />
           )}
         </View>
+        {/* Why we ask — right above the permission buttons. */}
+        <View style={[styles.why, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+          <View style={styles.whyHead}>
+            <Icon icon={ShieldCheck} size={20} color="fg/accent" />
+            <Text variant="Body/M Strong">{t('location.whyTitle')}</Text>
+          </View>
+          <Text variant="Body/S" color="fg/secondary">{t('location.whyBody')}</Text>
+        </View>
       </ScrollView>
 
       {/* Block · Button (fixed): Ghost L (680–736) + Primary L (744–800), gap 8. */}
@@ -130,5 +139,7 @@ const styles = StyleSheet.create({
   cityBlock: { paddingTop: space[24], alignItems: 'center' },
   city: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.full, borderWidth: 1 },
   cityPlaceholder: { height: 46 },
+  why: { marginTop: space[24], marginHorizontal: space[20], padding: space[16], gap: space[8], borderRadius: radius.lg, borderWidth: 1 },
+  whyHead: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   fixed: { position: 'absolute', left: space[20], right: space[20], gap: space[8] },
 });

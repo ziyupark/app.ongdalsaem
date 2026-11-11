@@ -13,7 +13,20 @@
     "letter": "We made ongdalsaem to remember the meals we shared with the people who made us happy.\n\nA warm table at home, a bowl across from a friend, even your first clumsy dish — each one holds a little time.\n\nShare your happiest meal here.",
     "signature": "— from the ongdalsaem kitchen",
     "cta": "Share my first meal",
-    "note": "You’ll see this letter once · Read it again in Settings\n› Help & policies"
+    "note": "You’ll see this letter once · Read it again in Settings\n› Help & policies",
+    "introTitle": "Your daily meal,\nwith the weather.",
+    "introBody": "See what people cook in weather like yours, and find what to eat today.",
+    "features": {
+      "weather": "Today’s weather pick",
+      "weatherBody": "A dish that fits the sky right now.",
+      "nearby": "Places nearby",
+      "nearbyBody": "Where to eat it close to you.",
+      "timer": "Kitchen timer",
+      "timerBody": "Several timers at once while you cook.",
+      "holidays": "World holidays",
+      "holidaysBody": "Festive dishes from around the world."
+    },
+    "start": "Get started"
   },
   "signIn": {
     "title": "What’s the weather\non your table?",
@@ -28,7 +41,7 @@
     "error": "Sign-in is napping — tap to try again."
   },
   "profileSetup": {
-    "step": "Step 1 of 2",
+    "step": "Step 1 of 4",
     "title": "How should we\ncall you?",
     "label": "Display name",
     "helper": "Shown on dishes you share.",
@@ -40,12 +53,30 @@
     "error": "Didn’t save — tap Continue to retry."
   },
   "location": {
-    "step": "Step 2 of 2",
+    "step": "Step 3 of 4",
     "title": "Let the weather\nhelp you choose.",
     "body": "We use your city’s forecast to suggest what others cooked in the same weather. Only your city is shared — never your exact location.",
     "chooseCity": "Choose a city instead",
     "useLocation": "Use my location",
-    "now": "· {{temp}}° {{condition}}"
+    "now": "· {{temp}}° {{condition}}",
+    "whyTitle": "Why do we need this?",
+    "whyBody": "For your neighborhood’s weather and places close by. We never save your exact coordinates — only your area is used."
+  },
+  "taste": {
+    "step": "Step 2 of 4",
+    "title": "What kind of meal\ndo you love?",
+    "body": "Pick as many as you like. We’ll lean your picks this way.",
+    "skip": "Skip",
+    "continue": "Continue",
+    "error": "Didn’t save — tap Continue to retry."
+  },
+  "notify": {
+    "step": "Step 4 of 4",
+    "title": "When should we send\nyour daily pick?",
+    "body": "One dish for today’s weather, every day at this time. You can change it in Settings.",
+    "skip": "Skip",
+    "continue": "Turn on notifications",
+    "wheel": "Notification time"
   },
   "weather": {
     "clear": "Clear",

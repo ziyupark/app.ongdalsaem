@@ -74,6 +74,21 @@ export async function saveLocationChoice(input: { city?: string; country?: strin
   if (error) throw error;
 }
 
+/** Onboarding taste step: preset tag keys (lib/tags) the user likes — Today's pick leans toward them. */
+export async function saveFavoriteTags(tags: string[]) {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error('Not signed in');
+  const { error } = await supabase.from('profiles').update({ favorite_tags: tags }).eq('id', auth.user.id);
+  if (error) throw error;
+}
+
+export async function fetchMyFavoriteTags(): Promise<string[]> {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
+  const { data } = await supabase.from('profiles').select('favorite_tags').eq('id', auth.user.id).maybeSingle();
+  return (data?.favorite_tags as string[] | null) ?? [];
+}
+
 export const MAX_BIO = 80;
 
 /** 6.1 tap avatar — upload a new photo and save it on the profile. Returns the public URL. */

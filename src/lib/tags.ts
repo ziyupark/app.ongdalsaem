@@ -41,6 +41,12 @@ export const LANDSCAPES = [
 ] as const satisfies readonly { key: string; icon: LucideIcon }[];
 export type Landscape = (typeof LANDSCAPES)[number]['key'];
 
+/** Onboarding taste step — preset tags people can like (same keys as dishes' mood_tags / meal_type). */
+export const TASTE_TAGS = [
+  ...MOOD_TAGS.map((m) => ({ ...m, group: 'moods' as const })),
+  ...MEAL_TAGS.filter((m) => m.key === 'vegan' || m.key === 'seafood' || m.key === 'snack').map((m) => ({ ...m, group: 'meals' as const })),
+];
+
 /** Custom moods ("Add your own") use the sparkles icon (Chip · Custom). */
 export const CUSTOM_MOOD_ICON = Sparkles;
 export const MAX_MOODS = 3;

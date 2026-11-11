@@ -30,7 +30,7 @@ import { hasUnread } from '../src/services/activity';
 import { timeAgo } from '../src/lib/time';
 import { displayTemp, usePrefs } from '../src/lib/prefs';
 import { getHere, placeLabel, useHere } from '../src/lib/useHere';
-import { saveLocationChoice } from '../src/services/profile';
+import { fetchMyFavoriteTags, saveLocationChoice } from '../src/services/profile';
 import { tempAt, type Forecast } from '../src/services/weather';
 import { space, useTheme, type WeatherMood } from '../src/theme';
 import { bwOn, useWashInk } from '../src/theme/washInk';
@@ -61,6 +61,8 @@ export default function HomeScreen() {
   // My user id — Today's pick leaves out my own dishes.
   const [myId, setMyId] = useState<string | null>(null);
   useEffect(() => { supabase.auth.getSession().then(({ data }) => setMyId(data.session?.user.id ?? null)); }, []);
+  const [favoriteTags, setFavoriteTags] = useState<string[]>([]);
+  useEffect(() => { fetchMyFavoriteTags().then(setFavoriteTags).catch(() => undefined); }, []);
   useFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, []));
   useFocusEffect(
     useCallback(() => {
@@ -185,8 +187,8 @@ export default function HomeScreen() {
 
   // §6.2 Today's pick — today's weather family within ±1 °C (else the closest temperature), then meal · place · acorns · freshness (the mood prompt was removed in 2.1 19:191).
   const pick = useMemo(
-    () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now), excludeCreator: myId }),
-    [pool, myId, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
+    () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now), excludeCreator: myId, favoriteTags }),
+    [pool, myId, favoriteTags, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
   );
   // Today's pick acorn: whether I gave one (from my marks) + my change since load, so the count moves at once.
   const [pickAcorn, setPickAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });

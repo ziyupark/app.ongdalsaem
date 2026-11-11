@@ -24,7 +24,7 @@ apple=Appleで続ける
 google=Googleで続ける
 error=サインインがお昼寝中です — タップしてもう一度。
 [profileSetup]
-step=ステップ 1/2
+step=ステップ 1/4
 title=なんと\nお呼びしましょう？
 label=表示名
 helper=シェアした料理に表示されます。
@@ -35,7 +35,7 @@ continue=続ける
 changePhoto=プロフィール写真を変更
 error=保存できませんでした — 「続ける」をタップして再試行してください。
 [location]
-step=ステップ 2/2
+step=ステップ 3/4
 title=天気に\n選んでもらおう。
 body=あなたの街の天気予報をもとに、同じ天気の日にほかの人が作った料理をおすすめします。共有されるのは街の名前だけ — 正確な位置は共有されません。
 chooseCity=代わりに街を選ぶ
@@ -974,3 +974,32 @@ canCook=今ある食材で作れる料理
 haveCount=食材 {{have}}/{{total}} 個あり
 needs=不足: {{items}}
 canCookEmpty=食材を入れると、作れる料理を探します。
+[welcome]
+introTitle=天気と選ぶ、\n今日のごはん。
+introBody=同じ天気の日にみんなが作った料理を見て、今日の一品を決めましょう。
+features.weather=今日の天気のおすすめ
+features.weatherBody=今の空に合う一品。
+features.nearby=近くのお店
+features.nearbyBody=近くで食べられる場所。
+features.timer=キッチンタイマー
+features.timerBody=料理中に複数同時に。
+features.holidays=世界の祝日
+features.holidaysBody=世界各地の行事料理。
+start=はじめる
+[taste]
+step=ステップ 2/4
+title=どんなごはんが\n好きですか？
+body=いくつでも選べます。おすすめに反映します。
+skip=スキップ
+continue=続ける
+error=保存できませんでした — 「続ける」をタップして再試行してください。
+[location]
+whyTitle=なぜ必要なの？
+whyBody=近所の天気と近くのお店を表示するためです。正確な座標は保存せず、地域単位でのみ使います。
+[notify]
+step=ステップ 4/4
+title=毎日何時に\nおすすめを受け取りますか？
+body=毎日この時間に、今日の天気に合う一品をお届けします。設定で変更できます。
+skip=スキップ
+continue=通知をオンにする
+wheel=通知の時間

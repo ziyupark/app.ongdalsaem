@@ -13,7 +13,20 @@
     "letter": "Chúng mình tạo ra ongdalsaem để ghi nhớ những bữa ăn ta đã chia sẻ với những người làm ta hạnh phúc.\n\nMột mâm cơm ấm ở nhà, một bát ăn đối diện người bạn, cả món đầu tiên còn vụng về của bạn — mỗi món đều giữ lại một chút thời gian.\n\nHãy chia sẻ bữa ăn hạnh phúc nhất của bạn tại đây.",
     "signature": "— từ căn bếp ongdalsaem",
     "cta": "Chia sẻ bữa ăn đầu tiên",
-    "note": "Bạn chỉ thấy lá thư này một lần · Đọc lại trong Cài đặt\n› Trợ giúp & chính sách"
+    "note": "Bạn chỉ thấy lá thư này một lần · Đọc lại trong Cài đặt\n› Trợ giúp & chính sách",
+    "introTitle": "Bữa ăn mỗi ngày,\ntheo thời tiết.",
+    "introBody": "Xem mọi người nấu gì trong thời tiết giống bạn và chọn món cho hôm nay.",
+    "features": {
+      "weather": "Gợi ý theo thời tiết",
+      "weatherBody": "Món hợp với bầu trời lúc này.",
+      "nearby": "Quán gần đây",
+      "nearbyBody": "Chỗ ăn gần bạn.",
+      "timer": "Hẹn giờ nhà bếp",
+      "timerBody": "Nhiều hẹn giờ cùng lúc khi nấu.",
+      "holidays": "Ngày lễ thế giới",
+      "holidaysBody": "Món ăn ngày lễ khắp thế giới."
+    },
+    "start": "Bắt đầu"
   },
   "signIn": {
     "title": "Thời tiết trên\nbàn ăn của bạn thế nào?",
@@ -28,7 +41,7 @@
     "error": "Đăng nhập đang ngủ trưa — chạm để thử lại."
   },
   "profileSetup": {
-    "step": "Bước 1/2",
+    "step": "Bước 1/4",
     "title": "Chúng mình nên\ngọi bạn là gì?",
     "label": "Tên hiển thị",
     "helper": "Hiển thị trên các món bạn chia sẻ.",
@@ -40,12 +53,30 @@
     "error": "Chưa lưu được — chạm Tiếp tục để thử lại."
   },
   "location": {
-    "step": "Bước 2/2",
+    "step": "Bước 3/4",
     "title": "Để thời tiết\ngiúp bạn chọn.",
     "body": "Chúng mình dùng dự báo thời tiết của thành phố bạn để gợi ý món người khác đã nấu trong cùng thời tiết. Chỉ chia sẻ thành phố — không bao giờ chia sẻ vị trí chính xác.",
     "chooseCity": "Chọn thành phố",
     "useLocation": "Dùng vị trí của tôi",
-    "now": "· {{temp}}° {{condition}}"
+    "now": "· {{temp}}° {{condition}}",
+    "whyTitle": "Vì sao cần vị trí?",
+    "whyBody": "Để biết thời tiết khu phố và quán gần bạn. Chúng tôi không lưu tọa độ chính xác — chỉ dùng theo khu vực."
+  },
+  "taste": {
+    "step": "Bước 2/4",
+    "title": "Bạn thích\nbữa ăn kiểu nào?",
+    "body": "Chọn bao nhiêu tùy thích. Gợi ý sẽ theo khẩu vị của bạn.",
+    "skip": "Bỏ qua",
+    "continue": "Tiếp tục",
+    "error": "Chưa lưu được — nhấn Tiếp tục để thử lại."
+  },
+  "notify": {
+    "step": "Bước 4/4",
+    "title": "Mấy giờ gửi\ngợi ý mỗi ngày?",
+    "body": "Một món cho thời tiết hôm nay, mỗi ngày vào giờ này. Có thể đổi trong Cài đặt.",
+    "skip": "Bỏ qua",
+    "continue": "Bật thông báo",
+    "wheel": "Giờ thông báo"
   },
   "weather": {
     "clear": "Trời quang",

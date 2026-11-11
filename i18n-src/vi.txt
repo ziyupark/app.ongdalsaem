@@ -24,7 +24,7 @@ apple=Tiếp tục với Apple
 google=Tiếp tục với Google
 error=Đăng nhập đang ngủ trưa — chạm để thử lại.
 [profileSetup]
-step=Bước 1/2
+step=Bước 1/4
 title=Chúng mình nên\ngọi bạn là gì?
 label=Tên hiển thị
 helper=Hiển thị trên các món bạn chia sẻ.
@@ -35,7 +35,7 @@ continue=Tiếp tục
 changePhoto=Đổi ảnh đại diện
 error=Chưa lưu được — chạm Tiếp tục để thử lại.
 [location]
-step=Bước 2/2
+step=Bước 3/4
 title=Để thời tiết\ngiúp bạn chọn.
 body=Chúng mình dùng dự báo thời tiết của thành phố bạn để gợi ý món người khác đã nấu trong cùng thời tiết. Chỉ chia sẻ thành phố — không bao giờ chia sẻ vị trí chính xác.
 chooseCity=Chọn thành phố
@@ -974,3 +974,32 @@ canCook=Món bạn nấu được ngay
 haveCount=Có {{have}}/{{total}} nguyên liệu
 needs=Thiếu: {{items}}
 canCookEmpty=Thêm nguyên liệu, chúng tôi sẽ tìm món bạn nấu được.
+[welcome]
+introTitle=Bữa ăn mỗi ngày,\ntheo thời tiết.
+introBody=Xem mọi người nấu gì trong thời tiết giống bạn và chọn món cho hôm nay.
+features.weather=Gợi ý theo thời tiết
+features.weatherBody=Món hợp với bầu trời lúc này.
+features.nearby=Quán gần đây
+features.nearbyBody=Chỗ ăn gần bạn.
+features.timer=Hẹn giờ nhà bếp
+features.timerBody=Nhiều hẹn giờ cùng lúc khi nấu.
+features.holidays=Ngày lễ thế giới
+features.holidaysBody=Món ăn ngày lễ khắp thế giới.
+start=Bắt đầu
+[taste]
+step=Bước 2/4
+title=Bạn thích\nbữa ăn kiểu nào?
+body=Chọn bao nhiêu tùy thích. Gợi ý sẽ theo khẩu vị của bạn.
+skip=Bỏ qua
+continue=Tiếp tục
+error=Chưa lưu được — nhấn Tiếp tục để thử lại.
+[location]
+whyTitle=Vì sao cần vị trí?
+whyBody=Để biết thời tiết khu phố và quán gần bạn. Chúng tôi không lưu tọa độ chính xác — chỉ dùng theo khu vực.
+[notify]
+step=Bước 4/4
+title=Mấy giờ gửi\ngợi ý mỗi ngày?
+body=Một món cho thời tiết hôm nay, mỗi ngày vào giờ này. Có thể đổi trong Cài đặt.
+skip=Bỏ qua
+continue=Bật thông báo
+wheel=Giờ thông báo
