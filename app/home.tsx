@@ -226,7 +226,7 @@ export default function HomeScreen() {
         scrollEnabled={state.kind !== 'loading'}
         keyboardShouldPersistTaps="handled"
       >
-        <ScreenHeader right="settings" onLogoLongPress={devMenu} />
+        <ScreenHeader right="notifications" onLogoLongPress={devMenu} />
         {state.kind === 'loading' ? (
           <Animated.View entering={FadeIn.duration(150)}>
             <HomeSkeleton />
