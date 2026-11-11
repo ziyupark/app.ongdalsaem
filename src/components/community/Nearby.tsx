@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect } from 'expo-router';
-import { ChevronRight, Clock, CloudRain, MapPin, Search, X } from 'lucide-react-native';
+import { Clock, CloudRain, MapPin, Search, X } from 'lucide-react-native';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -260,10 +260,9 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
           {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
         </View>
       ) : null}
-      <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/nearby-feed', params: { area } })} style={styles.more}>
-        <Text variant="Body/S Strong" color="fg/secondary">{t('community.seeAll')}</Text>
-        <Icon icon={ChevronRight} size={16} color="fg/secondary" />
-      </Pressable>
+      <View style={styles.more}>
+        <Button label={t('community.seeAll')} variant="Outline" size="M" onPress={() => router.push({ pathname: '/nearby-feed', params: { area } })} />
+      </View>
     </View>
   );
 }
@@ -356,7 +355,8 @@ const styles = StyleSheet.create({
   section: { paddingTop: space[32], gap: space[6] },
   chipsTight: { paddingTop: 0 },
   tiles: { gap: space[16], paddingHorizontal: space[20], paddingTop: space[8] },
-  more: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[4], paddingVertical: space[8] },
+  // See all — Button · Outline · M, full width inside p20.
+  more: { paddingHorizontal: space[20], paddingTop: space[8] },
   offCard: { alignItems: 'center', gap: space[12], padding: space[20], borderRadius: radius['2xl'], borderWidth: 1 },
   offText: { textAlign: 'center' },
 });
