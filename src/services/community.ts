@@ -126,25 +126,36 @@ export function countries(rows: CardDish[]) {
 
 /** 4.1 Trending by Country — the most-acorned recent dish per country. */
 export async function fetchTrendingByCountry(): Promise<CardDish[]> {
-  const since = new Date(Date.now() - 14 * 864e5).toISOString();
-  const { data, error } = await publicFoods().not('country', 'is', null).gte('created_at', since).order('created_at', { ascending: false }).limit(150);
-  if (error) throw error;
-  const best = new Map<string, CardDish>();
-  for (const d of (data as Row[]).map(toCard)) {
-    const c = d.country!.toUpperCase();
-    const cur = best.get(c);
-    if (!cur || d.acorns > cur.acorns) best.set(c, d);
+  // Last 14 days; if no dish there has a country, widen to 60 days so the section doesn't vanish.
+  for (const days of [14, 60]) {
+    const since = new Date(Date.now() - days * 864e5).toISOString();
+    const { data, error } = await publicFoods().not('country', 'is', null).gte('created_at', since).order('created_at', { ascending: false }).limit(150);
+    if (error) throw error;
+    const best = new Map<string, CardDish>();
+    for (const d of (data as Row[]).map(toCard)) {
+      const c = d.country!.toUpperCase();
+      const cur = best.get(c);
+      if (!cur || d.acorns > cur.acorns) best.set(c, d);
+    }
+    if (best.size) return [...best.values()].sort(byAcorns).slice(0, 8);
   }
-  return [...best.values()].sort(byAcorns).slice(0, 8);
+  return [];
 }
 
-/** 4.1 Story of the day — the most-acorned dish with a caption from the last 2 days. */
+/**
+ * 4.1 Story of the day — the most-acorned dish with a caption from the last 2 days; else from the last 30 days;
+ * else the most-acorned of the newest dishes even without a caption (the card leaves the caption out), so the section stays.
+ */
 export async function fetchStoryOfTheDay(): Promise<CardDish | null> {
-  const since = new Date(Date.now() - 2 * 864e5).toISOString();
-  const { data, error } = await publicFoods().gte('created_at', since).neq('description', '').order('created_at', { ascending: false }).limit(60);
-  if (error) throw error;
-  const rows = (data as Row[]).map(toCard).filter((d) => d.description).sort(byAcorns);
-  return rows[0] ?? null;
+  const recent = async (days: number, captioned: boolean) => {
+    const since = new Date(Date.now() - days * 864e5).toISOString();
+    let q = publicFoods().gte('created_at', since);
+    if (captioned) q = q.neq('description', '');
+    const { data, error } = await q.order('created_at', { ascending: false }).limit(60);
+    if (error) throw error;
+    return (data as Row[]).map(toCard).filter((d) => !captioned || d.description).sort(byAcorns)[0] ?? null;
+  };
+  return (await recent(2, true)) ?? (await recent(30, true)) ?? (await recent(3650, false)); // last: newest 60 dishes of any age
 }
 
 // ---------------------------------------------------------------------------------------------- following

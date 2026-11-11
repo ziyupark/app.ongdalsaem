@@ -412,7 +412,7 @@ function Global() {
             <View style={styles.storyFoot}>
               <View style={styles.storyBody}>
                 <View style={[styles.flex, styles.storyText]}>
-                  <Text variant="Statement" color="fg/on-photo" numberOfLines={3}>{story.description}</Text>
+                  {story.description ? <Text variant="Statement" color="fg/on-photo" numberOfLines={3}>{story.description}</Text> : null}
                   <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{[story.creator.name, story.city, timeAgo(story.createdAt, t)].filter(Boolean).join(' · ')}</Text>
                 </View>
                 <Avatar url={story.creator.avatarUrl} name={story.creator.name} size={40} />
