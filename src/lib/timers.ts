@@ -167,6 +167,17 @@ export async function addTime(id: string, sec: number) {
 
 export const addMinute = (id: string) => addTime(id, 60);
 
+/** Set the time left directly (dragging the big ring). `run` → it counts down from there; otherwise it stays paused. */
+export async function setTimeLeft(id: string, sec: number, run: boolean) {
+  const t = timers.find((x) => x.id === id);
+  if (!t) return;
+  cancel(t);
+  const left = Math.max(1, Math.round(sec));
+  const next: KitchenTimer = { ...t, leftSec: left, endAt: run ? Date.now() + left * 1000 : null, notificationId: undefined };
+  replace(id, next);
+  if (run) await arm(next, left);
+}
+
 export function removeTimer(id: string) {
   const t = timers.find((x) => x.id === id);
   if (t) cancel(t);

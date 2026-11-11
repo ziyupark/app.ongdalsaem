@@ -1,7 +1,9 @@
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { Check, Clock, Pause, Play, Plus, RotateCcw, Timer } from 'lucide-react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';
 import { Alert, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Chip } from '../src/components/Chip';
@@ -13,12 +15,22 @@ import { Text } from '../src/components/Text';
 import { TimerRing } from '../src/components/timer/TimerRing';
 import { useWashScroll } from '../src/lib/useWashScroll';
 import {
-  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, startTimer, useNow, useTimers, type KitchenTimer,
+  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
 import { elevation, radius, space, useTheme } from '../src/theme';
 
 /** A timer started this recently before the screen opened is treated as new and takes the big ring. */
 const JUST_STARTED_MS = 10_000;
+
+// Big ring (Active timer) — size / stroke are also the drag geometry.
+const RING = 196.8;
+const RING_STROKE = 10;
+/** Hold the ring this long, then drag around it to change the time. */
+const HOLD_MS = 350;
+/** Touches this close to the ring's centre line (pt) count as on the ring. */
+const RING_HIT = 24;
+const DRAG_STEP = 5;
+const DRAG_MAX = 24 * 3600 - DRAG_STEP;
 
 const PRESETS = [
   { key: 'softEgg', sec: 390 },
@@ -81,7 +93,63 @@ export default function KitchenTimerScreen() {
     bar.onY(y);
   };
 
-  const left = featured ? secondsLeft(featured, now) : 0;
+  // Hold the big ring, then drag around it: the arc's end follows the finger (counter-clockwise = more time, since the
+  // ring is mirrored), in 5-second steps, past a full lap if needed. A running timer pauses while held and resumes on release.
+  const [dragSec, setDragSec] = useState<number | null>(null);
+  const featuredRef = useRef(featured);
+  featuredRef.current = featured;
+  const drag = useRef({ on: false, id: '', run: false, base: 0, total: 1, acc: 0, last: 0, sec: 0 });
+  /** Angle of a touch, counter-clockwise from 12 o'clock (degrees), and its distance from the centre. */
+  const polar = (x: number, y: number) => {
+    const dx = x - RING / 2;
+    const dy = y - RING / 2;
+    return { deg: (Math.atan2(-dx, -dy) * 180) / Math.PI, dist: Math.hypot(dx, dy) };
+  };
+  const ringPan = usePanGesture({
+    activateAfterLongPress: HOLD_MS,
+    runOnJS: true,
+    enabled: !!featured && !(featured && secondsLeft(featured, now) === 0),
+    onActivate: (e) => {
+      const f = featuredRef.current;
+      const { deg, dist } = polar(e.x, e.y);
+      if (!f || Math.abs(dist - (RING - RING_STROKE) / 2) > RING_HIT) return;
+      const sec = secondsLeft(f);
+      if (sec === 0) return;
+      const run = f.endAt != null;
+      drag.current = { on: true, id: f.id, run, base: sec, total: Math.max(1, f.totalSec), acc: 0, last: deg, sec };
+      setFeaturedId(f.id);
+      if (run) pauseTimer(f.id);
+      setDragSec(sec);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
+    },
+    onUpdate: (e) => {
+      const d = drag.current;
+      if (!d.on) return;
+      const { deg } = polar(e.x, e.y);
+      let delta = deg - d.last;
+      if (delta > 180) delta -= 360;
+      if (delta < -180) delta += 360;
+      d.last = deg;
+      d.acc += delta;
+      const raw = d.base + (d.acc / 360) * d.total;
+      const sec = Math.min(DRAG_MAX, Math.max(DRAG_STEP, Math.round(raw / DRAG_STEP) * DRAG_STEP));
+      if (sec !== d.sec) {
+        d.sec = sec;
+        setDragSec(sec);
+        Haptics.selectionAsync().catch(() => undefined);
+      }
+    },
+    onFinalize: () => {
+      const d = drag.current;
+      if (!d.on) return;
+      d.on = false;
+      setTimeLeft(d.id, d.sec, d.run);
+      setDragSec(null);
+    },
+  });
+
+  const dragging = dragSec != null;
+  const left = dragging ? dragSec : featured ? secondsLeft(featured, now) : 0;
   const done = !!featured && left === 0;
   const running = !!featured && featured.endAt != null && !done;
   // Food Name above the ring: the typed / recipe dish, else the timer's own name (presets: Soft egg).
@@ -98,7 +166,7 @@ export default function KitchenTimerScreen() {
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <ScreenHeader right="none" />
         <Animated.View entering={FadeIn.duration(150)}>
         {done && featured ? (
@@ -121,11 +189,13 @@ export default function KitchenTimerScreen() {
         {/* Block · Active timer 88:3084 — p30 20 0: “Food Name” → 13 → ring → 24 → controls → Frame 11 (p20 0 12, Add Timer). */}
         <View style={[styles.active, { paddingTop: done ? space[20] : 30 }]}>
           {food ? <Text variant="Display/M" numberOfLines={1} style={styles.food}>{`“${food}”`}</Text> : null}
+          <GestureDetector gesture={ringPan}>
+          <View collapsable={false}>
           <TimerRing
             mirror
-            size={196.8}
-            stroke={10}
-            endAt={featured?.endAt ?? null}
+            size={RING}
+            stroke={RING_STROKE}
+            endAt={dragging ? null : featured?.endAt ?? null}
             leftSec={left}
             totalSec={featured?.totalSec ?? 1}
             done={done}
@@ -144,6 +214,8 @@ export default function KitchenTimerScreen() {
               ) : null}
             </View>
           </TimerRing>
+          </View>
+          </GestureDetector>
           {featured ? (
             <View style={styles.controls}>
               <RoundBtn icon={RotateCcw} label={t('timer.reset')} onPress={() => { pin(); resetTimer(featured.id); }} />
@@ -192,12 +264,13 @@ export default function KitchenTimerScreen() {
           </View>
           {others.length === 0 ? (
             // Empty state only (676:22674) — gone once a second timer is running.
-            <Pressable accessibilityRole="button" accessibilityLabel={t('timer.addTimer')} onPress={() => setAdding(true)} style={({ pressed }) => [styles.addCard, { backgroundColor: color('bg/default'), borderColor: color('border/default') }, pressed && { opacity: 0.7 }]}>
+            // Placeholder only — not tappable (Add Timer above starts one).
+            <View style={[styles.addCard, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
               <View style={styles.addPlus}>
                 <View style={[styles.addLineH, { backgroundColor: color('border/strong') }]} />
                 <View style={[styles.addLineV, { backgroundColor: color('border/strong') }]} />
               </View>
-            </Pressable>
+            </View>
           ) : (
             others.map((x) => {
               const l = secondsLeft(x, now);
