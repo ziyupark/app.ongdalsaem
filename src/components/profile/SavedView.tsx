@@ -3,13 +3,12 @@ import { router } from 'expo-router';
 import { Bookmark } from '../icons/custom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { cached } from '../../lib/cache';
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
-import { createCollection, fetchCollections, fetchSavedDishes, setInCollection, setSaved, type Collection, type SavedDish } from '../../services/foods';
-import { radius, space, text, useTheme, WEATHER_ICON, type WeatherMood } from '../../theme';
-import { BottomSheet } from '../BottomSheet';
+import { createCollection, deleteCollection, fetchCollections, fetchSavedDishes, setInCollection, setSaved, type Collection, type SavedDish } from '../../services/foods';
+import { elevation, radius, space, text, useTheme, WEATHER_ICON, type WeatherMood } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Text } from '../Text';
@@ -44,7 +43,7 @@ export function SavedView({ onOffline }: { onOffline?: (off: boolean) => void })
     filter.kind === 'all' ? true : filter.kind === 'mood' ? i.mood === filter.mood : i.collectionIds.includes(filter.id),
   );
 
-  // New collection — a small sheet with a name field (works on iOS and Android; Alert.prompt is iOS-only).
+  // New collection — a centred dialog with a name field (works on iOS and Android; Alert.prompt is iOS-only).
   const [naming, setNaming] = useState(false);
   const [newName, setNewName] = useState('');
   const newCollection = () => { setNewName(''); setNaming(true); };
@@ -53,6 +52,27 @@ export function SavedView({ onOffline }: { onOffline?: (off: boolean) => void })
     if (!name) return;
     setNaming(false);
     try { const c = await createCollection(name); setCollections((p) => [...p, c]); } catch { Alert.alert(t('saved.newFailed')); }
+  };
+
+  // Hold a collection chip → confirm → delete it (its dishes stay in Saved).
+  const removeCollection = (c: Collection) => {
+    Alert.alert(t('saved.deleteTitle', { name: c.name }), t('saved.deleteBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('saved.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteCollection(c.id);
+            setCollections((p) => p.filter((x) => x.id !== c.id));
+            setItems((p) => (p ?? []).map((x) => ({ ...x, collectionIds: x.collectionIds.filter((y) => y !== c.id) })));
+            setFilter((f) => (f.kind === 'collection' && f.id === c.id ? { kind: 'all' } : f));
+          } catch {
+            Alert.alert(t('saved.deleteFailed'));
+          }
+        },
+      },
+    ]);
   };
 
   const file = (d: SavedDish) => {
@@ -91,7 +111,7 @@ export function SavedView({ onOffline }: { onOffline?: (off: boolean) => void })
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll} contentContainerStyle={styles.chips}>
         <Chip label={t('home.allChip')} selected={filter.kind === 'all'} onPress={() => setFilter({ kind: 'all' })} />
-        {collections.map((c) => <Chip key={c.id} label={c.name} selected={filter.kind === 'collection' && filter.id === c.id} onPress={() => setFilter({ kind: 'collection', id: c.id })} />)}
+        {collections.map((c) => <Chip key={c.id} label={c.name} selected={filter.kind === 'collection' && filter.id === c.id} onPress={() => setFilter({ kind: 'collection', id: c.id })} onLongPress={() => removeCollection(c)} />)}
         {moods.map((m) => <Chip key={m} icon={WEATHER_ICON[m]} label={t(`home.titleMood.${m}`)} selected={filter.kind === 'mood' && filter.mood === m} onPress={() => setFilter({ kind: 'mood', mood: m })} />)}
       </ScrollView>
       {shown.length === 0 ? (
@@ -114,17 +134,30 @@ export function SavedView({ onOffline }: { onOffline?: (off: boolean) => void })
         </Pressable>
       ))}
       {shown.length ? <Text variant="Caption" color="fg/muted">{t('saved.holdHint')}</Text> : null}
-      <BottomSheet visible={naming} onClose={() => setNaming(false)} title={t('saved.newTitle')}>
-        <View style={[styles.nameField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-          <TextInput value={newName} onChangeText={(v) => setNewName(v.slice(0, 30))} autoFocus placeholder={t('saved.namePlaceholder')} placeholderTextColor={color('fg/muted')} returnKeyType="done" onSubmitEditing={createNamed} style={[nameText, { color: color('fg/default') }]} />
-        </View>
-        <Button label={t('common.save')} size="L" disabled={!newName.trim()} onPress={createNamed} />
-      </BottomSheet>
+      {/* New collection — centred dialog (same card as 8.2b Add your mood): title · name field · Cancel / Save. */}
+      <Modal visible={naming} transparent animationType="fade" onRequestClose={() => setNaming(false)}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.dialogWrap}>
+          <Pressable accessibilityRole="button" accessibilityLabel={t('common.close')} style={[StyleSheet.absoluteFill, { backgroundColor: color('overlay/scrim') }]} onPress={() => setNaming(false)} />
+          <View style={[styles.dialog, elevation['Elevation/3 Float'], { backgroundColor: color('bg/subtle') }]}>
+            <Text variant="Title/M">{t('saved.newTitle')}</Text>
+            <View style={[styles.nameField, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
+              <TextInput value={newName} onChangeText={(v) => setNewName(v.slice(0, 30))} autoFocus placeholder={t('saved.namePlaceholder')} placeholderTextColor={color('fg/muted')} returnKeyType="done" onSubmitEditing={createNamed} style={[nameText, { color: color('fg/default') }]} />
+            </View>
+            <View style={styles.dialogActions}>
+              <Button label={t('common.cancel')} variant="Outline" size="M" onPress={() => setNaming(false)} style={styles.flex} />
+              <Button label={t('common.save')} size="M" disabled={!newName.trim()} onPress={createNamed} style={styles.flex} />
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  dialogWrap: { flex: 1, justifyContent: 'center', paddingHorizontal: space[20] },
+  dialog: { borderRadius: radius.xl, paddingTop: space[24], paddingBottom: space[20], paddingHorizontal: space[20], gap: space[16] },
+  dialogActions: { flexDirection: 'row', gap: space[12] },
   nameField: { height: 48, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[16], justifyContent: 'center' },
   // 6.2: Collections (Title/L · + New) → 24 → filter chips → 16 → saved rows (Food Card · Row, gap 12).
   root: { paddingHorizontal: space[20], paddingTop: space[16], gap: space[12] },

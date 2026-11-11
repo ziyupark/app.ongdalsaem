@@ -446,6 +446,12 @@ export async function createCollection(name: string): Promise<Collection> {
   return data as Collection;
 }
 
+/** Deletes one of my collections; its items go with it (on delete cascade) — the dishes stay saved. */
+export async function deleteCollection(id: string) {
+  const { error } = await supabase.from('collections').delete().eq('id', id);
+  if (error) throw error;
+}
+
 export async function setInCollection(collectionId: string, saveId: string, on: boolean) {
   const { error } = on
     ? await supabase.from('collection_items').insert({ collection_id: collectionId, save_id: saveId })
