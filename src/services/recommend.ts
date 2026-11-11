@@ -117,20 +117,23 @@ export function pickForSlot(pool: PoolDish[], meal: Meal, ctx: Ctx, exclude: Set
   return null;
 }
 
+/** Today's pick only shows dishes posted within this many degrees of the current temperature. */
+export const PICK_TEMP_RANGE = 1;
+
 /**
- * §6.2 Today's pick. Candidates = dishes from today's weather family (rain · snow · clear · grey); inside it:
- * weather closeness × current meal × place/acorns/freshness. Location off (2.5) → the chosen city's best.
- * No weather (2.6) → every dish is a candidate.
+ * §6.2 Today's pick. Candidates = dishes from today's weather family (rain · snow · clear · grey) posted at a
+ * temperature within ±PICK_TEMP_RANGE °C of now (dishes without a temperature are left out); inside it:
+ * weather closeness × current meal × place/acorns/freshness. No candidate → null (Home hides the card).
+ * Location off (2.5) → the chosen city's best. No weather (2.6) → every dish is a candidate.
  */
 export function pickToday(pool: PoolDish[], ctx: Ctx & { meal?: Meal }): PoolDish | null {
   const { mood, tempC } = ctx;
-  const near = (d: PoolDish, max: number) => tempC == null || d.tempC == null || Math.abs(d.tempC - tempC) <= max;
-  const weatherFit = (d: PoolDish) => (!mood ? 1 : d.mood === mood && near(d, 3) ? 1.6 : d.mood === mood ? 1.3 : 1);
-  const family = mood ? pool.filter((d) => sameGroup(d.mood, mood)) : pool;
-  const candidates = family.length ? family : pool;
+  if (!mood) return best(pool, (d) => score(d, ctx.place) * (ctx.meal && fitsMeal(d, ctx.meal) && d.meals.length ? 1.3 : 1));
+  const inRange = (d: PoolDish) => tempC == null || (d.tempC != null && Math.abs(d.tempC - tempC) <= PICK_TEMP_RANGE);
+  const candidates = pool.filter((d) => sameGroup(d.mood, mood) && inRange(d));
   return best(candidates, (d) =>
     score(d, ctx.place) *
-    weatherFit(d) *
+    (d.mood === mood ? 1.6 : 1) *
     (ctx.meal && fitsMeal(d, ctx.meal) && d.meals.length ? 1.3 : 1),
   );
 }

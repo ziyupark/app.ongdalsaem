@@ -179,7 +179,7 @@ export default function HomeScreen() {
     router.push('/share/pick');
   };
 
-  // §6.2 Today's pick — today's weather family, then meal · place · acorns · freshness (the mood prompt was removed in 2.1 19:191).
+  // §6.2 Today's pick — today's weather family within ±1 °C, then meal · place · acorns · freshness (the mood prompt was removed in 2.1 19:191).
   const pick = useMemo(
     () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now) }),
     [pool, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
