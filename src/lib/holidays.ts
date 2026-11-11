@@ -31,18 +31,19 @@ export const THEME_MOOD: Record<ThemeKey, WeatherMood> = {
 
 export const themeImage = (k: string | null | undefined) => (k && k in THEME_IMAGE ? THEME_IMAGE[k as ThemeKey] : THEME_IMAGE.forest);
 
-type Festive = { key: Exclude<ThemeKey, 'forest'>; tag: string; icon: LucideIcon; date: (y: number) => Date };
+/** `country` = ISO code of the flag on the card: the holiday's home country, or a representative one for shared holidays. */
+type Festive = { key: Exclude<ThemeKey, 'forest'>; tag: string; country: string; icon: LucideIcon; date: (y: number) => Date };
 
 const lunar = (table: Record<number, Date>, fallback: (y: number) => Date) => (y: number) => table[y] ?? fallback(y);
 
 // Fixed-date holidays + this/next lunar ones.
 export const FESTIVE: Festive[] = [
-  { key: 'halloween', tag: 'halloween', icon: Cookie, date: (y) => new Date(y, 9, 31) },
-  { key: 'christmas', tag: 'christmas', icon: Star, date: (y) => new Date(y, 11, 25) },
-  { key: 'valentine', tag: 'valentine', icon: Heart, date: (y) => new Date(y, 1, 14) },
-  { key: 'seollal', tag: 'seollal', icon: Sun, date: lunar({ 2026: new Date(2026, 1, 17), 2027: new Date(2027, 1, 6), 2028: new Date(2028, 0, 26) }, (y) => new Date(y, 1, 1)) },
-  { key: 'chuseok', tag: 'chuseok', icon: Moon, date: lunar({ 2026: new Date(2026, 8, 25), 2027: new Date(2027, 8, 15), 2028: new Date(2028, 9, 3) }, (y) => new Date(y, 8, 20)) },
-  { key: 'diwali', tag: 'diwali', icon: Sparkles, date: lunar({ 2026: new Date(2026, 10, 8), 2027: new Date(2027, 9, 29), 2028: new Date(2028, 9, 17) }, (y) => new Date(y, 9, 25)) },
+  { key: 'halloween', tag: 'halloween', country: 'US', icon: Cookie, date: (y) => new Date(y, 9, 31) },
+  { key: 'christmas', tag: 'christmas', country: 'DE', icon: Star, date: (y) => new Date(y, 11, 25) },
+  { key: 'valentine', tag: 'valentine', country: 'IT', icon: Heart, date: (y) => new Date(y, 1, 14) },
+  { key: 'seollal', tag: 'seollal', country: 'KR', icon: Sun, date: lunar({ 2026: new Date(2026, 1, 17), 2027: new Date(2027, 1, 6), 2028: new Date(2028, 0, 26) }, (y) => new Date(y, 1, 1)) },
+  { key: 'chuseok', tag: 'chuseok', country: 'KR', icon: Moon, date: lunar({ 2026: new Date(2026, 8, 25), 2027: new Date(2027, 8, 15), 2028: new Date(2028, 9, 3) }, (y) => new Date(y, 8, 20)) },
+  { key: 'diwali', tag: 'diwali', country: 'IN', icon: Sparkles, date: lunar({ 2026: new Date(2026, 10, 8), 2027: new Date(2027, 9, 29), 2028: new Date(2028, 9, 17) }, (y) => new Date(y, 9, 25)) },
 ];
 
 export const THEME_ICON: Record<ThemeKey, LucideIcon> = { ...Object.fromEntries(FESTIVE.map((f) => [f.key, f.icon])), forest: TreePine } as Record<ThemeKey, LucideIcon>;
@@ -51,6 +52,8 @@ export const THEME_ICON: Record<ThemeKey, LucideIcon> = { ...Object.fromEntries(
  * Holidays around the world (4.1): every holiday with its food photo, by its next date (today counts), soonest
  * first — one calendar for everyone, never re-ordered by the viewer's country.
  */
+export type UpcomingFestive = ReturnType<typeof upcomingFestive>[number];
+
 export function upcomingFestive(now = new Date()) {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   return FESTIVE.map((h) => {

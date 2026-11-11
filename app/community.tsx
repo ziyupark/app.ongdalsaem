@@ -14,9 +14,8 @@ import {
 } from '../src/components/community/Parts';
 import { FeedPost } from '../src/components/home/FeedPost';
 import { ChallengesTab } from '../src/components/community/ChallengesTab';
-import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { upcomingFestive } from '../src/lib/holidays';
+import { FestiveCard } from '../src/components/community/FestiveCard';
 import { Icon } from '../src/components/Icon';
 import { MoodGradient } from '../src/components/MoodGradient';
 import { WeatherFx } from '../src/components/WeatherFx';
@@ -437,25 +436,11 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — 168×196 cards, radius 24, p16: badge · date · name · dish over the holiday's food photo. */}
+      {/* Group · Festive 398:9710 — eyebrow · title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
       <View style={styles.sectionL}>
-        <SectionHeader eyebrow={t('community.festiveEyebrow')} title={t('community.festiveTitle')} />
+        <SectionHeader eyebrow={t('community.festiveEyebrow')} title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-          {festive.map((h) => {
-            const days = Math.round((h.at.getTime() - new Date().setHours(0, 0, 0, 0)) / 864e5);
-            const date = h.at.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' }).toUpperCase();
-            return (
-              <Pressable key={h.key} accessibilityRole="button" onPress={() => router.push(`/tag/${h.tag}`)} style={styles.festive}>
-                {h.image ? <Image source={h.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} /> : <MoodGradient mood={h.mood} style={StyleSheet.absoluteFill} />}
-                <LinearGradient colors={['transparent', color('overlay/scrim-strong')]} locations={[0.35, 1]} style={StyleSheet.absoluteFill} />
-                <View style={[styles.badge, { backgroundColor: color('glass/surface') }]}><Icon icon={h.icon} size={18} /></View>
-                <View style={styles.flex} />
-                <Text variant="Overline" color="fg/on-photo-secondary">{days <= 1 ? `${date} · ${t(days === 0 ? 'community.today' : 'community.tomorrow').toUpperCase()}` : date}</Text>
-                <Text variant="Title/M" color="fg/on-photo">{t(`community.holidays.${h.key}.name`)}</Text>
-                <Text variant="Caption" numberOfLines={1} color="fg/on-photo-secondary">{t(`community.holidays.${h.key}.food`)}</Text>
-              </Pressable>
-            );
-          })}
+          {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
         </ScrollView>
       </View>
 
@@ -657,8 +642,6 @@ const styles = StyleSheet.create({
   countryBottom: { gap: space[10] },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
-  festive: { width: 168, height: 196, borderRadius: radius.xl, overflow: 'hidden', padding: space[16], gap: space[6] },
-  badge: { width: 36, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   story: { width: '100%', padding: space[24], justifyContent: 'space-between' },
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },

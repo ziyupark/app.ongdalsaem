@@ -18,13 +18,15 @@ import { AcornTag, WeatherTag } from '../PhotoTags';
 import { Text } from '../Text';
 
 const FLAGS: Record<string, number> = {
-  CA: require('../../../assets/flags/CA.png'), CN: require('../../../assets/flags/CN.png'), ES: require('../../../assets/flags/ES.png'),
+  CA: require('../../../assets/flags/CA.png'), CN: require('../../../assets/flags/CN.png'), DE: require('../../../assets/flags/DE.png'), ES: require('../../../assets/flags/ES.png'),
   FR: require('../../../assets/flags/FR.png'), GB: require('../../../assets/flags/GB.png'), IE: require('../../../assets/flags/IE.png'),
   IN: require('../../../assets/flags/IN.png'), IT: require('../../../assets/flags/IT.png'), JP: require('../../../assets/flags/JP.png'),
   KR: require('../../../assets/flags/KR.png'), MX: require('../../../assets/flags/MX.png'), TH: require('../../../assets/flags/TH.png'),
   US: require('../../../assets/flags/US.png'), VN: require('../../../assets/flags/VN.png'),
 };
 export const hasFlag = (code: string | null | undefined) => !!code && code.toUpperCase() in FLAGS;
+/** Flag image for an ISO country code (20×14 assets), or undefined. */
+export const flagSource = (code: string) => FLAGS[code.toUpperCase()];
 
 /** Flag Tag — 20×14 flag (r3) in a 36×24 pill. No fill (Figma removed it). */
 export function FlagTag({ code }: { code: string }) {
@@ -47,7 +49,8 @@ export function countryName(code: string, lang: string) {
 }
 
 /** SectionHeader — Title/L + optional "See all" (Body/S Strong muted), px 20. */
-export function SectionHeader({ title, action, onAction, eyebrow }: { title: string; action?: string; onAction?: () => void; eyebrow?: string }) {
+/** `onMore` adds a chevron button at the right end of the title row (`moreLabel` = its accessibility label). */
+export function SectionHeader({ title, action, onAction, eyebrow, onMore, moreLabel }: { title: string; action?: string; onAction?: () => void; eyebrow?: string; onMore?: () => void; moreLabel?: string }) {
   return (
     <View style={styles.sh}>
       <View style={styles.flex}>
@@ -57,6 +60,11 @@ export function SectionHeader({ title, action, onAction, eyebrow }: { title: str
       {action ? (
         <Pressable accessibilityRole="button" hitSlop={space[8]} onPress={onAction}>
           <Text variant="Body/S Strong" color="fg/muted">{action}</Text>
+        </Pressable>
+      ) : null}
+      {onMore ? (
+        <Pressable accessibilityRole="button" accessibilityLabel={moreLabel} hitSlop={space[10]} onPress={onMore}>
+          <Icon icon={ChevronRight} size={24} color="fg/secondary" />
         </Pressable>
       ) : null}
     </View>

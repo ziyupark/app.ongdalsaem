@@ -634,6 +634,7 @@ trendingTags=แท็กมาแรง
 pickTag=เลือกแท็กด้านบน — เมนูเหล่านี้จะเปลี่ยนตาม
 festiveEyebrow=โต๊ะเทศกาล
 festiveTitle=วันหยุดทั่วโลก
+allHolidays=ดูเทศกาลทั้งหมด
 today=วันนี้
 tomorrow=พรุ่งนี้
 story=เรื่องราวประจำวัน

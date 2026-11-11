@@ -645,6 +645,7 @@ trendingTags=Etiquetas en tendencia
 pickTag=Elige una etiqueta arriba: estos platos cambian con ella.
 festiveEyebrow=Mesas festivas
 festiveTitle=Fiestas del mundo
+allHolidays=Ver todas las fiestas
 today=Hoy
 tomorrow=Mañana
 story=Historia del día
