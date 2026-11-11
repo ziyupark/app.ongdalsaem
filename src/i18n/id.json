@@ -699,7 +699,11 @@
     "remove": "Hapus {{name}}",
     "fridgeZone": "Kulkas",
     "freezerZone": "Freezer",
-    "removeAsk": "Hapus {{name}}?"
+    "removeAsk": "Hapus {{name}}?",
+    "canCook": "Yang bisa dimasak sekarang",
+    "haveCount": "Ada {{have}}/{{total}} bahan",
+    "needs": "Kurang: {{items}}",
+    "canCookEmpty": "Tambahkan bahan, nanti kami carikan masakan yang bisa kamu buat."
   },
   "community": {
     "title": "Komunitas",

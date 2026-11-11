@@ -709,7 +709,11 @@
     "remove": "{{name}} 삭제",
     "fridgeZone": "냉장실",
     "freezerZone": "냉동실",
-    "removeAsk": "{{name}}을(를) 뺄까요?"
+    "removeAsk": "{{name}}을(를) 뺄까요?",
+    "canCook": "지금 재료로 만들 수 있는 요리",
+    "haveCount": "재료 {{have}}/{{total}}개 있음",
+    "needs": "부족: {{items}}",
+    "canCookEmpty": "재료를 넣으면 만들 수 있는 요리를 찾아 드려요."
   },
   "community": {
     "title": "커뮤니티",

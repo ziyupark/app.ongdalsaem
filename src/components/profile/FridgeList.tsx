@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { addFridge, removeFridge, useFridge, type FridgeItem, type FridgeZone } from '../../lib/fridge';
+import { matchRecipes } from '../../lib/ingredientMatch';
+import { fetchRecipeCandidates, type RecipeCandidate } from '../../services/foods';
 import { radius, space, useTheme } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
@@ -11,6 +15,7 @@ import { Text } from '../Text';
 const DAY = 24 * 60 * 60 * 1000;
 const ZONES: FridgeZone[] = ['fridge', 'freezer'];
 const ROW = 48;
+const CARD = 140;
 
 /** Whole calendar days between when it went in and today (local time). */
 function daysSince(iso: string) {
@@ -27,6 +32,13 @@ export function FridgeList() {
   const [zone, setZone] = useState<FridgeZone>('fridge');
   const [name, setName] = useState('');
   const add = () => { addFridge(name, zone); setName(''); };
+  const [recipes, setRecipes] = useState<RecipeCandidate[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetchRecipeCandidates().then((l) => alive && setRecipes(l)).catch(() => alive && setRecipes([]));
+    return () => { alive = false; };
+  }, []);
+  const matches = useMemo(() => (recipes ? matchRecipes(items.map((i) => i.name), recipes) : []), [items, recipes]);
   const zoneLabel = (z: FridgeZone) => t(z === 'fridge' ? 'fridge.fridgeZone' : 'fridge.freezerZone');
 
   // Tap a chip → confirm once → remove.
@@ -57,6 +69,33 @@ export function FridgeList() {
             </Pressable>
           );
         })}
+      </View>
+
+      {/* What I can cook with what's in the fridge — public recipes ranked by how many of their ingredients I have. */}
+      <View style={[styles.box, { backgroundColor: color('bg/accent-subtle') }]}>
+        <Text variant="Body/M Strong">{t('fridge.canCook')}</Text>
+        {items.length > 0 && recipes == null ? (
+          <ActivityIndicator color={color('fg/muted')} />
+        ) : matches.length === 0 ? (
+          <Text variant="Body/S" color="fg/muted">{t('fridge.canCookEmpty')}</Text>
+        ) : (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cards}>
+            {matches.map((m) => (
+              <Pressable key={m.food.id} accessibilityRole="button" onPress={() => router.push(`/dish/${m.food.id}`)} style={[styles.card, { backgroundColor: color('bg/subtle') }]}>
+                {m.food.photo ? (
+                  <Image source={{ uri: m.food.photo }} style={[styles.photo, { backgroundColor: color('bg/muted') }]} contentFit="cover" />
+                ) : <View style={[styles.photo, { backgroundColor: color('bg/muted') }]} />}
+                <View style={styles.cardText}>
+                  <Text variant="Body/S Strong" numberOfLines={1}>{m.food.name}</Text>
+                  <Text variant="Caption" color="fg/accent">{t('fridge.haveCount', { have: m.have, total: m.total })}</Text>
+                  {m.missing.length ? (
+                    <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('fridge.needs', { items: m.missing.slice(0, 2).join(', ') })}</Text>
+                  ) : null}
+                </View>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
       </View>
 
       <View style={styles.row}>
@@ -104,5 +143,9 @@ const styles = StyleSheet.create({
   zone: { flex: 1, height: ROW, borderRadius: radius.input, alignItems: 'center', justifyContent: 'center' },
   addBtn: { height: ROW, borderRadius: radius.input },
   box: { borderRadius: radius.xl, padding: space[16], gap: space[12] },
+  cards: { gap: space[8] },
+  card: { width: CARD, borderRadius: radius.lg, overflow: 'hidden' },
+  photo: { width: CARD, height: 100 },
+  cardText: { padding: space[10], gap: space[2] },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
 });

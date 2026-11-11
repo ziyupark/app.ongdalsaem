@@ -699,7 +699,11 @@
     "remove": "ลบ {{name}}",
     "fridgeZone": "ช่องแช่เย็น",
     "freezerZone": "ช่องแช่แข็ง",
-    "removeAsk": "ลบ {{name}} ไหม"
+    "removeAsk": "ลบ {{name}} ไหม",
+    "canCook": "เมนูที่ทำได้ตอนนี้",
+    "haveCount": "มีวัตถุดิบ {{have}}/{{total}} อย่าง",
+    "needs": "ขาด: {{items}}",
+    "canCookEmpty": "เพิ่มวัตถุดิบ แล้วเราจะหาเมนูที่ทำได้ให้"
   },
   "community": {
     "title": "ชุมชน",

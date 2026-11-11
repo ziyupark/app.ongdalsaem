@@ -986,3 +986,7 @@ remove=Remover {{name}}
 fridgeZone=Geladeira
 freezerZone=Freezer
 removeAsk=Remover {{name}}?
+canCook=O que dá para cozinhar agora
+haveCount={{have}}/{{total}} ingredientes em casa
+needs=Falta: {{items}}
+canCookEmpty=Adicione ingredientes e mostramos pratos que você pode fazer.

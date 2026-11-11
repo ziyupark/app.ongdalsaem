@@ -699,7 +699,11 @@
     "remove": "{{name}}を削除",
     "fridgeZone": "冷蔵室",
     "freezerZone": "冷凍室",
-    "removeAsk": "{{name}}を削除しますか？"
+    "removeAsk": "{{name}}を削除しますか？",
+    "canCook": "今ある食材で作れる料理",
+    "haveCount": "食材 {{have}}/{{total}} 個あり",
+    "needs": "不足: {{items}}",
+    "canCookEmpty": "食材を入れると、作れる料理を探します。"
   },
   "community": {
     "title": "コミュニティ",

@@ -709,7 +709,11 @@
     "remove": "Quitar {{name}}",
     "fridgeZone": "Nevera",
     "freezerZone": "Congelador",
-    "removeAsk": "¿Quitar {{name}}?"
+    "removeAsk": "¿Quitar {{name}}?",
+    "canCook": "Lo que puedes cocinar ahora",
+    "haveCount": "Tienes {{have}}/{{total}} ingredientes",
+    "needs": "Falta: {{items}}",
+    "canCookEmpty": "Añade ingredientes y te mostraremos platos que puedes preparar."
   },
   "community": {
     "title": "Comunidad",

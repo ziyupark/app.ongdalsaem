@@ -699,7 +699,11 @@
     "remove": "Xóa {{name}}",
     "fridgeZone": "Ngăn mát",
     "freezerZone": "Ngăn đá",
-    "removeAsk": "Xóa {{name}}?"
+    "removeAsk": "Xóa {{name}}?",
+    "canCook": "Món bạn nấu được ngay",
+    "haveCount": "Có {{have}}/{{total}} nguyên liệu",
+    "needs": "Thiếu: {{items}}",
+    "canCookEmpty": "Thêm nguyên liệu, chúng tôi sẽ tìm món bạn nấu được."
   },
   "community": {
     "title": "Cộng đồng",

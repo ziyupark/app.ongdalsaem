@@ -970,3 +970,7 @@ remove=刪除{{name}}
 fridgeZone=冷藏
 freezerZone=冷凍
 removeAsk=要刪除{{name}}嗎？
+canCook=現有食材能做的料理
+haveCount=已有 {{have}}/{{total}} 種食材
+needs=還缺：{{items}}
+canCookEmpty=加入食材後，會幫你找出能做的料理。

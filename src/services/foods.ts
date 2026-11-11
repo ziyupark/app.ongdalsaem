@@ -128,6 +128,35 @@ export async function fetchFeed(limit = 10): Promise<Dish[]> {
   return (data as Row[]).map(toDish);
 }
 
+export type RecipeCandidate = { id: string; name: string; photo: string | null; ingredients: string[] };
+let candidates: { at: number; list: RecipeCandidate[] } | null = null;
+/** Fridge memo "what can I cook" — the latest 200 public dishes that list ingredients. Cached in memory for 10 min. */
+export async function fetchRecipeCandidates(): Promise<RecipeCandidate[]> {
+  if (candidates && Date.now() - candidates.at < 10 * 60_000) return candidates.list;
+  const { data, error } = await supabase
+    .from('foods')
+    .select('id, name, image_url, ingredients')
+    .eq('visibility', 'everyone')
+    .eq('status', 'published')
+    .neq('ingredients', '[]')
+    .order('created_at', { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  // ingredients jsonb = [{ name, amount | quantity }] (plain strings tolerated).
+  const list = ((data ?? []) as Row[])
+    .map((r) => ({
+      id: r.id as string,
+      name: r.name as string,
+      photo: (r.image_url as string | null) ?? null,
+      ingredients: (Array.isArray(r.ingredients) ? (r.ingredients as unknown[]) : [])
+        .map((i) => (typeof i === 'string' ? i : String((i as Row | null)?.name ?? '')).trim())
+        .filter(Boolean),
+    }))
+    .filter((c) => c.ingredients.length);
+  candidates = { at: Date.now(), list };
+  return list;
+}
+
 export async function fetchDish(id: string): Promise<Dish | null> {
   const { data, error } = await supabase.from('foods').select(DISH_SELECT).eq('id', id).maybeSingle();
   if (error) throw error;
