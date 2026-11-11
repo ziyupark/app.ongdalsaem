@@ -17,7 +17,6 @@ export type AccountSettings = {
   locationEnabled: boolean;
   defaultVisibility: 'everyone' | 'only_me';
   defaultAllowComments: boolean;
-  messagePolicy: 'everyone' | 'following';
   sharedPrecision: 'neighborhood' | 'city' | 'country';
   marketingAds: boolean;
   marketingNightAds: boolean;
@@ -50,7 +49,6 @@ export async function fetchAccount(): Promise<AccountSettings> {
     locationEnabled: p.location_enabled ?? true,
     defaultVisibility: p.default_visibility ?? 'everyone',
     defaultAllowComments: p.default_allow_comments ?? true,
-    messagePolicy: p.message_policy ?? 'everyone',
     sharedPrecision: p.shared_precision ?? 'city',
     marketingAds: p.marketing_ads ?? false,
     marketingNightAds: p.marketing_night_ads ?? false,

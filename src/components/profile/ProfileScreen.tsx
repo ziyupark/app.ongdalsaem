@@ -32,7 +32,6 @@ import { fetchAcornTotal, fetchProfileDishes, type DishSummary, type ProfileTab 
 import { getMyProfile, MAX_BIO, updateMyAvatar, updateMyBio, type MyProfile } from '../../services/profile';
 import { supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
-import { startThread } from '../../services/messages';
 import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
 
 /** Grid 670:20275 — x20 · 2 columns · gap 16 · rows 20 apart. */
@@ -45,8 +44,8 @@ type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: D
 
 /**
  * 6.1 Profile · Dishes (Figma 657:16468) — Profile Header + 2-column Dish Tiles (670:20058). Saved / Diary share the grid.
- * `userId` (another cook, opened from a post, the community or messages): same layout — the wash, title and weather card
- * are always *my* weather and place; avatar, name, status, acorns and dishes are theirs, with Follow / Message instead of
+ * `userId` (another cook, opened from a post or the community): same layout — the wash, title and weather card
+ * are always *my* weather and place; avatar, name, status, acorns and dishes are theirs, with Follow (no Message — v1 has no DMs) instead of
  * editing. Their Saved and Diary stay private, so only Dishes is shown.
  */
 export function ProfileScreen({ userId }: { userId?: string }) {
@@ -137,16 +136,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     const on = !following;
     setFollowing(on);
     try { await follow(userId, on); } catch { setFollowing(!on); }
-  };
-  const message = async () => {
-    if (!userId) return;
-    try {
-      const thread = await startThread(userId);
-      router.push(`/messages/${thread}`);
-    } catch (e) {
-      const code = (e as { code?: string }).code;
-      Alert.alert(t(code === 'restricted' ? 'messages.restricted' : code === 'blocked' ? 'messages.blocked' : 'messages.sendFailed'));
-    }
   };
 
   // Own profile: tap the avatar to change the photo, tap the status line to edit it.
@@ -268,7 +257,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         {isMe || !me ? null : (
           <View style={styles.btns}>
             <View style={styles.flex1}><Button label={t(following ? 'cook.following' : 'cook.follow')} variant={following ? 'Secondary' : 'Primary'} size="M" onPress={toggleFollow} /></View>
-            <View style={styles.flex1}><Button label={t('cook.message')} variant="Outline" size="M" onPress={message} /></View>
           </View>
         )}
       </View>

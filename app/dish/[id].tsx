@@ -10,7 +10,6 @@ import { DishTile } from '../../src/components/dish/DishTile';
 import { type DishViewData } from '../../src/components/dish/DishView';
 import { PostView } from '../../src/components/dish/PostView';
 import { ReportSheet } from '../../src/components/dish/ReportSheet';
-import { SendToSheet } from '../../src/components/dish/SendToSheet';
 import { ShareSheet } from '../../src/components/dish/ShareSheet';
 import { Icon } from '../../src/components/Icon';
 import { Text } from '../../src/components/Text';
@@ -47,7 +46,7 @@ export default function PostDetail() {
   const [ate, setAte] = useState(false);
   const [toast, setToast] = useState(false);
   const [offline, setOffline] = useState(false);
-  const [sheet, setSheet] = useState<'report' | 'share' | 'send' | null>(null);
+  const [sheet, setSheet] = useState<'report' | 'share' | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -260,7 +259,6 @@ export default function PostDetail() {
         onAcorn={toggleAcorn}
         onComments={() => undefined}
         onShare={() => setSheet('share')}
-        onDirect={() => setSheet('send')}
         onSave={toggleSave}
         onMore={onMore}
         onAuthor={openAuthor}
@@ -280,7 +278,6 @@ export default function PostDetail() {
 
       <Toast visible={toast} message={t('dish.ateToast')} action={t('dish.undo')} onAction={undoAte} onHide={hideToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
 
-      <SendToSheet visible={sheet === 'send'} dish={{ id: dish.id, name: dish.name }} onClose={() => setSheet(null)} />
       <ShareSheet
         visible={sheet === 'share'}
         dish={{ id: dish.id, name: dish.name, photo: dish.photo, author: dish.creator.handle ?? dish.creator.name, mood: dish.mood, tempC: dish.tempC, meal: meal ? t(`share.meals.${meal}`) : undefined }}

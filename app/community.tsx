@@ -31,7 +31,6 @@ import { timeAgo } from '../src/lib/time';
 import { cellsAround } from '../src/lib/geohash';
 import { useHere } from '../src/lib/useHere';
 import { follow } from '../src/services/activity';
-import { hasUnreadMessages } from '../src/services/messages';
 import {
   fetchChallenges, fetchCooksInWeather, fetchFollowingFeed, fetchGlobal, fetchMyTables, fetchNearby, fetchNearbyQuestions, fetchStoryOfTheDay,
   fetchTrendingByCountry, searchSuggestions, setMeToo, timeLeft, topTags, type CardDish, type Challenge, type CookCard, type FollowingItem, type Question, type Table,
@@ -69,8 +68,6 @@ export default function Community() {
   // Header text over the wash: title ≈ 20 % down the 420 wash, tabs ≈ 35 %.
   const titleInk = useWashInk(washOn ? washMood : null, 0.2, 0.85);
   const tabInk = useWashInk(washOn ? washMood : null, 0.35, 0.85);
-  const [unreadDm, setUnreadDm] = useState(false);
-  useFocusEffect(useCallback(() => { hasUnreadMessages().then(setUnreadDm); }, []));
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
