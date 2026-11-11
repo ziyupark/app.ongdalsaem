@@ -14,6 +14,16 @@ export const THEME_IMAGE: Partial<Record<ThemeKey, number>> = {
   forest: require('../../assets/holidays/forest.jpg'),
 };
 
+/** Holiday food photos for 4.1 Holidays around the world (Figma 697:11053) — separate from the challenge illustrations above. */
+export const FESTIVE_PHOTO: Record<Exclude<ThemeKey, 'forest'>, number> = {
+  chuseok: require('../../assets/holidays/food/chuseok.jpg'),
+  halloween: require('../../assets/holidays/food/halloween.jpg'),
+  christmas: require('../../assets/holidays/food/christmas.jpg'),
+  seollal: require('../../assets/holidays/food/seollal.jpg'),
+  valentine: require('../../assets/holidays/food/valentine.jpg'),
+  diwali: require('../../assets/holidays/food/diwali.jpg'),
+};
+
 /** Mood wash behind a theme (fallback when there is no illustration, and the tint for text over it). */
 export const THEME_MOOD: Record<ThemeKey, WeatherMood> = {
   chuseok: 'clear-night', halloween: 'clear-night', christmas: 'snow', seollal: 'clear', valentine: 'clear', diwali: 'heat', forest: 'cloudy',
@@ -38,14 +48,14 @@ export const FESTIVE: Festive[] = [
 export const THEME_ICON: Record<ThemeKey, LucideIcon> = { ...Object.fromEntries(FESTIVE.map((f) => [f.key, f.icon])), forest: TreePine } as Record<ThemeKey, LucideIcon>;
 
 /**
- * Holidays around the world (4.1): every holiday that has an illustration, by its next date (today counts), soonest
+ * Holidays around the world (4.1): every holiday with its food photo, by its next date (today counts), soonest
  * first — one calendar for everyone, never re-ordered by the viewer's country.
  */
 export function upcomingFestive(now = new Date()) {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  return FESTIVE.filter((h) => !!THEME_IMAGE[h.key]).map((h) => {
+  return FESTIVE.map((h) => {
     let d = h.date(now.getFullYear());
     if (d.getTime() < today) d = h.date(now.getFullYear() + 1);
-    return { ...h, mood: THEME_MOOD[h.key], image: THEME_IMAGE[h.key], at: d };
+    return { ...h, mood: THEME_MOOD[h.key], image: FESTIVE_PHOTO[h.key], at: d };
   }).sort((a, b) => a.at.getTime() - b.at.getTime());
 }

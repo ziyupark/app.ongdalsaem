@@ -438,7 +438,7 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — 168×196 cards, radius 24, p16: badge · date · name · dish over the holiday's illustration. */}
+      {/* Group · Festive 398:9710 — 168×196 cards, radius 24, p16: badge · date · name · dish over the holiday's food photo. */}
       <View style={styles.sectionL}>
         <SectionHeader eyebrow={t('community.festiveEyebrow')} title={t('community.festiveTitle')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
