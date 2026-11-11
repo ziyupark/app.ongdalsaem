@@ -14,7 +14,9 @@ const ACORN_SYMBOL = require('../../assets/brand/acorn-symbol.svg');
  * Logo 4:18 — "ongdalsaem" wordmark filled with Gradient/Ink metal (top → bottom).
  * Acorn = Acorn Symbol 36×46 → Wordmark 34/36 → Tagline, centred, gap 10 (1.1 Splash).
  * Compact = 24/26 header wordmark, left aligned (1.2).
- * The invisible Text sizes the box; the SVG paints the gradient fill on top of it.
+ * The invisible Text sizes the box; the SVG paints the gradient fill on top of it. The RN measure and the SVG text
+ * width don't always agree on device, so the Acorn lockup anchors the SVG text on the box centre (it stays centred
+ * under the acorn whatever the measure) and Compact anchors it on the left edge.
  * The wordmark is always Outfit (never the locale font), and the SVG overhangs the box by PAD on every side so the
  * "g" descender, the ascenders and the last letter are never clipped — the box keeps the token's size for layout.
  */
@@ -26,6 +28,9 @@ export function Logo({ lockup, tagline, tone = 'ink' }: Props) {
   const [box, setBox] = useState<{ w: number; h: number } | null>(null);
   const word = 'ongdalsaem';
   const pad = Math.ceil((style.fontSize as number) * PAD);
+  const centred = lockup === 'Acorn';
+  // Horizontal room on each side for SVG text that runs wider than the RN measure (kerning / tracking).
+  const side = pad + (style.fontSize as number) * 2;
   return (
     <View style={lockup === 'Acorn' ? styles.stack : styles.compact} accessible accessibilityRole="header" accessibilityLabel={word}>
       {lockup === 'Acorn' ? <Image source={ACORN_SYMBOL} style={styles.acorn} contentFit="contain" /> : null}
@@ -35,10 +40,9 @@ export function Logo({ lockup, tagline, tone = 'ink' }: Props) {
         </RNText>
         {box ? (
           <Svg
-            // Extra room on the right: SVG text can run a little wider than the RN measure (kerning / tracking).
-            width={box.w + pad + (style.fontSize as number) * 2}
+            width={box.w + side * 2}
             height={box.h + pad * 2}
-            style={{ position: 'absolute', left: -pad, top: -pad }}
+            style={{ position: 'absolute', left: -side, top: -pad }}
             pointerEvents="none"
           >
             <Defs>
@@ -47,7 +51,8 @@ export function Logo({ lockup, tagline, tone = 'ink' }: Props) {
               </LinearGradient>
             </Defs>
             <SvgText
-              x={pad}
+              x={centred ? side + box.w / 2 : side}
+              textAnchor={centred ? 'middle' : 'start'}
               // Baseline ≈ line box centre + 0.35 em (Outfit metrics).
               y={pad + box.h / 2 + (style.fontSize as number) * 0.35}
               fill={tone === 'light' ? '#FFFFFF' : `url(#${id})`}

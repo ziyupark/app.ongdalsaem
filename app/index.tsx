@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 import { Logo } from '../src/components/Logo';
 import { hasSeenWelcomeLetter } from '../src/lib/flags';
@@ -26,8 +27,9 @@ async function nextRoute() {
   return (await hasSeenWelcomeLetter()) ? '/sign-in' : '/welcome';
 }
 
-/** 1.1 Splash — 14:2. Sunset glow (Gradient/Sunset, blurred circle, full width) + Logo (Acorn lockup), both centred on the screen. */
+/** 1.1 Splash — 14:2. Sunset glow (Gradient/Sunset, blurred circle 390 at y 215) + Logo (Acorn lockup). */
 export default function Splash() {
+  const insets = useSafeAreaInsets();
   const { color, scheme } = useTheme();
   const { t } = useTranslation();
 
@@ -44,22 +46,20 @@ export default function Splash() {
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <View pointerEvents="none" style={styles.layer}>
-        <View style={styles.glow}>
-          {/* Soft edge of the Figma layer blur = the same stops fading to 0. */}
-          <Svg width="100%" height="100%" viewBox="0 0 390 390">
-            <Defs>
-              <RadialGradient id="splash-glow" cx="50%" cy="50%" r="50%">
-                {gradients['Gradient/Sunset'].map((s) => (
-                  <Stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity={s.offset === 0 ? 0.32 : s.offset < 1 ? 0.12 : 0} />
-                ))}
-              </RadialGradient>
-            </Defs>
-            <Circle cx={195} cy={195} r={195} fill="url(#splash-glow)" />
-          </Svg>
-        </View>
+      <View pointerEvents="none" style={styles.glow}>
+        {/* Soft edge of the Figma layer blur = the same stops fading to 0. */}
+        <Svg width="100%" height="100%" viewBox="0 0 390 390">
+          <Defs>
+            <RadialGradient id="splash-glow" cx="50%" cy="50%" r="50%">
+              {gradients['Gradient/Sunset'].map((s) => (
+                <Stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity={s.offset === 0 ? 0.32 : s.offset < 1 ? 0.12 : 0} />
+              ))}
+            </RadialGradient>
+          </Defs>
+          <Circle cx={195} cy={195} r={195} fill="url(#splash-glow)" />
+        </Svg>
       </View>
-      <View style={styles.layer}>
+      <View style={[styles.center, { paddingTop: insets.top }]}>
         <Logo lockup="Acorn" tagline={t('common.brandTagline')} />
       </View>
     </View>
@@ -68,7 +68,7 @@ export default function Splash() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  // Logo and glow share the screen's exact centre, whatever the device height or safe-area insets.
-  layer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
-  glow: { width: '100%', aspectRatio: 1 },
+  glow: { position: 'absolute', left: 0, right: 0, top: 215, aspectRatio: 1 },
+  // Logo block = 790 tall below the 54 status bar with 65 bottom padding → optical centre slightly above middle.
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingBottom: 65 },
 });
