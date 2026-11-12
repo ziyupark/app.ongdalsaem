@@ -1066,7 +1066,7 @@
     "followEmptyBody": "料理する人をフォローしたり食卓に参加したりすると、その料理がここに表示されます。",
     "findCooks": "料理する人を探す",
     "within1km": "1 km以内",
-    "trendingBites": "話題のひと皿",
+    "viralBites": "いまバズってる料理",
     "challengesTab": "チャレンジ",
     "exploreTogether": "みんなで探す",
     "area": {
@@ -1080,6 +1080,17 @@
       "ask": "質問する",
       "locationOff": "位置情報をオンにすると、今日のご近所の食卓が見られます。"
     }
+  },
+  "viral": {
+    "rising": "🔥 今週 +{{n}}%",
+    "editor": "✦ 編集部のおすすめ",
+    "risingNote_other": "この3日間で{{count}}件の投稿、まだまだ増えています。",
+    "postCount_other": "投稿 {{count}}件",
+    "noteFallback": "いまみんなが作っている料理です。",
+    "emptyTitle": "まだ投稿がありません",
+    "emptyBody": "作ってみて、最初の投稿をしてみましょう。",
+    "firstPost": "最初の投稿をする",
+    "shareThis": "この料理を投稿"
   },
   "tag": {
     "count_other": "料理{{count}}件",

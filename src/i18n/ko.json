@@ -1077,7 +1077,7 @@
     "followEmptyBody": "요리사를 팔로우하거나 테이블에 참여하면 여기에 요리가 보여요.",
     "findCooks": "요리사 찾기",
     "within1km": "1km 이내",
-    "trendingBites": "지금 뜨는 한 입",
+    "viralBites": "요즘 난리 난 음식",
     "challengesTab": "챌린지",
     "exploreTogether": "함께 둘러보기",
     "area": {
@@ -1092,6 +1092,19 @@
       "ask": "질문하기",
       "locationOff": "위치를 켜면 우리 동네 식탁을 볼 수 있어요"
     }
+  },
+  "viral": {
+    "rising": "🔥 이번 주 +{{n}}%",
+    "editor": "✦ 에디터 픽",
+    "risingNote_one": "최근 3일 동안 {{count}}번 올라왔고, 계속 늘고 있어요.",
+    "risingNote_other": "최근 3일 동안 {{count}}번 올라왔고, 계속 늘고 있어요.",
+    "postCount_one": "게시물 {{count}}",
+    "postCount_other": "게시물 {{count}}",
+    "noteFallback": "요즘 다들 만들고 있는 음식이에요.",
+    "emptyTitle": "아직 올라온 게시물이 없어요",
+    "emptyBody": "직접 만들어 보고 첫 게시물을 올려 보세요",
+    "firstPost": "첫 게시물 올리기",
+    "shareThis": "이 음식 올리기"
   },
   "tag": {
     "count_one": "요리 {{count}}개",

@@ -1077,7 +1077,7 @@
     "followEmptyBody": "Follow a few cooks or join a table — their dishes show up here.",
     "findCooks": "Find cooks",
     "within1km": "Within 1 km",
-    "trendingBites": "Trending Bites",
+    "viralBites": "Viral Bites",
     "challengesTab": "Challenges",
     "exploreTogether": "Explore Together",
     "area": {
@@ -1092,6 +1092,19 @@
       "ask": "Ask a question",
       "locationOff": "Turn on location to see today's table in our area."
     }
+  },
+  "viral": {
+    "rising": "🔥 This week +{{n}}%",
+    "editor": "✦ Editor’s pick",
+    "risingNote_one": "Shared {{count}} time in the last 3 days — and climbing.",
+    "risingNote_other": "Shared {{count}} times in the last 3 days — and climbing.",
+    "postCount_one": "{{count}} post",
+    "postCount_other": "{{count}} posts",
+    "noteFallback": "A dish everyone is cooking right now.",
+    "emptyTitle": "No posts yet",
+    "emptyBody": "Make it yourself and share the first post.",
+    "firstPost": "Share the first post",
+    "shareThis": "Share this dish"
   },
   "tag": {
     "count_one": "{{count}} dish",

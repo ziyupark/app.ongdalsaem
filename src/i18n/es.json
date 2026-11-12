@@ -1077,7 +1077,7 @@
     "followEmptyBody": "Sigue a algunos cocineros o únete a una mesa: sus platos aparecerán aquí.",
     "findCooks": "Buscar cocineros",
     "within1km": "A menos de 1 km",
-    "trendingBites": "Bocados en tendencia",
+    "viralBites": "Platos virales",
     "challengesTab": "Retos",
     "exploreTogether": "Exploremos juntos",
     "area": {
@@ -1092,6 +1092,19 @@
       "ask": "Hacer una pregunta",
       "locationOff": "Activa la ubicación para ver la mesa de hoy en tu barrio."
     }
+  },
+  "viral": {
+    "rising": "🔥 Esta semana +{{n}}%",
+    "editor": "✦ Elección del editor",
+    "risingNote_one": "Compartido {{count}} vez en los últimos 3 días, y sigue subiendo.",
+    "risingNote_other": "Compartido {{count}} veces en los últimos 3 días, y sigue subiendo.",
+    "postCount_one": "{{count}} publicación",
+    "postCount_other": "{{count}} publicaciones",
+    "noteFallback": "Un plato que todos están cocinando ahora.",
+    "emptyTitle": "Aún no hay publicaciones",
+    "emptyBody": "Prepáralo tú y comparte la primera publicación.",
+    "firstPost": "Compartir la primera",
+    "shareThis": "Compartir este plato"
   },
   "tag": {
     "count_one": "{{count}} plato",

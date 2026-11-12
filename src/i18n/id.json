@@ -1066,7 +1066,7 @@
     "followEmptyBody": "Ikuti beberapa pemasak atau gabung ke meja — masakan mereka akan muncul di sini.",
     "findCooks": "Cari pemasak",
     "within1km": "Dalam 1 km",
-    "trendingBites": "Gigitan populer",
+    "viralBites": "Makanan viral",
     "challengesTab": "Tantangan",
     "exploreTogether": "Jelajahi bersama",
     "area": {
@@ -1080,6 +1080,17 @@
       "ask": "Ajukan pertanyaan",
       "locationOff": "Aktifkan lokasi untuk melihat meja hari ini di sekitarmu."
     }
+  },
+  "viral": {
+    "rising": "🔥 Minggu ini +{{n}}%",
+    "editor": "✦ Pilihan editor",
+    "risingNote_other": "Dibagikan {{count}} kali dalam 3 hari terakhir, dan terus naik.",
+    "postCount_other": "{{count}} unggahan",
+    "noteFallback": "Hidangan yang sedang banyak dimasak sekarang.",
+    "emptyTitle": "Belum ada unggahan",
+    "emptyBody": "Coba masak sendiri dan bagikan unggahan pertama.",
+    "firstPost": "Bagikan yang pertama",
+    "shareThis": "Bagikan hidangan ini"
   },
   "tag": {
     "count_other": "{{count}} masakan",

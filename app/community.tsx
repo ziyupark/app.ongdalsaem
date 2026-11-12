@@ -26,7 +26,7 @@ import { follow } from '../src/services/activity';
 import { hasUnreadMessages } from '../src/services/messages';
 import {
   fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchStoryOfTheDay, fetchSuggestedPlates,
-  fetchTrendingByCountry, localDate, localMidnight, timeLeft, topTags, type CardDish, type Challenge, type FollowingItem,
+  fetchViralBites, localDate, localMidnight, timeLeft, topTags, type CardDish, type Challenge, type FollowingItem, type ViralItem,
 } from '../src/services/community';
 import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../src/components/community/PlateTable';
 import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
@@ -116,7 +116,7 @@ function Global() {
   const [scape, setScape] = useState<string | null>(null);
   const [explore, setExplore] = useState<CardDish[] | null>(null);
   const [showAll, setShowAll] = useState(false);
-  const [countries, setCountries] = useState<CardDish[]>([]);
+  const [viral, setViral] = useState<ViralItem[]>([]);
   const [story, setStory] = useState<CardDish | null>(null);
   // My acorn on the Story of the day: given (filled) + count change since the last load.
   const [storyAcorn, setStoryAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });
@@ -136,7 +136,7 @@ function Global() {
 
   useFocusEffect(
     useCallback(() => {
-      fetchTrendingByCountry().then(setCountries).catch(() => undefined);
+      fetchViralBites().then(setViral).catch(() => undefined);
       fetchStoryOfTheDay().then(async (d) => {
         setStory(d);
         if (!d) return;
@@ -225,19 +225,22 @@ function Global() {
       {/* Our area — today's table: popular today · questions + Ask (or turn location on). */}
       <OurArea />
 
-      {/* Trending Bites 88:3078 — p42 · gap 6: header → Country Cards 280×180, gap 12. */}
-      {countries.length ? (
+      {/* Viral Bites 88:3078 — p42 · gap 6: header → Country Cards 280×180, gap 12. Editor picks first, then rising dishes. */}
+      {viral.length ? (
         <View style={styles.sectionS}>
-          <SectionHeader title={t('community.trendingBites')} />
+          <SectionHeader title={t('community.viralBites')} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-            {countries.map((d) => (
-              <PhotoCard key={d.id} photo={d.photo} width={280} height={180} label={d.name} onPress={() => router.push(`/country/${d.country}`)} style={styles.countryCard} scrim="bottom">
-                {/* Country Card: p14 18, content at the bottom (gap 10): Display/M name → tags; Flag Tag pinned at 18, 12. */}
-                {d.country ? <View style={styles.countryFlag}><FlagTag code={d.country} /></View> : null}
-                <Text variant="Display/M" color="fg/on-photo" numberOfLines={1}>{d.name}</Text>
+            {viral.map((v) => (
+              <PhotoCard key={v.key} photo={v.photo!} width={280} height={180} label={v.name} onPress={() => router.push({ pathname: '/viral/[name]', params: { name: v.name } })} style={styles.countryCard} scrim="bottom">
+                {/* Country Card: p14 18, content at the bottom (gap 10): Display/M name → tags; Flag Tag · Viral badge pinned at 18, 12. */}
+                <View style={styles.countryFlag}>
+                  {v.country ? <FlagTag code={v.country} /> : null}
+                  <ViralBadge item={v} />
+                </View>
+                <Text variant="Display/M" color="fg/on-photo" numberOfLines={1}>{v.name}</Text>
                 <View style={styles.tagRow}>
-                  {d.mood && d.tempC != null ? <WeatherTag mood={d.mood} tempC={d.tempC} condition={t(`weather.${d.mood}`)} /> : <View />}
-                  <AcornTag count={d.acorns} />
+                  {v.cover?.mood && v.cover.tempC != null ? <WeatherTag mood={v.cover.mood} tempC={v.cover.tempC} condition={t(`weather.${v.cover.mood}`)} /> : <View />}
+                  {v.cover ? <AcornTag count={v.cover.acorns} /> : null}
                 </View>
               </PhotoCard>
             ))}
@@ -277,6 +280,20 @@ function Global() {
           <View style={styles.px}><Text variant="Body/S" color="fg/muted">{t('community.emptyBody')}</Text></View>
         )}
       </View>
+    </View>
+  );
+}
+
+/** Viral badge (4.1 / 4.7) — pill p4 10 · radius full · Caption Strong fg/inverse: rising = bg/kick, editor pick = bg/inverse. */
+export function ViralBadge({ item }: { item: Pick<ViralItem, 'kind' | 'growth'> }) {
+  const { color } = useTheme();
+  const { t } = useTranslation();
+  const rising = item.kind === 'rising';
+  return (
+    <View style={[styles.viralBadge, { backgroundColor: color(rising ? 'bg/kick' : 'bg/inverse') }]}>
+      <Text variant="Caption Strong" color="fg/inverse" numberOfLines={1}>
+        {rising ? t('viral.rising', { n: (item.growth ?? 0).toLocaleString() }) : t('viral.editor')}
+      </Text>
     </View>
   );
 }
@@ -445,7 +462,8 @@ const styles = StyleSheet.create({
   sectionM: { paddingTop: space[42], gap: space[8] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
   countryCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'flex-end', gap: space[10] },
-  countryFlag: { position: 'absolute', left: 18, top: space[12] },
+  countryFlag: { position: 'absolute', left: 18, top: space[12], right: 18, flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  viralBadge: { flexShrink: 1, paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
   story: { width: '100%', padding: space[24], justifyContent: 'flex-end' },

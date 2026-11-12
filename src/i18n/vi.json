@@ -1066,7 +1066,7 @@
     "followEmptyBody": "Theo dõi vài người nấu hoặc tham gia một bàn ăn — món của họ sẽ hiện ở đây.",
     "findCooks": "Tìm người nấu",
     "within1km": "Trong vòng 1 km",
-    "trendingBites": "Món đang hot",
+    "viralBites": "Món đang gây sốt",
     "challengesTab": "Thử thách",
     "exploreTogether": "Cùng khám phá",
     "area": {
@@ -1080,6 +1080,17 @@
       "ask": "Đặt câu hỏi",
       "locationOff": "Bật vị trí để xem mâm cơm hôm nay quanh khu mình."
     }
+  },
+  "viral": {
+    "rising": "🔥 Tuần này +{{n}}%",
+    "editor": "✦ Biên tập viên chọn",
+    "risingNote_other": "Được chia sẻ {{count}} lần trong 3 ngày qua và vẫn đang tăng.",
+    "postCount_other": "{{count}} bài đăng",
+    "noteFallback": "Món mà ai cũng đang nấu lúc này.",
+    "emptyTitle": "Chưa có bài đăng nào",
+    "emptyBody": "Tự nấu thử và chia sẻ bài đăng đầu tiên nhé.",
+    "firstPost": "Đăng bài đầu tiên",
+    "shareThis": "Chia sẻ món này"
   },
   "tag": {
     "count_other": "{{count}} món",

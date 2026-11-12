@@ -1066,7 +1066,7 @@
     "followEmptyBody": "追蹤幾位料理者或加入餐桌——他們的料理會出現在這裡。",
     "findCooks": "尋找料理者",
     "within1km": "1 公里內",
-    "trendingBites": "熱門一口",
+    "viralBites": "最近爆紅的料理",
     "challengesTab": "挑戰",
     "exploreTogether": "一起探索",
     "area": {
@@ -1080,6 +1080,17 @@
       "ask": "提問",
       "locationOff": "開啟定位，就能看到今天附近的餐桌。"
     }
+  },
+  "viral": {
+    "rising": "🔥 本週 +{{n}}%",
+    "editor": "✦ 編輯精選",
+    "risingNote_other": "近 3 天被分享了 {{count}} 次，還在持續增加。",
+    "postCount_other": "{{count}} 則貼文",
+    "noteFallback": "大家最近都在做的料理。",
+    "emptyTitle": "還沒有貼文",
+    "emptyBody": "自己動手做做看，分享第一則貼文吧。",
+    "firstPost": "分享第一則貼文",
+    "shareThis": "分享這道料理"
   },
   "tag": {
     "count_other": "{{count}} 道料理",

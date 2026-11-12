@@ -144,22 +144,104 @@ export function countries(rows: CardDish[]) {
   return [...new Set(rows.map((r) => r.country).filter((c): c is string => !!c))];
 }
 
-/** 4.1 Trending by Country — the most-acorned recent dish per country. */
-export async function fetchTrendingByCountry(): Promise<CardDish[]> {
-  // Last 14 days; if no dish there has a country, widen to 60 days so the section doesn't vanish.
-  for (const days of [14, 60]) {
-    const since = new Date(Date.now() - days * 864e5).toISOString();
-    const { data, error } = await publicFoods().not('country', 'is', null).gte('created_at', since).order('created_at', { ascending: false }).limit(150);
-    if (error) throw error;
-    const best = new Map<string, CardDish>();
-    for (const d of (data as Row[]).map(toCard)) {
-      const c = d.country!.toUpperCase();
-      const cur = best.get(c);
-      if (!cur || d.acorns > cur.acorns) best.set(c, d);
-    }
-    if (best.size) return [...best.values()].sort(byAcorns).slice(0, 8);
+// ---------------------------------------------------------------------------------------------- 4.1 Viral Bites · 4.7 Viral
+
+/** Dish-name key: case and spaces ignored (same as viral_dishes() in 20261119000000_viral_bites.sql). */
+export const dishKey = (name: string) => name.trim().toLowerCase().replace(/\s+/g, ' ');
+
+export type ViralItem = {
+  key: string;
+  name: string;
+  country: string | null;
+  /** 'rising' = viral_dishes() growth · 'editor' = viral_picks. */
+  kind: 'rising' | 'editor';
+  growth: number | null;
+  /** Posts in the last 3 days (rising only). */
+  posts: number | null;
+  /** Operator note (editor picks). */
+  note: string | null;
+  /** The card: photo + the weather / acorns of its representative post (null when there is none). */
+  cover: DishSummary | null;
+  photo: string | null;
+};
+
+const VIRAL_MAX = 8;
+const VIRAL_TTL = 10 * 60 * 1000;
+let viralCache: { at: number; items: ViralItem[] } | null = null;
+
+/** Most-acorned recent public post of that name (exact name, case ignored). */
+async function coverByName(name: string): Promise<DishSummary | null> {
+  const { data, error } = await publicFoods(SUMMARY_SELECT).ilike('name', likeExact(name)).order('created_at', { ascending: false }).limit(30);
+  if (error) return null;
+  return (data as Row[]).map(toSummary).sort(byAcorns)[0] ?? null;
+}
+/** ilike pattern matching the whole string (wildcards escaped). */
+const likeExact = (name: string) => name.trim().replace(/[\\%_]/g, (c) => `\\${c}`);
+
+/**
+ * 4.1 Viral Bites — editor picks in their window (sort order) first, then rising dishes from viral_dishes(), names not
+ * repeated, at most 8. Kept for 10 minutes.
+ */
+export async function fetchViralBites(force = false): Promise<ViralItem[]> {
+  if (!force && viralCache && Date.now() - viralCache.at < VIRAL_TTL) return viralCache.items;
+  const [picks, rising] = await Promise.all([
+    supabase.from('viral_picks').select('name, country_code, image_url, note, sort, created_at').order('sort').order('created_at'),
+    supabase.rpc('viral_dishes', { p_limit: VIRAL_MAX }),
+  ]);
+  if (picks.error && rising.error) throw rising.error;
+
+  type Draft = ViralItem & { coverId: string | null };
+  const seen = new Set<string>();
+  const items: Draft[] = [];
+  for (const r of (picks.data ?? []) as Row[]) {
+    const key = dishKey(String(r.name ?? ''));
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    items.push({ key, name: String(r.name).trim(), country: r.country_code ? String(r.country_code).toUpperCase() : null, kind: 'editor', growth: null, posts: null, note: r.note ?? null, cover: null, photo: r.image_url ?? null, coverId: null });
   }
-  return [];
+  for (const r of (rising.data ?? []) as Row[]) {
+    const key = dishKey(String(r.name ?? ''));
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    items.push({ key, name: String(r.name).trim(), country: r.country_code ?? null, kind: 'rising', growth: Number(r.growth_pct) || 0, posts: Number(r.post_count) || 0, note: null, cover: null, photo: r.cover_url ?? null, coverId: r.cover_id ?? null });
+  }
+  const list = items.slice(0, VIRAL_MAX);
+
+  // Card weather + acorns: rising → its cover post; editor pick → the most-acorned recent post of that name.
+  const ids = list.map((i) => i.coverId).filter((x): x is string => !!x);
+  const byId = new Map<string, DishSummary>();
+  if (ids.length) {
+    const { data } = await supabase.from('foods').select(SUMMARY_SELECT).in('id', ids);
+    for (const d of ((data ?? []) as Row[]).map(toSummary)) byId.set(d.id, d);
+  }
+  const out: ViralItem[] = await Promise.all(list.map(async ({ coverId, ...item }) => {
+    const cover = coverId ? byId.get(coverId) ?? null : await coverByName(item.name);
+    return { ...item, cover, photo: item.photo ?? cover?.photo ?? null };
+  }));
+  const ready = out.filter((i) => !!i.photo);
+  viralCache = { at: Date.now(), items: ready };
+  return ready;
+}
+
+/** A viral item by its name (cached list), or null when it is not in the section now. */
+export async function findViral(name: string): Promise<ViralItem | null> {
+  const key = dishKey(name);
+  const list = await fetchViralBites().catch(() => [] as ViralItem[]);
+  return list.find((i) => i.key === key) ?? null;
+}
+
+/** 4.7 Viral · Detail — public posts with that dish name (case ignored), newest first, `limit` per page, plus the total. */
+export async function fetchPostsByName(name: string, offset = 0, limit = 20): Promise<{ items: CardDish[]; total: number }> {
+  const { data, error, count } = await supabase
+    .from('foods')
+    .select(CARD_SELECT, { count: 'exact' })
+    .eq('visibility', 'everyone')
+    .eq('status', 'published')
+    .ilike('name', likeExact(name))
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+  if (error) throw error;
+  return { items: (data as Row[]).map(toCard), total: count ?? 0 };
 }
 
 /**
