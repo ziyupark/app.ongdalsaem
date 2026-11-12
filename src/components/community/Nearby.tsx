@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   loadingS: { marginVertical: space[24] },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], justifyContent: 'center', marginTop: space[8] },
   // Our area — same rhythm as Trending Bites (p32 · gap 6: title → chips).
-  section: { paddingTop: space[32], gap: space[6] },
+  section: { paddingTop: space[42], gap: space[6] },
   chipsTight: { paddingTop: 0 },
   // See all — Button · Outline · M, full width inside p20.
   offCard: { alignItems: 'center', gap: space[12], padding: space[20], borderRadius: radius['2xl'], borderWidth: 1 },

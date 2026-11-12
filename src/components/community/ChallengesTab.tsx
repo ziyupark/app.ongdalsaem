@@ -245,7 +245,7 @@ function ChallengeRow({ c, sub, done, muted, action }: { c: Challenge; sub: stri
 
 const styles = StyleSheet.create({
   loading: { marginTop: space[40] },
-  section: { paddingTop: space[32], gap: space[12] },
+  section: { paddingTop: space[42], gap: space[12] },
   px: { paddingHorizontal: space[20] },
   flex: { flex: 1 },
   center: { textAlign: 'center' },

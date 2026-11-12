@@ -29,7 +29,7 @@ import {
   fetchTrendingByCountry, localDate, localMidnight, timeLeft, topTags, type CardDish, type Challenge, type FollowingItem,
 } from '../src/services/community';
 import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../src/components/community/PlateTable';
-import { fetchMyMarks, setSaved } from '../src/services/foods';
+import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
 import { radius, space, useTheme } from '../src/theme';
 
 /** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
@@ -118,14 +118,32 @@ function Global() {
   const [showAll, setShowAll] = useState(false);
   const [countries, setCountries] = useState<CardDish[]>([]);
   const [story, setStory] = useState<CardDish | null>(null);
+  // My acorn on the Story of the day: given (filled) + count change since the last load.
+  const [storyAcorn, setStoryAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });
   const [tag, setTag] = useState<string | null>(null);
   const [saved, setSavedIds] = useState<Set<string>>(new Set());
   const together = explore;
 
+  const storyMark = storyAcorn.id === story?.id ? storyAcorn : { given: false, delta: 0 };
+  const toggleStoryAcorn = () => {
+    if (!story) return;
+    const id = story.id;
+    const on = !storyMark.given;
+    const step = on ? 1 : -1;
+    setStoryAcorn({ id, given: on, delta: storyMark.delta + step });
+    setAcorn(id, on).catch(() => setStoryAcorn((a) => (a.id === id ? { ...a, given: !on, delta: a.delta - step } : a)));
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchTrendingByCountry().then(setCountries).catch(() => undefined);
-      fetchStoryOfTheDay().then(setStory).catch(() => undefined);
+      fetchStoryOfTheDay().then(async (d) => {
+        setStory(d);
+        if (!d) return;
+        setStoryAcorn({ id: d.id, given: false, delta: 0 });
+        const marks = await fetchMyMarks([d.id]).catch(() => null);
+        if (marks) setStoryAcorn({ id: d.id, given: marks.given.has(d.id), delta: 0 });
+      }).catch(() => undefined);
       fetchGlobal(null).then(async (l) => {
         setDishes(l);
         const marks = await fetchMyMarks(l.map((d) => d.id)).catch(() => null);
@@ -171,7 +189,7 @@ function Global() {
   // Explore: Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
   return (
     <View>
-      {/* Group 88:3081 — p32 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
+      {/* Group 88:3081 — p42 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
         <View style={[styles.sectionS, styles.px]}>
           {/* Title — Fraunces like the header weather title, always English; screen readers get the local string. */}
@@ -189,7 +207,15 @@ function Global() {
               </View>
               <View style={styles.tagRow}>
                 {story.mood && story.tempC != null ? <WeatherTag mood={story.mood} tempC={story.tempC} condition={t(`weather.${story.mood}`)} /> : <View />}
-                <AcornTag count={story.acorns} />
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('home.acorns', { count: story.acorns + storyMark.delta })}
+                  accessibilityState={{ selected: storyMark.given }}
+                  hitSlop={space[8]}
+                  onPress={toggleStoryAcorn}
+                >
+                  <AcornTag count={story.acorns + storyMark.delta} given={storyMark.given} />
+                </Pressable>
               </View>
             </View>
           </PhotoCard>
@@ -199,7 +225,7 @@ function Global() {
       {/* Our area — today's table: popular today · questions + Ask (or turn location on). */}
       <OurArea />
 
-      {/* Trending Bites 88:3078 — p32 · gap 6: header → Country Cards 280×180, gap 12. */}
+      {/* Trending Bites 88:3078 — p42 · gap 6: header → Country Cards 280×180, gap 12. */}
       {countries.length ? (
         <View style={styles.sectionS}>
           <SectionHeader title={t('community.trendingBites')} />
@@ -219,7 +245,7 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — p32 · gap 6: eyebrow · title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
+      {/* Group · Festive 398:9710 — p42 · gap 6: eyebrow · title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
       <View style={styles.sectionS}>
         <SectionHeader eyebrow={t('community.festiveEyebrow')} title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
@@ -227,7 +253,7 @@ function Global() {
         </ScrollView>
       </View>
 
-      {/* Trending tags 435:366 — p32 · gap 9: header → chips → 2 Food Cards (rows inset p4, gap 12). */}
+      {/* Trending tags 435:366 — p42 · gap 9: header → chips → 2 Food Cards (rows inset p4, gap 12). */}
       {tags.length ? (
         <View style={styles.sectionM}>
           <SectionHeader title={t('community.trendingTags')} onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
@@ -238,7 +264,7 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Explore Together 676:20621 — p32 · gap 9: All · landscape chips → Food Cards of that landscape. */}
+      {/* Explore Together 676:20621 — p42 · gap 9: All · landscape chips → Food Cards of that landscape. */}
       <View style={styles.sectionM}>
         <SectionHeader title={t('community.exploreTogether')} onMore={!showAll && (together?.length ?? 0) > 4 ? () => setShowAll(true) : undefined} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
@@ -414,9 +440,9 @@ const styles = StyleSheet.create({
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },
   section: { paddingTop: space[24], gap: space[12] },
-  // 4.1 groups: p32 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags · Explore).
-  sectionS: { paddingTop: space[32], gap: space[6] },
-  sectionM: { paddingTop: space[32], gap: space[8] },
+  // 4.1 groups: p42 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags · Explore).
+  sectionS: { paddingTop: space[42], gap: space[6] },
+  sectionM: { paddingTop: space[42], gap: space[8] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
   countryCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'flex-end', gap: space[10] },
   countryFlag: { position: 'absolute', left: 18, top: space[12] },
