@@ -66,6 +66,8 @@ export default function EditPlace() {
       mood = w?.mood; tempC = w?.tempC;
     }
     const cur = getShareDraft().context;
+    // Edit mode: the post keeps its original weather — only the place changes.
+    if (getShareDraft().editId && cur) { mood = cur.mood; tempC = cur.tempC; }
     updateShareDraft({
       contextState: 'ready',
       placeEdited: true,

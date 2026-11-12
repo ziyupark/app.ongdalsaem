@@ -349,7 +349,9 @@
     "moveUp": "위로",
     "moveDown": "아래로",
     "moveTop": "맨 위로",
-    "landscape": "풍경"
+    "landscape": "풍경",
+    "saveChanges": "변경 사항 저장",
+    "changesSaved": "변경 사항을 저장했어요"
   },
   "dish": {
     "temperature": {
@@ -1261,5 +1263,8 @@
       "dessert": "디저트",
       "bread": "빵·브런치"
     }
+  },
+  "post": {
+    "edit": "수정"
   }
 }

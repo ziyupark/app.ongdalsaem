@@ -9,9 +9,9 @@ import { DishActionBar, useActionBarInset } from '../../src/components/dish/Dish
 import { type DishViewData } from '../../src/components/dish/DishView';
 import { PostView } from '../../src/components/dish/PostView';
 import { GlassIconButton, GlassPill } from '../../src/components/GlassIconButton';
-import { resetShareDraft, updateShareDraft, useShareDraft } from '../../src/lib/shareDraft';
+import { markEditSaved, resetShareDraft, updateShareDraft, useShareDraft } from '../../src/lib/shareDraft';
 import { enterChallenge } from '../../src/services/community';
-import { createDish, UploadError } from '../../src/services/foods';
+import { createDish, updateDish, UploadError } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { space, useTheme } from '../../src/theme';
 
@@ -54,6 +54,14 @@ export default function SharePreview() {
     setSharing(true);
     try {
       updateShareDraft({ uploadFailed: null });
+      if (d.editId) {
+        // Edit mode: UPDATE the post, then back to it (it reloads and shows "Changes saved").
+        const editId = d.editId;
+        await updateDish(editId, d);
+        markEditSaved(editId);
+        resetShareDraft();
+        return router.dismissTo(`/dish/${editId}`);
+      }
       const foodId = await createDish(d);
       if (d.challenge && d.isPublic) await enterChallenge(d.challenge.id, foodId).catch((e) => console.warn('[challenge entry]', e));
       resetShareDraft();
@@ -98,7 +106,7 @@ export default function SharePreview() {
         }
       />
       <DishActionBar>
-        <Button label={t('share.shareCta')} loading={sharing} onPress={share} style={styles.flex} />
+        <Button label={d.editId ? t('share.saveChanges') : t('share.shareCta')} loading={sharing} onPress={share} style={styles.flex} />
       </DishActionBar>
     </View>
   );

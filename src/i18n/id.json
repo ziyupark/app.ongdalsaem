@@ -346,7 +346,9 @@
     "moveUp": "Naikkan",
     "moveDown": "Turunkan",
     "moveTop": "Pindah ke paling atas",
-    "landscape": "Pemandangan"
+    "landscape": "Pemandangan",
+    "saveChanges": "Simpan perubahan",
+    "changesSaved": "Perubahan disimpan"
   },
   "dish": {
     "temperature": {
@@ -1244,5 +1246,8 @@
       "dessert": "hidangan penutup",
       "bread": "roti & brunch"
     }
+  },
+  "post": {
+    "edit": "Edit"
   }
 }

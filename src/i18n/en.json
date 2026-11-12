@@ -349,7 +349,9 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "moveTop": "Move to top",
-    "landscape": "Landscape"
+    "landscape": "Landscape",
+    "saveChanges": "Save changes",
+    "changesSaved": "Changes saved"
   },
   "dish": {
     "temperature": {
@@ -1261,5 +1263,8 @@
       "dessert": "desserts",
       "bread": "bread & brunch"
     }
+  },
+  "post": {
+    "edit": "Edit"
   }
 }

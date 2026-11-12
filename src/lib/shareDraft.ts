@@ -15,6 +15,8 @@ export type DraftPhoto = {
   height: number;
   takenAt?: Date;
   location?: { latitude: number; longitude: number };
+  /** Edit mode: a photo already on the post (public URL) — kept as is, never re-uploaded. */
+  remoteUrl?: string;
 };
 
 export type DraftContext = {
@@ -55,11 +57,15 @@ export type ShareDraft = {
   challenge: { id: string; tag: string } | null;
   /** Optional landscape (forest / sea / …). */
   landscape: string | null;
+  /** Edit mode: the post being edited (null = a new post). Weather, temperature and created_at stay as they were. */
+  editId: string | null;
+  /** Edit mode: the post's photo URLs before editing (photos taken off are removed from storage on save). */
+  editBefore: string[];
 };
 
 const empty = (): ShareDraft => ({
   photos: [], context: null, contextState: 'idle', type: 'home', name: '', placeName: '', description: '',
-  meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', placeEdited: false, uploadFailed: null, challenge: null, landscape: null,
+  meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', placeEdited: false, uploadFailed: null, challenge: null, landscape: null, editId: null, editBefore: [],
 });
 
 let draft = empty();
@@ -98,4 +104,16 @@ export async function saveCustomMoods(list: string[]) {
   } catch {
     // Not critical — the tag still works for this post.
   }
+}
+
+// ---- Edit mode: tell the post detail screen that its post was just saved (it reloads and shows "Changes saved"). ----
+let savedEdit: string | null = null;
+export function markEditSaved(foodId: string) {
+  savedEdit = foodId;
+}
+/** True once for `foodId` after its edit was saved. */
+export function takeEditSaved(foodId: string) {
+  if (savedEdit !== foodId) return false;
+  savedEdit = null;
+  return true;
 }

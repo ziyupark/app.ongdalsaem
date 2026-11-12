@@ -349,7 +349,9 @@
     "moveUp": "Subir",
     "moveDown": "Bajar",
     "moveTop": "Mover al principio",
-    "landscape": "Paisaje"
+    "landscape": "Paisaje",
+    "saveChanges": "Guardar cambios",
+    "changesSaved": "Cambios guardados"
   },
   "dish": {
     "temperature": {
@@ -1261,5 +1263,8 @@
       "dessert": "postres",
       "bread": "pan y brunch"
     }
+  },
+  "post": {
+    "edit": "Editar"
   }
 }

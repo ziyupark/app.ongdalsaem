@@ -346,7 +346,9 @@
     "moveUp": "上へ移動",
     "moveDown": "下へ移動",
     "moveTop": "いちばん上へ",
-    "landscape": "風景"
+    "landscape": "風景",
+    "saveChanges": "変更を保存",
+    "changesSaved": "変更を保存しました"
   },
   "dish": {
     "temperature": {
@@ -1244,5 +1246,8 @@
       "dessert": "デザート",
       "bread": "パン・ブランチ"
     }
+  },
+  "post": {
+    "edit": "編集"
   }
 }

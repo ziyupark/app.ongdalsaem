@@ -119,7 +119,7 @@ export default function PickPhotos() {
 
   const close = () => {
     const leave = () => { resetShareDraft(); router.back(); };
-    if (selected.length === 0) return leave();
+    if (selected.length === 0 && !draft.editId) return leave();
     Alert.alert(t('share.discardTitle'), undefined, [
       { text: t('share.keepEditing'), style: 'cancel' },
       { text: t('share.discard'), style: 'destructive', onPress: leave },
@@ -133,7 +133,7 @@ export default function PickPhotos() {
     try {
       const resolved: DraftPhoto[] = await Promise.all(
         selected.map(async (p) => {
-          if (p.id.startsWith('camera-')) return p;
+          if (p.id.startsWith('camera-') || p.remoteUrl) return p;
           try {
             const info = await MediaLibrary.getAssetInfoAsync(p.id, { shouldDownloadFromNetwork: true });
             return { ...p, fileUri: info.localUri ?? p.uri, location: info.location ?? undefined, takenAt: info.creationTime ? new Date(info.creationTime) : p.takenAt };
@@ -142,7 +142,8 @@ export default function PickPhotos() {
           }
         }),
       );
-      updateShareDraft({ photos: resolved, context: null, contextState: 'idle' });
+      // Edit mode keeps the post's own weather and place; a new post re-detects them from the photos.
+      updateShareDraft(draft.editId ? { photos: resolved } : { photos: resolved, context: null, contextState: 'idle' });
       router.push('/share/details');
     } finally {
       setBusy(false);

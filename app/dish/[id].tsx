@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ChevronLeft, Timer, Utensils, WifiOff } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,9 +18,10 @@ import { Toast } from '../../src/components/Toast';
 import { isPresetMeal } from '../../src/lib/tags';
 import { timeAgo } from '../../src/lib/time';
 import { cached } from '../../src/lib/cache';
+import { resetShareDraft, takeEditSaved, updateShareDraft } from '../../src/lib/shareDraft';
 import { startTimer } from '../../src/lib/timers';
 import {
-  ateToday as fetchAteToday, deleteDish, fetchDish, fetchMoreFrom, fetchMyMarks, logEaten, setAcorn, setSaved, unlogEaten, type Dish, type DishSummary,
+  ateToday as fetchAteToday, deleteDish, editDraftFrom, fetchDish, fetchMoreFrom, fetchMyMarks, logEaten, setAcorn, setSaved, unlogEaten, type Dish, type DishSummary,
 } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
@@ -46,6 +47,12 @@ export default function PostDetail() {
   const [eaten, setEaten] = useState(0);
   const [ate, setAte] = useState(false);
   const [toast, setToast] = useState(false);
+  // Edit mode: after "Save changes" the post reloads (`reloadKey`) and a "Changes saved" toast shows.
+  const [reloadKey, setReloadKey] = useState(0);
+  const [savedToast, setSavedToast] = useState(false);
+  useFocusEffect(useCallback(() => {
+    if (id && takeEditSaved(String(id))) { setReloadKey((k) => k + 1); setSavedToast(true); }
+  }, [id]));
   const [offline, setOffline] = useState(false);
   const [sheet, setSheet] = useState<'report' | 'share' | 'send' | null>(null);
 
@@ -73,7 +80,7 @@ export default function PostDetail() {
       }
     })();
     return () => { alive = false; };
-  }, [id]);
+  }, [id, reloadKey]);
 
   const dish = state.kind === 'ready' ? state.dish : null;
   const mine = !!dish && !!me && dish.creator.id === me.id;
@@ -160,6 +167,15 @@ export default function PostDetail() {
     Alert.alert(dish.name, undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       {
+        // Edit = the share flow prefilled from this post (?edit=<id>); weather and created_at stay as they were.
+        text: t('post.edit'),
+        onPress: () => {
+          resetShareDraft();
+          updateShareDraft(editDraftFrom(dish));
+          router.push({ pathname: '/share/pick', params: { edit: dish.id } });
+        },
+      },
+      {
         text: t('dish.delete'),
         style: 'destructive',
         onPress: () =>
@@ -173,6 +189,7 @@ export default function PostDetail() {
 
   const onCount = useCallback((n: number) => setCommentCount(n), []);
   const hideToast = useCallback(() => setToast(false), []);
+  const hideSavedToast = useCallback(() => setSavedToast(false), []);
 
   if (state.kind !== 'ready' || !view || !dish) {
     return (
@@ -279,6 +296,7 @@ export default function PostDetail() {
       />
 
       <Toast visible={toast} message={t('dish.ateToast')} action={t('dish.undo')} onAction={undoAte} onHide={hideToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
+      <Toast visible={savedToast} message={t('share.changesSaved')} onHide={hideSavedToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
 
       <SendToSheet visible={sheet === 'send'} dish={{ id: dish.id, name: dish.name }} onClose={() => setSheet(null)} />
       <ShareSheet

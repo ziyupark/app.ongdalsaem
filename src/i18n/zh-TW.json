@@ -346,7 +346,9 @@
     "moveUp": "上移",
     "moveDown": "下移",
     "moveTop": "移到最上面",
-    "landscape": "風景"
+    "landscape": "風景",
+    "saveChanges": "儲存變更",
+    "changesSaved": "已儲存變更"
   },
   "dish": {
     "temperature": {
@@ -1244,5 +1246,8 @@
       "dessert": "甜點",
       "bread": "麵包・早午餐"
     }
+  },
+  "post": {
+    "edit": "編輯"
   }
 }

@@ -283,6 +283,8 @@ moveUp=Lên trên
 moveDown=Xuống dưới
 moveTop=Lên đầu
 landscape=Phong cảnh
+saveChanges=Lưu thay đổi
+changesSaved=Đã lưu thay đổi
 [dish]
 temperature.cold=Lạnh
 temperature.cool=Mát
@@ -1030,3 +1032,5 @@ body=Một món cho thời tiết hôm nay, mỗi ngày vào giờ này. Có th�
 skip=Bỏ qua
 continue=Bật thông báo
 wheel=Giờ thông báo
+[post]
+edit=Chỉnh sửa

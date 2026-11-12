@@ -283,6 +283,8 @@ moveUp=上へ移動
 moveDown=下へ移動
 moveTop=いちばん上へ
 landscape=風景
+saveChanges=変更を保存
+changesSaved=変更を保存しました
 [dish]
 temperature.cold=寒い
 temperature.cool=涼しい
@@ -1030,3 +1032,5 @@ body=毎日この時間に、今日の天気に合う一品をお届けします
 skip=スキップ
 continue=通知をオンにする
 wheel=通知の時間
+[post]
+edit=編集

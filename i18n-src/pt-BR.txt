@@ -286,6 +286,8 @@ moveUp=Mover para cima
 moveDown=Mover para baixo
 moveTop=Mover para o topo
 landscape=Paisagem
+saveChanges=Salvar alterações
+changesSaved=Alterações salvas
 [dish]
 temperature.cold=Frio
 temperature.cool=Fresco
@@ -1047,3 +1049,5 @@ body=Um prato para o clima de hoje, todo dia neste horário. Você pode mudar em
 skip=Pular
 continue=Ativar notificações
 wheel=Horário da notificação
+[post]
+edit=Editar

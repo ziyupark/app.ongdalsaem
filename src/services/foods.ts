@@ -39,6 +39,11 @@ export type Dish = DishSummary & {
   eaten: number;
   allowComments: boolean;
   isPublic: boolean;
+  /** Edit mode prefill (8.2 Type · landscape · place · when). */
+  type: 'home' | 'travel';
+  landscape: string | null;
+  country: string | null;
+  takenAt: Date | null;
 };
 
 /** Thrown by createDish when one photo keeps failing (8.4). */
@@ -52,7 +57,7 @@ export type Comment = { id: string; body: string; createdAt: Date; author: Perso
 export const SUMMARY_SELECT = 'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, likes(count)';
 const DISH_SELECT =
   'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, ' +
-  'city, neighborhood, place_name, created_at, allow_comments, visibility, ' +
+  'city, neighborhood, country, place_name, created_at, taken_at, dish_type, landscape, allow_comments, visibility, ' +
   'creator:profiles!creator_id(id, display_name, username, avatar_url), food_images(image_url, display_order), likes(count), comments(count), food_eaten_counts(count)';
 
 export type Row = Record<string, any>;
@@ -105,6 +110,10 @@ function toDish(r: Row): Dish {
     eaten: countOf(r.food_eaten_counts),
     allowComments: r.allow_comments ?? true,
     isPublic: r.visibility === 'everyone',
+    type: r.dish_type === 'travel' ? 'travel' : 'home',
+    landscape: r.landscape ?? null,
+    country: r.country ?? null,
+    takenAt: r.taken_at ? new Date(r.taken_at) : null,
   };
 }
 
@@ -340,10 +349,13 @@ export async function logEaten(dish: Pick<Dish, 'id' | 'name' | 'photo'>) {
 export async function deleteDish(foodId: string) {
   const uid = await myId();
   if (!uid) throw new Error('Not signed in');
+  // Photo paths first (edited posts also have `<foodId>-e<time>-<n>.jpg` files).
+  const { data: imgs } = await supabase.from('food_images').select('image_url').eq('food_id', foodId);
+  const extra = ((imgs ?? []) as Row[]).map((r) => pathOf(String(r.image_url ?? ''))).filter((x): x is string => !!x && x.startsWith(`${uid}/`));
   const { error } = await supabase.from('foods').delete().eq('id', foodId).eq('creator_id', uid);
   if (error) throw error;
-  // Files are best-effort: the row (and its food_images) is already gone. Paths are `<uid>/<foodId>-<0..9>.jpg`.
-  await supabase.storage.from(BUCKET).remove(Array.from({ length: 10 }, (_, i) => `${uid}/${foodId}-${i}.jpg`));
+  // Files are best-effort: the row (and its food_images) is already gone. Paths are `<uid>/<foodId>-<0..9>.jpg` + edited ones.
+  await supabase.storage.from(BUCKET).remove([...new Set([...Array.from({ length: 10 }, (_, i) => `${uid}/${foodId}-${i}.jpg`), ...extra])]);
 }
 
 /** 8.3 "Share to ongdalsaem": upload photos → foods row → food_images rows. Returns the new dish id. */
@@ -432,6 +444,119 @@ export async function createDish(draft: ShareDraft): Promise<string> {
     if (paths.length) await supabase.storage.from(BUCKET).remove(paths);
     throw e;
   }
+}
+
+/** Edit mode: a share draft filled from my post. Photos stay remote (remoteUrl) until replaced; the weather is the post's own. */
+export function editDraftFrom(dish: Dish): Partial<ShareDraft> {
+  const when = dish.takenAt ?? dish.createdAt;
+  return {
+    editId: dish.id,
+    editBefore: dish.photos.filter(Boolean),
+    photos: dish.photos.filter(Boolean).map((url, i) => ({ id: `remote-${i}-${url}`, uri: url, remoteUrl: url, width: 0, height: 0, takenAt: when })),
+    context: dish.mood
+      ? { mood: dish.mood, tempC: dish.tempC ?? 0, place: dish.city ? { city: dish.city, district: dish.neighborhood ?? undefined, countryCode: dish.country ?? undefined } : null, takenAt: when, from: 'photo' }
+      : null,
+    contextState: dish.mood ? 'ready' : 'none',
+    type: dish.type,
+    name: dish.name,
+    placeName: dish.placeName ?? '',
+    description: dish.description,
+    meals: dish.meals,
+    moods: dish.moods,
+    isPublic: dish.isPublic,
+    allowComments: dish.allowComments,
+    ingredients: dish.ingredients.map((i) => ({ name: i.name, amount: i.amount })),
+    steps: dish.steps.map((st) => ({ text: st.text, timerSec: st.timerSec })),
+    calories: dish.calories != null ? String(dish.calories) : '',
+    placeEdited: false,
+    uploadFailed: null,
+    challenge: null,
+    landscape: dish.landscape,
+  };
+}
+
+/** Storage path of one of my uploaded photos from its public URL (null when it isn't in the bucket). */
+function pathOf(url: string) {
+  const marker = `/object/public/${BUCKET}/`;
+  const i = url.indexOf(marker);
+  return i >= 0 ? decodeURIComponent(url.slice(i + marker.length).split('?')[0]) : null;
+}
+
+/**
+ * Edit mode "Save changes": upload only the new photos → UPDATE the foods row (weather, temperature, created_at and
+ * taken_at stay as they were; the place only changes when it was edited in 8.2d) → replace the food_images rows.
+ * Photos taken off the post are removed from storage (best effort).
+ */
+export async function updateDish(foodId: string, draft: ShareDraft): Promise<void> {
+  const before = draft.editBefore;
+  const uid = await myId();
+  if (!uid) throw new Error('Not signed in');
+  if (draft.photos.length === 0) throw new Error('No photos');
+  const stamp = Date.now();
+  const added: string[] = [];
+  const urls: string[] = [];
+  try {
+    for (const [i, p] of draft.photos.entries()) {
+      if (p.remoteUrl) { urls.push(p.remoteUrl); continue; }
+      const long = Math.max(p.width, p.height) || MAX_EDGE;
+      const resize = long > MAX_EDGE ? [{ resize: p.width >= p.height ? { width: MAX_EDGE } : { height: MAX_EDGE } }] : [];
+      // A new name per edit: the old `<foodId>-<n>.jpg` files may still be in use, and upsert needs a storage SELECT policy.
+      const path = `${uid}/${foodId}-e${stamp}-${i}.jpg`;
+      let uploaded = false;
+      for (let attempt = 0; attempt < 2 && !uploaded; attempt++) {
+        try {
+          const out = await ImageManipulator.manipulateAsync(p.fileUri ?? p.uri, resize, { compress: 0.82, format: ImageManipulator.SaveFormat.JPEG });
+          const body = await (await fetch(out.uri)).arrayBuffer();
+          const { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: 'image/jpeg', upsert: false });
+          if (error) throw error;
+          uploaded = true;
+        } catch {
+          // retry once
+        }
+      }
+      if (!uploaded) throw new UploadError(i);
+      added.push(path);
+      urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
+    }
+
+    const ctx = draft.context;
+    const row: Record<string, unknown> = {
+      image_url: urls[0],
+      name: draft.name.trim(),
+      description: draft.description.trim() || null,
+      mood_tags: draft.moods,
+      meal_type: draft.meals,
+      landscape: draft.landscape ?? null,
+      visibility: draft.isPublic ? 'everyone' : 'only_me',
+      allow_comments: draft.allowComments,
+      dish_type: draft.type,
+      place_name: draft.type === 'travel' && draft.placeName.trim() ? draft.placeName.trim() : null,
+      ingredients: draft.type === 'home' ? draft.ingredients.map((i) => ({ name: i.name.trim(), amount: i.amount.trim() })) : [],
+      steps: draft.type === 'home' ? draft.steps.map((st) => (st.timerSec ? { text: st.text.trim(), timer_sec: st.timerSec } : { text: st.text.trim() })) : [],
+      calories: draft.type === 'home' && /^\d+$/.test(draft.calories.trim()) ? Number(draft.calories.trim()) : null,
+    };
+    if (draft.placeEdited && ctx) {
+      row.city = ctx.place?.city ?? null;
+      row.country = ctx.place?.countryCode ?? ctx.place?.country ?? null;
+      row.neighborhood = ctx.place?.district ?? null;
+      row.geohash6 = ctx.coords ? geohash(ctx.coords.latitude, ctx.coords.longitude, 6) : null;
+    }
+    const { error: foodError } = await supabase.from('foods').update(row).eq('id', foodId).eq('creator_id', uid);
+    if (foodError) throw foodError;
+
+    const { error: delError } = await supabase.from('food_images').delete().eq('food_id', foodId);
+    if (delError) throw delError;
+    const { error: imgError } = await supabase
+      .from('food_images')
+      .insert(urls.map((image_url, display_order) => ({ food_id: foodId, user_id: uid, image_url, image_type: 'photo', display_order })));
+    if (imgError) throw imgError;
+  } catch (e) {
+    if (added.length) await supabase.storage.from(BUCKET).remove(added);
+    throw e;
+  }
+  // Photos no longer on the post — best effort.
+  const gone = before.filter((u) => !urls.includes(u)).map(pathOf).filter((x): x is string => !!x && x.startsWith(`${uid}/`));
+  if (gone.length) await supabase.storage.from(BUCKET).remove(gone).catch(() => undefined);
 }
 
 // ------------------------------------------------------------------------------------- 6.2 Saved · 6.3 Diary

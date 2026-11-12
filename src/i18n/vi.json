@@ -346,7 +346,9 @@
     "moveUp": "Lên trên",
     "moveDown": "Xuống dưới",
     "moveTop": "Lên đầu",
-    "landscape": "Phong cảnh"
+    "landscape": "Phong cảnh",
+    "saveChanges": "Lưu thay đổi",
+    "changesSaved": "Đã lưu thay đổi"
   },
   "dish": {
     "temperature": {
@@ -1244,5 +1246,8 @@
       "dessert": "tráng miệng",
       "bread": "bánh mì & brunch"
     }
+  },
+  "post": {
+    "edit": "Chỉnh sửa"
   }
 }

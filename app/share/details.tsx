@@ -111,7 +111,17 @@ export default function ShareDetails() {
   const close = () => {
     Alert.alert(t('share.discardTitle'), undefined, [
       { text: t('share.keepEditing'), style: 'cancel' },
-      { text: t('share.discard'), style: 'destructive', onPress: () => { resetShareDraft(); router.dismissAll(); } },
+      {
+        text: t('share.discard'),
+        style: 'destructive',
+        onPress: () => {
+          // Edit mode: back to the post, unchanged.
+          const editId = getShareDraft().editId;
+          resetShareDraft();
+          if (editId) router.dismissTo(`/dish/${editId}`);
+          else router.dismissAll();
+        },
+      },
     ]);
   };
 

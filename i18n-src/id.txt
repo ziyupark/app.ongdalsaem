@@ -283,6 +283,8 @@ moveUp=Naikkan
 moveDown=Turunkan
 moveTop=Pindah ke paling atas
 landscape=Pemandangan
+saveChanges=Simpan perubahan
+changesSaved=Perubahan disimpan
 [dish]
 temperature.cold=Dingin
 temperature.cool=Sejuk
@@ -1030,3 +1032,5 @@ body=Satu hidangan untuk cuaca hari ini, setiap hari di jam ini. Bisa diubah di 
 skip=Lewati
 continue=Aktifkan notifikasi
 wheel=Waktu notifikasi
+[post]
+edit=Edit
