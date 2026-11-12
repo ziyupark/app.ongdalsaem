@@ -1037,6 +1037,24 @@ inFridge=Sudah ada di kulkas: {{n}}
 empty=Belum ada yang perlu dibeli. Tambahkan bahan dari resep.
 toFridge=Sudah dibeli → ke kulkas ({{n}})
 remove=Hapus {{name}}
+[mealPlan]
+title=Menu minggu ini
+today=Hari ini
+plan=+ Rencana
+planFor=Untuk
+forWeather=Cocok saat {{weather}}
+suggested=Saran
+noPicks=Belum ada masakan untuk disarankan.
+fromSaved=Dari yang kamu simpan
+noSaved=Belum ada yang disimpan.
+remove=Hapus {{name}}
+addToPlan=Tambah ke menu
+addTitle=Tambah ke menu
+day=Hari
+add=Tambah
+added=Ditambahkan ke menu
+meals.lunch=Makan siang
+meals.dinner=Makan malam
 [welcome]
 introTitle=Makan harianmu,\nsesuai cuaca.
 introBody=Lihat masakan orang di cuaca seperti cuacamu, lalu tentukan mau makan apa hari ini.

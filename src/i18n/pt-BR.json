@@ -807,6 +807,27 @@
     "toFridge": "Comprado → para a geladeira ({{n}})",
     "remove": "Remover {{name}}"
   },
+  "mealPlan": {
+    "title": "Cardápio da semana",
+    "today": "Hoje",
+    "plan": "+ Planejar",
+    "planFor": "Para",
+    "forWeather": "Combina com {{weather}}",
+    "suggested": "Sugestões",
+    "noPicks": "Ainda não há pratos para sugerir.",
+    "fromSaved": "Dos seus salvos",
+    "noSaved": "Nada salvo ainda.",
+    "remove": "Remover {{name}}",
+    "addToPlan": "Adicionar ao cardápio",
+    "addTitle": "Adicionar ao cardápio",
+    "day": "Dia",
+    "add": "Adicionar",
+    "added": "Adicionado ao seu cardápio",
+    "meals": {
+      "lunch": "Almoço",
+      "dinner": "Jantar"
+    }
+  },
   "community": {
     "title": "Comunidade",
     "global": "Global",

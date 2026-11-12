@@ -1037,6 +1037,24 @@ inFridge=冰箱裡已有 {{n}} 樣
 empty=還沒有要買的東西。從食譜加入食材吧。
 toFridge=已購買 → 放進冰箱 ({{n}})
 remove=移除 {{name}}
+[mealPlan]
+title=本週菜單
+today=今天
+plan=+ 安排
+planFor=餐別
+forWeather=適合{{weather}}的日子
+suggested=推薦
+noPicks=還沒有可推薦的料理。
+fromSaved=從收藏的料理
+noSaved=還沒有收藏的料理。
+remove=移除 {{name}}
+addToPlan=加入菜單
+addTitle=加入菜單
+day=日期
+add=加入
+added=已加入菜單
+meals.lunch=午餐
+meals.dinner=晚餐
 [welcome]
 introTitle=跟著天氣選的\n每日一餐。
 introBody=看看大家在和你一樣的天氣裡煮了什麼，決定今天吃什麼。

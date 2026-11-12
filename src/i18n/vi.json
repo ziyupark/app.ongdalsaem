@@ -797,6 +797,27 @@
     "toFridge": "Đã mua → vào tủ lạnh ({{n}})",
     "remove": "Xóa {{name}}"
   },
+  "mealPlan": {
+    "title": "Thực đơn tuần này",
+    "today": "Hôm nay",
+    "plan": "+ Lên kế hoạch",
+    "planFor": "Bữa",
+    "forWeather": "Hợp với trời {{weather}}",
+    "suggested": "Gợi ý",
+    "noPicks": "Chưa có món nào để gợi ý.",
+    "fromSaved": "Từ món đã lưu",
+    "noSaved": "Chưa lưu món nào.",
+    "remove": "Xóa {{name}}",
+    "addToPlan": "Thêm vào thực đơn",
+    "addTitle": "Thêm vào thực đơn",
+    "day": "Ngày",
+    "add": "Thêm",
+    "added": "Đã thêm vào thực đơn",
+    "meals": {
+      "lunch": "Bữa trưa",
+      "dinner": "Bữa tối"
+    }
+  },
   "community": {
     "title": "Cộng đồng",
     "global": "Toàn cầu",

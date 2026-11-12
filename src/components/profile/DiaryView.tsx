@@ -10,6 +10,7 @@ import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { FridgeList } from './FridgeList';
 import { ShoppingList } from './ShoppingList';
+import { WeekPlan } from './WeekPlan';
 
 const RAINY: WeatherMood[] = ['drizzle', 'rain', 'heavy-rain', 'shower', 'thunder'];
 const SNOWY: WeatherMood[] = ['sleet', 'flurries', 'snow', 'heavy-snow'];
@@ -57,6 +58,7 @@ export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void })
 
   return (
     <View style={styles.root}>
+      <WeekPlan />
       <View style={styles.monthHead}>
         <Text variant="Title/M" style={styles.flex}>{title}</Text>
         <View style={styles.arrows}>

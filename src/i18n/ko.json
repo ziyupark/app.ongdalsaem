@@ -807,6 +807,27 @@
     "toFridge": "구매 완료 → 냉장고로 ({{n}})",
     "remove": "{{name}} 삭제"
   },
+  "mealPlan": {
+    "title": "이번 주 식단",
+    "today": "오늘",
+    "plan": "+ 계획",
+    "planFor": "끼니",
+    "forWeather": "{{weather}} 날에 어울려요",
+    "suggested": "추천",
+    "noPicks": "아직 추천할 요리가 없어요.",
+    "fromSaved": "저장한 요리에서",
+    "noSaved": "저장한 요리가 없어요.",
+    "remove": "{{name}} 삭제",
+    "addToPlan": "식단에 추가",
+    "addTitle": "식단에 추가",
+    "day": "날짜",
+    "add": "추가",
+    "added": "식단에 추가했어요",
+    "meals": {
+      "lunch": "점심",
+      "dinner": "저녁"
+    }
+  },
   "community": {
     "title": "커뮤니티",
     "global": "글로벌",

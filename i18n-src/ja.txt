@@ -1037,6 +1037,24 @@ inFridge=冷蔵庫にあります {{n}}個
 empty=まだ買うものはありません。レシピから材料を追加しましょう。
 toFridge=購入済み → 冷蔵庫へ ({{n}})
 remove={{name}}を削除
+[mealPlan]
+title=今週の献立
+today=今日
+plan=+ 予定
+planFor=食事
+forWeather={{weather}}の日に合う
+suggested=おすすめ
+noPicks=まだおすすめできる料理がありません。
+fromSaved=保存した料理から
+noSaved=保存した料理はまだありません。
+remove={{name}}を削除
+addToPlan=献立に追加
+addTitle=献立に追加
+day=日付
+add=追加
+added=献立に追加しました
+meals.lunch=昼食
+meals.dinner=夕食
 [welcome]
 introTitle=天気と選ぶ、\n今日のごはん。
 introBody=同じ天気の日にみんなが作った料理を見て、今日の一品を決めましょう。

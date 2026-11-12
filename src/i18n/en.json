@@ -807,6 +807,27 @@
     "toFridge": "Bought → to the fridge ({{n}})",
     "remove": "Remove {{name}}"
   },
+  "mealPlan": {
+    "title": "This week’s meals",
+    "today": "Today",
+    "plan": "+ Plan",
+    "planFor": "For",
+    "forWeather": "Good for {{weather}}",
+    "suggested": "Suggested",
+    "noPicks": "No dishes to suggest yet.",
+    "fromSaved": "From your saved dishes",
+    "noSaved": "Nothing saved yet.",
+    "remove": "Remove {{name}}",
+    "addToPlan": "Add to meal plan",
+    "addTitle": "Add to meal plan",
+    "day": "Day",
+    "add": "Add",
+    "added": "Added to your meal plan",
+    "meals": {
+      "lunch": "Lunch",
+      "dinner": "Dinner"
+    }
+  },
   "community": {
     "title": "Community",
     "global": "Global",

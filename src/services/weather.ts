@@ -114,3 +114,38 @@ export function tempAt(f: Forecast, at: Date) {
   if (!f.points.length) return f.tempC;
   return f.points.reduce((best, p) => (Math.abs(+p.at - +at) < Math.abs(+best.at - +at) ? p : best)).tempC;
 }
+
+export type DailyForecast = { /** Local date YYYY-MM-DD. */ date: string; mood: WeatherMood; hi: number; lo: number };
+
+/**
+ * Day-by-day forecast from the same 5-day / 3-hour feed (free tier) — about 5 days ahead.
+ * A day's weather = the most common mood between 9:00 and 21:00 (all of its steps when none fall there).
+ */
+export async function fetchDailyForecast(where: Coordinates | { city: string }): Promise<DailyForecast[]> {
+  if (!API_KEY) return [];
+  const params = new URLSearchParams({ units: 'metric', appid: API_KEY });
+  if ('city' in where) params.set('q', where.city);
+  else {
+    params.set('lat', String(roundCoord(where.latitude)));
+    params.set('lon', String(roundCoord(where.longitude)));
+  }
+  const res = await fetch(`${FORECAST_URL}?${params.toString()}`);
+  if (!res.ok) throw new Error(String(res.status));
+  const json = (await res.json()) as OwmForecast;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const days = new Map<string, ForecastPoint[]>();
+  for (const p of json.list) {
+    const at = new Date(p.dt * 1000);
+    const key = `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())}`;
+    const point = { at, tempC: Math.round(p.main.temp), mood: moodFromOwm({ ...p, name: '', sys: { country: '' } } as OwmResponse) };
+    days.set(key, [...(days.get(key) ?? []), point]);
+  }
+  return [...days.entries()].map(([date, pts]) => {
+    const day = pts.filter((p) => p.at.getHours() >= 9 && p.at.getHours() <= 21);
+    const counts = new Map<WeatherMood, number>();
+    (day.length ? day : pts).forEach((p) => counts.set(p.mood, (counts.get(p.mood) ?? 0) + 1));
+    const mood = [...counts.entries()].sort((a, b) => b[1] - a[1])[0][0];
+    const temps = pts.map((p) => p.tempC);
+    return { date, mood, hi: Math.max(...temps), lo: Math.min(...temps) };
+  });
+}

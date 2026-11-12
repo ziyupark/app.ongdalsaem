@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/Button';
+import { AddToPlanSheet } from '../../src/components/profile/WeekPlan';
 import { CommentsInline } from '../../src/components/dish/CommentsInline';
 import { DishTile } from '../../src/components/dish/DishTile';
 import { type DishViewData } from '../../src/components/dish/DishView';
@@ -59,7 +60,8 @@ export default function PostDetail() {
     if (id && takeEditSaved(String(id))) { setReloadKey((k) => k + 1); setSavedToast(true); }
   }, [id]));
   const [offline, setOffline] = useState(false);
-  const [sheet, setSheet] = useState<'report' | 'share' | 'send' | null>(null);
+  const [sheet, setSheet] = useState<'report' | 'share' | 'send' | 'plan' | null>(null);
+  const [planToast, setPlanToast] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -175,9 +177,16 @@ export default function PostDetail() {
 
   const onMore = () => {
     if (!dish) return;
-    if (!mine) return setSheet('report');
+    if (!mine) {
+      return Alert.alert(dish.name, undefined, [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('mealPlan.addToPlan'), onPress: () => setSheet('plan') },
+        { text: t('report.send'), style: 'destructive', onPress: () => setSheet('report') },
+      ]);
+    }
     Alert.alert(dish.name, undefined, [
       { text: t('common.cancel'), style: 'cancel' },
+      { text: t('mealPlan.addToPlan'), onPress: () => setSheet('plan') },
       {
         // Edit = the share flow prefilled from this post (?edit=<id>); weather and created_at stay as they were.
         text: t('post.edit'),
@@ -202,6 +211,7 @@ export default function PostDetail() {
   const onCount = useCallback((n: number) => setCommentCount(n), []);
   const hideToast = useCallback(() => setToast(false), []);
   const hideSavedToast = useCallback(() => setSavedToast(false), []);
+  const hidePlanToast = useCallback(() => setPlanToast(false), []);
 
   if (state.kind !== 'ready' || !view || !dish) {
     return (
@@ -344,6 +354,8 @@ export default function PostDetail() {
       <Toast visible={toast} message={t('dish.ateToast')} action={t('dish.undo')} onAction={undoAte} onHide={hideToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <Toast visible={savedToast} message={t('share.changesSaved')} onHide={hideSavedToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
 
+      <Toast visible={planToast} message={t('mealPlan.added')} onHide={hidePlanToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
+      <AddToPlanSheet visible={sheet === 'plan'} dish={{ id: dish.id, name: dish.name, photo: dish.photo }} onClose={() => setSheet(null)} onAdded={() => { setSheet(null); setPlanToast(true); }} />
       <SendToSheet visible={sheet === 'send'} dish={{ id: dish.id, name: dish.name }} onClose={() => setSheet(null)} />
       <ShareSheet
         visible={sheet === 'share'}
