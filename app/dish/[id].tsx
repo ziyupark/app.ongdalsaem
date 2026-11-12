@@ -1,10 +1,12 @@
+import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { ChevronLeft, Timer, Utensils, WifiOff } from 'lucide-react-native';
+import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils, WifiOff } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Button } from '../../src/components/Button';
 import { CommentsInline } from '../../src/components/dish/CommentsInline';
 import { DishTile } from '../../src/components/dish/DishTile';
 import { type DishViewData } from '../../src/components/dish/DishView';
@@ -21,7 +23,7 @@ import { cached } from '../../src/lib/cache';
 import { resetShareDraft, takeEditSaved, updateShareDraft } from '../../src/lib/shareDraft';
 import { startTimer } from '../../src/lib/timers';
 import {
-  ateToday as fetchAteToday, deleteDish, editDraftFrom, fetchDish, fetchMoreFrom, fetchMyMarks, logEaten, setAcorn, setSaved, unlogEaten, type Dish, type DishSummary,
+  ateToday as fetchAteToday, deleteDish, editDraftFrom, fetchCookedFrom, fetchDish, fetchMoreFrom, fetchRecipeAuthor, fetchMyMarks, logEaten, setAcorn, setSaved, unlogEaten, type Dish, type DishSummary, type Person,
 } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
@@ -39,6 +41,9 @@ export default function PostDetail() {
   const insets = useSafeAreaInsets();
   const [state, setState] = useState<State>({ kind: 'loading' });
   const [more, setMore] = useState<DishSummary[]>([]);
+  // "I made this": who cooked from this recipe · the recipe this one was cooked from.
+  const [cookedBy, setCookedBy] = useState<Awaited<ReturnType<typeof fetchCookedFrom>> | null>(null);
+  const [recipeAuthor, setRecipeAuthor] = useState<Person | null>(null);
   const [me, setMe] = useState<MyProfile | null>(null);
   const [given, setGiven] = useState(false);
   const [saved, setSavedState] = useState(false);
@@ -75,6 +80,9 @@ export default function PostDetail() {
         setEaten(dish.eaten);
         setState({ kind: 'ready', dish });
         fetchMoreFrom(dish.creator.id, dish.id).then((m) => alive && setMore(m)).catch(() => undefined);
+        fetchCookedFrom(dish.id).then((c) => alive && setCookedBy(c)).catch(() => undefined);
+        if (dish.cookedFromId) fetchRecipeAuthor(dish.cookedFromId).then((p) => alive && setRecipeAuthor(p)).catch(() => undefined);
+        else setRecipeAuthor(null);
       } catch {
         if (alive) setState({ kind: 'missing' });
       }
@@ -257,6 +265,40 @@ export default function PostDetail() {
     />
   );
 
+  // "I made this" opens the share flow with this recipe's name and ingredients; the new post keeps cooked_from_id.
+  const canCookThis = !mine && dish.type === 'home' && dish.ingredients.length > 0;
+  const madeThis = () => {
+    resetShareDraft();
+    updateShareDraft({ type: 'home', name: dish.name, ingredients: dish.ingredients.map((i) => ({ name: i.name, amount: i.amount })), cookedFromId: dish.id });
+    router.push('/share/pick');
+  };
+  const cookedFrom = mine && dish.cookedFromId && recipeAuthor && recipeAuthor.id !== me?.id ? (
+    <Pressable accessibilityRole="link" onPress={() => router.push(`/dish/${dish.cookedFromId}`)} style={[styles.fromLink, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+      <Icon icon={ChefHat} size={18} color="fg/accent" />
+      <Text variant="Body/S Strong" style={styles.flex} numberOfLines={1}>{t('dish.cookedFromRecipe', { name: recipeAuthor.handle ?? recipeAuthor.name })}</Text>
+      <Icon icon={ChevronRight} size={18} color="fg/secondary" />
+    </Pressable>
+  ) : null;
+  const made = cookedBy?.cooks || canCookThis || cookedFrom ? (
+    <View style={styles.made}>
+      {cookedFrom ? <View style={styles.px}>{cookedFrom}</View> : null}
+      {cookedBy?.cooks ? (
+        <View style={styles.madeList}>
+          <Text variant="Title/M" style={styles.px}>{t('dish.madeBy', { n: cookedBy.cooks })}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.madeRow}>
+            {cookedBy.posts.map((p) => (
+              <Pressable key={p.id} accessibilityRole="button" accessibilityLabel={p.person.handle ?? p.person.name} onPress={() => router.push(`/dish/${p.id}`)} style={styles.madeItem}>
+                <Image source={{ uri: p.photo }} style={[styles.madePhoto, { backgroundColor: color('bg/muted') }]} contentFit="cover" />
+                <Text variant="Caption" color="fg/secondary" numberOfLines={1}>{p.person.handle ?? p.person.name}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+      ) : null}
+      {canCookThis ? <View style={styles.px}><Button label={t('dish.madeThis')} icon={ChefHat} variant="Outline" size="M" onPress={madeThis} /></View> : null}
+    </View>
+  ) : null;
+
   const moreFrom = more.length ? (
     <View style={styles.more}>
       <View style={styles.moreHead}>
@@ -289,7 +331,7 @@ export default function PostDetail() {
         onStartTimer={startStep}
         actionBar={actionBar}
         comments={comments}
-        more={moreFrom}
+        more={made || moreFrom ? <>{made}{moreFrom}</> : null}
         scrollToComments={openComments === '1'}
         banner={offline ? (
           <View style={[styles.offline, { backgroundColor: color('bg/inverse') }]}>
@@ -329,6 +371,13 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   offline: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: 30 },
   more: { paddingTop: space[32], gap: space[8] },
+  px: { paddingHorizontal: space[20] },
+  made: { paddingTop: space[32], gap: space[16] },
+  madeList: { gap: space[10] },
+  madeRow: { gap: space[12], paddingHorizontal: space[20] },
+  madeItem: { width: 64, alignItems: 'center', gap: space[4] },
+  madePhoto: { width: 56, height: 56, borderRadius: radius.full },
+  fromLink: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1 },
   moreHead: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: space[20], gap: space[12] },
   moreRow: { gap: space[16], paddingHorizontal: space[20] },
   ate: { flex: 1, height: 52, borderRadius: radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },

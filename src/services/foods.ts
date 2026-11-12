@@ -47,6 +47,8 @@ export type Dish = DishSummary & {
   landscape: string | null;
   country: string | null;
   takenAt: Date | null;
+  /** 7.1 "I made this": the recipe post it was cooked from. */
+  cookedFromId: string | null;
 };
 
 /** Thrown by createDish when one photo keeps failing (8.4). */
@@ -59,7 +61,7 @@ export type Comment = { id: string; body: string; createdAt: Date; author: Perso
 // `!creator_id` / `!user_id`: foods↔profiles also meet through likes/saves/comments, so the direct FK is named.
 export const SUMMARY_SELECT = 'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, likes(count)';
 const DISH_SELECT =
-  'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, servings, cook_minutes, difficulty, ' +
+  'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, servings, cook_minutes, difficulty, cooked_from_id, ' +
   'city, neighborhood, country, place_name, created_at, taken_at, dish_type, landscape, allow_comments, visibility, ' +
   'creator:profiles!creator_id(id, display_name, username, avatar_url), food_images(image_url, display_order), likes(count), comments(count), food_eaten_counts(count)';
 
@@ -107,6 +109,7 @@ function toDish(r: Row): Dish {
     calories: r.calories ?? null,
     servings: r.servings ?? null,
     cookMinutes: r.cook_minutes ?? null,
+    cookedFromId: r.cooked_from_id ?? null,
     difficulty: r.difficulty === 'easy' || r.difficulty === 'medium' || r.difficulty === 'hard' ? r.difficulty : null,
     city: r.city ?? null,
     neighborhood: r.neighborhood ?? null,
@@ -191,6 +194,34 @@ export async function fetchMoreFrom(creatorId: string, excludeId: string, limit 
     .limit(limit);
   if (error) throw error;
   return (data as Row[]).map(toSummary);
+}
+
+/** 7.1 "Made by N people": public posts cooked from this recipe — N cooks and one post each (newest, at most `limit`). */
+export async function fetchCookedFrom(foodId: string, limit = 10): Promise<{ cooks: number; posts: { id: string; photo: string; person: Person }[] }> {
+  const { data, error } = await supabase
+    .from('foods')
+    .select('id, image_url, creator_id, creator:profiles!creator_id(id, display_name, username, avatar_url)')
+    .eq('cooked_from_id', foodId)
+    .eq('visibility', 'everyone')
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  const seen = new Set<string>();
+  const posts: { id: string; photo: string; person: Person }[] = [];
+  for (const r of data as Row[]) {
+    if (seen.has(r.creator_id)) continue;
+    seen.add(r.creator_id);
+    if (posts.length < limit) posts.push({ id: r.id, photo: r.image_url, person: toPerson(r.creator, r.creator_id) });
+  }
+  return { cooks: seen.size, posts };
+}
+
+/** 7.1 "Made with <name>'s recipe": the original post's author (null when it's gone or not visible). */
+export async function fetchRecipeAuthor(foodId: string): Promise<Person | null> {
+  const { data, error } = await supabase.from('foods').select('creator_id, creator:profiles!creator_id(id, display_name, username, avatar_url)').eq('id', foodId).maybeSingle();
+  if (error) throw error;
+  return data ? toPerson((data as Row).creator, (data as Row).creator_id) : null;
 }
 
 export type ProfileTab = 'dishes' | 'saved' | 'diary';
@@ -431,6 +462,7 @@ export async function createDish(draft: ShareDraft): Promise<string> {
       servings: draft.type === 'home' ? draft.servings : 2,
       cook_minutes: draft.type === 'home' ? draft.cookMinutes : null,
       difficulty: draft.type === 'home' ? draft.difficulty : null,
+      cooked_from_id: draft.cookedFromId,
     };
     let { error: foodError } = await supabase.from('foods').insert(row);
     // PGRST204 = unknown column: migration 20261106010000 (taken_at · weather_source · neighborhood) not applied yet.
