@@ -245,6 +245,33 @@ export async function fetchFollowingFeed(only: 'all' | 'people' | 'tables' = 'al
   return [...out.values()].filter((d) => d.creator.id !== me).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
+/** 4.4 Table · my seat — my own published dishes since `since` (any visibility), newest first. */
+export async function fetchMyDishesSince(since: Date): Promise<CardDish[]> {
+  const me = await uid();
+  if (!me) return [];
+  const { data, error } = await supabase.from('foods').select(CARD_SELECT).eq('creator_id', me).eq('status', 'published')
+    .gte('created_at', since.toISOString()).order('created_at', { ascending: false }).limit(20);
+  if (error) throw error;
+  return (data as Row[]).map(toCard);
+}
+
+/** 4.4b Table · no follows yet — recent popular cooks (acorns over 14 days), each with their most-liked dish. */
+export async function fetchSuggestedPlates(limit = 3): Promise<CardDish[]> {
+  const me = await uid();
+  const { data, error } = await publicFoods().gte('created_at', new Date(Date.now() - 14 * 864e5).toISOString())
+    .order('created_at', { ascending: false }).limit(200);
+  if (error) throw error;
+  const followed = new Set(await fetchFolloweeIds());
+  const best = new Map<string, { dish: CardDish; total: number }>();
+  for (const d of (data as Row[]).map(toCard)) {
+    if (d.creator.id === me || followed.has(d.creator.id)) continue;
+    const cur = best.get(d.creator.id);
+    if (!cur) best.set(d.creator.id, { dish: d, total: d.acorns });
+    else best.set(d.creator.id, { dish: d.acorns > cur.dish.acorns ? d : cur.dish, total: cur.total + d.acorns });
+  }
+  return [...best.values()].sort((a, b) => b.total - a.total).slice(0, limit).map((b) => b.dish);
+}
+
 export type CookCard = Person & { city: string | null; acorns: number; following: boolean; mood: WeatherMood | null; tempC: number | null };
 
 /** 4.4 Suggested for you / 4.6 Cooks in your weather — cooks who recently shared in `mood`, closest temperature first, then acorns. */

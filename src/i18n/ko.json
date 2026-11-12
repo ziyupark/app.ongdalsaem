@@ -762,7 +762,7 @@
     "explore": "탐색",
     "ourArea": "우리 동네",
     "turnOnLocation": "위치를 켜면 우리 동네 요리를 볼 수 있어요",
-    "following": "팔로잉",
+    "following": "식탁",
     "rightNow": "{{place}} · 지금",
     "noPlace": "도시를 선택하면 근처 요리를 볼 수 있어요",
     "searchPlaceholder": "요리, 재료, 기분",
@@ -1266,5 +1266,14 @@
   },
   "post": {
     "edit": "수정"
+  },
+  "following": {
+    "todayTable": "오늘의 식탁",
+    "yesterdayTable": "어제의 식탁",
+    "placeMine": "내 음식 놓기",
+    "mySeat": "내 자리",
+    "suggest": "이런 요리사를 팔로우해 보세요",
+    "suggestBody": "팔로우하면 그 사람의 식탁이 여기에 차려져요",
+    "seeMore": "더 보기"
   }
 }

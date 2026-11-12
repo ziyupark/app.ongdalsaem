@@ -623,7 +623,7 @@ global=Toàn cầu
 explore=Khám phá
 ourArea=Khu phố của bạn
 turnOnLocation=Bật vị trí để xem món ăn quanh khu bạn ở.
-following=Đang theo dõi
+following=Bàn ăn
 rightNow={{place}} · ngay lúc này
 noPlace=Chọn thành phố để xem món gần đây
 searchPlaceholder=Món ăn, nguyên liệu, tâm trạng
@@ -1034,3 +1034,11 @@ continue=Bật thông báo
 wheel=Giờ thông báo
 [post]
 edit=Chỉnh sửa
+[following]
+todayTable=Bàn ăn hôm nay
+yesterdayTable=Bàn ăn hôm qua
+placeMine=Đặt món của bạn
+mySeat=Chỗ của tôi
+suggest=Đầu bếp nên theo dõi
+suggestBody=Theo dõi một đầu bếp để món của họ có mặt trên bàn của bạn.
+seeMore=Xem thêm

@@ -752,7 +752,7 @@
     "explore": "探索",
     "ourArea": "近所",
     "turnOnLocation": "位置情報をオンにすると、近所の料理が見られます。",
-    "following": "フォロー中",
+    "following": "食卓",
     "rightNow": "{{place}} · いま",
     "noPlace": "街を選ぶと近くの料理が表示されます",
     "searchPlaceholder": "料理、材料、気分",
@@ -1249,5 +1249,14 @@
   },
   "post": {
     "edit": "編集"
+  },
+  "following": {
+    "todayTable": "今日の食卓",
+    "yesterdayTable": "昨日の食卓",
+    "placeMine": "料理を置く",
+    "mySeat": "わたしの席",
+    "suggest": "フォローしたい料理人",
+    "suggestBody": "フォローすると、その人の料理がここに並びます。",
+    "seeMore": "もっと見る"
   }
 }

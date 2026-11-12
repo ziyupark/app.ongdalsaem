@@ -752,7 +752,7 @@
     "explore": "Jelajahi",
     "ourArea": "Sekitarmu",
     "turnOnLocation": "Aktifkan lokasi untuk melihat masakan di sekitarmu.",
-    "following": "Diikuti",
+    "following": "Meja",
     "rightNow": "{{place}} · saat ini",
     "noPlace": "Pilih kota untuk melihat masakan di sekitar",
     "searchPlaceholder": "Masakan, bahan, suasana",
@@ -1249,5 +1249,14 @@
   },
   "post": {
     "edit": "Edit"
+  },
+  "following": {
+    "todayTable": "Meja hari ini",
+    "yesterdayTable": "Meja kemarin",
+    "placeMine": "Taruh hidanganmu",
+    "mySeat": "Kursiku",
+    "suggest": "Juru masak untuk diikuti",
+    "suggestBody": "Ikuti juru masak dan hidangannya akan tersaji di mejamu.",
+    "seeMore": "Lihat lebih banyak"
   }
 }

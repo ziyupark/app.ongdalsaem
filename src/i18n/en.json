@@ -762,7 +762,7 @@
     "explore": "Explore",
     "ourArea": "Our area",
     "turnOnLocation": "Turn on location to see dishes from your neighborhood.",
-    "following": "Following",
+    "following": "Table",
     "rightNow": "{{place}} · right now",
     "noPlace": "Choose a city to see nearby dishes",
     "searchPlaceholder": "Dishes, ingredients, moods",
@@ -1266,5 +1266,14 @@
   },
   "post": {
     "edit": "Edit"
+  },
+  "following": {
+    "todayTable": "Today's table",
+    "yesterdayTable": "Yesterday's table",
+    "placeMine": "Place your dish",
+    "mySeat": "My seat",
+    "suggest": "Cooks to follow",
+    "suggestBody": "Follow a cook and their dishes join your table here.",
+    "seeMore": "See more"
   }
 }

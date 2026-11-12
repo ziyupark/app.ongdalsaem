@@ -623,7 +623,7 @@ global=ทั่วโลก
 explore=สำรวจ
 ourArea=ย่านของคุณ
 turnOnLocation=เปิดตำแหน่งเพื่อดูอาหารในย่านของคุณ
-following=กำลังติดตาม
+following=โต๊ะอาหาร
 rightNow={{place}} · ตอนนี้
 noPlace=เลือกเมืองเพื่อดูเมนูใกล้ ๆ
 searchPlaceholder=เมนู วัตถุดิบ อารมณ์
@@ -1034,3 +1034,11 @@ continue=เปิดการแจ้งเตือน
 wheel=เวลาแจ้งเตือน
 [post]
 edit=แก้ไข
+[following]
+todayTable=โต๊ะอาหารวันนี้
+yesterdayTable=โต๊ะอาหารเมื่อวาน
+placeMine=วางจานของคุณ
+mySeat=ที่นั่งของฉัน
+suggest=เชฟที่น่าติดตาม
+suggestBody=ติดตามเชฟแล้วอาหารของเขาจะมาอยู่บนโต๊ะของคุณ
+seeMore=ดูเพิ่มเติม

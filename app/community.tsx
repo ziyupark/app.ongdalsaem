@@ -1,14 +1,12 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Send, Cookie, Moon, Plus, Star, Sun, Users, Utensils, type LucideIcon } from 'lucide-react-native';
+import { ChevronRight, Send, Cookie, Moon, Plus, Star, Sun, type LucideIcon } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import { Button } from '../src/components/Button';
 import { Chip } from '../src/components/Chip';
 import {
-  Avatar, CookTile, EmptyState, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag,
+  Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag,
 } from '../src/components/community/Parts';
-import { FeedPost } from '../src/components/home/FeedPost';
 import { ChallengesTab } from '../src/components/community/ChallengesTab';
 import { OurArea } from '../src/components/community/Nearby';
 import { upcomingFestive } from '../src/lib/holidays';
@@ -24,15 +22,15 @@ import { UnderlineTabs } from '../src/components/UnderlineTabs';
 import { Text } from '../src/components/Text';
 import { CUSTOM_MOOD_ICON, LANDSCAPES, MOOD_TAGS } from '../src/lib/tags';
 import { timeAgo } from '../src/lib/time';
-import { useHere } from '../src/lib/useHere';
 import { follow } from '../src/services/activity';
 import { hasUnreadMessages } from '../src/services/messages';
 import {
-  fetchChallenges, fetchCooksInWeather, fetchFollowingFeed, fetchGlobal, fetchMyTables, fetchStoryOfTheDay,
-  fetchTrendingByCountry, timeLeft, topTags, type CardDish, type Challenge, type CookCard, type FollowingItem, type Table,
+  fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchStoryOfTheDay, fetchSuggestedPlates,
+  fetchTrendingByCountry, localDate, localMidnight, timeLeft, topTags, type CardDish, type Challenge, type FollowingItem,
 } from '../src/services/community';
-import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
-import { radius, space, useTheme, type WeatherMood } from '../src/theme';
+import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../src/components/community/PlateTable';
+import { fetchMyMarks, setSaved } from '../src/services/foods';
+import { radius, space, useTheme } from '../src/theme';
 
 /** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
 const FESTIVE_CAROUSEL = 8;
@@ -54,8 +52,6 @@ export default function Community() {
     setSegState(k);
   };
   const bar = useTabBarScroll();
-  const { here } = useHere();
-  const mood = here.forecast?.mood ?? null;
   // Header + mood wash = the shared ScreenHeader / ScreenWash (same as Home · Timer · Profile); it scrolls away with
   // the content and fades out (~300 pt). Tabs sit ≈ 55 % down the 420 wash, under the header.
   const wash = useWashScroll();
@@ -102,7 +98,7 @@ export default function Community() {
         </View>
         {/* Tabs stay mounted once opened — switching only swaps what's under the tabs (no reload, data and images kept). */}
         {visited.has('global') ? <View style={seg === 'global' ? null : styles.gone}><Global /></View> : null}
-        {visited.has('following') ? <View style={seg === 'following' ? null : styles.gone}><Following mood={mood} tempC={here.forecast?.tempC ?? null} /></View> : null}
+        {visited.has('following') ? <View style={seg === 'following' ? null : styles.gone}><Following /></View> : null}
         {visited.has('challenges') ? <View style={seg === 'challenges' ? null : styles.gone}><ChallengesTab /></View> : null}
         </Animated.View>
       </ScrollView>
@@ -290,117 +286,126 @@ export function ChallengeCard({ c }: { c: Challenge }) {
   );
 }
 
-// ------------------------------------------------------------------------------------------------ Following (4.4)
+// ------------------------------------------------------------------------------------------------ Table (4.4)
 
-function Following({ mood, tempC }: { mood: WeatherMood | null; tempC: number | null }) {
+/** Plates per day before "See more" (3 rows × 3). */
+const TABLE_PLATES = 9;
+
+const toPlate = (d: CardDish, label = d.name): PlateItem => ({
+  id: d.id, photo: d.photo, label, cook: { id: d.creator.id, name: d.creator.handle ?? d.creator.name, avatarUrl: d.creator.avatarUrl },
+});
+
+/**
+ * 4.4 Community · Table (Figma 730:11217) — dishes of the cooks you follow, one table per local day (today · yesterday ·
+ * then the date). First seat on today's table is yours: your dish of today, or an empty dashed plate → share flow.
+ * 4.4b (732:11288) — you follow nobody yet: your seat + three popular cooks' plates with Follow.
+ */
+function Following() {
   const { color } = useTheme();
-  const { t } = useTranslation();
-  const [only, setOnly] = useState<'all' | 'people' | 'tables'>('all');
+  const { t, i18n } = useTranslation();
   const [feed, setFeed] = useState<FollowingItem[] | null>(null);
-  const [marks, setMarks] = useState<{ given: Set<string>; saved: Set<string> }>({ given: new Set(), saved: new Set() });
-  const [tables, setTables] = useState<Table[]>([]);
-  const [cooks, setCooks] = useState<CookCard[]>([]);
+  const [mine, setMine] = useState<CardDish[]>([]);
+  const [followees, setFollowees] = useState<number | null>(null);
+  const [suggest, setSuggest] = useState<CardDish[]>([]);
+  const [followed, setFollowed] = useState<Set<string>>(new Set());
+  const [open, setOpen] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
-    setFeed(null);
     try {
-      const [list, mine] = await Promise.all([fetchFollowingFeed(only), fetchMyTables()]);
-      setTables(mine);
+      const since = localMidnight();
+      since.setDate(since.getDate() - 1);
+      const [list, ids, my] = await Promise.all([fetchFollowingFeed('people'), fetchFolloweeIds(), fetchMyDishesSince(since)]);
       setFeed(list);
-      fetchMyMarks(list.map((d) => d.id)).then(setMarks).catch(() => undefined);
+      setMine(my);
+      setFollowees(ids.length);
+      if (!ids.length) fetchSuggestedPlates(3).then(setSuggest).catch(() => undefined);
     } catch {
-      setFeed([]);
+      setFeed((f) => f ?? []);
+      setFollowees((n) => n ?? 0);
     }
-  }, [only]);
+  }, []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
-  useEffect(() => { fetchCooksInWeather(mood, tempC, 8).then((l) => setCooks(l.filter((c) => !c.following))).catch(() => undefined); }, [mood, tempC]);
 
-  const toggleFollow = async (c: CookCard) => {
-    const on = !c.following;
-    setCooks((l) => l.map((x) => (x.id === c.id ? { ...x, following: on } : x)));
-    try { await follow(c.id, on); } catch { setCooks((l) => l.map((x) => (x.id === c.id ? c : x))); }
+  const day = (d: Date) => d.toLocaleDateString(i18n.language, { weekday: 'long', month: 'short', day: 'numeric' });
+
+  // Group by local date: today always first, yesterday when you posted then, then every day a followed cook posted.
+  const tables = useMemo(() => {
+    if (!feed) return [];
+    const now = new Date();
+    const y = new Date(now);
+    y.setDate(y.getDate() - 1);
+    const today = localDate(now);
+    const yesterday = localDate(y);
+    const byDay = new Map<string, { date: Date; dishes: CardDish[] }>([[today, { date: now, dishes: [] }]]);
+    if (mine.some((m) => localDate(m.createdAt) === yesterday)) byDay.set(yesterday, { date: y, dishes: [] });
+    for (const d of feed) {
+      const k = localDate(d.createdAt);
+      if (!byDay.has(k)) byDay.set(k, { date: d.createdAt, dishes: [] });
+      byDay.get(k)!.dishes.push(d);
+    }
+    return [...byDay.entries()]
+      .sort(([a], [b]) => (a < b ? 1 : -1))
+      .map(([key, v]) => ({ key, ...v, kind: key === today ? 'today' : key === yesterday ? 'yesterday' : 'older', mine: mine.find((m) => localDate(m.createdAt) === key) ?? null }));
+  }, [feed, mine]);
+
+  const toggleFollow = async (id: string) => {
+    const on = !followed.has(id);
+    setFollowed((s) => { const n = new Set(s); if (on) n.add(id); else n.delete(id); return n; });
+    try { await follow(id, on); } catch { setFollowed((s) => { const n = new Set(s); if (on) n.delete(id); else n.add(id); return n; }); }
   };
 
-  const suggested = cooks.length ? (
-    <View style={styles.suggestBlock}>
-      <SectionHeader title={t('community.suggested')} action={t('dish.seeAll')} onAction={() => router.push('/cooks-weather')} />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cookRow}>
-        {cooks.map((c) => <CookTile key={c.id} cook={c} sub={c.city ?? ''} onPress={() => router.push(`/cook/${c.id}`)} onFollow={() => toggleFollow(c)} />)}
-      </ScrollView>
-    </View>
-  ) : null;
+  if (feed == null) return <ActivityIndicator color={color('fg/muted')} style={styles.loading} />;
 
   return (
-    <View>
-      <View style={styles.followHead}>
-        <View style={styles.followTitle}><SectionHeader title={t('community.followingTitle')} /></View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tableRow}>
-          {tables.map((tb) => (
-            <Pressable key={tb.id} accessibilityRole="button" onPress={() => router.push(`/table/${tb.slug}`)} style={[styles.tableChip, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-              <Avatar url={tb.coverUrl} name={tb.name.replace('#', '')} size={24} />
-              <Text variant="Caption Strong">{tb.name}</Text>
-            </Pressable>
-          ))}
-          <Pressable accessibilityRole="button" onPress={() => router.push('/tables')} style={[styles.browse, { borderColor: color('border/strong') }]}>
-            <Icon icon={Plus} size={16} color="fg/secondary" />
-            <Text variant="Caption Strong" color="fg/secondary">{t('community.browseTables')}</Text>
-          </Pressable>
-        </ScrollView>
-        <View style={styles.filterRow}>
-          <Chip label={t('community.all')} selected={only === 'all'} onPress={() => setOnly('all')} />
-          <Chip label={t('community.people')} selected={only === 'people'} onPress={() => setOnly('people')} />
-          <Chip label={t('community.tables')} selected={only === 'tables'} onPress={() => setOnly('tables')} />
-        </View>
-      </View>
-
-      {feed == null ? (
-        <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
-      ) : feed.length ? (
-        <>
-          {feed.map((d) => (
-            <View key={d.id}>
-              {d.fromTable ? (
-                <View style={styles.fromTable}>
-                  <Icon icon={Utensils} size={14} color="fg/muted" />
-                  <Text variant="Caption Strong" color="fg/muted">{t('community.fromTable', { name: d.fromTable })}</Text>
+    <View style={styles.tables}>
+      {tables.map((tb) => {
+        const seat = tb.mine ? (
+          <Plate key="mine" item={toPlate(tb.mine, t('following.mySeat'))} tone="mine" onPress={() => router.push(`/dish/${tb.mine!.id}`)} onCook={() => router.push(`/cook/${tb.mine!.creator.id}`)} />
+        ) : tb.kind === 'today' ? (
+          <EmptySeat key="mine" label={t('following.placeMine')} onPress={() => router.push('/share/pick')} />
+        ) : null;
+        const plates = [
+          ...(seat ? [seat] : []),
+          ...tb.dishes.map((d) => <Plate key={d.id} item={toPlate(d)} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />),
+        ];
+        const all = open.has(tb.key);
+        const title = tb.kind === 'today' ? t('following.todayTable') : tb.kind === 'yesterday' ? t('following.yesterdayTable') : day(tb.date);
+        return (
+          <PlateTable
+            key={tb.key}
+            title={title}
+            subtitle={tb.kind === 'older' ? undefined : day(tb.date)}
+            moreLabel={t('following.seeMore')}
+            onMore={!all && plates.length > TABLE_PLATES ? () => setOpen((s) => new Set(s).add(tb.key)) : undefined}
+          >
+            <PlateGrid>{all ? plates : plates.slice(0, TABLE_PLATES)}</PlateGrid>
+            {tb.kind === 'today' && followees === 0 && suggest.length ? (
+              <>
+                <View style={styles.suggestHead}>
+                  <Text variant="Title/S">{t('following.suggest')}</Text>
+                  <Text variant="Caption" color="fg/secondary">{t('following.suggestBody')}</Text>
                 </View>
-              ) : null}
-              <FeedPost
-                post={{
-                  id: d.id, name: d.creator.handle ?? d.creator.name,
-                  meta: [d.neighborhood ?? d.city, timeAgo(d.createdAt, t)].filter(Boolean).join(' · '),
-                  avatar: d.creator.avatarUrl ? { uri: d.creator.avatarUrl } : undefined, photo: { uri: d.photo }, photoCount: d.photoCount,
-                  weather: d.mood ?? 'overcast', tempC: d.tempC ?? 0, acorns: d.acorns - (marks.given.has(d.id) ? 1 : 0), comments: d.comments, caption: d.description || d.name,
-                  given: marks.given.has(d.id), saved: marks.saved.has(d.id), authorId: d.creator.id,
-                }}
-                onAuthor={() => router.push(`/cook/${d.creator.id}`)}
-                onOpen={() => router.push(`/dish/${d.id}`)}
-                onComments={() => router.push(`/dish/${d.id}?comments=1`)}
-                onAcorn={(on) => setAcorn(d.id, on)}
-                onSave={(on) => setSaved(d.id, on)}
-              />
-            </View>
-          ))}
-          {suggested}
-        </>
-      ) : (
-        // 4.4b Following is empty
-        <>
-          <EmptyState icon={Users} title={t('community.followEmptyTitle')} body={t('community.followEmptyBody')}>
-            <View style={styles.wrap}>
-              <Button label={t('community.findCooks')} size="M" onPress={() => router.push('/cooks-weather')} />
-              <Button label={t('community.browseTables')} size="M" variant="Outline" onPress={() => router.push('/tables')} />
-            </View>
-          </EmptyState>
-          {suggested}
-        </>
-      )}
+                <PlateGrid>
+                  {suggest.map((d) => (
+                    <Plate key={d.id} item={toPlate(d, d.creator.handle ?? d.creator.name)} tone="cook" onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)}>
+                      <FollowButton following={followed.has(d.creator.id)} onPress={() => toggleFollow(d.creator.id)} />
+                    </Plate>
+                  ))}
+                </PlateGrid>
+              </>
+            ) : null}
+          </PlateTable>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   gone: { display: 'none' },
+  // Following · Tables 730:11394 — p24 20 · gap 24; suggest header gap 4.
+  tables: { paddingHorizontal: space[20], paddingVertical: space[24], gap: space[24] },
+  suggestHead: { gap: space[4] },
   root: { flex: 1 },
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
@@ -410,7 +415,6 @@ const styles = StyleSheet.create({
   chipsTop: { paddingTop: space[16] },
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], justifyContent: 'center', marginTop: space[8] },
   section: { paddingTop: space[24], gap: space[12] },
   // 4.1 groups: p32 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags · Explore).
   sectionS: { paddingTop: space[32], gap: space[6] },
@@ -432,14 +436,5 @@ const styles = StyleSheet.create({
   challengeDesc: { marginTop: space[6] },
   challengeFoot: { flexDirection: 'row', alignItems: 'center', gap: space[8], marginTop: space[14], height: 36 },
   plus: { width: 36, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
-  followHead: { paddingTop: space[24] },
-  followTitle: { paddingBottom: space[12] },
-  tableRow: { gap: space[8], paddingHorizontal: space[20], paddingBottom: space[16] },
-  tableChip: { flexDirection: 'row', alignItems: 'center', gap: space[8], paddingLeft: space[6], paddingRight: space[12], paddingVertical: space[6], borderRadius: radius.full, borderWidth: 1 },
-  browse: { flexDirection: 'row', alignItems: 'center', gap: space[6], paddingLeft: space[10], paddingRight: space[12], paddingVertical: space[6], borderRadius: radius.full, borderWidth: 1 },
-  filterRow: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20], paddingBottom: space[16] },
-  fromTable: { flexDirection: 'row', alignItems: 'center', gap: space[6], paddingHorizontal: space[20], paddingBottom: space[8] },
-  suggestBlock: { paddingTop: space[8], gap: space[12] },
-  cookRow: { gap: space[10], paddingHorizontal: space[20] },
   suggest: { width: 128, alignItems: 'center', gap: space[4], padding: space[12], borderRadius: radius.xl, borderWidth: 1 },
 });

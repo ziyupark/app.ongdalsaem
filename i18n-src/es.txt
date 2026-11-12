@@ -632,7 +632,7 @@ global=Global
 explore=Explorar
 ourArea=Tu barrio
 turnOnLocation=Activa la ubicación para ver platos de tu barrio.
-following=Siguiendo
+following=Mesa
 rightNow={{place}} · ahora mismo
 noPlace=Elige una ciudad para ver platos cercanos
 searchPlaceholder=Platos, ingredientes, estados de ánimo
@@ -1051,3 +1051,11 @@ continue=Activar notificaciones
 wheel=Hora de la notificación
 [post]
 edit=Editar
+[following]
+todayTable=La mesa de hoy
+yesterdayTable=La mesa de ayer
+placeMine=Pon tu plato
+mySeat=Mi sitio
+suggest=Cocineros para seguir
+suggestBody=Sigue a un cocinero y sus platos llegarán a tu mesa.
+seeMore=Ver más

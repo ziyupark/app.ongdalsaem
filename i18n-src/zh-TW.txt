@@ -623,7 +623,7 @@ global=全球
 explore=探索
 ourArea=你附近
 turnOnLocation=開啟定位，就能看到你附近的料理。
-following=追蹤中
+following=餐桌
 rightNow={{place}} · 現在
 noPlace=選擇城市即可看到附近的料理
 searchPlaceholder=料理、食材、心情
@@ -1034,3 +1034,11 @@ continue=開啟通知
 wheel=通知時間
 [post]
 edit=編輯
+[following]
+todayTable=今天的餐桌
+yesterdayTable=昨天的餐桌
+placeMine=放上你的料理
+mySeat=我的座位
+suggest=推薦追蹤的料理人
+suggestBody=追蹤後，對方的料理就會擺上你的餐桌。
+seeMore=查看更多
