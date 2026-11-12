@@ -4,9 +4,9 @@
 
 ## 03 Community · Nearby(Our area · Nearby list) — [섹션 59:2363](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2363)
 
-Community에 **Nearby 탭은 없다**(Explore에 합침, [04-community 4.1](04-community.md)). 내 동네 탐색은 두 군데에서 한다: Explore의 **Our area** 섹션(요약)과, 거기서 여는 **3.1 Nearby list**(전체 목록). Figma 3.1–3.6 프레임은 Nearby 탭 시절 디자인이고, 아래는 코드 기준이다.
+Community에 **Nearby 탭은 없다**(Explore에 합침, [04-community 4.1](04-community.md)). 내 동네 탐색은 두 군데에서 한다: Explore의 **Our area** 섹션(요약)과, 거기서 여는 **3.1 Nearby list**(전체 목록). Figma 3.1은 이 화면(TopBar "Our area")이다. 3.2–3.6 프레임은 Nearby 탭 시절 상단(탭 · Weather now)이 남아 있지만 본문 규칙은 아래와 같다.
 
-### 3.1 Nearby list — 코드 기준(Figma 3.1 [19:663](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-663)은 이전 탭 구성)
+### 3.1 Nearby list — [19:663](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-663)
 - 여는 곳: Explore → Our area **"See more"**(그 섹션과 같은 범위 칩이 선택된 채) · Explore 검색창에서 검색어를 보낼 때(그 검색어로). 푸시 화면, TabBar 없음.
 - 블록:
   1. TopBar(Inline) **"Our area"**(뒤로)

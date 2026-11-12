@@ -160,9 +160,9 @@ export async function fetchStoryOfTheDay(): Promise<CardDish | null> {
 
 // ---------------------------------------------------------------------------------------------- Our area · today
 
-/** Local midnight today (the "today" of Our area — top dishes, vote date). */
+/** Local midnight today (the "today" of Our area — top dishes). */
 export const localMidnight = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
-/** Local date as 'YYYY-MM-DD' (neighborhood_votes.vote_date). */
+/** Local date as 'YYYY-MM-DD'. */
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 export type TopDish = { name: string; count: number; photo: string; dishId: string };
@@ -206,44 +206,6 @@ export async function fetchTodayTopDishes(at: { cells: string[]; district?: stri
     if (items.length >= 2) break;
   }
   return best;
-}
-
-/** Today's vote — the question family for the weather now. */
-export const VOTE_FAMILIES = ['rain', 'snow', 'clear', 'grey'] as const;
-export type VoteFamily = (typeof VOTE_FAMILIES)[number];
-/** Preset options per family (i18n `community.area.vote.<family>.<option>`); stored as '<family>.<option>'. */
-export const VOTE_OPTIONS: Record<VoteFamily, readonly string[]> = {
-  rain: ['fritters', 'noodleSoup', 'stew', 'ramen'],
-  snow: ['hotpot', 'porridge', 'roasted', 'cocoa'],
-  clear: ['salad', 'picnic', 'grill', 'coldNoodles'],
-  grey: ['spicy', 'soup', 'pasta', 'dessert'],
-};
-
-export function voteFamily(mood: WeatherMood | null | undefined): VoteFamily {
-  switch (mood) {
-    case 'drizzle': case 'rain': case 'heavy-rain': case 'shower': case 'thunder': return 'rain';
-    case 'sleet': case 'flurries': case 'snow': case 'heavy-snow': case 'cold': return 'snow';
-    case 'clear': case 'clear-night': case 'heat': return 'clear';
-    default: return 'grey';
-  }
-}
-
-export type VoteResult = { mood: VoteFamily; choice: string; votes: number; mine: boolean };
-
-/** Counts per choice for `date` in your area cell and its 8 neighbours (your own vote always included, `mine`). */
-export async function fetchVoteResults(cell: string, date = localDate()): Promise<VoteResult[]> {
-  const { data, error } = await supabase.rpc('neighborhood_vote_results', { p_cell: cell, p_date: date });
-  if (error) throw error;
-  return ((data ?? []) as Row[]).map((r) => ({ mood: r.mood, choice: r.choice, votes: Number(r.votes) || 0, mine: !!r.mine }));
-}
-
-/** One vote a day. Already voted today → no error (the caller reloads the results). */
-export async function castVote(input: { cell: string; mood: VoteFamily; choice: string; date?: string }) {
-  const me = await needUid();
-  const choice = input.choice.trim().slice(0, 40);
-  if (!choice) return;
-  const { error } = await supabase.from('neighborhood_votes').insert({ user_id: me, cell: input.cell, vote_date: input.date ?? localDate(), mood: input.mood, choice });
-  if (error && error.code !== '23505') throw error;
 }
 
 // ---------------------------------------------------------------------------------------------- following

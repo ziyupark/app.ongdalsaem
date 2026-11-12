@@ -2,6 +2,12 @@
 
 디자인 버전별 변경 요약이다. 본문 문서에는 최종 상태만 적고, 무엇이 바뀌었는지는 여기에만 남긴다. 새 변경은 맨 위에 추가한다.
 
+## v1.8.1 — 2026-11-12 (Community Figma를 앱에 맞춤 · 오늘의 투표 삭제)
+
+- Figma: 4.1(19:818)을 **4.1 Community · Explore**로 — 공통 헤더(무드 wash · 로고 · 벨 · 날짜 · 날씨 제목) · 밑줄 탭 Explore · Following · Challenges · 검색 · **Our area**(오늘 인기 · 동네 질문 + Ask · 이웃 요리 · See more) · Holidays 더보기(`chevron-right`). 4.4(183:5713) · Challenges 탭(680:11155, 섹션 순서 This week → Your challenges …)의 상단도 같은 헤더 · 탭으로. 3.1(19:663)을 **3.1 Nearby list**(TopBar "Our area", 탭 · Weather now · TabBar 없음)로. 새 프레임 **4.1b Holidays around the world**(724:11491)
+- **Today’s vote(오늘의 투표) 삭제** — Figma · 앱 · 문서 모두. DB `neighborhood_votes`와 함수는 남겨 두고 쓰지 않음. 투표 문구 키는 9개 언어에서 지움
+- 문서: 위 Figma 프레임을 각 화면 링크로 연결하고 "코드 기준 · Figma 없음" 표시를 뺌. Figma에 남은 차이: Festive Card 배지(Figma = 아이콘, 앱 = 국기), TabBar 컴포넌트(이전 모양)
+
 ## v1.8 — 2026-11-12 (문서를 실제 앱(시뮬레이터 확인)에 맞춤)
 
 v1.7.1 이후 앱에서 바뀐 것을 문서에 반영했다. **Figma에는 없고 앱에서만 바뀐 부분은 본문에 "코드 기준"으로 표시**했다(Figma 프레임은 이전 디자인으로 남아 있음).
@@ -27,7 +33,7 @@ v1.7.1 이후 앱에서 바뀐 것을 문서에 반영했다. **Figma에는 없�
 **Community(03 · 04)**
 - 탭 **Explore · Following · Challenges**. Global과 Nearby를 Explore로 합침
 - Explore 순서: 검색 → Story of the day → **Our area(Today’s table in our area)** → Trending Bites → Holidays → Trending tags → Explore Together. 데이터가 없어도 섹션이 사라지지 않게 기간을 넓혀 채움
-- **Our area**: Popular today(오늘 이름별 Top 3, 범위 넓히기) · **Today’s vote**(날씨 계열 질문, 보기 4개 + 직접 입력, 하루 1번, 결과 막대) · 동네 질문 3–5개(넓혀 채움) + Ask · 이웃 요리 3개 + See more
+- **Our area**: Popular today(오늘 이름별 Top 3, 범위 넓히기) · Today’s vote(v1.8.1에서 삭제) · 동네 질문 3–5개(넓혀 채움) + Ask · 이웃 요리 3개 + See more
 - 새 화면 **3.1 Nearby list**(`/nearby-feed`, Our area 전체 목록 · 검색 결과) · **4.1b Holidays around the world**(명절 46개 2열)
 - Festive Card: 명절 음식 사진 · 나라 국기 배지(세계 공통은 globe), 명절 46개 · 날짜 2026–2035 생성 스크립트
 - 4.1 레이아웃을 Figma 19:818 간격에 맞춤(섹션 머리 → 내용 6/8, Story chevron, Country Card 국기 위치 · 아래 페이드)

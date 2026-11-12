@@ -34,7 +34,7 @@ Settings     6.1 ⚙ → 9.1 Settings ─ 9.2 Edit profile ─ 9.2b Choose a pho
 |---|---|---|
 | Home | 지금 날씨·시간에 맞는 오늘의 한 끼 + 주변 식당 | 내 위치(도시/동) |
 | Timer | 주방 타이머 | — |
-| Community | **Explore**(검색 · 오늘의 이야기 · **Our area**(오늘 인기 · 오늘의 투표 · 동네 질문 · 이웃 요리) · Trending Bites · 명절 · 트렌딩 태그 · Explore Together) · **Following** · **Challenges** | Global + Local |
+| Community | **Explore**(검색 · 오늘의 이야기 · **Our area**(오늘 인기 · 동네 질문 · 이웃 요리) · Trending Bites · 명절 · 트렌딩 태그 · Explore Together) · **Following** · **Challenges** | Global + Local |
 | Profile | 내 요리, 저장, 다이어리, 설정 | 나 |
 
 > 탭바는 4개. 내 동네는 Community Explore의 Our area(전체 목록 = 3.1 Nearby list). 태그 · 나라 · 명절 페이지는 Community 하위 템플릿이다.

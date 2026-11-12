@@ -100,11 +100,6 @@ interface SupportTicket { id: string; userId: string; topic: 'bug'|'account'|'re
   appVersion: string; os: string; language: string;            // 자동 첨부
   status: 'open'|'answered'|'closed'; createdAt: string; closedAt?: string } // 9.8a — 처리 완료 후 3년 보관
 // DB: supabase/migrations/20261105010000_support_and_marketing.sql — support_tickets(본인만 insert · select) · (v1 미사용) profiles.marketing_ads · marketing_night_ads · marketing_consented_at(야간은 광고 동의가 있어야 켤 수 있음) · marketing_consent_log(바꿀 때마다 자동 기록, 9.9e "You agreed on …"과 2년 재확인용)
-interface NeighborhoodVote { userId: string; cell: string;   // 5자리 geohash(내 칸)
-  voteDate: string;                                // 현지 날짜 YYYY-MM-DD, 한 사람 하루 1표(unique user × date)
-  mood: 'rain'|'snow'|'clear'|'grey';              // 질문 계열(지금 날씨 → 4계열)
-  choice: string }                                 // '<계열>.<보기>'(예: 'rain.stew') 또는 직접 쓴 답(1–40자)
-// DB: supabase/migrations/20261112000000_neighborhood_votes.sql — neighborhood_votes(본인 insert만, 직접 읽기 불가) · geohash_cells_around(cell)(주변 9칸) · neighborhood_vote_results(cell, date)(그 칸과 주변 8칸의 보기별 수 + 내 표 여부만 반환) — 4.1 Our area "Today's vote"
 // DB: supabase/migrations/20261111000000_nearby_questions_wide.sql — nearby_questions_wide(geohash)(한 단계 넓은 3자리 칸, 규칙은 nearby_questions와 같음) — Our area 질문 채우기
 // Our area "Popular today"는 테이블 없이 foods(오늘 0시 이후 · geohash6 · neighborhood · city)를 앱에서 이름별로 묶어 계산
 // 냉장고 메모(6.3 Fridge)는 기기에만 저장(AsyncStorage, { name, zone: 'fridge'|'freezer', addedAt }) — DB 없음. "What you can cook now"는 foods.ingredients가 있는 최신 공개 게시물 200개와 비교
@@ -114,4 +109,4 @@ interface Country { code: string; name: string; city: string; localTime: string;
   tempC: number; dishCount7d: number }
 ```
 
-> **v1에서 쓰지 않는 DB**(테이블은 남겨 둠): 마케팅 컬럼 · `marketing_consent_log`. (`message_threads` · `messages` · `start_thread` · `profiles.message_policy` · `collections` · `collection_items`는 앱이 다시 쓴다.) 다시 켤 때는 [99-removed-in-v1](04-screens/99-removed-in-v1.md).
+> **v1에서 쓰지 않는 DB**(테이블은 남겨 둠): 마케팅 컬럼 · `marketing_consent_log` · `neighborhood_votes` · `geohash_cells_around()` · `neighborhood_vote_results()`(20261112000000, 오늘의 투표 — 앱에서 뺐음). (`message_threads` · `messages` · `start_thread` · `profiles.message_policy` · `collections` · `collection_items`는 앱이 다시 쓴다.) 다시 켤 때는 [99-removed-in-v1](04-screens/99-removed-in-v1.md).

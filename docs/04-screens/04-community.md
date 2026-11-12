@@ -4,10 +4,10 @@
 
 ## 04 Community · Explore — [섹션 59:2365](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2365)
 
-**탭 구성(코드 기준)**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following · Challenges** 3개. 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 내용은 Explore의 검색과 "Our area" 섹션, 그리고 별도 화면 3.x Nearby list로 옮김). Figma 4.1 프레임(19:818)은 탭 이름 · Our area가 없는 이전 구성이다.
+**탭 구성**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following · Challenges** 3개. 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 내용은 Explore의 검색과 "Our area" 섹션, 그리고 별도 화면 3.x Nearby list로 옮김). Figma 4.1 · 4.4 · Challenges 프레임이 이 구성이다(공통 헤더 + 밑줄 탭).
 
 섹션 안 배치(라벨 기준, 화면 종류별):
-- **MAIN** — 4.1 Community · Explore(탭 화면). Following(4.4)은 04b, Challenges 탭은 04c(4.9 참고).
+- **MAIN** — 4.1 Community · Explore(탭 화면) · 4.1 Community · Challenges(탭 화면) · 4.1b Holidays around the world. Following(4.4)은 04b.
 - **TEMPLATES** — 4.2 Tag · #Comfort · 4.3 Country · Japan. **앱은 v2 디자인**(Figma "4.2 Tag · #Comfort (v2)" [718:11114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11114) · "4.3 Country · Japan (v2)" [718:11248](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11248)). 명절 페이지(Halloween · Christmas …)도 **4.2 태그 템플릿**에 그 명절 태그를 넣은 것이다. 같은 종류의 다른 페이지(#Spicy, #Vegan, Italy …)는 **이 템플릿에 데이터만 바꿔** 쓴다.
 
 두 템플릿은 같은 뼈대(`CollectionParts`)를 쓰고 탭과 데이터만 다르다:
@@ -19,7 +19,7 @@
 | 정보 알약의 날씨 | 내 날씨 | 고른 도시(All이면 1위 도시)의 날씨 |
 | 그리드 순서 | 탭 기준 | 인기순, 지금 그 도시 날씨와 같은 요리 먼저 |
 
-### 4.1 Community · Explore — [19:818](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-818)(이전 구성) · 코드 기준
+### 4.1 Community · Explore — [19:818](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-818)
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
   1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3)
@@ -37,29 +37,26 @@
 - Food Card Row: 썸네일 · Overline "끼니 · 기온°" · 제목 · "핸들 · 도시 · 시간" · 북마크(저장 토글).
 - 순서는 항상 Story → Our area → Trending Bites → Holidays → Trending tags → Explore Together(데이터가 비어도 섹션 순서가 바뀌지 않도록 넓혀서 채움).
 
-#### 4.1 Our area — Today’s table in our area(코드 기준, Figma 없음)
+#### 4.1 Our area — Today’s table in our area(4.1 프레임 안 "Group · Our area")
 - 위치가 켜져 있을 때(p32 위, 좌우 20):
   1. 헤더: Title/M "Today’s table in our area" + Caption fg/muted "{동(없으면 도시)} · {날씨} {기온}°"
   2. 블록들(위 16, 블록 사이 24, 블록 안 10):
      - **Popular today**(Title/S + 오른쪽 Caption "Based on {범위}" — 넓혀서 가져왔을 때만): ListCard에 1–3위 행(순위 숫자 Title/S fg/accent · 썸네일 48 radius md · 요리 이름 · "{n} posts"). 탭 → 그 대표 게시물 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
        - 규칙: 오늘 0시(현지) 이후 공개 게시물을 **요리 이름으로 묶어**(대소문자·공백 무시) 개수순(같으면 도토리 합) 상위 3개. 대표 게시물 = 그 이름 중 도토리 최다(같으면 최신). 범위: 내 칸(geohash 5자리)과 주변 칸 → 이름이 0–1개면 같은 구 → 같은 도시.
-     - **Today’s vote**(Title/S "Today’s vote" + Body/M 질문): 지금 날씨 계열별 질문 1개와 보기 4개(Outline M 버튼) + Ghost M "Write your own"(누르면 입력칸 최대 40자 + "Vote" 버튼). **하루 1번**. 투표하면 결과 막대(보기 4개 + 직접 쓴 답, 최대 6줄): 막대 칸 bg/subtle + 테두리, 채움 = 비율, 내 답 = border/accent · bg/accent-subtle 채움 · 글자 fg/accent Strong · 오른쪽 %. 아래 Caption "{n} votes". 실패 시 Caption fg/destructive.
-       - 질문: 비 "Rainy day — what’s on your table tonight?"(Crispy fritters · Noodle soup · Hot stew · Instant ramen) · 눈 "Snowy day — what warms you up?"(Hot pot · Warm porridge · Roasted sweet potatoes · Hot chocolate) · 맑음 "Sunny day — what are you eating?"(Fresh salad · Picnic box · Grill & BBQ · Cold noodles) · 흐림 "Grey day — what would lift your mood?"(Something spicy · Warm soup · Pasta · Sweet dessert).
-       - 집계 범위 = 내 칸과 주변 8칸, 그날 날짜. 투표한 뒤에는 날씨가 바뀌어도 내가 답한 질문의 결과를 보여 준다.
      - **Neighbourhood questions**(Title/S): **Question Card**(radius 2xl) 3–5개 → Outline M `message-circle` **"Ask a question"** → 3.7. 카드 → 3.8, Me too = 그 자리 토글.
        - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다(최대 5). 넓혀서 가져온 질문에는 그 범위(구 · 도시 · 질문 장소) 라벨이 붙는다.
      - **Neighbours’ dishes**(Title/S) → Dish Tile(radius 2xl) **3개** 가로 스크롤(좌우 20, gap 16). 3개 미만이면 같은 구 → 같은 도시 → 같은 날씨(최신) 순으로 채우고, 채운 타일에는 장소 라벨(구 · 도시 · "Same weather"). 같은 날씨 요리를 먼저.
   3. Outline M **"See more"**(좌우 20, 위 8) → **3.1 Nearby list**(같은 범위 칩으로 열림: 위치 있으면 Within 1 km, 아니면 구, 아니면 Same weather).
 - 위치가 꺼져 있으면: 카드(bg/subtle + border/default, radius 2xl, padding 20, 가운데) `map-pin` 22 fg/secondary · Body/M fg/secondary "Turn on location to see today’s table in our area." · Button M "Allow location"(권한 요청 → 도시 저장).
 
-### 4.1b Holidays around the world — 코드 기준(Figma 없음)
+### 4.1b Holidays around the world — [724:11491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=724-11491)
 - 4.1 Festive 섹션의 더보기(`chevron-right`, 접근성 "See all holidays")에서 연다. 푸시, TopBar(Inline) "Holidays around the world"(뒤로).
 - 본문(좌우 20, 위 12, gap 12): Overline fg/accent "FESTIVE TABLES" → **Festive Card 2열 그리드**(gap 12, 카드 비율 168:196). **모든 명절 46개**를 다음 날짜가 가까운 순으로.
 - 카드 → 그 명절 태그의 4.2.
 
 ### Festive Card(4.1 · 4.1b 공통)
 - 168×196, radius xl(24), padding 16, gap 6. 배경 = 그 명절 **음식 사진**(`assets/holidays/food/`, 600×800) + 아래로 overlay/scrim-strong 그라데이션(35 %부터).
-- 위 왼쪽 **배지 36 원**(glass/surface): 그 명절 나라 국기 20×14(radius 3), 세계 공통 명절(새해 등)은 `globe` 18.
+- 위 왼쪽 **배지 36 원**(glass/surface): 그 명절 나라 국기 20×14(radius 3), 세계 공통 명절(새해 등)은 `globe` 18. (Figma 카드 배지는 아직 아이콘 — 앱 기준은 국기)
 - 아래로 몰아서: Overline fg/on-photo-secondary 날짜 "OCT 31"(오늘 · 내일이면 "· TODAY" / "· TOMORROW") → Title/M fg/on-photo 명절 이름 → Caption fg/on-photo-secondary 대표 음식(1줄).
 - 명절 46개 목록·국기·사진은 `src/lib/holidays.ts`, 날짜(2026–2035)는 `src/lib/holidayDates.ts`(`npm run holidays:dates`로 생성: 음력 · 절기 · 부활절 · 요일 규칙 · 달 기준 명절 · 마타리키 법정일). 이름 · 음식은 9개 언어.
 
@@ -156,7 +153,7 @@
 | **Neighborhood questions** | 동네 사람에게 짧게 묻기(≤200자, 7일 뒤 닫힘) | 3.1 Ask 줄 | 3.1 피드 · 3.8 상세 |
 | **Food challenges** | 기간 · 참여자 · 사진 인증 | Community **Challenges 탭** | 4.10 Latest entries |
 
-### Community · Challenges 탭 — 코드 기준(Figma 프레임 없음)
+### 4.1 Community · Challenges(탭) — [680:11155](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=680-11155)
 - Community 세 번째 탭. 위에서부터(섹션마다 SectionHeader):
   1. **This week’s challenge**(Overline "SEASONAL TABLES"): 큰 카드(테마 사진 + 아래 scrim) — 위 유리 pill "Live · {남은 시간}"(점 fg/accent) → 제목 · 설명 → 참여자 아바타 24 겹침 + "{n} cooking · {n} entries" → 버튼: 참여 전 White M **Join challenge** · 참여 후 Kick M `upload` **Post my entry**(→ 8.1, 태그 미리 붙음) · 올린 뒤 Glass M `check` **Entry posted**(비활성). 카드 탭 → 4.10.
   2. **Your challenges**: 참여 중 챌린지 행(올렸으면 "Entry posted", 곧 시작 "Starts …", 아니면 "Post before …" + **Post** 버튼).

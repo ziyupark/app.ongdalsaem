@@ -8,8 +8,8 @@ import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWind
 import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
 import {
-  castVote, fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, fetchVoteResults, searchSuggestions, setMeToo, voteFamily, VOTE_OPTIONS,
-  type CardDish, type Question, type TopDish, type VoteFamily, type VoteResult,
+  fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, searchSuggestions, setMeToo,
+  type CardDish, type Question, type TopDish,
 } from '../../services/community';
 import { useTemp } from '../../lib/prefs';
 import { saveLocationChoice } from '../../services/profile';
@@ -18,7 +18,6 @@ import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { DishTile } from '../dish/DishTile';
 import { Icon } from '../Icon';
-import { Input } from '../Input';
 import { MessageCircle } from '../icons/custom';
 import { Text } from '../Text';
 import { EmptyState, FoodGrid, ListCard, ListRow, QuestionCard, SearchField, useByline } from './Parts';
@@ -289,96 +288,9 @@ function TopToday({ here }: { here: Here }) {
   );
 }
 
-/** Our area · Today's vote — a weather-family question, 4 presets + your own answer; once a day, then result bars. */
-function TodayVote({ here }: { here: Here }) {
-  const { color } = useTheme();
-  const { t } = useTranslation();
-  const cell = here.cell;
-  const [results, setResults] = useState<VoteResult[] | null>(null);
-  const [custom, setCustom] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const load = useCallback(() => {
-    if (!cell) return;
-    fetchVoteResults(cell).then(setResults).catch(() => setResults([]));
-  }, [cell]);
-  useFocusEffect(useCallback(() => { load(); }, [load]));
-
-  const mineRow = results?.find((r) => r.mine);
-  // After voting, the question you answered (the weather may have changed since).
-  const family: VoteFamily = mineRow?.mood ?? voteFamily(here.forecast?.mood);
-  const presets = VOTE_OPTIONS[family].map((o) => `${family}.${o}`);
-  const labelOf = (choice: string) => (presets.includes(choice) ? t(`community.area.vote.${choice}`) : choice);
-
-  const vote = async (choice: string) => {
-    if (!cell || !choice.trim() || busy) return;
-    setBusy(true);
-    setFailed(false);
-    try {
-      await castVote({ cell, mood: family, choice });
-      setCustom(null);
-      setResults(await fetchVoteResults(cell));
-    } catch {
-      setFailed(true);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  if (!cell) return null;
-  const rows = (results ?? []).filter((r) => r.mood === family);
-  const total = rows.reduce((n, r) => n + r.votes, 0);
-  // Bars: every preset (0 too), then own answers by count — at most 6 rows; the rest only count in the total.
-  const byChoice = new Map(rows.map((r) => [r.choice, r]));
-  const others = rows.filter((r) => !presets.includes(r.choice)).sort((a, b) => Number(b.mine) - Number(a.mine) || b.votes - a.votes);
-  const bars = [
-    ...presets.map((c) => byChoice.get(c) ?? { mood: family, choice: c, votes: 0, mine: false }),
-    ...others,
-  ].slice(0, 6);
-
-  return (
-    <View style={styles.block}>
-      <Text variant="Title/S">{t('community.area.voteTitle')}</Text>
-      <Text variant="Body/M">{t(`community.area.vote.${family}.question`)}</Text>
-      {results == null ? (
-        <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
-      ) : mineRow ? (
-        <View style={styles.bars}>
-          {bars.map((r) => {
-            const pct = total ? Math.round((r.votes / total) * 100) : 0;
-            return (
-              <View key={r.choice} style={[styles.bar, { backgroundColor: color('bg/subtle'), borderColor: r.mine ? color('border/accent') : color('border/default') }]}>
-                <View style={[styles.barFill, { width: `${pct}%`, backgroundColor: r.mine ? color('bg/accent-subtle') : color('bg/muted') }]} />
-                <Text variant={r.mine ? 'Body/S Strong' : 'Body/S'} color={r.mine ? 'fg/accent' : 'fg/default'} style={styles.flex} numberOfLines={1}>{labelOf(r.choice)}</Text>
-                <Text variant={r.mine ? 'Body/S Strong' : 'Body/S'} color={r.mine ? 'fg/accent' : 'fg/secondary'}>{pct}%</Text>
-              </View>
-            );
-          })}
-          <Text variant="Caption" color="fg/muted">{t('community.area.votes', { count: total })}</Text>
-        </View>
-      ) : (
-        <View style={styles.bars}>
-          {presets.map((c) => <Button key={c} label={labelOf(c)} variant="Outline" size="M" disabled={busy} onPress={() => vote(c)} />)}
-          {custom == null ? (
-            <Button label={t('community.area.writeOwn')} variant="Ghost" size="M" disabled={busy} onPress={() => setCustom('')} />
-          ) : (
-            <View style={styles.ownRow}>
-              <View style={styles.flex}>
-                <Input value={custom} onChangeText={setCustom} placeholder={t('community.area.ownPlaceholder')} maxLength={40} autoFocus returnKeyType="send" onSubmitEditing={() => vote(custom)} />
-              </View>
-              <Button label={t('community.area.voteCta')} size="M" loading={busy} disabled={!custom.trim()} onPress={() => vote(custom)} />
-            </View>
-          )}
-          {failed ? <Text variant="Caption" color="fg/destructive">{t('community.area.voteFailed')}</Text> : null}
-        </View>
-      )}
-    </View>
-  );
-}
-
 /**
  * Explore · "Our area" — Today's table in our area: header (district · weather temp) → Popular today (top 3) →
- * Today's vote → area questions (3–5, topped up from wider ranges) + Ask → 3 neighbours' dishes + See more
+ * area questions (3–5, topped up from wider ranges) + Ask → 3 neighbours' dishes + See more
  * (app/nearby-feed). Location off → a card to turn it on. `onShown` gets the dish ids shown here (Explore
  * Together leaves them out).
  */
@@ -436,8 +348,6 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
       <View style={[styles.px, styles.blocks]}>
         {/* 2 · Popular today */}
         <TopToday here={here} />
-        {/* 3 · Today's vote */}
-        <TodayVote here={here} />
         {/* 4 · Area questions + Ask */}
         <View style={styles.block}>
           <Text variant="Title/S">{t('community.area.questionsTitle')}</Text>
@@ -560,8 +470,4 @@ const styles = StyleSheet.create({
   rankLead: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
   rank: { width: space[16], textAlign: 'center' },
   thumb: { width: 48, height: 48, borderRadius: radius.md },
-  bars: { gap: space[8] },
-  bar: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[14], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1, overflow: 'hidden' },
-  barFill: { position: 'absolute', left: 0, top: 0, bottom: 0 },
-  ownRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
 });
