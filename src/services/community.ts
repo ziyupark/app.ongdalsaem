@@ -1,5 +1,6 @@
 // Community (3.x Nearby · 4.x Global / Following / Tables / Challenges) — reads and writes on the tables in
 // supabase/migrations/20261029000000_follows_and_messages.sql and 20261030020000_tables_questions_challenges.sql.
+import { hasIngredients } from '../lib/ingredientMatch';
 import { supabase } from '../lib/supabase';
 import type { WeatherMood } from '../theme';
 import { countOf, SUMMARY_SELECT, toPerson, toSummary, type DishSummary, type Person, type Row } from './foods';
@@ -57,17 +58,30 @@ async function list(q: any, sort: Sort = 'latest', limit = 40): Promise<CardDish
 
 // ---------------------------------------------------------------------------------------------- dishes
 
-export type NearbyFilter = { city?: string | null; neighborhood?: string | null; cells?: string[] | null; mood?: WeatherMood | null; query?: string };
+export type NearbyFilter = {
+  city?: string | null; neighborhood?: string | null; cells?: string[] | null; mood?: WeatherMood | null; query?: string;
+  /** Search filters (Explore filter popup): cook time at most n minutes · difficulty · every listed ingredient. */
+  maxMinutes?: number | null; difficulty?: 'easy' | 'medium' | 'hard' | null; ingredients?: string[];
+};
 
 /** 3.1 / 3.5 / 3.6 — dishes shared in your city (or neighbourhood), optionally the same weather or matching a search. */
 export async function fetchNearby(f: NearbyFilter, sort: Sort = 'latest') {
-  let q = publicFoods();
+  const wanted = f.ingredients?.filter((i) => i.trim()) ?? [];
+  let q = publicFoods(wanted.length ? `${CARD_SELECT}, ingredients` : CARD_SELECT);
   if (f.cells?.length) q = q.in('geohash6', f.cells);
   else if (f.neighborhood) q = q.eq('neighborhood', f.neighborhood);
   else if (f.city) q = q.eq('city', f.city);
   if (f.mood) q = q.eq('weather_condition', f.mood);
   if (f.query?.trim()) q = q.or(searchOr(f.query));
-  return list(q, sort);
+  if (f.maxMinutes) q = q.lte('cook_minutes', f.maxMinutes);
+  if (f.difficulty) q = q.eq('difficulty', f.difficulty);
+  if (!wanted.length) return list(q, sort);
+  // Ingredients are matched on the device (synonyms: 계란 = egg) — read a wider page, keep dishes that have them all.
+  const { data, error } = await q.order('created_at', { ascending: false }).limit(200);
+  if (error) throw error;
+  const names = (r: Row) => (Array.isArray(r.ingredients) ? (r.ingredients as Row[]).map((i) => String(i?.name ?? '')).filter(Boolean) : []);
+  const rows = (data as Row[]).filter((r) => hasIngredients(wanted, names(r))).map(toCard);
+  return (sort === 'popular' ? rows.sort(byAcorns) : rows).slice(0, 40);
 }
 
 /** Search term → PostgREST `or` over name, description and mood tags. Commas/parens are stripped so the filter stays valid. */

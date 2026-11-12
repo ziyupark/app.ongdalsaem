@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NearbyFeed, type Area } from '../src/components/community/Nearby';
+import { filtersFromParams } from '../src/components/community/SearchFilters';
 import { TopBar } from '../src/components/TopBar';
 import { space, useTheme } from '../src/theme';
 
@@ -13,14 +14,14 @@ export default function NearbyFeedScreen() {
   const { color } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ q?: string; area?: string }>();
+  const params = useLocalSearchParams<{ q?: string; area?: string; time?: string; level?: string; ing?: string }>();
   const area = AREAS.includes(params.area as Area) ? (params.area as Area) : 'all';
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
       <TopBar title={t('community.ourArea')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + space[24] }}>
-        <NearbyFeed initialQuery={params.q ?? ''} initialArea={area} />
+        <NearbyFeed initialQuery={params.q ?? ''} initialArea={area} initialFilters={filtersFromParams(params)} />
       </ScrollView>
     </View>
   );

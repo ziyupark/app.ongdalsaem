@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { Clock, CloudRain, MapPin, Search, X } from 'lucide-react-native';
+import { Clock, CloudRain, MapPin, Search, SlidersHorizontal, X } from 'lucide-react-native';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -19,6 +19,7 @@ import { Chip } from '../Chip';
 import { Icon } from '../Icon';
 import { MessageCircle } from '../icons/custom';
 import { Text } from '../Text';
+import { FilterChips, FilterSheet, hasFilters, NO_FILTERS, type SearchFilters } from './SearchFilters';
 import { EmptyState, FoodGrid, ListCard, ListRow, QuestionCard, SearchField, useByline } from './Parts';
 
 export type Area = 'all' | 'near' | 'area' | 'weather';
@@ -36,7 +37,7 @@ const placeOf = (here: Here) => ({
 // ------------------------------------------------------------------------------------------------ data
 
 /** Nearby dishes for an area filter + search term (same-weather dishes first). null while loading. */
-export function useNearbyDishes(here: Here, area: Area, query: string) {
+export function useNearbyDishes(here: Here, area: Area, query: string, filters: SearchFilters = NO_FILTERS) {
   const f = here.forecast;
   const { city, district } = placeOf(here);
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
@@ -50,13 +51,16 @@ export function useNearbyDishes(here: Here, area: Area, query: string) {
         cells: area === 'near' && here.coords ? cellsAround(here.coords.latitude, here.coords.longitude) : null,
         mood: area === 'weather' ? f?.mood ?? null : null,
         query,
+        maxMinutes: filters.maxMinutes,
+        difficulty: filters.difficulty,
+        ingredients: filters.ingredients,
       });
       // "best in <weather> first": same-weather dishes lead, then newest.
       setDishes(f?.mood ? [...list.filter((d) => d.mood === f.mood), ...list.filter((d) => d.mood !== f.mood)] : list);
     } catch {
       setDishes([]);
     }
-  }, [here.status, here.coords, city, district, area, f?.mood, query]);
+  }, [here.status, here.coords, city, district, area, f?.mood, query, filters]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
   return dishes;
 }
@@ -86,13 +90,19 @@ export function useNearbyQuestions(here: Here, n: number, fill?: boolean) {
  * Search Field + 3.4 typing panel (suggestions · recent searches). While typing the panel replaces `children`.
  * `onSubmit` gets the trimmed term ('' = cleared).
  */
-export function NearbySearch({ city, initial = '', onSubmit, children }: { city: string | null; initial?: string; onSubmit: (term: string) => void; children?: ReactNode }) {
+export function NearbySearch({ city, initial = '', onSubmit, filters, onFilters, children }: {
+  city: string | null; initial?: string; onSubmit: (term: string) => void;
+  /** Filter button beside the field (popup) + the selected filters as chips under it. */
+  filters?: SearchFilters; onFilters?: (f: SearchFilters) => void;
+  children?: ReactNode;
+}) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const [query, setQuery] = useState(initial);
   const [focused, setFocused] = useState(false);
   const [suggest, setSuggest] = useState<{ name: string; n: number }[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem(RECENT_KEY).then((v) => v && setRecent(JSON.parse(v))).catch(() => undefined);
@@ -123,17 +133,35 @@ export function NearbySearch({ city, initial = '', onSubmit, children }: { city:
 
   return (
     <View>
-      <View style={styles.searchWrap}>
-        <SearchField
-          value={query}
-          onChangeText={(v) => { setQuery(v); if (!v) onSubmit(''); }}
-          placeholder={t('community.searchPlaceholder')}
-          focused={focused}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          onSubmit={() => run(query)}
-        />
+      <View style={[styles.searchWrap, styles.searchRow]}>
+        <View style={styles.flex}>
+          <SearchField
+            value={query}
+            onChangeText={(v) => { setQuery(v); if (!v) onSubmit(''); }}
+            placeholder={t('community.searchPlaceholder')}
+            focused={focused}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onSubmit={() => run(query)}
+          />
+        </View>
+        {filters && onFilters ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('community.filterTitle')}
+            onPress={() => { Keyboard.dismiss(); setFilterOpen(true); }}
+            style={[styles.filterBtn, { backgroundColor: color(hasFilters(filters) ? 'bg/inverse' : 'bg/muted') }]}
+          >
+            <Icon icon={SlidersHorizontal} size={18} color={hasFilters(filters) ? 'fg/inverse' : 'fg/secondary'} />
+          </Pressable>
+        ) : null}
       </View>
+      {filters && onFilters ? (
+        <>
+          {hasFilters(filters) ? <View style={styles.filterChips}><FilterChips filters={filters} onChange={onFilters} /></View> : null}
+          <FilterSheet visible={filterOpen} initial={filters} onClose={() => setFilterOpen(false)} onApply={(f) => { setFilterOpen(false); onFilters(f); }} />
+        </>
+      ) : null}
       {typing ? (
         <View style={styles.typing}>
           {suggest.length ? (
@@ -312,7 +340,7 @@ export function OurArea() {
 // ------------------------------------------------------------------------------------------------ full list (3.x)
 
 /** The full Nearby list (3.1–3.6) — search, range chips (with All), ask bar + a question, Dish grid / empty states. */
-export function NearbyFeed({ initialQuery = '', initialArea = 'all' }: { initialQuery?: string; initialArea?: Area }) {
+export function NearbyFeed({ initialQuery = '', initialArea = 'all', initialFilters = NO_FILTERS }: { initialQuery?: string; initialArea?: Area; initialFilters?: SearchFilters }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
@@ -322,12 +350,14 @@ export function NearbyFeed({ initialQuery = '', initialArea = 'all' }: { initial
   const { city } = placeOf(here);
   const [area, setArea] = useState<Area>(initialArea);
   const [submitted, setSubmitted] = useState(initialQuery);
-  const dishes = useNearbyDishes(here, area, submitted);
+  const [filters, setFilters] = useState<SearchFilters>(initialFilters);
+  const dishes = useNearbyDishes(here, area, submitted, filters);
+  const searching = !!submitted || hasFilters(filters);
   const { questions, meToo } = useNearbyQuestions(here, 3);
   const condition = f ? t(`weather.${f.mood}`).toLowerCase() : '';
 
   return (
-    <NearbySearch city={city} initial={initialQuery} onSubmit={setSubmitted}>
+    <NearbySearch city={city} initial={initialQuery} onSubmit={setSubmitted} filters={filters} onFilters={setFilters}>
       <AreaChips here={here} area={area} onChange={setArea} withAll />
 
       <View style={styles.body}>
@@ -335,12 +365,12 @@ export function NearbyFeed({ initialQuery = '', initialArea = 'all' }: { initial
           <View style={styles.ctx}>
             <Icon icon={CloudRain} size={16} color="fg/accent" />
             <Text variant="Body/S Strong" color="fg/accent" numberOfLines={1}>
-              {submitted && dishes ? t('community.resultsCtx', { count: dishes.length, weather: condition }) : t('community.cookedNear')}
+              {searching && dishes ? t('community.resultsCtx', { count: dishes.length, weather: condition }) : t('community.cookedNear')}
             </Text>
           </View>
         ) : null}
 
-        {!submitted ? (
+        {!searching ? (
           <View style={styles.qs}>
             <Pressable accessibilityRole="button" onPress={() => router.push('/ask')} style={[styles.askBar, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
               <Icon icon={MessageCircle} size={20} color="fg/secondary" />
@@ -355,11 +385,11 @@ export function NearbyFeed({ initialQuery = '', initialArea = 'all' }: { initial
         <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
       ) : dishes.length ? (
         <FoodGrid dishes={dishes} width={width} byline={(d) => byline(d)} onOpen={(d) => router.push(`/dish/${d.id}`)} />
-      ) : submitted ? (
+      ) : searching ? (
         // 3.3 No results — offer weather / mood tags instead.
-        <EmptyState size="L" icon={Search} title={t('community.noResultsTitle', { q: submitted })} body={t('community.noResultsBody')}>
+        <EmptyState size="L" icon={Search} title={submitted ? t('community.noResultsTitle', { q: submitted }) : t('community.noFilterResults')} body={t('community.noResultsBody')}>
           <View style={styles.wrap}>
-            {f ? <Chip label={t(`weather.${f.mood}`)} onPress={() => { setSubmitted(''); setArea('weather'); }} /> : null}
+            {f ? <Chip label={t(`weather.${f.mood}`)} onPress={() => { setSubmitted(''); setFilters(NO_FILTERS); setArea('weather'); }} /> : null}
             {['cozy', 'comforting', 'spicy'].map((m) => <Chip key={m} label={`#${m}`} onPress={() => router.push(`/tag/${m}`)} />)}
           </View>
         </EmptyState>
@@ -382,6 +412,9 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
   searchWrap: { paddingTop: space[16], paddingHorizontal: space[20] },
+  searchRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  filterBtn: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  filterChips: { paddingTop: space[10], paddingHorizontal: space[20] },
   typing: { paddingHorizontal: space[20], paddingTop: space[16], gap: space[10] },
   overline: { marginTop: space[6] },
   sugRow: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[16], paddingVertical: space[14] },

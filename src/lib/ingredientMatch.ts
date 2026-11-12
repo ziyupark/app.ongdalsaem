@@ -77,3 +77,9 @@ export function matchRecipes(fridge: string[], recipes: RecipeCandidate[], limit
     .sort((a, b) => b.have / b.total - a.have / a.total || b.have - a.have)
     .slice(0, limit);
 }
+
+/** Search filter "with ingredients": every wanted ingredient is in the recipe (synonyms count, e.g. 계란 = egg). */
+export function hasIngredients(wanted: string[], ingredients: string[]): boolean {
+  const have = new Set(ingredients.map(keyOf).filter(Boolean));
+  return wanted.map(keyOf).filter(Boolean).every((k) => have.has(k));
+}
