@@ -23,8 +23,8 @@
       "nearbyBody": "Chỗ ăn gần bạn.",
       "timer": "Hẹn giờ nhà bếp",
       "timerBody": "Nhiều hẹn giờ cùng lúc khi nấu.",
-      "holidays": "Ngày lễ thế giới",
-      "holidaysBody": "Món ăn ngày lễ khắp thế giới."
+      "holidays": "Ngày kỷ niệm thế giới",
+      "holidaysBody": "Món ăn ngày kỷ niệm khắp thế giới."
     },
     "start": "Bắt đầu"
   },
@@ -864,7 +864,6 @@
     "challenges": "Thử thách nấu ăn",
     "trendingTags": "Thẻ thịnh hành",
     "pickTag": "Chọn một thẻ ở trên — các món này sẽ thay đổi theo.",
-    "festiveEyebrow": "Bàn tiệc lễ hội",
     "festiveTitle": "Ngày kỷ niệm khắp thế giới",
     "allHolidays": "Xem tất cả ngày lễ",
     "today": "Hôm nay",

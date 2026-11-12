@@ -23,8 +23,8 @@
       "nearbyBody": "Onde comer perto de você.",
       "timer": "Timer de cozinha",
       "timerBody": "Vários timers ao mesmo tempo.",
-      "holidays": "Festas do mundo",
-      "holidaysBody": "Pratos festivos do mundo todo."
+      "holidays": "Datas especiais do mundo",
+      "holidaysBody": "Pratos de datas especiais do mundo todo."
     },
     "start": "Começar"
   },
@@ -875,7 +875,6 @@
     "challenges": "Desafios culinários",
     "trendingTags": "Tags em alta",
     "pickTag": "Escolha uma tag acima — estes pratos mudam com ela.",
-    "festiveEyebrow": "Mesas festivas",
     "festiveTitle": "Datas especiais pelo mundo",
     "allHolidays": "Ver todos os feriados",
     "today": "Hoje",

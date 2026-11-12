@@ -23,8 +23,8 @@
       "nearbyBody": "가까운 곳에서 바로 먹어요.",
       "timer": "키친 타이머",
       "timerBody": "요리하며 여러 개를 한 번에.",
-      "holidays": "세계의 명절",
-      "holidaysBody": "세계 곳곳의 명절 음식."
+      "holidays": "세계의 기념일",
+      "holidaysBody": "세계 곳곳의 기념일 음식."
     },
     "start": "시작하기"
   },
@@ -875,7 +875,6 @@
     "challenges": "푸드 챌린지",
     "trendingTags": "인기 태그",
     "pickTag": "위에서 태그를 고르면 요리가 바뀌어요.",
-    "festiveEyebrow": "명절 식탁",
     "festiveTitle": "세계의 기념일",
     "allHolidays": "명절 전체 보기",
     "today": "오늘",

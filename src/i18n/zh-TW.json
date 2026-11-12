@@ -23,8 +23,8 @@
       "nearbyBody": "在你附近就能吃到。",
       "timer": "廚房計時器",
       "timerBody": "做菜時同時開好幾個。",
-      "holidays": "世界節日",
-      "holidaysBody": "世界各地的節慶料理。"
+      "holidays": "世界紀念日",
+      "holidaysBody": "世界各地的紀念日料理。"
     },
     "start": "開始使用"
   },
@@ -864,7 +864,6 @@
     "challenges": "料理挑戰",
     "trendingTags": "熱門標籤",
     "pickTag": "選擇上方的標籤——料理會跟著改變。",
-    "festiveEyebrow": "節慶餐桌",
     "festiveTitle": "世界各地的紀念日",
     "allHolidays": "查看所有節日",
     "today": "今天",

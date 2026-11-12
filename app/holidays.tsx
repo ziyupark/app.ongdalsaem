@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FestiveCard } from '../src/components/community/FestiveCard';
-import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { upcomingFestive } from '../src/lib/holidays';
 import { space, useTheme } from '../src/theme';
@@ -27,7 +26,6 @@ export default function Holidays() {
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
       <TopBar title={t('community.festiveTitle')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + space[24] }]}>
-        <Text variant="Overline" color="fg/accent">{t('community.festiveEyebrow')}</Text>
         <View style={styles.grid}>
           {festive.map((h) => <FestiveCard key={h.key} h={h} width={cardW} height={Math.round((cardW * 196) / 168)} />)}
         </View>

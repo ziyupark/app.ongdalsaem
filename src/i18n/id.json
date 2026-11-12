@@ -23,8 +23,8 @@
       "nearbyBody": "Tempat makan di dekatmu.",
       "timer": "Timer dapur",
       "timerBody": "Beberapa timer sekaligus saat memasak.",
-      "holidays": "Hari raya dunia",
-      "holidaysBody": "Hidangan perayaan dari seluruh dunia."
+      "holidays": "Hari istimewa dunia",
+      "holidaysBody": "Hidangan hari istimewa dari seluruh dunia."
     },
     "start": "Mulai"
   },
@@ -864,7 +864,6 @@
     "challenges": "Tantangan masak",
     "trendingTags": "Tag populer",
     "pickTag": "Pilih tag di atas — masakan ini berubah mengikutinya.",
-    "festiveEyebrow": "Meja perayaan",
     "festiveTitle": "Hari istimewa di seluruh dunia",
     "allHolidays": "Lihat semua hari raya",
     "today": "Hari ini",

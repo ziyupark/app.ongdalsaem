@@ -23,8 +23,8 @@
       "nearbyBody": "近くで食べられる場所。",
       "timer": "キッチンタイマー",
       "timerBody": "料理中に複数同時に。",
-      "holidays": "世界の祝日",
-      "holidaysBody": "世界各地の行事料理。"
+      "holidays": "世界の記念日",
+      "holidaysBody": "世界各地の記念日の料理。"
     },
     "start": "はじめる"
   },
@@ -864,7 +864,6 @@
     "challenges": "フードチャレンジ",
     "trendingTags": "トレンドタグ",
     "pickTag": "上のタグを選ぶと、料理が切り替わります。",
-    "festiveEyebrow": "お祝いの食卓",
     "festiveTitle": "世界の記念日",
     "allHolidays": "祝祭日をすべて見る",
     "today": "今日",

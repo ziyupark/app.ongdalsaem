@@ -23,8 +23,8 @@
       "nearbyBody": "Where to eat it close to you.",
       "timer": "Kitchen timer",
       "timerBody": "Several timers at once while you cook.",
-      "holidays": "World holidays",
-      "holidaysBody": "Festive dishes from around the world."
+      "holidays": "Special days of the world",
+      "holidaysBody": "Special-day dishes from around the world."
     },
     "start": "Get started"
   },
@@ -875,7 +875,6 @@
     "challenges": "Food challenges",
     "trendingTags": "Trending tags",
     "pickTag": "Pick a tag above — these dishes change with it.",
-    "festiveEyebrow": "Festive tables",
     "festiveTitle": "Special days around the world",
     "allHolidays": "See all holidays",
     "today": "Today",
