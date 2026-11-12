@@ -2,6 +2,16 @@
 
 디자인 버전별 변경 요약이다. 본문 문서에는 최종 상태만 적고, 무엇이 바뀌었는지는 여기에만 남긴다. 새 변경은 맨 위에 추가한다.
 
+## v1.8.2 — 2026-11-12 (Diary 재구성 · 이번 주 한 줄 · 식단 계획)
+
+- 6.3 Diary 순서를 **이번 주 한 줄 → 월 요약 한 줄 → Fridge memo → Shopping list**로. 기존 "This week’s meals" 카드(가로 스크롤 7장)는 삭제하고 이번 주 한 줄로 합침
+- **이번 주 한 줄** 추가: 로케일 주 시작 7칸 · 오늘 칸 border/focus · ‹ ›로 지난주/다음주 · "Month view". 지난 날 = 날씨 + 내가 만든 요리 사진, 오늘·앞으로 = 예보(아이콘 · 최고기온) + 계획한 요리, 없으면 `+` → 그날 식단 시트(예보로 추천 3개 + 저장한 요리). 길게 누르면 계획 삭제(확인)
+- **월 달력을 화면에서 빼서 Month view 팝업**(타이머 팝업과 같은 모양)으로. 기능(내가 만든 요리만 · 날짜 → 목록 → 7.1)은 그대로. `Diary Day`는 이 팝업에서만 씀
+- **월 요약 카드 → 한 줄**(아이콘 16 + Body/S, "{month}, mostly {날씨} · You cooked …", 요리 없으면 "A quiet {month}"만)
+- Fridge memo: **"What you can cook now"를 냉장실/냉동실 상자 아래로** 이동
+- 7.1 `more` 메뉴의 **Add to meal plan**(오늘 + 6일 · Lunch/Dinner) 문서화. 식단 계획은 기기에만 저장(AsyncStorage, 30일 지나면 삭제) — 06-data-model에 `PlanItem` 추가
+- 문구 키 추가(9개 언어): `diary.thisWeek` · `diary.prevWeek` · `diary.nextWeek` · `diary.monthView` · `mealPlan.removeAsk` · `mealPlan.planDay`. `mealPlan.title`은 이제 쓰지 않음
+
 ## v1.8.1 — 2026-11-12 (Community Figma를 앱에 맞춤 · 오늘의 투표 삭제)
 
 - Figma: 4.1(19:818)을 **4.1 Community · Explore**로 — 공통 헤더(무드 wash · 로고 · 벨 · 날짜 · 날씨 제목) · 밑줄 탭 Explore · Following · Challenges · 검색 · **Our area**(오늘 인기 · 동네 질문 + Ask · 이웃 요리 · See more) · Holidays 더보기(`chevron-right`). 4.4(183:5713) · Challenges 탭(680:11155, 섹션 순서 This week → Your challenges …)의 상단도 같은 헤더 · 탭으로. 3.1(19:663)을 **3.1 Nearby list**(TopBar "Our area", 탭 · Weather now · TabBar 없음)로. 새 프레임 **4.1b Holidays around the world**(724:11491)
