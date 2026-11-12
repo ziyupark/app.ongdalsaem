@@ -103,6 +103,8 @@ interface SupportTicket { id: string; userId: string; topic: 'bug'|'account'|'re
 // DB: supabase/migrations/20261111000000_nearby_questions_wide.sql — nearby_questions_wide(geohash)(한 단계 넓은 3자리 칸, 규칙은 nearby_questions와 같음) — Our area 질문 채우기
 // Our area "Popular today"는 테이블 없이 foods(오늘 0시 이후 · geohash6 · neighborhood · city)를 앱에서 이름별로 묶어 계산
 // 냉장고 메모(6.3 Fridge)는 기기에만 저장(AsyncStorage, { name, zone: 'fridge'|'freezer', addedAt }) — DB 없음. "What you can cook now"는 foods.ingredients가 있는 최신 공개 게시물 200개와 비교
+// 식단 계획(6.3 이번 주 한 줄 · 7.1 Add to meal plan)도 기기에만 저장(AsyncStorage `ongdalsaem.mealPlan`) — DB 없음, 동기화 안 함. 30일 지난 계획은 불러올 때 지움
+interface PlanItem { id: string; date: string /* 로컬 YYYY-MM-DD */; meal: 'lunch'|'dinner'; foodId?: string; name: string; photo?: string } // 하루 끼니당 1개(같은 끼니는 교체)
 // 주방 타이머(5.x)도 기기에만 저장
 interface Follow { followerId: string; followeeId: string; createdAt: string }
 interface Country { code: string; name: string; city: string; localTime: string; mood: WeatherMood;

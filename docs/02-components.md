@@ -91,7 +91,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 | Nearby Card | 131:4542 | 3줄 텍스트 T, 사진 fill | 홈 "Eat this nearby" 카드(홈 전용 — 7.1 상세에는 두지 않음) |
 | Place Card | 131:4620 | 거리·이름·메뉴·도토리 수·메모 T | 2.4 식당 카드 |
 | Timer Card | 12:406 | Label T | 350×88 |
-| Diary Day | 132:4501 | State V[Blank/Plain/Logged] · 날짜 T | 6.3 캘린더 칸 |
+| Diary Day | 132:4501 | State V[Blank/Plain/Logged] · 날짜 T | 6.3 Month view 팝업의 달력 칸(이번 주 한 줄은 이 컴포넌트를 쓰지 않음) |
 | Weather Mood | 72:787 | Mood V[18종] | [§2.4](01-foundations.md) |
 
 - 레이어 순서(아래→위): **Photo**(카드 전체 STRETCH) → **Scrim**(Gradient/Card scrim 한 장) → Top(Eyebrow + Title, chevron) ↔ Footer(Body + Cook = **Avatar 40**(사진 없으면 이니셜), 그 아래 Tags 줄).

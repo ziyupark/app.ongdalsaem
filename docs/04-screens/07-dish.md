@@ -25,7 +25,8 @@
   8. Bottom spacer 140. 섹션 간격 32.
 - Sheet(390 폭, 위 y 528) 안의 More from Minji 줄은 폭 390 고정 + 가로 스크롤(줄이 시트를 넓히지 않음).
 - **[고정] Action bar**(화면 맨 아래, 높이 114, 그라데이션 배경): `Acorn Button` Bar Default **"I ate this · 12"**(`utensils`, FILL — 기록 버튼, 도토리 반응은 위 Feed Post Actions) + IconButton Soft L `timer`(Cook along → 5.1).
-- 이동: 뒤로 → **이전 화면(Back)** · `more` → 7.3 · 작성자(아바타·이름) / More from Minji See all → 작성자 프로필(4.5 템플릿) · 게시물 댓글 아이콘(18) → 7.2 · Start 15:00 timer / Cook along → 5.1 · **Acorn Button → 7.1b** · 하트·저장 = 그 자리에서 토글.
+- 이동: 뒤로 → **이전 화면(Back)** · `more` → 메뉴(**Add to meal plan** · 남의 요리 = Report → 7.3 / 내 요리 = Edit …) · 작성자(아바타·이름) / More from Minji See all → 작성자 프로필(4.5 템플릿) · 게시물 댓글 아이콘(18) → 7.2 · Start 15:00 timer / Cook along → 5.1 · **Acorn Button → 7.1b** · 하트·저장 = 그 자리에서 토글.
+- **Add to meal plan**(코드 기준, Figma 없음): BottomSheet "Add to meal plan" — Overline "DAY" 칩(Today + 6일, 요일 · 날짜) · Overline "FOR" 칩 Lunch / **Dinner**(기본) → Button "Add" → 그날 그 끼니 식단에 저장(같은 끼니는 교체) · Toast "Added to your meal plan". 6.3 이번 주 한 줄에 보인다.
 - 데이터: `Dish`([§7](../06-data-model.md)) 전체 — author, photos[], weather, acorns, comments 수, caption, tags, kcalTotal(선택), ingredients, steps, 작성자의 다른 요리 4개.
 
 ### 7.1b State · Ate it — [253:327](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=253-327)
