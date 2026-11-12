@@ -111,6 +111,7 @@ export default function Community() {
 function Global() {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
+  const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
   const [scape, setScape] = useState<string | null>(null);
   const [explore, setExplore] = useState<CardDish[] | null>(null);
@@ -173,14 +174,15 @@ function Global() {
       {/* Group 88:3081 — p32 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
         <View style={[styles.sectionS, styles.px]}>
-          <SectionHeader title={t('community.story')} />
+          {/* Title — Fraunces like the header weather title, always English; screen readers get the local string. */}
+          <Text variant="Display/M" accessibilityRole="header" accessibilityLabel={t('community.story')} numberOfLines={1}>{en('community.story')}</Text>
           <PhotoCard photo={story.photo} width={0} height={400} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
             <View style={styles.storyFoot}>
               <View style={styles.storyBody}>
                 <View style={[styles.flex, styles.storyText]}>
-                  {/* Dish name — Overline, 1 line, right above the statement. */}
-                  <Text variant="Overline" color="fg/on-photo-secondary" numberOfLines={1}>{story.name}</Text>
-                  {story.description ? <Text variant="Statement" color="fg/on-photo" numberOfLines={3}>{story.description}</Text> : null}
+                  {/* Dish name (Statement, 2 lines) → description (Body/M, 2 lines) → byline. */}
+                  <Text variant="Statement" color="fg/on-photo" numberOfLines={2}>{story.name}</Text>
+                  {story.description ? <Text variant="Body/M" color="fg/on-photo-secondary" numberOfLines={2}>{story.description}</Text> : null}
                   <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{[story.creator.name, story.city, timeAgo(story.createdAt, t)].filter(Boolean).join(' · ')}</Text>
                 </View>
                 <Avatar url={story.creator.avatarUrl} name={story.creator.name} size={40} />
