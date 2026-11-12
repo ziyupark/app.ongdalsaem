@@ -770,7 +770,11 @@
     "cooked_other": "今月は{{count}}回料理しました。",
     "cookedRain_other": "{{count}}回料理しました — そのうち{{rainy}}回は雨の日。",
     "cookedSnow_other": "{{count}}回料理しました — そのうち{{snowy}}回は雪の日。",
-    "youCooked": "あなたが作った料理"
+    "youCooked": "あなたが作った料理",
+    "thisWeek": "今週",
+    "prevWeek": "前の週",
+    "nextWeek": "次の週",
+    "monthView": "月表示"
   },
   "fridge": {
     "title": "冷蔵庫",
@@ -816,7 +820,9 @@
     "meals": {
       "lunch": "昼食",
       "dinner": "夕食"
-    }
+    },
+    "removeAsk": "献立から削除しますか？",
+    "planDay": "{{date}}の献立を立てる"
   },
   "community": {
     "title": "コミュニティ",

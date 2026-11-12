@@ -71,33 +71,6 @@ export function FridgeList() {
         })}
       </View>
 
-      {/* What I can cook with what's in the fridge — public recipes ranked by how many of their ingredients I have. */}
-      <View style={[styles.box, { backgroundColor: color('bg/accent-subtle') }]}>
-        <Text variant="Body/M Strong">{t('fridge.canCook')}</Text>
-        {items.length > 0 && recipes == null ? (
-          <ActivityIndicator color={color('fg/muted')} />
-        ) : matches.length === 0 ? (
-          <Text variant="Body/S" color="fg/muted">{t('fridge.canCookEmpty')}</Text>
-        ) : (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cards}>
-            {matches.map((m) => (
-              <Pressable key={m.food.id} accessibilityRole="button" onPress={() => router.push(`/dish/${m.food.id}`)} style={[styles.card, { backgroundColor: color('bg/subtle') }]}>
-                {m.food.photo ? (
-                  <Image source={{ uri: m.food.photo }} style={[styles.photo, { backgroundColor: color('bg/muted') }]} contentFit="cover" />
-                ) : <View style={[styles.photo, { backgroundColor: color('bg/muted') }]} />}
-                <View style={styles.cardText}>
-                  <Text variant="Body/S Strong" numberOfLines={1}>{m.food.name}</Text>
-                  <Text variant="Caption" color="fg/accent">{t('fridge.haveCount', { have: m.have, total: m.total })}</Text>
-                  {m.missing.length ? (
-                    <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('fridge.needs', { items: m.missing.slice(0, 2).join(', ') })}</Text>
-                  ) : null}
-                </View>
-              </Pressable>
-            ))}
-          </ScrollView>
-        )}
-      </View>
-
       <View style={styles.row}>
         <View style={styles.flex}>
           <Input height={ROW} value={name} onChangeText={setName} placeholder={t('fridge.placeholder')} returnKeyType="done" onSubmitEditing={add} />
@@ -131,6 +104,32 @@ export function FridgeList() {
           </View>
         );
       })}
+      {/* What I can cook with what's in the fridge — public recipes ranked by how many of their ingredients I have. */}
+      <View style={[styles.box, { backgroundColor: color('bg/accent-subtle') }]}>
+        <Text variant="Body/M Strong">{t('fridge.canCook')}</Text>
+        {items.length > 0 && recipes == null ? (
+          <ActivityIndicator color={color('fg/muted')} />
+        ) : matches.length === 0 ? (
+          <Text variant="Body/S" color="fg/muted">{t('fridge.canCookEmpty')}</Text>
+        ) : (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cards}>
+            {matches.map((m) => (
+              <Pressable key={m.food.id} accessibilityRole="button" onPress={() => router.push(`/dish/${m.food.id}`)} style={[styles.card, { backgroundColor: color('bg/subtle') }]}>
+                {m.food.photo ? (
+                  <Image source={{ uri: m.food.photo }} style={[styles.photo, { backgroundColor: color('bg/muted') }]} contentFit="cover" />
+                ) : <View style={[styles.photo, { backgroundColor: color('bg/muted') }]} />}
+                <View style={styles.cardText}>
+                  <Text variant="Body/S Strong" numberOfLines={1}>{m.food.name}</Text>
+                  <Text variant="Caption" color="fg/accent">{t('fridge.haveCount', { have: m.have, total: m.total })}</Text>
+                  {m.missing.length ? (
+                    <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('fridge.needs', { items: m.missing.slice(0, 2).join(', ') })}</Text>
+                  ) : null}
+                </View>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
+      </View>
     </View>
   );
 }

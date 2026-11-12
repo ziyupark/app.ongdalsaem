@@ -632,6 +632,10 @@ cooked_other=你這個月下廚了 {{count}} 次。
 cookedRain_other=你下廚了 {{count}} 次——其中 {{rainy}} 次在雨天。
 cookedSnow_other=你下廚了 {{count}} 次——其中 {{snowy}} 次在雪天。
 youCooked=你做過這道
+thisWeek=本週
+prevWeek=上一週
+nextWeek=下一週
+monthView=月檢視
 [community]
 title=社群
 global=全球
@@ -1055,6 +1059,8 @@ add=加入
 added=已加入菜單
 meals.lunch=午餐
 meals.dinner=晚餐
+removeAsk=要從菜單計畫移除嗎？
+planDay=規劃 {{date}}
 [welcome]
 introTitle=跟著天氣選的\n每日一餐。
 introBody=看看大家在和你一樣的天氣裡煮了什麼，決定今天吃什麼。

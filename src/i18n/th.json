@@ -770,7 +770,11 @@
     "cooked_other": "เดือนนี้คุณทำอาหาร {{count}} ครั้ง",
     "cookedRain_other": "คุณทำอาหาร {{count}} ครั้ง — {{rainy}} ครั้งในวันฝนตก",
     "cookedSnow_other": "คุณทำอาหาร {{count}} ครั้ง — {{snowy}} ครั้งในวันหิมะตก",
-    "youCooked": "คุณทำเมนูนี้"
+    "youCooked": "คุณทำเมนูนี้",
+    "thisWeek": "สัปดาห์นี้",
+    "prevWeek": "สัปดาห์ก่อน",
+    "nextWeek": "สัปดาห์ถัดไป",
+    "monthView": "ดูรายเดือน"
   },
   "fridge": {
     "title": "ตู้เย็น",
@@ -816,7 +820,9 @@
     "meals": {
       "lunch": "มื้อกลางวัน",
       "dinner": "มื้อเย็น"
-    }
+    },
+    "removeAsk": "ลบออกจากแผนมื้ออาหารไหม?",
+    "planDay": "วางแผน {{date}}"
   },
   "community": {
     "title": "ชุมชน",

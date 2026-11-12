@@ -779,7 +779,11 @@
     "cookedRain_other": "You cooked {{count}} times — {{rainy}} of them in the rain.",
     "cookedSnow_one": "You cooked once — in the snow.",
     "cookedSnow_other": "You cooked {{count}} times — {{snowy}} of them in the snow.",
-    "youCooked": "You cooked this"
+    "youCooked": "You cooked this",
+    "thisWeek": "This week",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "monthView": "Month view"
   },
   "fridge": {
     "title": "Fridge",
@@ -826,7 +830,9 @@
     "meals": {
       "lunch": "Lunch",
       "dinner": "Dinner"
-    }
+    },
+    "removeAsk": "Remove from your meal plan?",
+    "planDay": "Plan {{date}}"
   },
   "community": {
     "title": "Community",

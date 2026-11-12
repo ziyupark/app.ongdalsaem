@@ -779,7 +779,11 @@
     "cookedRain_other": "Cocinaste {{count}} veces, {{rainy}} de ellas con lluvia.",
     "cookedSnow_one": "Cocinaste una vez, con nieve.",
     "cookedSnow_other": "Cocinaste {{count}} veces, {{snowy}} de ellas con nieve.",
-    "youCooked": "Cocinaste esto"
+    "youCooked": "Cocinaste esto",
+    "thisWeek": "Esta semana",
+    "prevWeek": "Semana anterior",
+    "nextWeek": "Semana siguiente",
+    "monthView": "Ver mes"
   },
   "fridge": {
     "title": "Nevera",
@@ -826,7 +830,9 @@
     "meals": {
       "lunch": "Almuerzo",
       "dinner": "Cena"
-    }
+    },
+    "removeAsk": "¿Quitar del plan de comidas?",
+    "planDay": "Planear {{date}}"
   },
   "community": {
     "title": "Comunidad",

@@ -641,6 +641,10 @@ cookedRain_other=Cocinaste {{count}} veces, {{rainy}} de ellas con lluvia.
 cookedSnow_one=Cocinaste una vez, con nieve.
 cookedSnow_other=Cocinaste {{count}} veces, {{snowy}} de ellas con nieve.
 youCooked=Cocinaste esto
+thisWeek=Esta semana
+prevWeek=Semana anterior
+nextWeek=Semana siguiente
+monthView=Ver mes
 [community]
 title=Comunidad
 global=Global
@@ -1072,6 +1076,8 @@ add=Añadir
 added=Añadido a tu menú
 meals.lunch=Almuerzo
 meals.dinner=Cena
+removeAsk=¿Quitar del plan de comidas?
+planDay=Planear {{date}}
 [welcome]
 introTitle=Tu comida de cada día,\ncon el clima.
 introBody=Mira lo que cocina la gente con un clima como el tuyo y decide qué comer hoy.

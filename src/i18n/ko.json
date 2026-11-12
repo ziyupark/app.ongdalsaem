@@ -779,7 +779,11 @@
     "cookedRain_other": "{{count}}번 요리했어요 — 그중 {{rainy}}번은 비 오는 날.",
     "cookedSnow_one": "{{count}}번 요리했어요 — 눈 오는 날에.",
     "cookedSnow_other": "{{count}}번 요리했어요 — 그중 {{snowy}}번은 눈 오는 날.",
-    "youCooked": "내가 만든 요리"
+    "youCooked": "내가 만든 요리",
+    "thisWeek": "이번 주",
+    "prevWeek": "지난주",
+    "nextWeek": "다음 주",
+    "monthView": "월 보기"
   },
   "fridge": {
     "title": "냉장고",
@@ -826,7 +830,9 @@
     "meals": {
       "lunch": "점심",
       "dinner": "저녁"
-    }
+    },
+    "removeAsk": "식단에서 삭제할까요?",
+    "planDay": "{{date}} 식단 짜기"
   },
   "community": {
     "title": "커뮤니티",

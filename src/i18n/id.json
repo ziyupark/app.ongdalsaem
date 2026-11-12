@@ -770,7 +770,11 @@
     "cooked_other": "Kamu memasak {{count}} kali bulan ini.",
     "cookedRain_other": "Kamu memasak {{count}} kali — {{rainy}} di antaranya saat hujan.",
     "cookedSnow_other": "Kamu memasak {{count}} kali — {{snowy}} di antaranya saat bersalju.",
-    "youCooked": "Kamu memasak ini"
+    "youCooked": "Kamu memasak ini",
+    "thisWeek": "Minggu ini",
+    "prevWeek": "Minggu sebelumnya",
+    "nextWeek": "Minggu berikutnya",
+    "monthView": "Lihat bulan"
   },
   "fridge": {
     "title": "Kulkas",
@@ -816,7 +820,9 @@
     "meals": {
       "lunch": "Makan siang",
       "dinner": "Makan malam"
-    }
+    },
+    "removeAsk": "Hapus dari rencana makan?",
+    "planDay": "Rencanakan {{date}}"
   },
   "community": {
     "title": "Komunitas",

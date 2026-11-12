@@ -632,6 +632,10 @@ cooked_other=Tháng này bạn đã nấu {{count}} lần.
 cookedRain_other=Bạn đã nấu {{count}} lần — {{rainy}} lần trong mưa.
 cookedSnow_other=Bạn đã nấu {{count}} lần — {{snowy}} lần trong tuyết.
 youCooked=Bạn đã nấu món này
+thisWeek=Tuần này
+prevWeek=Tuần trước
+nextWeek=Tuần sau
+monthView=Xem tháng
 [community]
 title=Cộng đồng
 global=Toàn cầu
@@ -1055,6 +1059,8 @@ add=Thêm
 added=Đã thêm vào thực đơn
 meals.lunch=Bữa trưa
 meals.dinner=Bữa tối
+removeAsk=Xóa khỏi thực đơn?
+planDay=Lên thực đơn {{date}}
 [welcome]
 introTitle=Bữa ăn mỗi ngày,\ntheo thời tiết.
 introBody=Xem mọi người nấu gì trong thời tiết giống bạn và chọn món cho hôm nay.

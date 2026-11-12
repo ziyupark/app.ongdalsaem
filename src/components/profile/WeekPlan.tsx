@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useDietPrefs } from '../../lib/dietPrefs';
 import { dateKey, PLAN_MEALS, removePlan, setPlan, useMealPlan, type PlanMeal } from '../../lib/mealPlan';
-import { useTemp } from '../../lib/prefs';
 import { useHere } from '../../lib/useHere';
 import { fetchSavedDishes, type DishSummary } from '../../services/foods';
 import { fetchPool, pickToday, type PoolDish } from '../../services/recommend';
@@ -19,7 +18,6 @@ import { Icon } from '../Icon';
 import { Text } from '../Text';
 
 const DAYS = 7;
-const CARD_W = 104;
 const TILE_W = 112;
 const PICKS = 3;
 
@@ -30,7 +28,7 @@ export function weekDates() {
 }
 
 /** Day forecasts for where I am (device location, else my city). Empty while loading or without a forecast. */
-function useDailyForecast() {
+export function useDailyForecast() {
   const { here } = useHere();
   const where = here.coords ?? (here.forecast?.city ? { city: here.forecast.city } : here.place?.city ? { city: here.place.city } : null);
   const whereKey = where ? ('city' in where ? where.city : `${where.latitude.toFixed(2)},${where.longitude.toFixed(2)}`) : '';
@@ -45,60 +43,8 @@ function useDailyForecast() {
   return days;
 }
 
-/** 6.3 Diary · This week's meals — 7 day cards (date · forecast · planned dishes) above the calendar. Tap a day to plan it. */
-export function WeekPlan() {
-  const { color } = useTheme();
-  const { t, i18n } = useTranslation();
-  const temp = useTemp();
-  const plan = useMealPlan();
-  const forecast = useDailyForecast();
-  const dates = useMemo(weekDates, []);
-  const [open, setOpen] = useState<string | null>(null);
-  const byDate = useMemo(() => new Map(forecast.map((f) => [f.date, f])), [forecast]);
-
-  return (
-    <View style={styles.root}>
-      <Text variant="Title/M">{t('mealPlan.title')}</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row} style={styles.bleed}>
-        {dates.map((d, i) => {
-          const key = dateKey(d);
-          const f = byDate.get(key);
-          const items = PLAN_MEALS.map((m) => plan.find((p) => p.date === key && p.meal === m)).filter(Boolean);
-          return (
-            <Pressable
-              key={key}
-              accessibilityRole="button"
-              onPress={() => setOpen(key)}
-              style={({ pressed }) => [styles.card, { backgroundColor: color(i === 0 ? 'bg/accent-subtle' : 'bg/subtle'), borderColor: color(i === 0 ? 'border/accent' : 'border/default') }, pressed && { opacity: 0.85 }]}
-            >
-              <Text variant="Caption Strong" color={i === 0 ? 'fg/accent' : 'fg/muted'}>
-                {i === 0 ? t('mealPlan.today') : d.toLocaleDateString(i18n.language, { weekday: 'short' })}
-              </Text>
-              <Text variant="Title/S">{d.toLocaleDateString(i18n.language, { month: 'numeric', day: 'numeric' })}</Text>
-              <View style={styles.wx}>
-                {f ? (
-                  <>
-                    <Icon icon={WEATHER_ICON[f.mood]} size={16} color="fg/secondary" />
-                    <Text variant="Caption" color="fg/secondary">{`${temp(f.hi)}°`}</Text>
-                  </>
-                ) : <Text variant="Caption" color="fg/muted">—</Text>}
-              </View>
-              <View style={styles.items}>
-                {items.length ? items.map((p) => (
-                  <Text key={p!.id} variant="Caption" numberOfLines={1}>{`${t(`mealPlan.meals.${p!.meal}`)} · ${p!.name}`}</Text>
-                )) : <Text variant="Caption" color="fg/accent">{t('mealPlan.plan')}</Text>}
-              </View>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
-      <DayPlanSheet date={open} forecast={open ? byDate.get(open) ?? null : null} onClose={() => setOpen(null)} />
-    </View>
-  );
-}
-
 /** One day: what's planned (remove) · lunch / dinner · 3 picks for that day's forecast (Today's pick logic) · my saved dishes. */
-function DayPlanSheet({ date, forecast, onClose }: { date: string | null; forecast: DailyForecast | null; onClose: () => void }) {
+export function DayPlanSheet({ date, forecast, onClose }: { date: string | null; forecast: DailyForecast | null; onClose: () => void }) {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const plan = useMealPlan();
@@ -224,12 +170,6 @@ export function AddToPlanSheet({ dish, visible, onClose, onAdded }: { dish: { id
 }
 
 const styles = StyleSheet.create({
-  root: { gap: space[10] },
-  bleed: { marginHorizontal: -space[20] },
-  row: { gap: space[8], paddingHorizontal: space[20] },
-  card: { width: CARD_W, minHeight: 132, padding: space[10], gap: space[4], borderRadius: radius.lg, borderWidth: 1 },
-  wx: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  items: { marginTop: space[4], gap: space[2] },
   sheet: { gap: space[20], paddingBottom: space[8] },
   box: { borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: space[14] },
   planRow: { flexDirection: 'row', alignItems: 'center', gap: space[10], minHeight: 48 },

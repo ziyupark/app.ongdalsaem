@@ -632,6 +632,10 @@ cooked_other=เดือนนี้คุณทำอาหาร {{count}} �
 cookedRain_other=คุณทำอาหาร {{count}} ครั้ง — {{rainy}} ครั้งในวันฝนตก
 cookedSnow_other=คุณทำอาหาร {{count}} ครั้ง — {{snowy}} ครั้งในวันหิมะตก
 youCooked=คุณทำเมนูนี้
+thisWeek=สัปดาห์นี้
+prevWeek=สัปดาห์ก่อน
+nextWeek=สัปดาห์ถัดไป
+monthView=ดูรายเดือน
 [community]
 title=ชุมชน
 global=ทั่วโลก
@@ -1055,6 +1059,8 @@ add=เพิ่ม
 added=เพิ่มในแผนมื้ออาหารแล้ว
 meals.lunch=มื้อกลางวัน
 meals.dinner=มื้อเย็น
+removeAsk=ลบออกจากแผนมื้ออาหารไหม?
+planDay=วางแผน {{date}}
 [welcome]
 introTitle=มื้อประจำวันของคุณ\nตามสภาพอากาศ
 introBody=ดูว่าผู้คนทำอาหารอะไรในอากาศแบบเดียวกับคุณ แล้วเลือกว่าวันนี้จะกินอะไร
