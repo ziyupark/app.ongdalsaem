@@ -230,7 +230,7 @@ function Global() {
       {/* Trending tags 435:366 — p32 · gap 9: header → chips → 2 Food Cards (rows inset p4, gap 12). */}
       {tags.length ? (
         <View style={styles.sectionM}>
-          <SectionHeader title={t('community.trendingTags')} action={tag ? t('dish.seeAll') : undefined} onAction={() => tag && router.push(`/tag/${tag}`)} />
+          <SectionHeader title={t('community.trendingTags')} onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
             {tags.map((k) => <Chip key={k} label={tagLabel(k)} icon={MOOD_TAGS.find((m) => m.key === k)?.icon ?? CUSTOM_MOOD_ICON} selected={tag === k} onPress={() => setTag(k)} />)}
           </ScrollView>
@@ -240,7 +240,7 @@ function Global() {
 
       {/* Explore Together 676:20621 — p32 · gap 9: All · landscape chips → Food Cards of that landscape. */}
       <View style={styles.sectionM}>
-        <SectionHeader title={t('community.exploreTogether')} action={!showAll && (together?.length ?? 0) > 4 ? t('dish.seeAll') : undefined} onAction={() => setShowAll(true)} />
+        <SectionHeader title={t('community.exploreTogether')} onMore={!showAll && (together?.length ?? 0) > 4 ? () => setShowAll(true) : undefined} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
           <Chip label={t('community.all')} selected={!scape} onPress={() => setScape(null)} />
           {LANDSCAPES.map((l) => <Chip key={l.key} label={t(`landscape.${l.key}`)} selected={scape === l.key} onPress={() => setScape(l.key)} />)}

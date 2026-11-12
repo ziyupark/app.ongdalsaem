@@ -1073,6 +1073,8 @@
     "area": {
       "topTitle": "今日熱門料理",
       "basis": "以{{place}}為準",
+      "last3Days": "近 3 天",
+      "recent": "最近",
       "posts_other": "{{count}} 則分享",
       "topEmpty": "今天附近還沒有人分享料理。",
       "questionsTitle": "附近的提問",

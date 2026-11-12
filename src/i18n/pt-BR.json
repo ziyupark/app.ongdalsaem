@@ -1084,6 +1084,8 @@
     "area": {
       "topTitle": "Mais populares hoje",
       "basis": "Com base em {{place}}",
+      "last3Days": "Últimos 3 dias",
+      "recent": "Recente",
       "posts_one": "{{count}} publicação",
       "posts_other": "{{count}} publicações",
       "topEmpty": "Ainda não compartilharam pratos perto de você hoje.",

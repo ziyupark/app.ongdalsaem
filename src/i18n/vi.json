@@ -1073,6 +1073,8 @@
     "area": {
       "topTitle": "Phổ biến hôm nay",
       "basis": "Theo {{place}}",
+      "last3Days": "3 ngày qua",
+      "recent": "Gần đây",
       "posts_other": "{{count}} bài đăng",
       "topEmpty": "Hôm nay chưa có món nào được chia sẻ gần bạn.",
       "questionsTitle": "Câu hỏi quanh khu",

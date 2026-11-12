@@ -145,7 +145,7 @@ export function ChallengesTab() {
       {featured && top.length ? (
         <View style={styles.section}>
           <View style={styles.px}>
-            <SectionHeader title={t('challenge.topEntries')} action={t('dish.seeAll')} onAction={() => router.push(`/challenge/${featured.slug}`)} />
+            <SectionHeader title={t('challenge.topEntries')} onMore={() => router.push(`/challenge/${featured.slug}`)} />
           </View>
           <View style={styles.grid}>
             {top.map((d) => <DishTile key={d.id} dish={d} width={tileW} onPress={() => router.push(`/dish/${d.id}`)} />)}
@@ -156,7 +156,7 @@ export function ChallengesTab() {
       {/* More running now + coming up — 168×220 themed cards, join early. */}
       {others.length || soon.length ? (
         <View style={styles.section}>
-          <View style={styles.px}><SectionHeader title={t('challenge.comingUp')} action={t('dish.seeAll')} onAction={() => router.push('/challenges')} /></View>
+          <View style={styles.px}><SectionHeader title={t('challenge.comingUp')} onMore={() => router.push('/challenges')} /></View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
             {[...others, ...soon].map((c) => (
               <Pressable key={c.id} accessibilityRole="button" accessibilityLabel={c.title} onPress={() => router.push(`/challenge/${c.slug}`)} style={styles.card}>

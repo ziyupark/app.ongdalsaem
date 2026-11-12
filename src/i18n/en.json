@@ -1084,6 +1084,8 @@
     "area": {
       "topTitle": "Popular today",
       "basis": "Based on {{place}}",
+      "last3Days": "Last 3 days",
+      "recent": "Recent",
       "posts_one": "{{count}} post",
       "posts_other": "{{count}} posts",
       "topEmpty": "No dishes shared nearby today yet.",

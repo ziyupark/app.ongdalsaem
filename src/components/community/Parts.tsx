@@ -50,34 +50,31 @@ export function countryName(code: string, lang: string) {
   }
 }
 
-/** SectionHeader — Title/L + optional "See all" (Body/S Strong muted), px 20. */
-/** `onMore` adds a chevron button at the right end of the title row (`moreLabel` = its accessibility label). */
-export function SectionHeader({ title, action, onAction, eyebrow, onMore, moreLabel, badge }: { title: string; action?: string; onAction?: () => void; eyebrow?: string; onMore?: () => void; moreLabel?: string; badge?: string }) {
+/**
+ * SectionHeader — Title/L, px 20. Title row, right end: optional Badge (pill) then, with `onMore`, a "See more" chevron
+ * (ChevronRight 20 · fg/muted · 44×44 touch). `moreLabel` = its accessibility label (default "See more").
+ */
+export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge }: { title: string; eyebrow?: string; onMore?: () => void; moreLabel?: string; badge?: string }) {
   const { color } = useTheme();
+  const { t } = useTranslation();
   return (
     <View style={styles.sh}>
-      <View style={styles.flex}>
-        {eyebrow ? <Text variant="Overline" color="fg/accent">{eyebrow}</Text> : null}
-        {/* Title row — Title + optional Badge (pill bg/subtle · Caption Strong fg/secondary), centred on the title, gap 8. */}
-        <View style={styles.shTitleRow}>
-          <Text variant="Title/L" numberOfLines={1} style={styles.flexShrink}>{title}</Text>
-          {badge ? (
-            <View style={[styles.shBadge, { backgroundColor: color('bg/subtle') }]}>
-              <Text variant="Caption Strong" color="fg/secondary" numberOfLines={1}>{badge}</Text>
-            </View>
-          ) : null}
-        </View>
+      {eyebrow ? <Text variant="Overline" color="fg/accent">{eyebrow}</Text> : null}
+      {/* Title row — Title · [Badge (pill bg/subtle · Caption Strong fg/secondary)] · [>], centred on the title, gap 8. */}
+      <View style={styles.shTitleRow}>
+        <Text variant="Title/L" numberOfLines={1} style={styles.flexShrink}>{title}</Text>
+        <View style={styles.flex} />
+        {badge ? (
+          <View style={[styles.shBadge, { backgroundColor: color('bg/subtle') }]}>
+            <Text variant="Caption Strong" color="fg/secondary" numberOfLines={1}>{badge}</Text>
+          </View>
+        ) : null}
+        {onMore ? (
+          <Pressable accessibilityRole="button" accessibilityLabel={moreLabel ?? t('following.seeMore')} hitSlop={space[12]} onPress={onMore}>
+            <Icon icon={ChevronRight} size={20} color="fg/muted" />
+          </Pressable>
+        ) : null}
       </View>
-      {action ? (
-        <Pressable accessibilityRole="button" hitSlop={space[8]} onPress={onAction}>
-          <Text variant="Body/S Strong" color="fg/muted">{action}</Text>
-        </Pressable>
-      ) : null}
-      {onMore ? (
-        <Pressable accessibilityRole="button" accessibilityLabel={moreLabel} hitSlop={space[10]} onPress={onMore}>
-          <Icon icon={ChevronRight} size={24} color="fg/secondary" />
-        </Pressable>
-      ) : null}
     </View>
   );
 }
@@ -386,8 +383,8 @@ const styles = StyleSheet.create({
   center: { textAlign: 'center' },
   flagTag: { paddingHorizontal: space[8], paddingVertical: space[4], borderRadius: radius.full, alignSelf: 'flex-start' },
   flag: { width: 20, height: 14, borderRadius: 3 },
-  sh: { flexDirection: 'row', alignItems: 'flex-end', gap: space[12], paddingHorizontal: space[20] },
-  shTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[8] },
+  sh: { paddingHorizontal: space[20] },
+  shTitleRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flexShrink: { flexShrink: 1 },
   shBadge: { flexShrink: 1, paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   tabs: { flexDirection: 'row', gap: space[24], paddingLeft: space[20] },

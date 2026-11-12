@@ -1073,6 +1073,8 @@
     "area": {
       "topTitle": "Populer hari ini",
       "basis": "Berdasarkan {{place}}",
+      "last3Days": "3 hari terakhir",
+      "recent": "Terbaru",
       "posts_other": "{{count}} unggahan",
       "topEmpty": "Belum ada masakan yang dibagikan di sekitarmu hari ini.",
       "questionsTitle": "Pertanyaan sekitar",

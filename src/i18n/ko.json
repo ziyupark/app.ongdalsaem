@@ -1084,6 +1084,8 @@
     "area": {
       "topTitle": "오늘 인기 요리",
       "basis": "{{place}} 기준",
+      "last3Days": "최근 3일",
+      "recent": "최근",
       "posts_one": "{{count}}번 올라왔어요",
       "posts_other": "{{count}}번 올라왔어요",
       "topEmpty": "오늘 근처에 올라온 요리가 아직 없어요.",

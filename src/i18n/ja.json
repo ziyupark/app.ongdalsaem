@@ -1073,6 +1073,8 @@
     "area": {
       "topTitle": "今日の人気料理",
       "basis": "{{place}}基準",
+      "last3Days": "直近3日",
+      "recent": "最近",
       "posts_other": "{{count}}件の投稿",
       "topEmpty": "今日はまだ近くで料理が共有されていません。",
       "questionsTitle": "ご近所の質問",

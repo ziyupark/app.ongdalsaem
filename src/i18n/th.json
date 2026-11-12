@@ -1073,6 +1073,8 @@
     "area": {
       "topTitle": "ยอดนิยมวันนี้",
       "basis": "อิงจาก {{place}}",
+      "last3Days": "3 วันล่าสุด",
+      "recent": "ล่าสุด",
       "posts_other": "{{count}} โพสต์",
       "topEmpty": "วันนี้ยังไม่มีใครแชร์อาหารใกล้ๆ",
       "questionsTitle": "คำถามในย่าน",

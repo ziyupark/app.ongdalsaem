@@ -186,46 +186,60 @@ export const localMidnight = () => { const d = new Date(); d.setHours(0, 0, 0, 0
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 export type TopDish = { name: string; count: number; photo: string; dishId: string };
+/** How far Popular today had to widen: my cells → district → city (today) → city, last 3 days → same weather, recent. */
+export type TopScope = 'area' | 'district' | 'city' | 'city3d' | 'weather';
+
+const TOP_N = 3;
 
 /**
- * Our area · Popular today — public dishes shared since local midnight, grouped by name (case / spaces ignored),
- * top 3 by count (then acorns). The representative is the most-acorned (then newest) dish of that name.
- * Starts at your area cell + its neighbours (`cells`, 5-char); 0–1 names → district → city. `range` is the place
- * the list came from when it had to widen (null = your cells).
+ * Our area · Popular today — public dishes grouped by name (case / spaces ignored), ranked by count (then acorns); the
+ * representative is the most-acorned (then newest) dish of that name. Always tries for 3: starts with today in your
+ * area cell + its neighbours (`cells`, 5-char), then tops up — skipping names already in — from today in the district →
+ * today in the city → the city's last 3 days → the same weather (`mood`) over the last 7 days, anywhere. `scope` = the
+ * widest step that added a name. Fewer than 3 after every step → just those.
  */
-export async function fetchTodayTopDishes(at: { cells: string[]; district?: string | null; city?: string | null }): Promise<{ items: TopDish[]; range: string | null }> {
-  const since = localMidnight().toISOString();
-  const today = () => publicFoods(`${SUMMARY_SELECT}, created_at`).gte('created_at', since);
-  const steps: { load: () => any; range: string | null }[] = [];
+export async function fetchTodayTopDishes(at: { cells: string[]; district?: string | null; city?: string | null; mood?: WeatherMood | null }): Promise<{ items: TopDish[]; scope: TopScope }> {
+  const daysAgo = (n: number) => new Date(Date.now() - n * 864e5).toISOString();
+  const today = localMidnight().toISOString();
+  const from = (since: string) => publicFoods(`${SUMMARY_SELECT}, created_at`).gte('created_at', since);
+  const steps: { load: () => any; scope: TopScope }[] = [];
   const cells = at.cells.filter((c) => /^[0-9b-hjkmnp-z]{5}$/.test(c));
-  if (cells.length) steps.push({ load: () => today().or(cells.map((c) => `geohash6.like.${c}*`).join(',')), range: null });
-  if (at.district) steps.push({ load: () => (at.city ? today().eq('city', at.city) : today()).eq('neighborhood', at.district!), range: at.district });
-  if (at.city) steps.push({ load: () => today().eq('city', at.city!), range: at.city });
+  if (cells.length) steps.push({ load: () => from(today).or(cells.map((c) => `geohash6.like.${c}*`).join(',')), scope: 'area' });
+  if (at.district) steps.push({ load: () => (at.city ? from(today).eq('city', at.city) : from(today)).eq('neighborhood', at.district!), scope: 'district' });
+  if (at.city) {
+    steps.push({ load: () => from(today).eq('city', at.city!), scope: 'city' });
+    steps.push({ load: () => from(daysAgo(3)).eq('city', at.city!), scope: 'city3d' });
+  }
+  if (at.mood) steps.push({ load: () => from(daysAgo(7)).eq('weather_condition', at.mood!), scope: 'weather' });
 
-  let best: { items: TopDish[]; range: string | null } = { items: [], range: null };
+  const key = (name: string) => name.trim().toLowerCase().replace(/\s+/g, ' ');
+  const items: TopDish[] = [];
+  let scope: TopScope = 'area';
   for (const step of steps) {
+    if (items.length >= TOP_N) break;
     const { data, error } = await step.load().order('created_at', { ascending: false }).limit(300);
     if (error) continue;
     const groups = new Map<string, { count: number; acorns: number; rep: DishSummary }>();
     for (const d of (data as Row[]).map(toSummary)) {
-      const key = d.name.trim().toLowerCase().replace(/\s+/g, ' ');
-      if (!key) continue;
-      const g = groups.get(key);
-      if (!g) groups.set(key, { count: 1, acorns: d.acorns, rep: d });
+      const k = key(d.name ?? '');
+      if (!k) continue;
+      const g = groups.get(k);
+      if (!g) groups.set(k, { count: 1, acorns: d.acorns, rep: d });
       else {
         g.count += 1;
         g.acorns += d.acorns;
         if (d.acorns > g.rep.acorns) g.rep = d; // rows are newest first, so ties keep the newest
       }
     }
-    const items = [...groups.values()]
-      .sort((a, b) => b.count - a.count || b.acorns - a.acorns)
-      .slice(0, 3)
-      .map((g) => ({ name: g.rep.name.trim(), count: g.count, photo: g.rep.photo, dishId: g.rep.id }));
-    if (items.length > best.items.length) best = { items, range: step.range };
-    if (items.length >= 2) break;
+    const have = new Set(items.map((i) => key(i.name)));
+    const added = [...groups.entries()]
+      .filter(([k]) => !have.has(k))
+      .sort(([, a], [, b]) => b.count - a.count || b.acorns - a.acorns)
+      .slice(0, TOP_N - items.length)
+      .map(([, g]) => ({ name: g.rep.name.trim(), count: g.count, photo: g.rep.photo, dishId: g.rep.id }));
+    if (added.length) { items.push(...added); scope = step.scope; }
   }
-  return best;
+  return { items, scope };
 }
 
 // ---------------------------------------------------------------------------------------------- following
@@ -457,9 +471,9 @@ export async function fetchAreaQuestions(
 ): Promise<Question[]> {
   const own = await fetchNearbyQuestions(geohash, max);
   if (own.length >= min) return own;
-  const open = () => supabase.from('questions').select('*').is('table_id', null).order('created_at', { ascending: false }).limit(max + 5);
+  const open = () => supabase.from('questions').select('*').is('table_id', null).order('created_at', { ascending: false }).limit(max);
   const steps: { load: () => PromiseLike<{ data: unknown; error: unknown }>; range?: string }[] = [
-    { load: () => supabase.rpc('nearby_questions_wide', { p_geohash: geohash, p_limit: max + 5 }) },
+    { load: () => supabase.rpc('nearby_questions_wide', { p_geohash: geohash, p_limit: max }) },
   ];
   if (at.district) steps.push({ load: () => (at.city ? open().eq('city', at.city) : open()).eq('neighborhood', at.district!), range: at.district });
   if (at.city) steps.push({ load: () => open().eq('city', at.city!), range: at.city });

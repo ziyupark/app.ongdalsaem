@@ -10,7 +10,7 @@ import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
 import {
   fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, searchSuggestions, setMeToo,
-  type CardDish, type Question, type TopDish,
+  type CardDish, type Question, type TopDish, type TopScope,
 } from '../../services/community';
 import { saveLocationChoice } from '../../services/profile';
 import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
@@ -25,7 +25,7 @@ import { EmptyState, FoodGrid, ListCard, ListRow, QuestionCard, SearchField, Sec
 export type Area = 'all' | 'near' | 'area' | 'weather';
 const RECENT_KEY = 'community.recentSearches';
 /** "Our area" on Explore: 3–5 questions (fewer in your cell → filled from wider ranges). */
-const AREA_QUESTIONS = 5;
+const AREA_QUESTIONS = 3;
 /** Fewer than this in the chosen range → fill from wider ranges (district → city → same weather, newest). */
 const AREA_MIN = 3;
 
@@ -231,22 +231,31 @@ export function AreaChips({ here, area, onChange, withAll, tight }: { here: Here
 
 // ------------------------------------------------------------------------------------------------ Our area (Explore)
 
-/** Our area · Popular today — top 3 dish names shared nearby since midnight (district → city when 0–1). */
+/** Our area · Popular today — top 3 dish names nearby today, widened step by step until 3 (see fetchTodayTopDishes). */
 function TopToday({ here }: { here: Here }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { city, district } = placeOf(here);
-  const [top, setTop] = useState<{ items: TopDish[]; range: string | null } | null>(null);
+  const mood = here.forecast?.mood ?? null;
+  const [top, setTop] = useState<{ items: TopDish[]; scope: TopScope } | null>(null);
   useFocusEffect(
     useCallback(() => {
       const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : here.cell ? [here.cell] : [];
-      fetchTodayTopDishes({ cells, district, city }).then(setTop).catch(() => setTop({ items: [], range: null }));
-    }, [here.coords, here.cell, district, city]),
+      fetchTodayTopDishes({ cells, district, city, mood }).then(setTop).catch(() => setTop({ items: [], scope: 'area' }));
+    }, [here.coords, here.cell, district, city, mood]),
   );
-  // Same header as Trending Bites (SectionHeader · section p32 · gap 6). Badge on the right: my neighbourhood's name
-  // while the list is from my own area (cells / district); "{place} basis" once it widened to the city.
-  const mine = district ?? city;
-  const badge = top == null ? undefined : top.range && top.range !== district ? t('community.area.basis', { place: top.range }) : mine ?? undefined;
+  // Same header as Trending Bites (SectionHeader · section p32 · gap 6). Badge on the right = how far the list widened:
+  // my neighbourhood · district · city · "city · last 3 days" · "weather · recent".
+  const badge = (() => {
+    if (top == null) return undefined;
+    switch (top.scope) {
+      case 'district': return district ?? undefined;
+      case 'city': return city ?? undefined;
+      case 'city3d': return city ? `${city} · ${t('community.area.last3Days')}` : t('community.area.last3Days');
+      case 'weather': return mood ? `${t(`weather.${mood}`)} · ${t('community.area.recent')}` : t('community.area.recent');
+      default: return (district ?? city) ?? undefined;
+    }
+  })();
   return (
     <View style={styles.section}>
       <SectionHeader title={t('community.area.topTitle')} badge={badge} />
@@ -280,8 +289,8 @@ function TopToday({ here }: { here: Here }) {
 }
 
 /**
- * Explore · "Our area" — Popular today (top 3) → area questions (3–5, topped up from wider ranges) + Ask. Both titles
- * are the Trending Bites SectionHeader; questions' See more = its action link (→ app/questions). Location off → a card
+ * Explore · "Our area" — Popular today (top 3) → area questions (max 3, topped up from wider ranges; more on the board) + Ask. Both titles
+ * are the Trending Bites SectionHeader; questions' See more = its chevron (→ app/questions). Location off → a card
  * to turn it on.
  */
 export function OurArea() {
@@ -320,7 +329,7 @@ export function OurArea() {
       <TopToday here={here} />
       {/* Area questions + Ask */}
       <View style={styles.section}>
-        <SectionHeader title={t('community.area.questionsTitle')} action={t('following.seeMore')} onAction={() => router.push('/questions')} />
+        <SectionHeader title={t('community.area.questionsTitle')} onMore={() => router.push('/questions')} />
         <View style={[styles.px, styles.block]}>
           {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} rounded="2xl" onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
           <Button label={t('community.area.ask')} variant="Outline" size="M" icon={MessageCircle} onPress={() => router.push('/questions')} />
