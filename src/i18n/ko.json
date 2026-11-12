@@ -991,7 +991,56 @@
     "within1km": "1km 이내",
     "trendingBites": "지금 뜨는 한 입",
     "challengesTab": "챌린지",
-    "exploreTogether": "함께 둘러보기"
+    "exploreTogether": "함께 둘러보기",
+    "area": {
+      "title": "오늘 우리 동네 식탁",
+      "topTitle": "오늘 인기 요리",
+      "basis": "{{place}} 기준",
+      "posts_one": "{{count}}번 올라왔어요",
+      "posts_other": "{{count}}번 올라왔어요",
+      "topEmpty": "오늘 근처에 올라온 요리가 아직 없어요.",
+      "voteTitle": "오늘의 투표",
+      "votes_one": "{{count}}명 투표",
+      "votes_other": "{{count}}명 투표",
+      "writeOwn": "직접 입력",
+      "ownPlaceholder": "내 답",
+      "voteCta": "투표",
+      "voteFailed": "투표를 저장하지 못했어요. 다시 시도해 주세요.",
+      "questionsTitle": "동네 질문",
+      "ask": "질문하기",
+      "neighboursTitle": "이웃 요리",
+      "locationOff": "위치를 켜면 우리 동네 식탁을 볼 수 있어요",
+      "vote": {
+        "rain": {
+          "question": "비 오는 날, 오늘 저녁 식탁엔?",
+          "fritters": "바삭한 전",
+          "noodleSoup": "따끈한 국수",
+          "stew": "얼큰한 찌개",
+          "ramen": "라면"
+        },
+        "snow": {
+          "question": "눈 오는 날, 무엇으로 몸을 녹일까요?",
+          "hotpot": "전골",
+          "porridge": "따뜻한 죽",
+          "roasted": "군고구마",
+          "cocoa": "핫초코"
+        },
+        "clear": {
+          "question": "맑은 날, 오늘은 뭐 먹어요?",
+          "salad": "신선한 샐러드",
+          "picnic": "도시락",
+          "grill": "고기 구이",
+          "coldNoodles": "냉면"
+        },
+        "grey": {
+          "question": "흐린 날, 기분을 올려 줄 음식은?",
+          "spicy": "매콤한 음식",
+          "soup": "따뜻한 국",
+          "pasta": "파스타",
+          "dessert": "달콤한 디저트"
+        }
+      }
+    }
   },
   "tag": {
     "count_one": "요리 {{count}}개",

@@ -991,7 +991,56 @@
     "within1km": "A menos de 1 km",
     "trendingBites": "Bocados en tendencia",
     "challengesTab": "Retos",
-    "exploreTogether": "Exploremos juntos"
+    "exploreTogether": "Exploremos juntos",
+    "area": {
+      "title": "La mesa de hoy en tu barrio",
+      "topTitle": "Lo más popular hoy",
+      "basis": "Según {{place}}",
+      "posts_one": "{{count}} publicación",
+      "posts_other": "{{count}} publicaciones",
+      "topEmpty": "Aún no se han compartido platos cerca hoy.",
+      "voteTitle": "La votación de hoy",
+      "votes_one": "{{count}} voto",
+      "votes_other": "{{count}} votos",
+      "writeOwn": "Escribe tu respuesta",
+      "ownPlaceholder": "Tu respuesta",
+      "voteCta": "Votar",
+      "voteFailed": "No se pudo guardar tu voto. Inténtalo de nuevo.",
+      "questionsTitle": "Preguntas del barrio",
+      "ask": "Hacer una pregunta",
+      "neighboursTitle": "Platos de tus vecinos",
+      "locationOff": "Activa la ubicación para ver la mesa de hoy en tu barrio.",
+      "vote": {
+        "rain": {
+          "question": "Día de lluvia: ¿qué hay en tu mesa esta noche?",
+          "fritters": "Frituras crujientes",
+          "noodleSoup": "Sopa de fideos",
+          "stew": "Guiso caliente",
+          "ramen": "Ramen instantáneo"
+        },
+        "snow": {
+          "question": "Día de nieve: ¿qué te hace entrar en calor?",
+          "hotpot": "Olla caliente",
+          "porridge": "Gachas calientes",
+          "roasted": "Batatas asadas",
+          "cocoa": "Chocolate caliente"
+        },
+        "clear": {
+          "question": "Día soleado: ¿qué estás comiendo?",
+          "salad": "Ensalada fresca",
+          "picnic": "Comida de pícnic",
+          "grill": "Parrilla y barbacoa",
+          "coldNoodles": "Fideos fríos"
+        },
+        "grey": {
+          "question": "Día gris: ¿qué te levantaría el ánimo?",
+          "spicy": "Algo picante",
+          "soup": "Sopa caliente",
+          "pasta": "Pasta",
+          "dessert": "Postre dulce"
+        }
+      }
+    }
   },
   "tag": {
     "count_one": "{{count}} plato",

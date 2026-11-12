@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { Clock, CloudRain, MapPin, Search, X } from 'lucide-react-native';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
@@ -6,21 +7,26 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
-import { fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, searchSuggestions, setMeToo, type CardDish, type Question } from '../../services/community';
+import {
+  castVote, fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, fetchVoteResults, searchSuggestions, setMeToo, voteFamily, VOTE_OPTIONS,
+  type CardDish, type Question, type TopDish, type VoteFamily, type VoteResult,
+} from '../../services/community';
+import { useTemp } from '../../lib/prefs';
 import { saveLocationChoice } from '../../services/profile';
 import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { DishTile } from '../dish/DishTile';
 import { Icon } from '../Icon';
+import { Input } from '../Input';
 import { MessageCircle } from '../icons/custom';
 import { Text } from '../Text';
-import { EmptyState, FoodGrid, ListCard, QuestionCard, SectionHeader, SearchField, useByline } from './Parts';
+import { EmptyState, FoodGrid, ListCard, ListRow, QuestionCard, SearchField, useByline } from './Parts';
 
 export type Area = 'all' | 'near' | 'area' | 'weather';
 const RECENT_KEY = 'community.recentSearches';
-/** "Our area" on Explore: up to 6 dishes, 3–5 questions (fewer in your cell → filled from wider ranges). */
-const AREA_DISHES = 6;
+/** "Our area" on Explore: up to 3 neighbours' dishes, 3–5 questions (fewer in your cell → filled from wider ranges). */
+const AREA_DISHES = 3;
 const AREA_QUESTIONS = 5;
 /** Fewer than this in the chosen range → fill from wider ranges (district → city → same weather, newest). */
 const AREA_MIN = 3;
@@ -238,22 +244,153 @@ const firstArea = (here: Here): Area => (here.coords ? 'near' : here.place?.dist
 
 // ------------------------------------------------------------------------------------------------ Our area (Explore)
 
+/** Our area · Popular today — top 3 dish names shared nearby since midnight (district → city when 0–1). */
+function TopToday({ here }: { here: Here }) {
+  const { color } = useTheme();
+  const { t } = useTranslation();
+  const { city, district } = placeOf(here);
+  const [top, setTop] = useState<{ items: TopDish[]; range: string | null } | null>(null);
+  useFocusEffect(
+    useCallback(() => {
+      const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : here.cell ? [here.cell] : [];
+      fetchTodayTopDishes({ cells, district, city }).then(setTop).catch(() => setTop({ items: [], range: null }));
+    }, [here.coords, here.cell, district, city]),
+  );
+  return (
+    <View style={styles.block}>
+      <View style={styles.blockHead}>
+        <Text variant="Title/S" style={styles.flex} numberOfLines={1}>{t('community.area.topTitle')}</Text>
+        {top?.range ? <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('community.area.basis', { place: top.range })}</Text> : null}
+      </View>
+      {top == null ? (
+        <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
+      ) : top.items.length ? (
+        <ListCard>
+          {top.items.map((d, i) => (
+            <ListRow
+              key={d.dishId}
+              last={i === top.items.length - 1}
+              onPress={() => router.push(`/dish/${d.dishId}`)}
+              leading={
+                <View style={styles.rankLead}>
+                  <Text variant="Title/S" color="fg/accent" style={styles.rank}>{i + 1}</Text>
+                  <Image source={{ uri: d.photo }} style={[styles.thumb, { backgroundColor: color('bg/muted') }]} contentFit="cover" recyclingKey={d.dishId} />
+                </View>
+              }
+              title={d.name}
+              sub={t('community.area.posts', { count: d.count })}
+            />
+          ))}
+        </ListCard>
+      ) : (
+        <Text variant="Body/S" color="fg/muted">{t('community.area.topEmpty')}</Text>
+      )}
+    </View>
+  );
+}
+
+/** Our area · Today's vote — a weather-family question, 4 presets + your own answer; once a day, then result bars. */
+function TodayVote({ here }: { here: Here }) {
+  const { color } = useTheme();
+  const { t } = useTranslation();
+  const cell = here.cell;
+  const [results, setResults] = useState<VoteResult[] | null>(null);
+  const [custom, setCustom] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const load = useCallback(() => {
+    if (!cell) return;
+    fetchVoteResults(cell).then(setResults).catch(() => setResults([]));
+  }, [cell]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  const mineRow = results?.find((r) => r.mine);
+  // After voting, the question you answered (the weather may have changed since).
+  const family: VoteFamily = mineRow?.mood ?? voteFamily(here.forecast?.mood);
+  const presets = VOTE_OPTIONS[family].map((o) => `${family}.${o}`);
+  const labelOf = (choice: string) => (presets.includes(choice) ? t(`community.area.vote.${choice}`) : choice);
+
+  const vote = async (choice: string) => {
+    if (!cell || !choice.trim() || busy) return;
+    setBusy(true);
+    setFailed(false);
+    try {
+      await castVote({ cell, mood: family, choice });
+      setCustom(null);
+      setResults(await fetchVoteResults(cell));
+    } catch {
+      setFailed(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (!cell) return null;
+  const rows = (results ?? []).filter((r) => r.mood === family);
+  const total = rows.reduce((n, r) => n + r.votes, 0);
+  // Bars: every preset (0 too), then own answers by count — at most 6 rows; the rest only count in the total.
+  const byChoice = new Map(rows.map((r) => [r.choice, r]));
+  const others = rows.filter((r) => !presets.includes(r.choice)).sort((a, b) => Number(b.mine) - Number(a.mine) || b.votes - a.votes);
+  const bars = [
+    ...presets.map((c) => byChoice.get(c) ?? { mood: family, choice: c, votes: 0, mine: false }),
+    ...others,
+  ].slice(0, 6);
+
+  return (
+    <View style={styles.block}>
+      <Text variant="Title/S">{t('community.area.voteTitle')}</Text>
+      <Text variant="Body/M">{t(`community.area.vote.${family}.question`)}</Text>
+      {results == null ? (
+        <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
+      ) : mineRow ? (
+        <View style={styles.bars}>
+          {bars.map((r) => {
+            const pct = total ? Math.round((r.votes / total) * 100) : 0;
+            return (
+              <View key={r.choice} style={[styles.bar, { backgroundColor: color('bg/subtle'), borderColor: r.mine ? color('border/accent') : color('border/default') }]}>
+                <View style={[styles.barFill, { width: `${pct}%`, backgroundColor: r.mine ? color('bg/accent-subtle') : color('bg/muted') }]} />
+                <Text variant={r.mine ? 'Body/S Strong' : 'Body/S'} color={r.mine ? 'fg/accent' : 'fg/default'} style={styles.flex} numberOfLines={1}>{labelOf(r.choice)}</Text>
+                <Text variant={r.mine ? 'Body/S Strong' : 'Body/S'} color={r.mine ? 'fg/accent' : 'fg/secondary'}>{pct}%</Text>
+              </View>
+            );
+          })}
+          <Text variant="Caption" color="fg/muted">{t('community.area.votes', { count: total })}</Text>
+        </View>
+      ) : (
+        <View style={styles.bars}>
+          {presets.map((c) => <Button key={c} label={labelOf(c)} variant="Outline" size="M" disabled={busy} onPress={() => vote(c)} />)}
+          {custom == null ? (
+            <Button label={t('community.area.writeOwn')} variant="Ghost" size="M" disabled={busy} onPress={() => setCustom('')} />
+          ) : (
+            <View style={styles.ownRow}>
+              <View style={styles.flex}>
+                <Input value={custom} onChangeText={setCustom} placeholder={t('community.area.ownPlaceholder')} maxLength={40} autoFocus returnKeyType="send" onSubmitEditing={() => vote(custom)} />
+              </View>
+              <Button label={t('community.area.voteCta')} size="M" loading={busy} disabled={!custom.trim()} onPress={() => vote(custom)} />
+            </View>
+          )}
+          {failed ? <Text variant="Caption" color="fg/destructive">{t('community.area.voteFailed')}</Text> : null}
+        </View>
+      )}
+    </View>
+  );
+}
+
 /**
- * Explore · "Our area": range chips → up to 6 nearby dishes (horizontal Dish Tiles) → 3–5 nearby questions (topped up from wider ranges) →
- * See all (app/nearby-feed). Location off → a card to turn it on. `onShown` gets the dish ids shown here (Explore
+ * Explore · "Our area" — Today's table in our area: header (district · weather temp) → Popular today (top 3) →
+ * Today's vote → area questions (3–5, topped up from wider ranges) + Ask → 3 neighbours' dishes + See more
+ * (app/nearby-feed). Location off → a card to turn it on. `onShown` gets the dish ids shown here (Explore
  * Together leaves them out).
  */
 export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
+  const temp = useTemp();
   const { here, allow } = useHere();
-  const [area, setArea] = useState<Area>(() => firstArea(here));
-  // The reading can arrive after mount (or location can be turned on): move off a range that no longer applies.
-  useEffect(() => {
-    const ok = (area === 'near' && here.coords) || (area === 'area' && here.place?.district) || (area === 'weather' && here.forecast);
-    if (!ok) setArea(firstArea(here));
-  }, [here, area]);
+  const area = firstArea(here);
+  const f = here.forecast;
+  const { city, district } = placeOf(here);
   const dishes = useNearbyDishes(here, area, '');
   const { questions, meToo } = useNearbyQuestions(here, AREA_QUESTIONS, true);
   const extra = useAreaFill(here, area, dishes);
@@ -279,28 +416,43 @@ export function OurArea({ onShown }: { onShown?: (ids: string[]) => void }) {
       <View style={[styles.section, styles.px]}>
         <View style={[styles.offCard, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
           <Icon icon={MapPin} size={22} color="fg/secondary" />
-          <Text variant="Body/M" color="fg/secondary" style={styles.offText}>{t('community.turnOnLocation')}</Text>
+          <Text variant="Body/M" color="fg/secondary" style={styles.offText}>{t('community.area.locationOff')}</Text>
           <Button label={t('home.locationOff.allow')} size="M" onPress={turnOn} loading={busy} />
         </View>
       </View>
     );
   }
 
+  const caption = [district ?? city, f ? `${t(`weather.${f.mood}`)} ${temp(f.tempC)}°` : null].filter(Boolean).join(' · ');
+
   return (
     <View style={styles.section}>
-      <SectionHeader title={t('community.ourArea')} />
-      <AreaChips here={here} area={area} onChange={setArea} tight />
+      {/* 1 · Header — Title/M + Caption */}
+      <View style={styles.px}>
+        <Text variant="Title/M" numberOfLines={1}>{t('community.area.title')}</Text>
+        {caption ? <Text variant="Caption" color="fg/muted" numberOfLines={1}>{caption}</Text> : null}
+      </View>
+
+      <View style={[styles.px, styles.blocks]}>
+        {/* 2 · Popular today */}
+        <TopToday here={here} />
+        {/* 3 · Today's vote */}
+        <TodayVote here={here} />
+        {/* 4 · Area questions + Ask */}
+        <View style={styles.block}>
+          <Text variant="Title/S">{t('community.area.questionsTitle')}</Text>
+          {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} rounded="2xl" onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
+          <Button label={t('community.area.ask')} variant="Outline" size="M" icon={MessageCircle} onPress={() => router.push('/ask')} />
+        </View>
+        {/* 5 · Neighbours' dishes */}
+        <Text variant="Title/S">{t('community.area.neighboursTitle')}</Text>
+      </View>
       {dishes == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
       ) : shown.length ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
           {shown.map(({ dish: d, place }) => <DishTile key={d.id} dish={d} place={place} width={tileW} rounded="2xl" onPress={() => router.push(`/dish/${d.id}`)} />)}
         </ScrollView>
-      ) : null}
-      {questions.length ? (
-        <View style={[styles.px, styles.qs]}>
-          {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} rounded="2xl" onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
-        </View>
       ) : null}
       <View style={styles.more}>
         <Button label={t('community.seeAll')} variant="Outline" size="M" onPress={() => router.push({ pathname: '/nearby-feed', params: { area } })} />
@@ -401,4 +553,15 @@ const styles = StyleSheet.create({
   more: { paddingHorizontal: space[20], paddingTop: space[8] },
   offCard: { alignItems: 'center', gap: space[12], padding: space[20], borderRadius: radius['2xl'], borderWidth: 1 },
   offText: { textAlign: 'center' },
+  // Today's table in our area — header, then blocks p20 · gap 24 (block: title → content, gap 10).
+  blocks: { gap: space[24], paddingTop: space[16] },
+  block: { gap: space[10] },
+  blockHead: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  rankLead: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
+  rank: { width: space[16], textAlign: 'center' },
+  thumb: { width: 48, height: 48, borderRadius: radius.md },
+  bars: { gap: space[8] },
+  bar: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[14], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1, overflow: 'hidden' },
+  barFill: { position: 'absolute', left: 0, top: 0, bottom: 0 },
+  ownRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
 });

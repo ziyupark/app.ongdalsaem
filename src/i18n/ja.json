@@ -980,7 +980,54 @@
     "within1km": "1 km以内",
     "trendingBites": "話題のひと皿",
     "challengesTab": "チャレンジ",
-    "exploreTogether": "みんなで探す"
+    "exploreTogether": "みんなで探す",
+    "area": {
+      "title": "今日のご近所の食卓",
+      "topTitle": "今日の人気料理",
+      "basis": "{{place}}基準",
+      "posts_other": "{{count}}件の投稿",
+      "topEmpty": "今日はまだ近くで料理が共有されていません。",
+      "voteTitle": "今日の投票",
+      "votes_other": "{{count}}票",
+      "writeOwn": "自分で入力",
+      "ownPlaceholder": "あなたの答え",
+      "voteCta": "投票",
+      "voteFailed": "投票を保存できませんでした。もう一度お試しください。",
+      "questionsTitle": "ご近所の質問",
+      "ask": "質問する",
+      "neighboursTitle": "ご近所さんの料理",
+      "locationOff": "位置情報をオンにすると、今日のご近所の食卓が見られます。",
+      "vote": {
+        "rain": {
+          "question": "雨の日、今夜の食卓には？",
+          "fritters": "サクサクのチヂミ",
+          "noodleSoup": "温かい麺",
+          "stew": "ピリ辛の鍋・チゲ",
+          "ramen": "インスタントラーメン"
+        },
+        "snow": {
+          "question": "雪の日、何で温まりますか？",
+          "hotpot": "鍋料理",
+          "porridge": "温かいおかゆ",
+          "roasted": "焼き芋",
+          "cocoa": "ホットチョコレート"
+        },
+        "clear": {
+          "question": "晴れの日、今日は何を食べますか？",
+          "salad": "フレッシュサラダ",
+          "picnic": "お弁当",
+          "grill": "焼肉・BBQ",
+          "coldNoodles": "冷麺"
+        },
+        "grey": {
+          "question": "曇りの日、気分を上げてくれる料理は？",
+          "spicy": "ピリ辛料理",
+          "soup": "温かいスープ",
+          "pasta": "パスタ",
+          "dessert": "甘いデザート"
+        }
+      }
+    }
   },
   "tag": {
     "count_other": "料理{{count}}件",

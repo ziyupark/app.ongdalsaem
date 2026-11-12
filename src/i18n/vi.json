@@ -980,7 +980,54 @@
     "within1km": "Trong vòng 1 km",
     "trendingBites": "Món đang hot",
     "challengesTab": "Thử thách",
-    "exploreTogether": "Cùng khám phá"
+    "exploreTogether": "Cùng khám phá",
+    "area": {
+      "title": "Mâm cơm hôm nay quanh khu mình",
+      "topTitle": "Phổ biến hôm nay",
+      "basis": "Theo {{place}}",
+      "posts_other": "{{count}} bài đăng",
+      "topEmpty": "Hôm nay chưa có món nào được chia sẻ gần bạn.",
+      "voteTitle": "Bình chọn hôm nay",
+      "votes_other": "{{count}} lượt bình chọn",
+      "writeOwn": "Tự nhập câu trả lời",
+      "ownPlaceholder": "Câu trả lời của bạn",
+      "voteCta": "Bình chọn",
+      "voteFailed": "Không lưu được bình chọn. Hãy thử lại.",
+      "questionsTitle": "Câu hỏi quanh khu",
+      "ask": "Đặt câu hỏi",
+      "neighboursTitle": "Món của hàng xóm",
+      "locationOff": "Bật vị trí để xem mâm cơm hôm nay quanh khu mình.",
+      "vote": {
+        "rain": {
+          "question": "Ngày mưa — tối nay trên bàn có gì?",
+          "fritters": "Đồ chiên giòn",
+          "noodleSoup": "Mì nước",
+          "stew": "Món hầm nóng",
+          "ramen": "Mì gói"
+        },
+        "snow": {
+          "question": "Ngày tuyết — món gì giúp bạn ấm lên?",
+          "hotpot": "Lẩu",
+          "porridge": "Cháo nóng",
+          "roasted": "Khoai lang nướng",
+          "cocoa": "Sô-cô-la nóng"
+        },
+        "clear": {
+          "question": "Ngày nắng — hôm nay bạn ăn gì?",
+          "salad": "Salad tươi",
+          "picnic": "Đồ ăn dã ngoại",
+          "grill": "Đồ nướng",
+          "coldNoodles": "Mì lạnh"
+        },
+        "grey": {
+          "question": "Ngày âm u — món gì giúp bạn vui hơn?",
+          "spicy": "Món cay",
+          "soup": "Súp nóng",
+          "pasta": "Mì Ý",
+          "dessert": "Món tráng miệng ngọt"
+        }
+      }
+    }
   },
   "tag": {
     "count_other": "{{count}} món",

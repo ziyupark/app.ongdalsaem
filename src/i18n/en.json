@@ -991,7 +991,56 @@
     "within1km": "Within 1 km",
     "trendingBites": "Trending Bites",
     "challengesTab": "Challenges",
-    "exploreTogether": "Explore Together"
+    "exploreTogether": "Explore Together",
+    "area": {
+      "title": "Today's table in our area",
+      "topTitle": "Popular today",
+      "basis": "Based on {{place}}",
+      "posts_one": "{{count}} post",
+      "posts_other": "{{count}} posts",
+      "topEmpty": "No dishes shared nearby today yet.",
+      "voteTitle": "Today's vote",
+      "votes_one": "{{count}} vote",
+      "votes_other": "{{count}} votes",
+      "writeOwn": "Write your own",
+      "ownPlaceholder": "Your answer",
+      "voteCta": "Vote",
+      "voteFailed": "Couldn't save your vote. Try again.",
+      "questionsTitle": "Neighbourhood questions",
+      "ask": "Ask a question",
+      "neighboursTitle": "Neighbours' dishes",
+      "locationOff": "Turn on location to see today's table in our area.",
+      "vote": {
+        "rain": {
+          "question": "Rainy day — what's on your table tonight?",
+          "fritters": "Crispy fritters",
+          "noodleSoup": "Noodle soup",
+          "stew": "Hot stew",
+          "ramen": "Instant ramen"
+        },
+        "snow": {
+          "question": "Snowy day — what warms you up?",
+          "hotpot": "Hot pot",
+          "porridge": "Warm porridge",
+          "roasted": "Roasted sweet potatoes",
+          "cocoa": "Hot chocolate"
+        },
+        "clear": {
+          "question": "Sunny day — what are you eating?",
+          "salad": "Fresh salad",
+          "picnic": "Picnic box",
+          "grill": "Grill & BBQ",
+          "coldNoodles": "Cold noodles"
+        },
+        "grey": {
+          "question": "Grey day — what would lift your mood?",
+          "spicy": "Something spicy",
+          "soup": "Warm soup",
+          "pasta": "Pasta",
+          "dessert": "Sweet dessert"
+        }
+      }
+    }
   },
   "tag": {
     "count_one": "{{count}} dish",

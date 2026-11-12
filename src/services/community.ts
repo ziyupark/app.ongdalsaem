@@ -158,6 +158,94 @@ export async function fetchStoryOfTheDay(): Promise<CardDish | null> {
   return (await recent(2, true)) ?? (await recent(30, true)) ?? (await recent(3650, false)); // last: newest 60 dishes of any age
 }
 
+// ---------------------------------------------------------------------------------------------- Our area · today
+
+/** Local midnight today (the "today" of Our area — top dishes, vote date). */
+export const localMidnight = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+/** Local date as 'YYYY-MM-DD' (neighborhood_votes.vote_date). */
+export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+export type TopDish = { name: string; count: number; photo: string; dishId: string };
+
+/**
+ * Our area · Popular today — public dishes shared since local midnight, grouped by name (case / spaces ignored),
+ * top 3 by count (then acorns). The representative is the most-acorned (then newest) dish of that name.
+ * Starts at your area cell + its neighbours (`cells`, 5-char); 0–1 names → district → city. `range` is the place
+ * the list came from when it had to widen (null = your cells).
+ */
+export async function fetchTodayTopDishes(at: { cells: string[]; district?: string | null; city?: string | null }): Promise<{ items: TopDish[]; range: string | null }> {
+  const since = localMidnight().toISOString();
+  const today = () => publicFoods(`${SUMMARY_SELECT}, created_at`).gte('created_at', since);
+  const steps: { load: () => any; range: string | null }[] = [];
+  const cells = at.cells.filter((c) => /^[0-9b-hjkmnp-z]{5}$/.test(c));
+  if (cells.length) steps.push({ load: () => today().or(cells.map((c) => `geohash6.like.${c}*`).join(',')), range: null });
+  if (at.district) steps.push({ load: () => (at.city ? today().eq('city', at.city) : today()).eq('neighborhood', at.district!), range: at.district });
+  if (at.city) steps.push({ load: () => today().eq('city', at.city!), range: at.city });
+
+  let best: { items: TopDish[]; range: string | null } = { items: [], range: null };
+  for (const step of steps) {
+    const { data, error } = await step.load().order('created_at', { ascending: false }).limit(300);
+    if (error) continue;
+    const groups = new Map<string, { count: number; acorns: number; rep: DishSummary }>();
+    for (const d of (data as Row[]).map(toSummary)) {
+      const key = d.name.trim().toLowerCase().replace(/\s+/g, ' ');
+      if (!key) continue;
+      const g = groups.get(key);
+      if (!g) groups.set(key, { count: 1, acorns: d.acorns, rep: d });
+      else {
+        g.count += 1;
+        g.acorns += d.acorns;
+        if (d.acorns > g.rep.acorns) g.rep = d; // rows are newest first, so ties keep the newest
+      }
+    }
+    const items = [...groups.values()]
+      .sort((a, b) => b.count - a.count || b.acorns - a.acorns)
+      .slice(0, 3)
+      .map((g) => ({ name: g.rep.name.trim(), count: g.count, photo: g.rep.photo, dishId: g.rep.id }));
+    if (items.length > best.items.length) best = { items, range: step.range };
+    if (items.length >= 2) break;
+  }
+  return best;
+}
+
+/** Today's vote — the question family for the weather now. */
+export const VOTE_FAMILIES = ['rain', 'snow', 'clear', 'grey'] as const;
+export type VoteFamily = (typeof VOTE_FAMILIES)[number];
+/** Preset options per family (i18n `community.area.vote.<family>.<option>`); stored as '<family>.<option>'. */
+export const VOTE_OPTIONS: Record<VoteFamily, readonly string[]> = {
+  rain: ['fritters', 'noodleSoup', 'stew', 'ramen'],
+  snow: ['hotpot', 'porridge', 'roasted', 'cocoa'],
+  clear: ['salad', 'picnic', 'grill', 'coldNoodles'],
+  grey: ['spicy', 'soup', 'pasta', 'dessert'],
+};
+
+export function voteFamily(mood: WeatherMood | null | undefined): VoteFamily {
+  switch (mood) {
+    case 'drizzle': case 'rain': case 'heavy-rain': case 'shower': case 'thunder': return 'rain';
+    case 'sleet': case 'flurries': case 'snow': case 'heavy-snow': case 'cold': return 'snow';
+    case 'clear': case 'clear-night': case 'heat': return 'clear';
+    default: return 'grey';
+  }
+}
+
+export type VoteResult = { mood: VoteFamily; choice: string; votes: number; mine: boolean };
+
+/** Counts per choice for `date` in your area cell and its 8 neighbours (your own vote always included, `mine`). */
+export async function fetchVoteResults(cell: string, date = localDate()): Promise<VoteResult[]> {
+  const { data, error } = await supabase.rpc('neighborhood_vote_results', { p_cell: cell, p_date: date });
+  if (error) throw error;
+  return ((data ?? []) as Row[]).map((r) => ({ mood: r.mood, choice: r.choice, votes: Number(r.votes) || 0, mine: !!r.mine }));
+}
+
+/** One vote a day. Already voted today → no error (the caller reloads the results). */
+export async function castVote(input: { cell: string; mood: VoteFamily; choice: string; date?: string }) {
+  const me = await needUid();
+  const choice = input.choice.trim().slice(0, 40);
+  if (!choice) return;
+  const { error } = await supabase.from('neighborhood_votes').insert({ user_id: me, cell: input.cell, vote_date: input.date ?? localDate(), mood: input.mood, choice });
+  if (error && error.code !== '23505') throw error;
+}
+
 // ---------------------------------------------------------------------------------------------- following
 
 export async function fetchFolloweeIds() {

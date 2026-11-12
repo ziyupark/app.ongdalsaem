@@ -980,7 +980,54 @@
     "within1km": "Dalam 1 km",
     "trendingBites": "Gigitan populer",
     "challengesTab": "Tantangan",
-    "exploreTogether": "Jelajahi bersama"
+    "exploreTogether": "Jelajahi bersama",
+    "area": {
+      "title": "Meja hari ini di sekitarmu",
+      "topTitle": "Populer hari ini",
+      "basis": "Berdasarkan {{place}}",
+      "posts_other": "{{count}} unggahan",
+      "topEmpty": "Belum ada masakan yang dibagikan di sekitarmu hari ini.",
+      "voteTitle": "Voting hari ini",
+      "votes_other": "{{count}} suara",
+      "writeOwn": "Tulis jawabanmu",
+      "ownPlaceholder": "Jawabanmu",
+      "voteCta": "Pilih",
+      "voteFailed": "Suaramu gagal disimpan. Coba lagi.",
+      "questionsTitle": "Pertanyaan sekitar",
+      "ask": "Ajukan pertanyaan",
+      "neighboursTitle": "Masakan tetangga",
+      "locationOff": "Aktifkan lokasi untuk melihat meja hari ini di sekitarmu.",
+      "vote": {
+        "rain": {
+          "question": "Hari hujan — apa yang ada di mejamu malam ini?",
+          "fritters": "Gorengan renyah",
+          "noodleSoup": "Mi kuah",
+          "stew": "Sup pedas hangat",
+          "ramen": "Mi instan"
+        },
+        "snow": {
+          "question": "Hari bersalju — apa yang menghangatkanmu?",
+          "hotpot": "Hot pot",
+          "porridge": "Bubur hangat",
+          "roasted": "Ubi panggang",
+          "cocoa": "Cokelat panas"
+        },
+        "clear": {
+          "question": "Hari cerah — kamu makan apa?",
+          "salad": "Salad segar",
+          "picnic": "Bekal piknik",
+          "grill": "Bakar-bakaran",
+          "coldNoodles": "Mi dingin"
+        },
+        "grey": {
+          "question": "Hari mendung — apa yang bisa memperbaiki suasana hati?",
+          "spicy": "Yang pedas-pedas",
+          "soup": "Sup hangat",
+          "pasta": "Pasta",
+          "dessert": "Makanan penutup manis"
+        }
+      }
+    }
   },
   "tag": {
     "count_other": "{{count}} masakan",

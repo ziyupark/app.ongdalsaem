@@ -991,7 +991,56 @@
     "within1km": "Até 1 km",
     "trendingBites": "Em alta",
     "challengesTab": "Desafios",
-    "exploreTogether": "Explore junto"
+    "exploreTogether": "Explore junto",
+    "area": {
+      "title": "A mesa de hoje no seu bairro",
+      "topTitle": "Mais populares hoje",
+      "basis": "Com base em {{place}}",
+      "posts_one": "{{count}} publicação",
+      "posts_other": "{{count}} publicações",
+      "topEmpty": "Ainda não compartilharam pratos perto de você hoje.",
+      "voteTitle": "Votação de hoje",
+      "votes_one": "{{count}} voto",
+      "votes_other": "{{count}} votos",
+      "writeOwn": "Escrever minha resposta",
+      "ownPlaceholder": "Sua resposta",
+      "voteCta": "Votar",
+      "voteFailed": "Não foi possível salvar seu voto. Tente de novo.",
+      "questionsTitle": "Perguntas do bairro",
+      "ask": "Fazer uma pergunta",
+      "neighboursTitle": "Pratos dos vizinhos",
+      "locationOff": "Ative a localização para ver a mesa de hoje no seu bairro.",
+      "vote": {
+        "rain": {
+          "question": "Dia de chuva: o que vai à mesa hoje à noite?",
+          "fritters": "Bolinhos fritos crocantes",
+          "noodleSoup": "Sopa de macarrão",
+          "stew": "Ensopado quente",
+          "ramen": "Lámen instantâneo"
+        },
+        "snow": {
+          "question": "Dia de neve: o que te aquece?",
+          "hotpot": "Panela quente",
+          "porridge": "Mingau quentinho",
+          "roasted": "Batata-doce assada",
+          "cocoa": "Chocolate quente"
+        },
+        "clear": {
+          "question": "Dia de sol: o que você está comendo?",
+          "salad": "Salada fresca",
+          "picnic": "Lanche de piquenique",
+          "grill": "Churrasco",
+          "coldNoodles": "Macarrão gelado"
+        },
+        "grey": {
+          "question": "Dia nublado: o que melhoraria seu humor?",
+          "spicy": "Algo apimentado",
+          "soup": "Sopa quentinha",
+          "pasta": "Massa",
+          "dessert": "Sobremesa doce"
+        }
+      }
+    }
   },
   "tag": {
     "count_one": "{{count}} prato",

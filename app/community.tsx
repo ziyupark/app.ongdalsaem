@@ -207,7 +207,7 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Our area — range chips · nearby dishes · questions · See all (or turn location on). */}
+      {/* Our area — today's table: popular today · today's vote · questions + Ask · neighbours' dishes + See more (or turn location on). */}
       <OurArea onShown={setAreaIds} />
 
       {/* Trending Bites 88:3078 — p32 · gap 6: header → Country Cards 280×180, gap 12. */}

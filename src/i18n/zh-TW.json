@@ -980,7 +980,54 @@
     "within1km": "1 公里內",
     "trendingBites": "熱門一口",
     "challengesTab": "挑戰",
-    "exploreTogether": "一起探索"
+    "exploreTogether": "一起探索",
+    "area": {
+      "title": "今天附近的餐桌",
+      "topTitle": "今日熱門料理",
+      "basis": "以{{place}}為準",
+      "posts_other": "{{count}} 則分享",
+      "topEmpty": "今天附近還沒有人分享料理。",
+      "voteTitle": "今日投票",
+      "votes_other": "{{count}} 票",
+      "writeOwn": "自己填寫",
+      "ownPlaceholder": "你的答案",
+      "voteCta": "投票",
+      "voteFailed": "無法儲存你的投票，請再試一次。",
+      "questionsTitle": "附近的提問",
+      "ask": "提問",
+      "neighboursTitle": "鄰居的料理",
+      "locationOff": "開啟定位，就能看到今天附近的餐桌。",
+      "vote": {
+        "rain": {
+          "question": "下雨天，今晚餐桌上有什麼？",
+          "fritters": "酥脆煎餅",
+          "noodleSoup": "湯麵",
+          "stew": "熱騰騰的燉鍋",
+          "ramen": "泡麵"
+        },
+        "snow": {
+          "question": "下雪天，什麼讓你暖起來？",
+          "hotpot": "火鍋",
+          "porridge": "熱粥",
+          "roasted": "烤地瓜",
+          "cocoa": "熱可可"
+        },
+        "clear": {
+          "question": "晴天，今天吃什麼？",
+          "salad": "新鮮沙拉",
+          "picnic": "野餐便當",
+          "grill": "燒烤",
+          "coldNoodles": "涼麵"
+        },
+        "grey": {
+          "question": "陰天，什麼能讓你心情變好？",
+          "spicy": "辣的料理",
+          "soup": "熱湯",
+          "pasta": "義大利麵",
+          "dessert": "甜點"
+        }
+      }
+    }
   },
   "tag": {
     "count_other": "{{count}} 道料理",
