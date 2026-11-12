@@ -1173,7 +1173,12 @@
       "recipe_help": "Bantuan resep",
       "ingredients": "Bahan",
       "market_deals": "Pasar & promo",
-      "other": "Lainnya"
+      "other": "Lainnya",
+      "whatToEat": "Makan apa hari ini",
+      "recipe": "Tanya resep",
+      "restaurant": "Tempat makan",
+      "groceries": "Bahan & belanja",
+      "tools": "Peralatan"
     },
     "note": "Tetangga di dekatmu melihat ini — tidak pernah lokasi persismu. Pertanyaan tayang selama 7 hari. Jangan tulis nama, nomor telepon, atau alamat orang.",
     "post": "Kirim pertanyaan",
@@ -1191,7 +1196,10 @@
     "pick": "Tandai sebagai pilihanku",
     "unpick": "Hapus pilihanku",
     "missing": "Pertanyaan ini sudah ditutup",
-    "reportAnswer": "Laporkan jawaban ini"
+    "reportAnswer": "Laporkan jawaban ini",
+    "category": "Kategori",
+    "required": "Wajib",
+    "editTitle": "Edit pertanyaan"
   },
   "challenge": {
     "listTitle": "Tantangan masak",
@@ -1347,5 +1355,12 @@
     "suggest": "Juru masak untuk diikuti",
     "suggestBody": "Ikuti juru masak dan hidangannya akan tersaji di mejamu.",
     "seeMore": "Lihat lebih banyak"
+  },
+  "questions": {
+    "search": "Cari pertanyaan",
+    "emptyTitle": "Belum ada pertanyaan di sekitar",
+    "emptyBody": "Jadilah yang pertama bertanya",
+    "reportTitle": "Laporkan pertanyaan ini",
+    "answers_other": "{{count}} jawaban"
   }
 }

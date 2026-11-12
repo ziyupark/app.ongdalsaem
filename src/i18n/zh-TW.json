@@ -1173,7 +1173,12 @@
       "recipe_help": "食譜求助",
       "ingredients": "食材",
       "market_deals": "市場與優惠",
-      "other": "其他"
+      "other": "其他",
+      "whatToEat": "今天吃什麼",
+      "recipe": "食譜問題",
+      "restaurant": "餐廳",
+      "groceries": "食材·採買",
+      "tools": "廚具"
     },
     "note": "你附近的鄰居會看到——絕不顯示你的精確位置。問題會保留 7 天。請勿寫出他人的姓名、電話或地址。",
     "post": "發布問題",
@@ -1191,7 +1196,10 @@
     "pick": "設為我的精選",
     "unpick": "取消精選",
     "missing": "這個問題已關閉",
-    "reportAnswer": "檢舉這則回答"
+    "reportAnswer": "檢舉這則回答",
+    "category": "分類",
+    "required": "必填",
+    "editTitle": "編輯問題"
   },
   "challenge": {
     "listTitle": "料理挑戰",
@@ -1347,5 +1355,12 @@
     "suggest": "推薦追蹤的料理人",
     "suggestBody": "追蹤後，對方的料理就會擺上你的餐桌。",
     "seeMore": "查看更多"
+  },
+  "questions": {
+    "search": "搜尋問題",
+    "emptyTitle": "附近還沒有問題",
+    "emptyBody": "來問第一個問題吧",
+    "reportTitle": "檢舉這個問題",
+    "answers_other": "{{count}} 則回答"
   }
 }

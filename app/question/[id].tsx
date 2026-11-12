@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowRight, Check, MoreHorizontal, ThumbsUp } from 'lucide-react-native';
 import { MessageCircle } from '../../src/components/icons/custom';
 import { useCallback, useEffect, useState } from 'react';
@@ -39,7 +39,8 @@ export default function QuestionScreen() {
     setQ(question);
     setAnswers(list);
   }, [id]);
-  useEffect(() => { load(); getMyProfile().then(setMe).catch(() => undefined); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useEffect(() => { getMyProfile().then(setMe).catch(() => undefined); }, []);
 
   if (q === undefined) return <View style={[styles.center, { backgroundColor: color('bg/default') }]}><ActivityIndicator color={color('fg/muted')} /></View>;
 
@@ -84,6 +85,7 @@ export default function QuestionScreen() {
     if (!q?.mine) return;
     Alert.alert(t('ask.questionTitle'), undefined, [
       { text: t('common.cancel'), style: 'cancel' },
+      { text: t('post.edit'), onPress: () => router.push({ pathname: '/ask', params: { id: q.id } }) },
       { text: t('dish.delete'), style: 'destructive', onPress: async () => { try { await deleteQuestion(q.id); router.back(); } catch { Alert.alert(t('settings.saveFailed')); } } },
     ]);
   };

@@ -1188,7 +1188,12 @@
       "recipe_help": "Recipe help",
       "ingredients": "Ingredients",
       "market_deals": "Market & deals",
-      "other": "Other"
+      "other": "Other",
+      "whatToEat": "What to eat today",
+      "recipe": "Recipe question",
+      "restaurant": "Restaurants",
+      "groceries": "Ingredients & groceries",
+      "tools": "Tools"
     },
     "note": "Neighbors near you see this — never your exact location. Questions stay up for 7 days. No names, phone numbers or addresses of people.",
     "post": "Post question",
@@ -1208,7 +1213,10 @@
     "pick": "Mark as my pick",
     "unpick": "Remove my pick",
     "missing": "This question has closed",
-    "reportAnswer": "Report this answer"
+    "reportAnswer": "Report this answer",
+    "category": "Category",
+    "required": "Required",
+    "editTitle": "Edit question"
   },
   "challenge": {
     "listTitle": "Food challenges",
@@ -1364,5 +1372,13 @@
     "suggest": "Cooks to follow",
     "suggestBody": "Follow a cook and their dishes join your table here.",
     "seeMore": "See more"
+  },
+  "questions": {
+    "search": "Search questions",
+    "emptyTitle": "No neighborhood questions yet",
+    "emptyBody": "Be the first to ask",
+    "reportTitle": "Report this question",
+    "answers_one": "{{count}} answer",
+    "answers_other": "{{count}} answers"
   }
 }

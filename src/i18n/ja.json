@@ -1173,7 +1173,12 @@
       "recipe_help": "レシピの相談",
       "ingredients": "材料",
       "market_deals": "市場とお得情報",
-      "other": "その他"
+      "other": "その他",
+      "whatToEat": "今日なに食べる",
+      "recipe": "レシピの質問",
+      "restaurant": "お店",
+      "groceries": "食材・買い物",
+      "tools": "道具"
     },
     "note": "近くのご近所さんに表示されます — 正確な位置は表示されません。質問は7日間掲載されます。人の名前、電話番号、住所は書かないでください。",
     "post": "質問を投稿",
@@ -1191,7 +1196,10 @@
     "pick": "ベストに選ぶ",
     "unpick": "ベストを外す",
     "missing": "この質問は締め切られました",
-    "reportAnswer": "この回答を報告"
+    "reportAnswer": "この回答を報告",
+    "category": "カテゴリー",
+    "required": "必須",
+    "editTitle": "質問を編集"
   },
   "challenge": {
     "listTitle": "フードチャレンジ",
@@ -1347,5 +1355,12 @@
     "suggest": "フォローしたい料理人",
     "suggestBody": "フォローすると、その人の料理がここに並びます。",
     "seeMore": "もっと見る"
+  },
+  "questions": {
+    "search": "質問を検索",
+    "emptyTitle": "まだ近所の質問はありません",
+    "emptyBody": "最初の質問をしてみましょう",
+    "reportTitle": "この質問を報告",
+    "answers_other": "回答 {{count}}"
   }
 }

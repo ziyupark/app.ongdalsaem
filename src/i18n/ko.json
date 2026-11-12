@@ -1188,7 +1188,12 @@
       "recipe_help": "레시피 도움",
       "ingredients": "재료",
       "market_deals": "시장·할인",
-      "other": "기타"
+      "other": "기타",
+      "whatToEat": "오늘 뭐 먹지",
+      "recipe": "레시피 질문",
+      "restaurant": "맛집",
+      "groceries": "재료·장보기",
+      "tools": "도구"
     },
     "note": "근처 이웃에게만 보이고, 정확한 위치는 절대 보이지 않아요. 질문은 7일 동안 유지돼요. 다른 사람의 이름, 전화번호, 주소는 쓰지 마세요.",
     "post": "질문 올리기",
@@ -1208,7 +1213,10 @@
     "pick": "내 선택으로 표시",
     "unpick": "선택 해제",
     "missing": "마감된 질문이에요",
-    "reportAnswer": "이 답변 신고"
+    "reportAnswer": "이 답변 신고",
+    "category": "카테고리",
+    "required": "필수",
+    "editTitle": "질문 수정"
   },
   "challenge": {
     "listTitle": "푸드 챌린지",
@@ -1364,5 +1372,13 @@
     "suggest": "이런 요리사를 팔로우해 보세요",
     "suggestBody": "팔로우하면 그 사람의 식탁이 여기에 차려져요",
     "seeMore": "더 보기"
+  },
+  "questions": {
+    "search": "질문 검색",
+    "emptyTitle": "아직 동네 질문이 없어요",
+    "emptyBody": "첫 질문을 남겨 보세요",
+    "reportTitle": "이 질문 신고",
+    "answers_one": "답변 {{count}}",
+    "answers_other": "답변 {{count}}"
   }
 }

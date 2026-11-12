@@ -331,9 +331,14 @@ export function OurArea() {
         <TopToday here={here} />
         {/* 3 · Area questions + Ask */}
         <View style={styles.block}>
-          <Text variant="Title/S">{t('community.area.questionsTitle')}</Text>
+          <View style={styles.qHead}>
+            <Text variant="Title/S" style={styles.flex}>{t('community.area.questionsTitle')}</Text>
+            <Pressable accessibilityRole="button" hitSlop={space[8]} onPress={() => router.push('/questions')}>
+              <Text variant="Body/S Strong" color="fg/muted">{t('following.seeMore')}</Text>
+            </Pressable>
+          </View>
           {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} rounded="2xl" onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
-          <Button label={t('community.area.ask')} variant="Outline" size="M" icon={MessageCircle} onPress={() => router.push('/ask')} />
+          <Button label={t('community.area.ask')} variant="Outline" size="M" icon={MessageCircle} onPress={() => router.push('/questions')} />
         </View>
       </View>
     </View>
@@ -414,6 +419,7 @@ export function NearbyFeed({ initialQuery = '', initialArea = 'all', initialFilt
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
+  qHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   searchWrap: { paddingTop: space[16], paddingHorizontal: space[20] },
   searchRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   filterBtn: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },

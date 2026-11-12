@@ -1,8 +1,8 @@
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Camera, MapPin, X } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,26 +12,35 @@ import { Icon } from '../src/components/Icon';
 import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { useHere } from '../src/lib/useHere';
-import { askQuestion, QUESTION_CATEGORIES, type QuestionCategory } from '../src/services/community';
+import { askQuestion, fetchQuestion, QUESTION_CATEGORIES, updateQuestion, type QuestionCategory } from '../src/services/community';
 import { radius, space, text, useTheme } from '../src/theme';
 
 const MIN = 5;
 const MAX = 200;
 const { lineHeight: _lh, ...field } = text['Body/L'] ?? text['Body/M'];
 
-/** 3.7 Ask the neighborhood (469:11315) · 3.7b Location off (502:12559). */
+/**
+ * 4.6 Ask · Category (778:12053) · 3.7b Location off (502:12559). Category chips (required, default whatToEat) above
+ * the question; the weather right now (mood · temp) is saved with it. `?id=` edits your own question (body · category).
+ */
 export default function Ask() {
   const { color } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { id: editId } = useLocalSearchParams<{ id?: string }>();
   const { here, allow } = useHere();
   const [body, setBody] = useState('');
-  const [category, setCategory] = useState<QuestionCategory>('where_to_eat');
+  const [category, setCategory] = useState<QuestionCategory>('whatToEat');
   const [photo, setPhoto] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [asking, setAsking] = useState(false);
   const area = here.place?.district ?? here.place?.city ?? '';
-  const ok = body.trim().length >= MIN && !!here.cell;
+  const ok = body.trim().length >= MIN && (!!editId || !!here.cell);
+
+  useEffect(() => {
+    if (!editId) return;
+    fetchQuestion(editId).then((q) => { if (q) { setBody(q.body); setCategory(q.category); } }).catch(() => undefined);
+  }, [editId]);
 
   const pick = async () => {
     const r = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
@@ -39,12 +48,19 @@ export default function Ask() {
   };
 
   const post = async () => {
-    if (!ok || sending || !here.cell) return;
+    if (!ok || sending) return;
     setSending(true);
     try {
+      if (editId) {
+        await updateQuestion(editId, { body, category });
+        router.back();
+        return;
+      }
+      if (!here.cell) return;
       const id = await askQuestion({
         body, category, geohash: here.cell, imageUri: photo,
         neighborhood: here.place?.district ?? null, city: here.place?.city ?? null, country: here.place?.countryCode ?? null,
+        mood: here.forecast?.mood ?? null, tempC: here.forecast?.tempC ?? null,
       });
       router.replace(`/question/${id}`);
     } catch {
@@ -54,7 +70,7 @@ export default function Ask() {
     }
   };
 
-  if (here.status === 'off') {
+  if (here.status === 'off' && !editId) {
     return (
       <View style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + space[12], backgroundColor: color('bg/default') }]}>
         <TopBar title={t('ask.title')} onBack={() => router.back()} backLabel={t('common.back')} />
@@ -73,7 +89,7 @@ export default function Ask() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <TopBar title={t('ask.title')} onBack={() => router.back()} backLabel={t('common.back')} />
+      <TopBar title={t(editId ? 'ask.editTitle' : 'ask.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
         <View style={[styles.area, { backgroundColor: color('bg/subtle') }]}>
           <Icon icon={MapPin} size={16} />
@@ -81,6 +97,17 @@ export default function Ask() {
           <Pressable accessibilityRole="button" onPress={() => router.push('/settings/privacy')} style={[styles.change, { backgroundColor: color('bg/default') }]}>
             <Text variant="Caption Strong" color="fg/accent">{t('ask.change')}</Text>
           </Pressable>
+        </View>
+
+        {/* Category (required) — label + "Required" (Caption Strong fg/accent), gap 4 · chips gap 8, one scrolling row. */}
+        <View style={styles.cat}>
+          <View style={styles.catHead}>
+            <Text variant="Title/S">{t('ask.category')}</Text>
+            <Text variant="Caption Strong" color="fg/accent">{t('ask.required')}</Text>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+            {QUESTION_CATEGORIES.map((c) => <Chip key={c} label={t(`ask.categories.${c}`)} selected={category === c} onPress={() => setCategory(c)} />)}
+          </ScrollView>
         </View>
 
         <View style={[styles.box, { backgroundColor: color('bg/subtle'), borderColor: color('border/focus') }]}>
@@ -103,18 +130,11 @@ export default function Ask() {
             </View>
           ) : null}
           <View style={styles.boxFoot}>
-            <Pressable accessibilityRole="button" onPress={pick} style={[styles.photoBtn, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
+            {editId ? <View /> : <Pressable accessibilityRole="button" onPress={pick} style={[styles.photoBtn, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
               <Icon icon={Camera} size={16} />
               <Text variant="Caption Strong" color="fg/secondary">{t('ask.photo')}</Text>
-            </Pressable>
+            </Pressable>}
             <Text variant="Caption" color="fg/muted">{`${body.length} / ${MAX}`}</Text>
-          </View>
-        </View>
-
-        <View style={styles.cat}>
-          <Text variant="Title/S">{t('ask.kind')}</Text>
-          <View style={styles.wrap}>
-            {QUESTION_CATEGORIES.map((c) => <Chip key={c} label={t(`ask.categories.${c}`)} selected={category === c} onPress={() => setCategory(c)} />)}
           </View>
         </View>
 
@@ -123,7 +143,7 @@ export default function Ask() {
         </View>
       </ScrollView>
       <View style={[styles.px, { paddingBottom: insets.bottom + space[12], paddingTop: space[8] }]}>
-        <Button label={t('ask.post')} size="L" disabled={!ok} loading={sending} onPress={post} />
+        <Button label={editId ? t('common.save') : t('ask.post')} size="L" disabled={!ok} loading={sending} onPress={post} />
       </View>
     </KeyboardAvoidingView>
   );
@@ -145,6 +165,7 @@ const styles = StyleSheet.create({
   remove: { position: 'absolute', top: space[6], right: space[6], width: 24, height: 24, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   boxFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   photoBtn: { flexDirection: 'row', alignItems: 'center', gap: space[6], paddingHorizontal: space[10], paddingVertical: space[6], borderRadius: radius.full, borderWidth: 1 },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
+  catHead: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
+  chips: { flexDirection: 'row', gap: space[8] },
   note: { borderRadius: radius.md, paddingHorizontal: space[14], paddingVertical: space[12] },
 });

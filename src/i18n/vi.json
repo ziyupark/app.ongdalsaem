@@ -1173,7 +1173,12 @@
       "recipe_help": "Hỏi công thức",
       "ingredients": "Nguyên liệu",
       "market_deals": "Chợ & ưu đãi",
-      "other": "Khác"
+      "other": "Khác",
+      "whatToEat": "Hôm nay ăn gì",
+      "recipe": "Hỏi công thức",
+      "restaurant": "Quán ăn",
+      "groceries": "Nguyên liệu·đi chợ",
+      "tools": "Dụng cụ"
     },
     "note": "Hàng xóm gần bạn sẽ thấy — không bao giờ hiện vị trí chính xác. Câu hỏi hiển thị trong 7 ngày. Không ghi tên, số điện thoại hay địa chỉ của người khác.",
     "post": "Đăng câu hỏi",
@@ -1191,7 +1196,10 @@
     "pick": "Chọn làm câu trả lời của tôi",
     "unpick": "Bỏ chọn",
     "missing": "Câu hỏi này đã đóng",
-    "reportAnswer": "Báo cáo câu trả lời này"
+    "reportAnswer": "Báo cáo câu trả lời này",
+    "category": "Danh mục",
+    "required": "Bắt buộc",
+    "editTitle": "Sửa câu hỏi"
   },
   "challenge": {
     "listTitle": "Thử thách nấu ăn",
@@ -1347,5 +1355,12 @@
     "suggest": "Đầu bếp nên theo dõi",
     "suggestBody": "Theo dõi một đầu bếp để món của họ có mặt trên bàn của bạn.",
     "seeMore": "Xem thêm"
+  },
+  "questions": {
+    "search": "Tìm câu hỏi",
+    "emptyTitle": "Chưa có câu hỏi nào trong khu phố",
+    "emptyBody": "Hãy đặt câu hỏi đầu tiên",
+    "reportTitle": "Báo cáo câu hỏi này",
+    "answers_other": "{{count}} câu trả lời"
   }
 }

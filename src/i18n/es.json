@@ -1188,7 +1188,12 @@
       "recipe_help": "Ayuda con recetas",
       "ingredients": "Ingredientes",
       "market_deals": "Mercado y ofertas",
-      "other": "Otro"
+      "other": "Otro",
+      "whatToEat": "¿Qué como hoy?",
+      "recipe": "Pregunta de receta",
+      "restaurant": "Restaurantes",
+      "groceries": "Ingredientes y compras",
+      "tools": "Utensilios"
     },
     "note": "Lo ven los vecinos cercanos, nunca tu ubicación exacta. Las preguntas duran 7 días. Sin nombres, teléfonos ni direcciones de personas.",
     "post": "Publicar pregunta",
@@ -1208,7 +1213,10 @@
     "pick": "Marcar como mi elegida",
     "unpick": "Quitar mi elección",
     "missing": "Esta pregunta se cerró",
-    "reportAnswer": "Denunciar esta respuesta"
+    "reportAnswer": "Denunciar esta respuesta",
+    "category": "Categoría",
+    "required": "Obligatorio",
+    "editTitle": "Editar pregunta"
   },
   "challenge": {
     "listTitle": "Retos de cocina",
@@ -1364,5 +1372,13 @@
     "suggest": "Cocineros para seguir",
     "suggestBody": "Sigue a un cocinero y sus platos llegarán a tu mesa.",
     "seeMore": "Ver más"
+  },
+  "questions": {
+    "search": "Buscar preguntas",
+    "emptyTitle": "Aún no hay preguntas en tu barrio",
+    "emptyBody": "Haz la primera pregunta",
+    "reportTitle": "Denunciar esta pregunta",
+    "answers_one": "{{count}} respuesta",
+    "answers_other": "{{count}} respuestas"
   }
 }

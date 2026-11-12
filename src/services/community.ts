@@ -406,12 +406,15 @@ export async function postToTable(tableId: string, foodId: string) {
 
 // ---------------------------------------------------------------------------------------------- questions
 
-export const QUESTION_CATEGORIES = ['where_to_eat', 'recipe_help', 'ingredients', 'market_deals', 'other'] as const;
+/** 4.6 Ask · Category — required, default whatToEat (20261118000000_questions_list_category_weather.sql). */
+export const QUESTION_CATEGORIES = ['whatToEat', 'recipe', 'restaurant', 'groceries', 'tools'] as const;
 export type QuestionCategory = (typeof QUESTION_CATEGORIES)[number];
 
 export type Question = {
   id: string; body: string; category: QuestionCategory; imageUrl: string | null; place: string | null;
   author: Person; answers: number; meToo: number; mine: boolean; meTooByMe: boolean; bestAnswerId: string | null; createdAt: Date;
+  /** Weather when it was asked. */
+  mood: WeatherMood | null; tempC: number | null;
   /** Set when a question came from a wider range than your area cell (Explore · Our area), e.g. "Dongjak-gu", "Seoul". */
   range?: string;
 };
@@ -433,6 +436,7 @@ async function decorateQuestions(rows: Row[]): Promise<Question[]> {
     author: byId.get(r.author_id) ?? toPerson(null, r.author_id),
     answers: r.answer_count ?? 0, meToo: r.me_too_count ?? 0, mine: r.author_id === me, meTooByMe: meToo.has(r.id),
     bestAnswerId: r.best_answer_id ?? null, createdAt: new Date(r.created_at),
+    mood: r.mood ?? null, tempC: r.temp_c == null ? null : Number(r.temp_c),
   }));
 }
 
@@ -484,7 +488,7 @@ export async function fetchQuestion(id: string): Promise<Question | null> {
   return data ? (await decorateQuestions([data as Row]))[0] : null;
 }
 
-export async function askQuestion(input: { body: string; category: QuestionCategory; geohash: string; neighborhood?: string | null; city?: string | null; country?: string | null; imageUri?: string | null }) {
+export async function askQuestion(input: { body: string; category: QuestionCategory; geohash: string; neighborhood?: string | null; city?: string | null; country?: string | null; imageUri?: string | null; mood?: WeatherMood | null; tempC?: number | null }) {
   let imageUrl: string | null = null;
   if (input.imageUri) {
     const me = await needUid();
@@ -497,9 +501,73 @@ export async function askQuestion(input: { body: string; category: QuestionCateg
   const { data, error } = await supabase.rpc('ask_question', {
     p_body: input.body.trim(), p_category: input.category, p_image_url: imageUrl,
     p_neighborhood: input.neighborhood ?? null, p_city: input.city ?? null, p_country: input.country ?? null, p_geohash: input.geohash,
+    p_mood: input.mood ?? null, p_temp_c: input.tempC ?? null,
   });
   if (error) throw error;
   return (data as Row).id as string;
+}
+
+/** Asker edits their own question (body · category). */
+export async function updateQuestion(id: string, input: { body: string; category: QuestionCategory }) {
+  const { error } = await supabase.from('questions').update({ body: input.body.trim(), category: input.category }).eq('id', id);
+  if (error) throw error;
+}
+
+export async function reportQuestion(questionId: string, authorId: string, reason: string) {
+  const me = await needUid();
+  const { error } = await supabase.from('reports').insert({ reporter_id: me, question_id: questionId, reported_user_id: authorId, reason });
+  if (error) throw error;
+}
+
+/** 4.5 Questions · List — paging state: which range we're in, how far into it, ids already shown. */
+export type QuestionCursor = { tier: number; offset: number; seen: string[] };
+export type QuestionFilter = { category: QuestionCategory | null; query: string };
+
+/**
+ * 4.5 Questions · List — 20 at a time: your area cell first, then (same order as fetchAreaQuestions) neighbouring
+ * cells → district → city, skipping ids already shown. Each range is read to the end before the next one starts.
+ * Questions from a wider range than your cell carry `range`. `next` = null when every range is used up.
+ */
+export async function fetchQuestionsPage(
+  at: { geohash: string | null; district?: string | null; city?: string | null },
+  f: QuestionFilter, cursor: QuestionCursor | null, size = 20,
+): Promise<{ items: Question[]; next: QuestionCursor | null }> {
+  const query = f.query.trim();
+  const like = `%${query.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  const open = (from: number, n: number) => {
+    let q = supabase.from('questions').select('*').is('table_id', null);
+    if (f.category) q = q.eq('category', f.category);
+    if (query) q = q.ilike('body', like);
+    return q.order('created_at', { ascending: false }).order('id').range(from, from + n - 1);
+  };
+  const area = (chars: number) => (from: number, n: number) => supabase.rpc('area_questions', {
+    p_geohash: at.geohash, p_chars: chars, p_category: f.category, p_query: query || null, p_limit: n, p_offset: from,
+  });
+  const tiers: { load: (from: number, n: number) => PromiseLike<{ data: unknown; error: unknown }>; range?: string; wide?: boolean }[] = [];
+  if (at.geohash) tiers.push({ load: area(4) }, { load: area(3), wide: true });
+  if (at.district) tiers.push({ load: (from, n) => (at.city ? open(from, n).eq('city', at.city) : open(from, n)).eq('neighborhood', at.district!), range: at.district });
+  if (at.city) tiers.push({ load: (from, n) => open(from, n).eq('city', at.city!), range: at.city });
+
+  let { tier, offset } = cursor ?? { tier: 0, offset: 0 };
+  const seen = new Set(cursor?.seen ?? []);
+  const rows: { row: Row; range?: string; wide?: boolean }[] = [];
+  while (rows.length < size && tier < tiers.length) {
+    const step = tiers[tier];
+    const n = size - rows.length;
+    const { data, error } = await Promise.resolve(step.load(offset, n)).catch((e) => ({ data: null, error: e }));
+    const got = error ? [] : ((data ?? []) as Row[]);
+    for (const row of got) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      rows.push({ row, range: step.range, wide: step.wide });
+    }
+    if (got.length < n) { tier += 1; offset = 0; } else offset += got.length;
+  }
+  const items = await decorateQuestions(rows.map((r) => r.row));
+  return {
+    items: items.map((q, i) => (rows[i].range || rows[i].wide ? { ...q, range: rows[i].range ?? q.place ?? undefined } : q)),
+    next: tier < tiers.length ? { tier, offset, seen: [...seen] } : null,
+  };
 }
 
 export async function deleteQuestion(id: string) {
