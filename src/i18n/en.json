@@ -1083,7 +1083,6 @@
     "challengesTab": "Challenges",
     "exploreTogether": "Explore Together",
     "area": {
-      "title": "Today's table in our area",
       "topTitle": "Popular today",
       "basis": "Based on {{place}}",
       "posts_one": "{{count}} post",

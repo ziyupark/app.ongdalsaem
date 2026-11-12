@@ -1072,7 +1072,6 @@
     "challengesTab": "Tantangan",
     "exploreTogether": "Jelajahi bersama",
     "area": {
-      "title": "Meja hari ini di sekitarmu",
       "topTitle": "Populer hari ini",
       "basis": "Berdasarkan {{place}}",
       "posts_other": "{{count}} unggahan",

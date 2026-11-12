@@ -789,7 +789,6 @@ within1km=1 公里內
 trendingBites=熱門一口
 challengesTab=挑戰
 exploreTogether=一起探索
-area.title=今天附近的餐桌
 area.topTitle=今日熱門料理
 area.basis=以{{place}}為準
 area.posts_other={{count}} 則分享

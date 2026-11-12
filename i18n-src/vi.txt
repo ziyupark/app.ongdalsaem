@@ -789,7 +789,6 @@ within1km=Trong vòng 1 km
 trendingBites=Món đang hot
 challengesTab=Thử thách
 exploreTogether=Cùng khám phá
-area.title=Mâm cơm hôm nay quanh khu mình
 area.topTitle=Phổ biến hôm nay
 area.basis=Theo {{place}}
 area.posts_other={{count}} bài đăng

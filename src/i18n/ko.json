@@ -1083,7 +1083,6 @@
     "challengesTab": "챌린지",
     "exploreTogether": "함께 둘러보기",
     "area": {
-      "title": "오늘 우리 동네 식탁",
       "topTitle": "오늘 인기 요리",
       "basis": "{{place}} 기준",
       "posts_one": "{{count}}번 올라왔어요",

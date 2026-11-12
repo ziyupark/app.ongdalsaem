@@ -799,7 +799,6 @@ within1km=Até 1 km
 trendingBites=Em alta
 challengesTab=Desafios
 exploreTogether=Explore junto
-area.title=A mesa de hoje no seu bairro
 area.topTitle=Mais populares hoje
 area.basis=Com base em {{place}}
 area.posts_one={{count}} publicação

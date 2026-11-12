@@ -1072,7 +1072,6 @@
     "challengesTab": "ชาเลนจ์",
     "exploreTogether": "สำรวจไปด้วยกัน",
     "area": {
-      "title": "โต๊ะอาหารวันนี้ในย่านของเรา",
       "topTitle": "ยอดนิยมวันนี้",
       "basis": "อิงจาก {{place}}",
       "posts_other": "{{count}} โพสต์",

@@ -799,7 +799,6 @@ within1km=A menos de 1 km
 trendingBites=Bocados en tendencia
 challengesTab=Retos
 exploreTogether=Exploremos juntos
-area.title=La mesa de hoy en tu barrio
 area.topTitle=Lo más popular hoy
 area.basis=Según {{place}}
 area.posts_one={{count}} publicación

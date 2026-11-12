@@ -1072,7 +1072,6 @@
     "challengesTab": "チャレンジ",
     "exploreTogether": "みんなで探す",
     "area": {
-      "title": "今日のご近所の食卓",
       "topTitle": "今日の人気料理",
       "basis": "{{place}}基準",
       "posts_other": "{{count}}件の投稿",

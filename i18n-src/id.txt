@@ -789,7 +789,6 @@ within1km=Dalam 1 km
 trendingBites=Gigitan populer
 challengesTab=Tantangan
 exploreTogether=Jelajahi bersama
-area.title=Meja hari ini di sekitarmu
 area.topTitle=Populer hari ini
 area.basis=Berdasarkan {{place}}
 area.posts_other={{count}} unggahan

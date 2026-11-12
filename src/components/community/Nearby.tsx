@@ -12,7 +12,6 @@ import {
   fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, searchSuggestions, setMeToo,
   type CardDish, type Question, type TopDish,
 } from '../../services/community';
-import { useTemp } from '../../lib/prefs';
 import { saveLocationChoice } from '../../services/profile';
 import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
 import { Button } from '../Button';
@@ -21,7 +20,7 @@ import { Icon } from '../Icon';
 import { MessageCircle } from '../icons/custom';
 import { Text } from '../Text';
 import { FilterChips, FilterSheet, hasFilters, NO_FILTERS, type SearchFilters } from './SearchFilters';
-import { EmptyState, FoodGrid, ListCard, ListRow, QuestionCard, SearchField, useByline } from './Parts';
+import { EmptyState, FoodGrid, ListCard, ListRow, QuestionCard, SearchField, SectionHeader, useByline } from './Parts';
 
 export type Area = 'all' | 'near' | 'area' | 'weather';
 const RECENT_KEY = 'community.recentSearches';
@@ -244,12 +243,11 @@ function TopToday({ here }: { here: Here }) {
       fetchTodayTopDishes({ cells, district, city }).then(setTop).catch(() => setTop({ items: [], range: null }));
     }, [here.coords, here.cell, district, city]),
   );
+  // Same header as Trending Bites (SectionHeader · section p32 · gap 6); the range it came from under the list.
   return (
-    <View style={styles.block}>
-      <View style={styles.blockHead}>
-        <Text variant="Title/S" style={styles.flex} numberOfLines={1}>{t('community.area.topTitle')}</Text>
-        {top?.range ? <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('community.area.basis', { place: top.range })}</Text> : null}
-      </View>
+    <View style={styles.section}>
+      <SectionHeader title={t('community.area.topTitle')} />
+      <View style={[styles.px, styles.block]}>
       {top == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
       ) : top.items.length ? (
@@ -273,23 +271,21 @@ function TopToday({ here }: { here: Here }) {
       ) : (
         <Text variant="Body/S" color="fg/muted">{t('community.area.topEmpty')}</Text>
       )}
+      {top?.range ? <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('community.area.basis', { place: top.range })}</Text> : null}
+      </View>
     </View>
   );
 }
 
 /**
- * Explore · "Our area" — Today's table in our area: header (district · weather temp) → Popular today (top 3) →
- * area questions (3–5, topped up from wider ranges) + Ask → 3 neighbours' dishes + See more
- * (app/nearby-feed). Location off → a card to turn it on. `onShown` gets the dish ids shown here (Explore
- * Together leaves them out).
+ * Explore · "Our area" — Popular today (top 3) → area questions (3–5, topped up from wider ranges) + Ask. Both titles
+ * are the Trending Bites SectionHeader; questions' See more = its action link (→ app/questions). Location off → a card
+ * to turn it on.
  */
 export function OurArea() {
   const { color } = useTheme();
   const { t } = useTranslation();
-  const temp = useTemp();
   const { here, allow } = useHere();
-  const f = here.forecast;
-  const { city, district } = placeOf(here);
   const { questions, meToo } = useNearbyQuestions(here, AREA_QUESTIONS, true);
   const [busy, setBusy] = useState(false);
 
@@ -316,27 +312,14 @@ export function OurArea() {
     );
   }
 
-  const caption = [district ?? city, f ? `${t(`weather.${f.mood}`)} ${temp(f.tempC)}°` : null].filter(Boolean).join(' · ');
-
   return (
-    <View style={styles.section}>
-      {/* 1 · Header — Title/M + Caption */}
-      <View style={styles.px}>
-        <Text variant="Title/M" numberOfLines={1}>{t('community.area.title')}</Text>
-        {caption ? <Text variant="Caption" color="fg/muted" numberOfLines={1}>{caption}</Text> : null}
-      </View>
-
-      <View style={[styles.px, styles.blocks]}>
-        {/* 2 · Popular today */}
-        <TopToday here={here} />
-        {/* 3 · Area questions + Ask */}
-        <View style={styles.block}>
-          <View style={styles.qHead}>
-            <Text variant="Title/S" style={styles.flex}>{t('community.area.questionsTitle')}</Text>
-            <Pressable accessibilityRole="button" hitSlop={space[8]} onPress={() => router.push('/questions')}>
-              <Text variant="Body/S Strong" color="fg/muted">{t('following.seeMore')}</Text>
-            </Pressable>
-          </View>
+    <View>
+      {/* Popular today */}
+      <TopToday here={here} />
+      {/* Area questions + Ask */}
+      <View style={styles.section}>
+        <SectionHeader title={t('community.area.questionsTitle')} action={t('following.seeMore')} onAction={() => router.push('/questions')} />
+        <View style={[styles.px, styles.block]}>
           {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} rounded="2xl" onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
           <Button label={t('community.area.ask')} variant="Outline" size="M" icon={MessageCircle} onPress={() => router.push('/questions')} />
         </View>
@@ -419,7 +402,6 @@ export function NearbyFeed({ initialQuery = '', initialArea = 'all', initialFilt
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
-  qHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   searchWrap: { paddingTop: space[16], paddingHorizontal: space[20] },
   searchRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   filterBtn: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
@@ -441,10 +423,8 @@ const styles = StyleSheet.create({
   // See all — Button · Outline · M, full width inside p20.
   offCard: { alignItems: 'center', gap: space[12], padding: space[20], borderRadius: radius['2xl'], borderWidth: 1 },
   offText: { textAlign: 'center' },
-  // Today's table in our area — header, then blocks p20 · gap 24 (block: title → content, gap 10).
-  blocks: { gap: space[24], paddingTop: space[16] },
+  // Our area content under each SectionHeader (cards · Ask), gap 10.
   block: { gap: space[10] },
-  blockHead: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   rankLead: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
   rank: { width: space[16], textAlign: 'center' },
   thumb: { width: 48, height: 48, borderRadius: radius.md },

@@ -1072,7 +1072,6 @@
     "challengesTab": "挑戰",
     "exploreTogether": "一起探索",
     "area": {
-      "title": "今天附近的餐桌",
       "topTitle": "今日熱門料理",
       "basis": "以{{place}}為準",
       "posts_other": "{{count}} 則分享",

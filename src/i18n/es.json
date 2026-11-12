@@ -1083,7 +1083,6 @@
     "challengesTab": "Retos",
     "exploreTogether": "Exploremos juntos",
     "area": {
-      "title": "La mesa de hoy en tu barrio",
       "topTitle": "Lo más popular hoy",
       "basis": "Según {{place}}",
       "posts_one": "{{count}} publicación",

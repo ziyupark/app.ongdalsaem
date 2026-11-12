@@ -8,9 +8,7 @@ import {
   Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag,
 } from '../src/components/community/Parts';
 import { ChallengesTab } from '../src/components/community/ChallengesTab';
-import { NearbySearch, OurArea } from '../src/components/community/Nearby';
-import { filtersToParams, hasFilters, NO_FILTERS, type SearchFilters } from '../src/components/community/SearchFilters';
-import { useHere } from '../src/lib/useHere';
+import { OurArea } from '../src/components/community/Nearby';
 import { upcomingFestive } from '../src/lib/holidays';
 import { FestiveCard } from '../src/components/community/FestiveCard';
 import { Icon } from '../src/components/Icon';
@@ -80,7 +78,6 @@ export default function Community() {
         contentContainerStyle={{ paddingBottom: 110 + space[24] }}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        keyboardShouldPersistTaps="handled"
       >
         <ScreenHeader right="notifications" />
         <Animated.View entering={FadeIn.duration(150)}>
@@ -123,10 +120,6 @@ function Global() {
   const [tag, setTag] = useState<string | null>(null);
   const [saved, setSavedIds] = useState<Set<string>>(new Set());
   const together = explore;
-  const { here } = useHere();
-  const city = here.place?.city ?? here.forecast?.city ?? null;
-  // Search filters (popup beside the field) — carried into the search results.
-  const [filters, setFilters] = useState<SearchFilters>(NO_FILTERS);
 
   useFocusEffect(
     useCallback(() => {
@@ -174,15 +167,9 @@ function Global() {
     />
   );
 
-  // Explore: Search (+ filters) → Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
-  // A search opens the full nearby list (app/nearby-feed) with that term and the filters; while typing, the 3.4 panel replaces the sections.
+  // Explore: Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
   return (
-    <NearbySearch
-      city={city}
-      filters={filters}
-      onFilters={setFilters}
-      onSubmit={(q) => { if (q || hasFilters(filters)) router.push({ pathname: '/nearby-feed', params: { ...(q ? { q } : {}), ...filtersToParams(filters) } }); }}
-    >
+    <View>
       {/* Group 88:3081 — p32 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
         <View style={[styles.sectionS, styles.px]}>
@@ -265,7 +252,7 @@ function Global() {
           <View style={styles.px}><Text variant="Body/S" color="fg/muted">{t('community.emptyBody')}</Text></View>
         )}
       </View>
-    </NearbySearch>
+    </View>
   );
 }
 

@@ -789,7 +789,6 @@ within1km=ภายใน 1 กม.
 trendingBites=เมนูมาแรง
 challengesTab=ชาเลนจ์
 exploreTogether=สำรวจไปด้วยกัน
-area.title=โต๊ะอาหารวันนี้ในย่านของเรา
 area.topTitle=ยอดนิยมวันนี้
 area.basis=อิงจาก {{place}}
 area.posts_other={{count}} โพสต์
