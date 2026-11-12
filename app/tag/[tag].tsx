@@ -1,101 +1,111 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { TrendingUp } from 'lucide-react-native';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chip } from '../../src/components/Chip';
-import { countryName, EmptyState, FoodGrid, Tabs, useByline } from '../../src/components/community/Parts';
-import { Icon } from '../../src/components/Icon';
+import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { CategoryRow, CollectionHero, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
+import { EmptyState, FoodGrid } from '../../src/components/community/Parts';
+import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
-import { TopBar } from '../../src/components/TopBar';
+import { UnderlineTabs } from '../../src/components/UnderlineTabs';
+import { displayTemp } from '../../src/lib/prefs';
 import { useHere } from '../../src/lib/useHere';
-import { countries, fetchByTag, type CardDish } from '../../src/services/community';
-import { gradients, radius, space, useTheme, type WeatherMood } from '../../src/theme';
+import { fetchByTag, topTags, type CardDish } from '../../src/services/community';
+import { space, useTheme, WEATHER_ICON, type WeatherMood } from '../../src/theme';
 
-type Sort = 'popular' | 'latest' | 'near';
+type Sort = 'latest' | 'popular' | 'weather';
+/** Expanded TabBar height (12:182) — same bottom room as 4.1. */
+const TAB_BAR_H = 110;
 
-/** 4.2 Tag · #Comfort (182:5020) — accent hero (headline · count · weather it's shared in) → countries → Popular / Latest / Near me grid. */
+/**
+ * 4.2 Tag · #Comfort (v2 718:11114) — photo hero + title card (overline · headline · band) → Latest / Popular / By weather
+ * → info pill (my weather · count) + meal filter → round categories (co-used tags) → dish grid → TabBar.
+ */
 export default function TagScreen() {
   const { tag } = useLocalSearchParams<{ tag: string }>();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
-  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const byline = useByline();
   const { here } = useHere();
-  const [sort, setSort] = useState<Sort>('popular');
+  const bar = useTabBarScroll();
+  const [sort, setSort] = useState<Sort>('latest');
   const [all, setAll] = useState<CardDish[] | null>(null);
-  const [list, setList] = useState<CardDish[] | null>(null);
+  const [latest, setLatest] = useState<CardDish[] | null>(null);
+  const [category, setCategory] = useState<string | null>(null);
+  const [meal, setMeal] = useState<string | null>(null);
+  const [sheet, setSheet] = useState(false);
   const key = String(tag ?? '').toLowerCase();
-  const label = i18n.exists(`share.moods.${key}`) ? t(`share.moods.${key}`) : key;
+  const tagLabel = (k: string) => (i18n.exists(`share.moods.${k}`) ? t(`share.moods.${k}`) : k);
+  const label = tagLabel(key);
+  const myMood = here.forecast?.mood ?? null;
 
   useEffect(() => { fetchByTag(key, 'popular').then(setAll).catch(() => setAll([])); }, [key]);
   useEffect(() => {
-    if (sort === 'popular') return setList(all);
-    setList(null);
-    const city = sort === 'near' ? here.place?.city ?? null : null;
-    if (sort === 'near' && !city) return setList([]);
-    fetchByTag(key, 'latest', city).then(setList).catch(() => setList([]));
-  }, [sort, key, all, here.place?.city]);
+    if (sort !== 'latest' || latest) return;
+    fetchByTag(key, 'latest').then(setLatest).catch(() => setLatest([]));
+  }, [sort, key, latest]);
 
   const topWeather = useMemo<WeatherMood | null>(() => {
     const m = new Map<WeatherMood, number>();
     for (const d of all ?? []) if (d.mood) m.set(d.mood, (m.get(d.mood) ?? 0) + 1);
     return [...m.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
   }, [all]);
-  const where = all ? countries(all) : [];
-  const ember = gradients['Gradient/Ember'];
+
+  const base = sort === 'latest' ? latest : sort === 'weather' ? (all ? all.filter((d) => myMood != null && d.mood === myMood) : null) : all;
+  const list = base?.filter((d) => (!category || d.moods.includes(category)) && (!meal || d.meals.includes(meal))) ?? null;
+  const categories = useMemo(() => tagCategories(all ?? [], tagLabel, key), [all, key, i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
+  const meals = all ? topTags(all, 'meals') : [];
+  const tabs = [{ key: 'latest' as const, label: t('tag.latest') }, { key: 'popular' as const, label: t('tag.popular') }, { key: 'weather' as const, label: t('tag.byWeather') }];
+  const sectionTitle = [tabs.find((x) => x.key === sort)?.label, category ? tagLabel(category) : null].filter(Boolean).join(' · ');
+
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => bar.onY(e.nativeEvent.contentOffset.y);
+  const onTab = (k: TabKey) => router.replace(`/${k}`);
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      <TopBar title={`#${label}`} onBack={() => router.back()} backLabel={t('common.back')} />
-      <ScrollView contentContainerStyle={{ paddingTop: space[12], gap: space[16], paddingBottom: insets.bottom + space[24] }}>
-        <View style={styles.px}>
-          <View style={styles.hero}>
-            <LinearGradient colors={[ember[0].color, ember[1].color]} style={StyleSheet.absoluteFill} />
-            <Icon icon={TrendingUp} size={14} color="fg/on-photo" />
-            <Text variant="Display/M" color="fg/on-photo">{i18n.exists(`tag.headlines.${key}`) ? t(`tag.headlines.${key}`) : `#${label}`}</Text>
-            <Text variant="Body/S" color="fg/on-photo">
-              {[t('tag.count', { count: all?.length ?? 0 }), topWeather ? t('tag.mostIn', { weather: t(`weather.${topWeather}`).toLowerCase() }) : null].filter(Boolean).join(' · ')}
-            </Text>
-          </View>
-        </View>
-
-        {where.length ? (
-          <View style={styles.section}>
-            <Text variant="Overline" color="fg/muted" style={styles.px}>{t('tag.cookedIn', { count: where.length })}</Text>
-            <View style={styles.wrap}>
-              {where.slice(0, 5).map((c) => <Chip key={c} label={`#${countryName(c, i18n.language)}`} onPress={() => router.push(`/country/${c}`)} />)}
-              {where.length > 5 ? <Chip label={`+${where.length - 5}`} static /> : null}
-            </View>
-          </View>
-        ) : null}
-
-        <Tabs
-          style={styles.tabs}
-          value={sort}
-          onChange={setSort}
-          items={[{ key: 'popular', label: t('tag.popular') }, { key: 'latest', label: t('tag.latest') }, { key: 'near', label: t('tag.nearMe') }]}
+    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={[styles.content, { paddingBottom: TAB_BAR_H + space[24] }]}>
+        <CollectionHero
+          dishes={all ?? []}
+          width={width}
+          onOpen={(d) => router.push(`/dish/${d.id}`)}
+          onBack={() => router.back()}
+          overline={t('tag.overline', { tag: label })}
+          title={i18n.exists(`tag.headlines.${key}`) ? t(`tag.headlines.${key}`) : `#${label}`}
+          band={topWeather ? t('tag.mostIn', { weather: t(`weather.${topWeather}`).toLowerCase() }) : t('tag.count', { count: all?.length ?? 0 })}
         />
-        {list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
-          <FoodGrid dishes={list} width={width} byline={(d) => byline(d)} onOpen={(d) => router.push(`/dish/${d.id}`)} />
-        ) : (
-          <EmptyState icon={TrendingUp} title={t('tag.emptyTitle', { tag: label })} body={t('tag.emptyBody')} />
-        )}
+
+        <UnderlineTabs contentStyle={styles.tabRow} value={sort} onChange={setSort} items={tabs} />
+
+        <InfoRow
+          icon={myMood ? WEATHER_ICON[myMood] : undefined}
+          weather={here.forecast ? t('tag.myWeather', { weather: t(`weather.${here.forecast.mood}`), temp: displayTemp(here.forecast.tempC) }) : null}
+          count={t('tag.count', { count: all?.length ?? 0 })}
+          onFilter={() => setSheet(true)}
+          filtered={meal != null}
+        />
+
+        <CategoryRow items={categories} value={category} onChange={setCategory} />
+
+        <View style={styles.section}>
+          <Text variant="Overline" color="fg/muted" style={styles.px}>{sectionTitle}</Text>
+          {list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
+            <FoodGrid dishes={list} width={width} onOpen={(d) => router.push(`/dish/${d.id}`)} />
+          ) : (
+            <EmptyState icon={TrendingUp} title={t('tag.emptyTitle', { tag: label })} body={t('tag.emptyBody')} />
+          )}
+        </View>
       </ScrollView>
+      <TabBar active="community" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
+      <MealSheet visible={sheet} onClose={() => setSheet(false)} meals={meals} value={meal} onChange={setMeal} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  content: { gap: space[20] },
   px: { paddingHorizontal: space[20] },
-  hero: { borderRadius: radius.xl, overflow: 'hidden', padding: space[20], gap: space[8] },
-  section: { gap: space[8] },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[6], paddingHorizontal: space[20] },
-  tabs: {},
-  gridTop: { height: space[16] },
+  tabRow: { gap: space[24], paddingHorizontal: space[20] },
+  section: { gap: space[12] },
   loading: { marginTop: space[40] },
 });

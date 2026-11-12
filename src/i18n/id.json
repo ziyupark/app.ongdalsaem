@@ -1043,7 +1043,13 @@
       "comforting": "Hari mendung,\nmangkuk hangat.",
       "cozy": "Cuaca berselimut,\nmasak pelan-pelan.",
       "spicy": "Pedas untuk\ntangan yang dingin."
-    }
+    },
+    "byWeather": "Menurut cuaca",
+    "overline": "Makanan {{tag}}",
+    "myWeather": "Cuacaku · {{weather}} {{temp}}°",
+    "filter": "Filter",
+    "mealFilter": "Saring menurut waktu makan",
+    "allMeals": "Semua waktu makan"
   },
   "country": {
     "headlineFallback": "Meja hari ini di {{name}}",
@@ -1061,7 +1067,10 @@
     "weather": "Cuaca",
     "onTables": "Di meja",
     "signature": "Tag khas",
-    "emptyTitle": "Belum ada masakan dari {{name}}"
+    "emptyTitle": "Belum ada masakan dari {{name}}",
+    "all": "Semua",
+    "cityWeather": "Cuaca {{city}} · {{weather}} {{temp}}°",
+    "band": "Sekarang di {{city}}: {{weather}} {{temp}}° · hidangan cuaca sama dulu"
   },
   "cooksWeather": {
     "title": "Pemasak di cuacamu",

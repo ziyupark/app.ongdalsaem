@@ -806,6 +806,12 @@ headlines.comfort=Hari mendung,\nmangkuk hangat.
 headlines.comforting=Hari mendung,\nmangkuk hangat.
 headlines.cozy=Cuaca berselimut,\nmasak pelan-pelan.
 headlines.spicy=Pedas untuk\ntangan yang dingin.
+byWeather=Menurut cuaca
+overline=Makanan {{tag}}
+myWeather=Cuacaku · {{weather}} {{temp}}°
+filter=Filter
+mealFilter=Saring menurut waktu makan
+allMeals=Semua waktu makan
 [country]
 headlineFallback=Meja hari ini di {{name}}
 headline.cloudy=Sore mendung,\nmasak perlahan.
@@ -821,6 +827,9 @@ weather=Cuaca
 onTables=Di meja
 signature=Tag khas
 emptyTitle=Belum ada masakan dari {{name}}
+all=Semua
+cityWeather=Cuaca {{city}} · {{weather}} {{temp}}°
+band=Sekarang di {{city}}: {{weather}} {{temp}}° · hidangan cuaca sama dulu
 [cooksWeather]
 title=Pemasak di cuacamu
 intro=Orang yang sedang tinggal di cuaca seperti cuacamu — {{weather}} dan {{temp}}° di {{place}}.

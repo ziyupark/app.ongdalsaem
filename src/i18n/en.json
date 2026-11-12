@@ -1058,7 +1058,13 @@
       "comforting": "Grey days,\nwarm bowls.",
       "cozy": "Blanket weather,\nslow food.",
       "spicy": "Heat for\ncold hands."
-    }
+    },
+    "byWeather": "By weather",
+    "overline": "{{tag}} food",
+    "myWeather": "My weather · {{weather}} {{temp}}°",
+    "filter": "Filter",
+    "mealFilter": "Filter by meal",
+    "allMeals": "All meals"
   },
   "country": {
     "headlineFallback": "Today’s tables in {{name}}",
@@ -1077,7 +1083,10 @@
     "weather": "Weather",
     "onTables": "On tables",
     "signature": "Signature tags",
-    "emptyTitle": "No dishes from {{name}} yet"
+    "emptyTitle": "No dishes from {{name}} yet",
+    "all": "All",
+    "cityWeather": "{{city}} weather · {{weather}} {{temp}}°",
+    "band": "Now in {{city}}: {{weather}} {{temp}}° · same-weather dishes first"
   },
   "cooksWeather": {
     "title": "Cooks in your weather",

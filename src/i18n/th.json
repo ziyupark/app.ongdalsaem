@@ -1043,7 +1043,13 @@
       "comforting": "วันฟ้าครึ้ม\nชามอุ่น ๆ",
       "cozy": "อากาศน่าห่มผ้า\nทำอาหารช้า ๆ",
       "spicy": "เผ็ด ๆ\nแก้มือเย็น"
-    }
+    },
+    "byWeather": "ตามสภาพอากาศ",
+    "overline": "อาหาร{{tag}}",
+    "myWeather": "อากาศของฉัน · {{weather}} {{temp}}°",
+    "filter": "ตัวกรอง",
+    "mealFilter": "กรองตามมื้ออาหาร",
+    "allMeals": "ทุกมื้อ"
   },
   "country": {
     "headlineFallback": "โต๊ะอาหารวันนี้ใน{{name}}",
@@ -1061,7 +1067,10 @@
     "weather": "สภาพอากาศ",
     "onTables": "บนโต๊ะอาหาร",
     "signature": "แท็กประจำ",
-    "emptyTitle": "ยังไม่มีเมนูจาก{{name}}"
+    "emptyTitle": "ยังไม่มีเมนูจาก{{name}}",
+    "all": "ทั้งหมด",
+    "cityWeather": "อากาศที่{{city}} · {{weather}} {{temp}}°",
+    "band": "ตอนนี้ที่{{city}} {{weather}} {{temp}}° · อาหารอากาศเดียวกันก่อน"
   },
   "cooksWeather": {
     "title": "คนทำอาหารในอากาศเดียวกับคุณ",

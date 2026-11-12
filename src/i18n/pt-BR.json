@@ -1058,7 +1058,13 @@
       "comforting": "Dias cinzentos,\npratos quentinhos.",
       "cozy": "Tempo de cobertor,\ncomida sem pressa.",
       "spicy": "Picância para\nmãos geladas."
-    }
+    },
+    "byWeather": "Por clima",
+    "overline": "Comida {{tag}}",
+    "myWeather": "Meu clima · {{weather}} {{temp}}°",
+    "filter": "Filtrar",
+    "mealFilter": "Filtrar por refeição",
+    "allMeals": "Todas as refeições"
   },
   "country": {
     "headlineFallback": "As mesas de hoje em {{name}}",
@@ -1077,7 +1083,10 @@
     "weather": "Clima",
     "onTables": "Nas mesas",
     "signature": "Tags típicas",
-    "emptyTitle": "Nenhum prato de {{name}} ainda"
+    "emptyTitle": "Nenhum prato de {{name}} ainda",
+    "all": "Tudo",
+    "cityWeather": "Clima em {{city}} · {{weather}} {{temp}}°",
+    "band": "Agora em {{city}}: {{weather}} {{temp}}° · primeiro, pratos do mesmo clima"
   },
   "cooksWeather": {
     "title": "Pessoas no seu clima",

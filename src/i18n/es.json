@@ -1058,7 +1058,13 @@
       "comforting": "Días grises,\nplatos calientes.",
       "cozy": "Tiempo de manta,\ncomida lenta.",
       "spicy": "Picante para\nmanos frías."
-    }
+    },
+    "byWeather": "Por clima",
+    "overline": "Comida {{tag}}",
+    "myWeather": "Mi clima · {{weather}} {{temp}}°",
+    "filter": "Filtrar",
+    "mealFilter": "Filtrar por comida",
+    "allMeals": "Todas las comidas"
   },
   "country": {
     "headlineFallback": "Las mesas de hoy en {{name}}",
@@ -1077,7 +1083,10 @@
     "weather": "Clima",
     "onTables": "En las mesas",
     "signature": "Etiquetas típicas",
-    "emptyTitle": "Aún no hay platos de {{name}}"
+    "emptyTitle": "Aún no hay platos de {{name}}",
+    "all": "Todo",
+    "cityWeather": "Clima en {{city}} · {{weather}} {{temp}}°",
+    "band": "Ahora en {{city}}: {{weather}} {{temp}}° · primero, platos del mismo clima"
   },
   "cooksWeather": {
     "title": "Cocineros con tu clima",

@@ -806,6 +806,12 @@ headlines.comfort=วันฟ้าครึ้ม\nชามอุ่น ๆ
 headlines.comforting=วันฟ้าครึ้ม\nชามอุ่น ๆ
 headlines.cozy=อากาศน่าห่มผ้า\nทำอาหารช้า ๆ
 headlines.spicy=เผ็ด ๆ\nแก้มือเย็น
+byWeather=ตามสภาพอากาศ
+overline=อาหาร{{tag}}
+myWeather=อากาศของฉัน · {{weather}} {{temp}}°
+filter=ตัวกรอง
+mealFilter=กรองตามมื้ออาหาร
+allMeals=ทุกมื้อ
 [country]
 headlineFallback=โต๊ะอาหารวันนี้ใน{{name}}
 headline.cloudy=บ่ายฟ้าครึ้ม\nเคี่ยวช้า ๆ
@@ -821,6 +827,9 @@ weather=สภาพอากาศ
 onTables=บนโต๊ะอาหาร
 signature=แท็กประจำ
 emptyTitle=ยังไม่มีเมนูจาก{{name}}
+all=ทั้งหมด
+cityWeather=อากาศที่{{city}} · {{weather}} {{temp}}°
+band=ตอนนี้ที่{{city}} {{weather}} {{temp}}° · อาหารอากาศเดียวกันก่อน
 [cooksWeather]
 title=คนทำอาหารในอากาศเดียวกับคุณ
 intro=คนที่อยู่ในอากาศคล้ายคุณตอนนี้ — {{place}} {{weather}} {{temp}}°

@@ -1058,7 +1058,13 @@
       "comforting": "흐린 날엔,\n따뜻한 한 그릇.",
       "cozy": "담요 같은 날씨,\n느린 음식.",
       "spicy": "차가운 손엔\n매운 맛."
-    }
+    },
+    "byWeather": "날씨별",
+    "overline": "{{tag}} 요리",
+    "myWeather": "내 날씨 · {{weather}} {{temp}}°",
+    "filter": "필터",
+    "mealFilter": "끼니로 거르기",
+    "allMeals": "모든 끼니"
   },
   "country": {
     "headlineFallback": "오늘 {{name}}의 식탁",
@@ -1077,7 +1083,10 @@
     "weather": "날씨",
     "onTables": "식탁 위",
     "signature": "대표 태그",
-    "emptyTitle": "아직 {{name}}의 요리가 없어요"
+    "emptyTitle": "아직 {{name}}의 요리가 없어요",
+    "all": "전체",
+    "cityWeather": "{{city}} 날씨 · {{weather}} {{temp}}°",
+    "band": "지금 {{city}} {{weather}} {{temp}}° · 같은 날씨 요리 먼저"
   },
   "cooksWeather": {
     "title": "나와 같은 날씨의 요리사",

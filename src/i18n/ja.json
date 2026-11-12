@@ -1043,7 +1043,13 @@
       "comforting": "どんよりした日は、\nあたたかい一杯を。",
       "cozy": "毛布日和には、\nゆっくり料理を。",
       "spicy": "冷えた手に、\nピリ辛を。"
-    }
+    },
+    "byWeather": "天気別",
+    "overline": "{{tag}}ごはん",
+    "myWeather": "わたしの天気 · {{weather}} {{temp}}°",
+    "filter": "絞り込み",
+    "mealFilter": "食事で絞り込む",
+    "allMeals": "すべての食事"
   },
   "country": {
     "headlineFallback": "今日の{{name}}の食卓",
@@ -1061,7 +1067,10 @@
     "weather": "天気",
     "onTables": "食卓にのぼる料理",
     "signature": "代表的なタグ",
-    "emptyTitle": "{{name}}の料理はまだありません"
+    "emptyTitle": "{{name}}の料理はまだありません",
+    "all": "すべて",
+    "cityWeather": "{{city}}の天気 · {{weather}} {{temp}}°",
+    "band": "いま{{city}}は{{weather}} {{temp}}° · 同じ天気の料理から"
   },
   "cooksWeather": {
     "title": "あなたと同じ天気の人たち",

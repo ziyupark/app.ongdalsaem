@@ -820,6 +820,12 @@ headlines.comfort=Días grises,\nplatos calientes.
 headlines.comforting=Días grises,\nplatos calientes.
 headlines.cozy=Tiempo de manta,\ncomida lenta.
 headlines.spicy=Picante para\nmanos frías.
+byWeather=Por clima
+overline=Comida {{tag}}
+myWeather=Mi clima · {{weather}} {{temp}}°
+filter=Filtrar
+mealFilter=Filtrar por comida
+allMeals=Todas las comidas
 [country]
 headlineFallback=Las mesas de hoy en {{name}}
 headline.cloudy=Tarde gris,\nfuego lento.
@@ -836,6 +842,9 @@ weather=Clima
 onTables=En las mesas
 signature=Etiquetas típicas
 emptyTitle=Aún no hay platos de {{name}}
+all=Todo
+cityWeather=Clima en {{city}} · {{weather}} {{temp}}°
+band=Ahora en {{city}}: {{weather}} {{temp}}° · primero, platos del mismo clima
 [cooksWeather]
 title=Cocineros con tu clima
 intro=Personas que viven ahora con un clima como el tuyo: {{weather}} y {{temp}}° en {{place}}.

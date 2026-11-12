@@ -820,6 +820,12 @@ headlines.comfort=Dias cinzentos,\npratos quentinhos.
 headlines.comforting=Dias cinzentos,\npratos quentinhos.
 headlines.cozy=Tempo de cobertor,\ncomida sem pressa.
 headlines.spicy=Picância para\nmãos geladas.
+byWeather=Por clima
+overline=Comida {{tag}}
+myWeather=Meu clima · {{weather}} {{temp}}°
+filter=Filtrar
+mealFilter=Filtrar por refeição
+allMeals=Todas as refeições
 [country]
 headlineFallback=As mesas de hoje em {{name}}
 headline.cloudy=Tarde cinzenta,\nfogo baixo.
@@ -836,6 +842,9 @@ weather=Clima
 onTables=Nas mesas
 signature=Tags típicas
 emptyTitle=Nenhum prato de {{name}} ainda
+all=Tudo
+cityWeather=Clima em {{city}} · {{weather}} {{temp}}°
+band=Agora em {{city}}: {{weather}} {{temp}}° · primeiro, pratos do mesmo clima
 [cooksWeather]
 title=Pessoas no seu clima
 intro=Quem vive agora em um clima como o seu — {{weather}} e {{temp}}° em {{place}}.

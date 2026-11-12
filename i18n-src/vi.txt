@@ -806,6 +806,12 @@ headlines.comfort=Ngày âm u,\nbát ấm.
 headlines.comforting=Ngày âm u,\nbát ấm.
 headlines.cozy=Trời đắp chăn,\nnấu chậm rãi.
 headlines.spicy=Vị cay cho\nđôi tay lạnh.
+byWeather=Theo thời tiết
+overline=Món {{tag}}
+myWeather=Thời tiết của tôi · {{weather}} {{temp}}°
+filter=Lọc
+mealFilter=Lọc theo bữa
+allMeals=Tất cả các bữa
 [country]
 headlineFallback=Bàn ăn hôm nay ở {{name}}
 headline.cloudy=Chiều âm u,\nhầm liu riu.
@@ -821,6 +827,9 @@ weather=Thời tiết
 onTables=Trên bàn ăn
 signature=Thẻ đặc trưng
 emptyTitle=Chưa có món nào từ {{name}}
+all=Tất cả
+cityWeather=Thời tiết {{city}} · {{weather}} {{temp}}°
+band=Bây giờ ở {{city}}: {{weather}} {{temp}}° · món cùng thời tiết trước
 [cooksWeather]
 title=Người nấu cùng thời tiết với bạn
 intro=Những người đang sống trong thời tiết giống bạn — {{weather}} và {{temp}}° ở {{place}}.

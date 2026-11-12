@@ -1043,7 +1043,13 @@
       "comforting": "灰濛濛的日子，\n來一碗暖暖的。",
       "cozy": "蓋毯子的天氣，\n慢慢煮。",
       "spicy": "冷冷的手，\n來點辣。"
-    }
+    },
+    "byWeather": "依天氣",
+    "overline": "{{tag}}料理",
+    "myWeather": "我的天氣 · {{weather}} {{temp}}°",
+    "filter": "篩選",
+    "mealFilter": "依餐別篩選",
+    "allMeals": "所有餐別"
   },
   "country": {
     "headlineFallback": "{{name}} 今天的餐桌",
@@ -1061,7 +1067,10 @@
     "weather": "天氣",
     "onTables": "餐桌上",
     "signature": "代表標籤",
-    "emptyTitle": "還沒有來自 {{name}} 的料理"
+    "emptyTitle": "還沒有來自 {{name}} 的料理",
+    "all": "全部",
+    "cityWeather": "{{city}}天氣 · {{weather}} {{temp}}°",
+    "band": "{{city}}現在{{weather}} {{temp}}° · 同樣天氣的料理優先"
   },
   "cooksWeather": {
     "title": "和你同樣天氣的料理者",
