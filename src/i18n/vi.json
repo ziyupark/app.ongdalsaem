@@ -749,7 +749,6 @@
     "global": "Toàn cầu",
     "explore": "Khám phá",
     "ourArea": "Khu phố của bạn",
-    "seeAll": "Xem thêm",
     "turnOnLocation": "Bật vị trí để xem món ăn quanh khu bạn ở.",
     "following": "Đang theo dõi",
     "rightNow": "{{place}} · ngay lúc này",
@@ -989,7 +988,6 @@
       "topEmpty": "Hôm nay chưa có món nào được chia sẻ gần bạn.",
       "questionsTitle": "Câu hỏi quanh khu",
       "ask": "Đặt câu hỏi",
-      "neighboursTitle": "Món của hàng xóm",
       "locationOff": "Bật vị trí để xem mâm cơm hôm nay quanh khu mình."
     }
   },

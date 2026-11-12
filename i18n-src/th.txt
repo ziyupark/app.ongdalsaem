@@ -620,7 +620,6 @@ title=ชุมชน
 global=ทั่วโลก
 explore=สำรวจ
 ourArea=ย่านของคุณ
-seeAll=ดูเพิ่มเติม
 turnOnLocation=เปิดตำแหน่งเพื่อดูอาหารในย่านของคุณ
 following=กำลังติดตาม
 rightNow={{place}} · ตอนนี้
@@ -765,7 +764,6 @@ area.posts_other={{count}} โพสต์
 area.topEmpty=วันนี้ยังไม่มีใครแชร์อาหารใกล้ๆ
 area.questionsTitle=คำถามในย่าน
 area.ask=ถามคำถาม
-area.neighboursTitle=อาหารของเพื่อนบ้าน
 area.locationOff=เปิดตำแหน่งเพื่อดูโต๊ะอาหารวันนี้ในย่านของเรา
 [tag]
 count_other={{count}} เมนู

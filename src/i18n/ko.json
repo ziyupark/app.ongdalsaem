@@ -759,7 +759,6 @@
     "global": "글로벌",
     "explore": "탐색",
     "ourArea": "우리 동네",
-    "seeAll": "더 보기",
     "turnOnLocation": "위치를 켜면 우리 동네 요리를 볼 수 있어요",
     "following": "팔로잉",
     "rightNow": "{{place}} · 지금",
@@ -1001,7 +1000,6 @@
       "topEmpty": "오늘 근처에 올라온 요리가 아직 없어요.",
       "questionsTitle": "동네 질문",
       "ask": "질문하기",
-      "neighboursTitle": "이웃 요리",
       "locationOff": "위치를 켜면 우리 동네 식탁을 볼 수 있어요"
     }
   },

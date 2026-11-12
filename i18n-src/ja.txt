@@ -620,7 +620,6 @@ title=コミュニティ
 global=グローバル
 explore=探索
 ourArea=近所
-seeAll=もっと見る
 turnOnLocation=位置情報をオンにすると、近所の料理が見られます。
 following=フォロー中
 rightNow={{place}} · いま
@@ -765,7 +764,6 @@ area.posts_other={{count}}件の投稿
 area.topEmpty=今日はまだ近くで料理が共有されていません。
 area.questionsTitle=ご近所の質問
 area.ask=質問する
-area.neighboursTitle=ご近所さんの料理
 area.locationOff=位置情報をオンにすると、今日のご近所の食卓が見られます。
 [tag]
 count_other=料理{{count}}件

@@ -759,7 +759,6 @@
     "global": "Global",
     "explore": "Explore",
     "ourArea": "Our area",
-    "seeAll": "See more",
     "turnOnLocation": "Turn on location to see dishes from your neighborhood.",
     "following": "Following",
     "rightNow": "{{place}} · right now",
@@ -1001,7 +1000,6 @@
       "topEmpty": "No dishes shared nearby today yet.",
       "questionsTitle": "Neighbourhood questions",
       "ask": "Ask a question",
-      "neighboursTitle": "Neighbours' dishes",
       "locationOff": "Turn on location to see today's table in our area."
     }
   },

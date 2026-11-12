@@ -5,6 +5,7 @@
 ## v1.8.1 — 2026-11-12 (Community Figma를 앱에 맞춤 · 오늘의 투표 삭제)
 
 - Figma: 4.1(19:818)을 **4.1 Community · Explore**로 — 공통 헤더(무드 wash · 로고 · 벨 · 날짜 · 날씨 제목) · 밑줄 탭 Explore · Following · Challenges · 검색 · **Our area**(오늘 인기 · 동네 질문 + Ask · 이웃 요리 · See more) · Holidays 더보기(`chevron-right`). 4.4(183:5713) · Challenges 탭(680:11155, 섹션 순서 This week → Your challenges …)의 상단도 같은 헤더 · 탭으로. 3.1(19:663)을 **3.1 Nearby list**(TopBar "Our area", 탭 · Weather now · TabBar 없음)로. 새 프레임 **4.1b Holidays around the world**(724:11491)
+- **Explore 검색창 삭제**, Our area의 **Neighbours’ dishes(이웃 요리 3개) + See more 삭제** — Figma · 앱 · 문서. 그래서 3.1 Nearby list는 여는 버튼이 없다(화면 코드 · Figma 프레임은 남겨 둠). Explore Together는 더 이상 Our area 요리를 빼지 않는다. 문구 키 `community.seeAll` · `community.area.neighboursTitle` 삭제(9개 언어)
 - **Today’s vote(오늘의 투표) 삭제** — Figma · 앱 · 문서 모두. DB `neighborhood_votes`와 함수는 남겨 두고 쓰지 않음. 투표 문구 키는 9개 언어에서 지움
 - 문서: 위 Figma 프레임을 각 화면 링크로 연결하고 "코드 기준 · Figma 없음" 표시를 뺌. Figma에 남은 차이: Festive Card 배지(Figma = 아이콘, 앱 = 국기), TabBar 컴포넌트(이전 모양)
 

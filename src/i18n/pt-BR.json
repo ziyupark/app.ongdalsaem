@@ -759,7 +759,6 @@
     "global": "Global",
     "explore": "Explorar",
     "ourArea": "Seu bairro",
-    "seeAll": "Ver mais",
     "turnOnLocation": "Ative a localização para ver pratos do seu bairro.",
     "following": "Seguindo",
     "rightNow": "{{place}} · agora",
@@ -1001,7 +1000,6 @@
       "topEmpty": "Ainda não compartilharam pratos perto de você hoje.",
       "questionsTitle": "Perguntas do bairro",
       "ask": "Fazer uma pergunta",
-      "neighboursTitle": "Pratos dos vizinhos",
       "locationOff": "Ative a localização para ver a mesa de hoje no seu bairro."
     }
   },

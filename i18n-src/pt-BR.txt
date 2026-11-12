@@ -629,7 +629,6 @@ title=Comunidade
 global=Global
 explore=Explorar
 ourArea=Seu bairro
-seeAll=Ver mais
 turnOnLocation=Ative a localização para ver pratos do seu bairro.
 following=Seguindo
 rightNow={{place}} · agora
@@ -776,7 +775,6 @@ area.posts_other={{count}} publicações
 area.topEmpty=Ainda não compartilharam pratos perto de você hoje.
 area.questionsTitle=Perguntas do bairro
 area.ask=Fazer uma pergunta
-area.neighboursTitle=Pratos dos vizinhos
 area.locationOff=Ative a localização para ver a mesa de hoje no seu bairro.
 [tag]
 count_one={{count}} prato

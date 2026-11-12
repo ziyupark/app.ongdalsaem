@@ -4,10 +4,10 @@
 
 ## 03 Community · Nearby(Our area · Nearby list) — [섹션 59:2363](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2363)
 
-Community에 **Nearby 탭은 없다**(Explore에 합침, [04-community 4.1](04-community.md)). 내 동네 탐색은 두 군데에서 한다: Explore의 **Our area** 섹션(요약)과, 거기서 여는 **3.1 Nearby list**(전체 목록). Figma 3.1은 이 화면(TopBar "Our area")이다. 3.2–3.6 프레임은 Nearby 탭 시절 상단(탭 · Weather now)이 남아 있지만 본문 규칙은 아래와 같다.
+Community에 **Nearby 탭은 없다**(Explore에 합침, [04-community 4.1](04-community.md)). 내 동네 탐색은 Explore의 **Our area** 섹션(오늘 인기 · 동네 질문)에서 한다. **3.1 Nearby list** 화면은 코드에 남아 있지만 **지금 여는 버튼이 없다**(Our area "See more"와 Explore 검색창을 뺐음). Figma 3.1은 이 화면(TopBar "Our area")이다. 3.2–3.6 프레임은 Nearby 탭 시절 상단(탭 · Weather now)이 남아 있지만 본문 규칙은 아래와 같다.
 
 ### 3.1 Nearby list — [19:663](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-663)
-- 여는 곳: Explore → Our area **"See more"**(그 섹션과 같은 범위 칩이 선택된 채) · Explore 검색창에서 검색어를 보낼 때(그 검색어로). 푸시 화면, TabBar 없음.
+- 여는 곳: **지금 없음**(예전 Explore → Our area "See more" · Explore 검색창). 푸시 화면, TabBar 없음.
 - 블록:
   1. TopBar(Inline) **"Our area"**(뒤로)
   2. **검색 필드** "Dishes, ingredients, moods"(좌우 20, 위 16) — 입력 중에는 아래 대신 **3.4 입력 패널**. 보내면 같은 화면에서 결과(3.5).
@@ -26,11 +26,11 @@ Community에 **Nearby 탭은 없다**(Explore에 합침, [04-community 4.1](04-c
 - 검색 결과 0개: EmptyState(L) `search` → "Nothing for “{q}” yet" → "Try the weather or a mood tag instead." → 칩: 지금 날씨(→ 검색 지우고 Same weather 칩) · #cozy · #comforting · #spicy(→ 그 태그 4.2).
 
 ### 3.4 Search · Typing — [351:7294](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=351-7294)
-- Explore와 3.1의 검색 필드에 공통. 입력 중에는 아래 내용 대신 패널(좌우 20, 위 16, gap 10)이 보인다.
+- 3.1의 검색 필드. 입력 중에는 아래 내용 대신 패널(좌우 20, 위 16, gap 10)이 보인다.
 - **SUGGESTIONS**: `search` · 일치 부분 굵게 · 오른쪽 "{n} near you"(Caption) — 내 도시 게시물 이름에서.
 - **RECENT**: 최근 검색 최대 6개(기기에만 저장), 행 끝 `x`로 하나씩 지우기.
 - 힌트 Caption "Search dishes, ingredients or moods near you. Nothing matches? We’ll suggest weather and mood tags."
-- 이동: 제안 행 / Return → 결과(Explore에서는 3.1을 그 검색어로 엶) · Clear → 입력 비움.
+- 이동: 제안 행 / Return → 결과(같은 화면) · Clear → 입력 비움.
 
 ### 3.5 Search results — [351:8143](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=351-8143)
 - 3.1 레이아웃 그대로, 검색 필드에 검색어. 컨텍스트 "24 dishes near you · best in light rain first". Ask 줄 · 질문 카드는 숨김.

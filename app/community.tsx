@@ -10,7 +10,7 @@ import {
 } from '../src/components/community/Parts';
 import { FeedPost } from '../src/components/home/FeedPost';
 import { ChallengesTab } from '../src/components/community/ChallengesTab';
-import { NearbySearch, OurArea } from '../src/components/community/Nearby';
+import { OurArea } from '../src/components/community/Nearby';
 import { upcomingFestive } from '../src/lib/holidays';
 import { FestiveCard } from '../src/components/community/FestiveCard';
 import { Icon } from '../src/components/Icon';
@@ -124,11 +124,7 @@ function Global() {
   const [story, setStory] = useState<CardDish | null>(null);
   const [tag, setTag] = useState<string | null>(null);
   const [saved, setSavedIds] = useState<Set<string>>(new Set());
-  // Dishes already in "Our area" — Explore Together leaves them out.
-  const [areaIds, setAreaIds] = useState<string[]>([]);
-  const { here } = useHere();
-  const city = here.place?.city ?? here.forecast?.city ?? null;
-  const together = useMemo(() => (explore ? explore.filter((d) => !areaIds.includes(d.id)) : null), [explore, areaIds]);
+  const together = explore;
 
   useFocusEffect(
     useCallback(() => {
@@ -176,10 +172,9 @@ function Global() {
     />
   );
 
-  // Explore: Search → Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
-  // A search opens the full nearby list (app/nearby-feed) with that term; while typing, the 3.4 panel replaces the sections.
+  // Explore: Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
   return (
-    <NearbySearch city={city} onSubmit={(q) => { if (q) router.push({ pathname: '/nearby-feed', params: { q } }); }}>
+    <View>
       {/* Group 88:3081 — p32 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
         <View style={[styles.sectionS, styles.px]}>
@@ -207,8 +202,8 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Our area — today's table: popular today · today's vote · questions + Ask · neighbours' dishes + See more (or turn location on). */}
-      <OurArea onShown={setAreaIds} />
+      {/* Our area — today's table: popular today · questions + Ask (or turn location on). */}
+      <OurArea />
 
       {/* Trending Bites 88:3078 — p32 · gap 6: header → Country Cards 280×180, gap 12. */}
       {countries.length ? (
@@ -262,7 +257,7 @@ function Global() {
           <View style={styles.px}><Text variant="Body/S" color="fg/muted">{t('community.emptyBody')}</Text></View>
         )}
       </View>
-    </NearbySearch>
+    </View>
   );
 }
 

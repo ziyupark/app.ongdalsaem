@@ -13,7 +13,7 @@ Global       + FAB → Share a dish (8.1 Pick photos → 8.2 Details ⇄ 8.2e Tr
 Dish         7.1 Post detail(모든 게시물 상세, 레시피·댓글 포함) ⇄ 7.1b Ate it / 7.2 Comments sheet / 7.3 Report·block (Report · Block → 2.1 + 토스트)
              Feed Post share → 7.4 Share sheet · bookmark = 저장 토글(6.2 Saved)
 Community    탭: Explore(4.1) · Following(4.4) · Challenges
-             4.1 Explore ─┬ 검색 · Our area See more → 3.1 Nearby list ─ 3.4 Search → 3.5 Results (3.3 no results) · 3.6 범위 칩 · 3.2 empty
+             4.1 Explore ─┬ (여는 버튼 없음) 3.1 Nearby list ─ 3.4 Search → 3.5 Results (3.3 no results) · 3.6 범위 칩 · 3.2 empty
                                │            └ Our area · 3.1 Ask → 3.7 Ask the neighborhood → 3.8 Question (위치 꺼짐 3.7b → 9.5)
                                ├ Holidays more → 4.1b Holidays around the world → 4.2(명절 태그)
                                ├ 4.4 Following ─ 4.6 Cooks in your weather · 4.4b empty
@@ -34,10 +34,10 @@ Settings     6.1 ⚙ → 9.1 Settings ─ 9.2 Edit profile ─ 9.2b Choose a pho
 |---|---|---|
 | Home | 지금 날씨·시간에 맞는 오늘의 한 끼 + 주변 식당 | 내 위치(도시/동) |
 | Timer | 주방 타이머 | — |
-| Community | **Explore**(검색 · 오늘의 이야기 · **Our area**(오늘 인기 · 동네 질문 · 이웃 요리) · Trending Bites · 명절 · 트렌딩 태그 · Explore Together) · **Following** · **Challenges** | Global + Local |
+| Community | **Explore**(오늘의 이야기 · **Our area**(오늘 인기 · 동네 질문) · Trending Bites · 명절 · 트렌딩 태그 · Explore Together) · **Following** · **Challenges** | Global + Local |
 | Profile | 내 요리, 저장, 다이어리, 설정 | 나 |
 
-> 탭바는 4개. 내 동네는 Community Explore의 Our area(전체 목록 = 3.1 Nearby list). 태그 · 나라 · 명절 페이지는 Community 하위 템플릿이다.
+> 탭바는 4개. 내 동네는 Community Explore의 Our area. 태그 · 나라 · 명절 페이지는 Community 하위 템플릿이다.
 
 Figma 페이지 구성:
 
@@ -88,7 +88,7 @@ Figma 페이지 구성:
 | 3.5 · 3.6 | 카드 / 검색바 · All | 7.1 / 3.4 · 3.1 |
 | 3.2 | Share a dish | 8.1 |
 | 3.3 | 날씨 칩 / 태그 칩 | 3.1(Same weather) / 4.2 |
-| 4.1 | Following · Challenges 탭 / 검색 보내기 / Story card / Our area: 인기 행 · Ask a question · 질문 카드 · 이웃 타일 · See more / Country Card / Festive 카드 · 더보기 / Trending tags See all (칩 = 같은 화면 전환) / Row 카드 / `bell` | 4.4 · Challenges / 3.1 / 7.1 / 7.1 · 3.7 · 3.8 · 7.1 · 3.1 / **4.3** / 4.2(명절) · 4.1b / 4.2 / 7.1 / 2.8 |
+| 4.1 | Following · Challenges 탭 / Story card / Our area: 인기 행 · Ask a question · 질문 카드 / Country Card / Festive 카드 · 더보기 / Trending tags See all (칩 = 같은 화면 전환) / Row 카드 / `bell` | 4.4 · Challenges / 7.1 / 7.1 · 3.7 · 3.8 / **4.3** / 4.2(명절) · 4.1b / 4.2 / 7.1 / 2.8 |
 | 4.1b | 카드 / 뒤로 | 4.2 / Back |
 | 4.2 | 사진 · 카드 / 탭 · 카테고리 · 끼니 필터 (같은 화면 전환) / 뒤로 / TabBar | 7.1 / — / Back / 탭 |
 | 4.3 | 사진 · 카드 / 도시 탭 · 카테고리 · 끼니 필터 (같은 화면 전환) / 뒤로 / TabBar | 7.1 / — / Back / 탭 |

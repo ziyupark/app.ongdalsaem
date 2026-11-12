@@ -759,7 +759,6 @@
     "global": "Global",
     "explore": "Explorar",
     "ourArea": "Tu barrio",
-    "seeAll": "Ver más",
     "turnOnLocation": "Activa la ubicación para ver platos de tu barrio.",
     "following": "Siguiendo",
     "rightNow": "{{place}} · ahora mismo",
@@ -1001,7 +1000,6 @@
       "topEmpty": "Aún no se han compartido platos cerca hoy.",
       "questionsTitle": "Preguntas del barrio",
       "ask": "Hacer una pregunta",
-      "neighboursTitle": "Platos de tus vecinos",
       "locationOff": "Activa la ubicación para ver la mesa de hoy en tu barrio."
     }
   },

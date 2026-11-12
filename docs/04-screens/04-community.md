@@ -4,7 +4,7 @@
 
 ## 04 Community · Explore — [섹션 59:2365](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2365)
 
-**탭 구성**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following · Challenges** 3개. 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 내용은 Explore의 검색과 "Our area" 섹션, 그리고 별도 화면 3.x Nearby list로 옮김). Figma 4.1 · 4.4 · Challenges 프레임이 이 구성이다(공통 헤더 + 밑줄 탭).
+**탭 구성**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following · Challenges** 3개. 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 동네 내용은 Explore의 "Our area" 섹션으로 옮김. Explore에는 검색창이 없다). Figma 4.1 · 4.4 · Challenges 프레임이 이 구성이다(공통 헤더 + 밑줄 탭).
 
 섹션 안 배치(라벨 기준, 화면 종류별):
 - **MAIN** — 4.1 Community · Explore(탭 화면) · 4.1 Community · Challenges(탭 화면) · 4.1b Holidays around the world. Following(4.4)은 04b.
@@ -24,16 +24,15 @@
 - 블록:
   1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3)
   2. **UnderlineTabs**: **Explore**(active) · Following · Challenges(좌우 20, 탭 간격 24). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음). 본문 150ms 페이드인.
-  3. **검색 필드** "Dishes, ingredients, moods"(좌우 20, 위 16). 입력 중에는 아래 섹션 대신 **3.4 입력 패널**(추천 검색어 · 최근 검색 · 힌트)이 보인다. 검색어를 보내면 **3.1 Nearby list**(`/nearby-feed`)가 그 검색어로 열린다.
-  4. **Story of the day**(p32 20 0, gap 6): SectionHeader "Story of the day" → Story Card 350×400(PhotoCard): 위 줄 Title/L "{요리}, {이름}’s way"(1줄) · `chevron-right` 20(gap 8) → 아래 Statement 캡션(3줄) + Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag(상태 글자 포함) · Acorn Tag. 탭 → 7.1.
+  3. **Story of the day**(p32 20 0, gap 6): SectionHeader "Story of the day" → Story Card 350×400(PhotoCard): 위 줄 Title/L "{요리}, {이름}’s way"(1줄) · `chevron-right` 20(gap 8) → 아래 Statement 캡션(3줄) + Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag(상태 글자 포함) · Acorn Tag. 탭 → 7.1.
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
-  5. **Our area — Today’s table in our area**(아래 별도 설명)
-  6. **Trending Bites**(p32, gap 6): SectionHeader "Trending Bites" → **Country Card** 280×180 가로 스크롤(gap 12): Flag Tag(18, 12) · 아래로 몰아서 Display/M 요리 이름 → Weather Tag · Acorn Tag, 아래 120pt 잉크 70 % 페이드. 탭 → **4.3**(그 나라).
+  4. **Our area — Today’s table in our area**(아래 별도 설명: 오늘 인기 · 동네 질문)
+  5. **Trending Bites**(p32, gap 6): SectionHeader "Trending Bites" → **Country Card** 280×180 가로 스크롤(gap 12): Flag Tag(18, 12) · 아래로 몰아서 Display/M 요리 이름 → Weather Tag · Acorn Tag, 아래 120pt 잉크 70 % 페이드. 탭 → **4.3**(그 나라).
      - 데이터: 최근 14일(없으면 60일) 나라별 도토리 최다 게시물, 도토리순 최대 8개.
-  7. **Festive tables / Holidays around the world**(p32, gap 6): SectionHeader(Overline "FESTIVE TABLES" + 제목 + 오른쪽 `chevron-right` 더보기 → **4.1b**) → **Festive Card** 168×196 가로 스크롤(gap 12), **가까운 명절 8개**. 카드 → 그 명절 태그의 **4.2**.
-  8. **Trending tags**(p32, gap 8): SectionHeader "Trending tags" + "See all"(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row ×2(그 태그 게시물).
-  9. **Explore Together**(p32, gap 8): SectionHeader "Explore Together" + "See all"(5개 이상일 때, 누르면 같은 자리에서 20개까지 펼침) → 칩 **All** · 풍경(Forest · Sea · Lake · Mountain · Countryside · City) → Food Card Row ×4. Our area에 이미 나온 요리는 뺀다. 풍경 칩은 이 섹션만 거른다.
-  10. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
+  6. **Festive tables / Holidays around the world**(p32, gap 6): SectionHeader(Overline "FESTIVE TABLES" + 제목 + 오른쪽 `chevron-right` 더보기 → **4.1b**) → **Festive Card** 168×196 가로 스크롤(gap 12), **가까운 명절 8개**. 카드 → 그 명절 태그의 **4.2**.
+  7. **Trending tags**(p32, gap 8): SectionHeader "Trending tags" + "See all"(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row ×2(그 태그 게시물).
+  8. **Explore Together**(p32, gap 8): SectionHeader "Explore Together" + "See all"(5개 이상일 때, 누르면 같은 자리에서 20개까지 펼침) → 칩 **All** · 풍경(Forest · Sea · Lake · Mountain · Countryside · City) → Food Card Row ×4. 풍경 칩은 이 섹션만 거른다.
+  9. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
 - Food Card Row: 썸네일 · Overline "끼니 · 기온°" · 제목 · "핸들 · 도시 · 시간" · 북마크(저장 토글).
 - 순서는 항상 Story → Our area → Trending Bites → Holidays → Trending tags → Explore Together(데이터가 비어도 섹션 순서가 바뀌지 않도록 넓혀서 채움).
 
@@ -45,8 +44,6 @@
        - 규칙: 오늘 0시(현지) 이후 공개 게시물을 **요리 이름으로 묶어**(대소문자·공백 무시) 개수순(같으면 도토리 합) 상위 3개. 대표 게시물 = 그 이름 중 도토리 최다(같으면 최신). 범위: 내 칸(geohash 5자리)과 주변 칸 → 이름이 0–1개면 같은 구 → 같은 도시.
      - **Neighbourhood questions**(Title/S): **Question Card**(radius 2xl) 3–5개 → Outline M `message-circle` **"Ask a question"** → 3.7. 카드 → 3.8, Me too = 그 자리 토글.
        - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다(최대 5). 넓혀서 가져온 질문에는 그 범위(구 · 도시 · 질문 장소) 라벨이 붙는다.
-     - **Neighbours’ dishes**(Title/S) → Dish Tile(radius 2xl) **3개** 가로 스크롤(좌우 20, gap 16). 3개 미만이면 같은 구 → 같은 도시 → 같은 날씨(최신) 순으로 채우고, 채운 타일에는 장소 라벨(구 · 도시 · "Same weather"). 같은 날씨 요리를 먼저.
-  3. Outline M **"See more"**(좌우 20, 위 8) → **3.1 Nearby list**(같은 범위 칩으로 열림: 위치 있으면 Within 1 km, 아니면 구, 아니면 Same weather).
 - 위치가 꺼져 있으면: 카드(bg/subtle + border/default, radius 2xl, padding 20, 가운데) `map-pin` 22 fg/secondary · Body/M fg/secondary "Turn on location to see today’s table in our area." · Button M "Allow location"(권한 요청 → 도시 저장).
 
 ### 4.1b Holidays around the world — [724:11491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=724-11491)
@@ -150,7 +147,7 @@
 | 기능 | 무엇 | 들어가는 곳 | 쌓이는 곳 |
 |---|---|---|---|
 | **Tables** | 주제로 모이는 공간(#SoloMeals · #RainyDayFood · #KidsTable · #PlantBased · #CampCooking · #LunchBox). 운영자가 만들고 누구나 Join | 4.4 Browse tables · 4.2 태그 페이지(구현 시 "Open table") | 들어간 테이블 게시물이 **Following**에 |
-| **Neighborhood questions** | 동네 사람에게 짧게 묻기(≤200자, 7일 뒤 닫힘) | 3.1 Ask 줄 | 3.1 피드 · 3.8 상세 |
+| **Neighborhood questions** | 동네 사람에게 짧게 묻기(≤200자, 7일 뒤 닫힘) | 4.1 Our area "Ask a question" | 4.1 Our area · 3.8 상세 |
 | **Food challenges** | 기간 · 참여자 · 사진 인증 | Community **Challenges 탭** | 4.10 Latest entries |
 
 ### 4.1 Community · Challenges(탭) — [680:11155](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=680-11155)

@@ -749,7 +749,6 @@
     "global": "全球",
     "explore": "探索",
     "ourArea": "你附近",
-    "seeAll": "查看更多",
     "turnOnLocation": "開啟定位，就能看到你附近的料理。",
     "following": "追蹤中",
     "rightNow": "{{place}} · 現在",
@@ -989,7 +988,6 @@
       "topEmpty": "今天附近還沒有人分享料理。",
       "questionsTitle": "附近的提問",
       "ask": "提問",
-      "neighboursTitle": "鄰居的料理",
       "locationOff": "開啟定位，就能看到今天附近的餐桌。"
     }
   },

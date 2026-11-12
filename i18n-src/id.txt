@@ -620,7 +620,6 @@ title=Komunitas
 global=Global
 explore=Jelajahi
 ourArea=Sekitarmu
-seeAll=Lihat lainnya
 turnOnLocation=Aktifkan lokasi untuk melihat masakan di sekitarmu.
 following=Diikuti
 rightNow={{place}} · saat ini
@@ -765,7 +764,6 @@ area.posts_other={{count}} unggahan
 area.topEmpty=Belum ada masakan yang dibagikan di sekitarmu hari ini.
 area.questionsTitle=Pertanyaan sekitar
 area.ask=Ajukan pertanyaan
-area.neighboursTitle=Masakan tetangga
 area.locationOff=Aktifkan lokasi untuk melihat meja hari ini di sekitarmu.
 [tag]
 count_other={{count}} masakan
