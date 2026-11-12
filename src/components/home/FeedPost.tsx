@@ -21,7 +21,7 @@ export type FeedPostData = {
 };
 
 /**
- * Feed Post 119:601 (390 wide, padding-bottom 24): Header (avatar 32 · name/meta · more) → Media 390×440 radius 0
+ * Feed Post 119:601 (390 wide, padding-bottom 24): Header (avatar 32 · name/meta · more) → Media 370×417 radius 32
  * (Weather Tag XL with condition top-left 16 · Photo Counter bottom-right 16) → Actions (acorn · comment · share ··· save) → Caption.
  */
 export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComments, onShare, onMore, onAcorn, onSave }: {
@@ -49,11 +49,15 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
       <View style={styles.header}>
         <Pressable accessibilityRole="button" accessibilityLabel={post.name} onPress={onAuthor} disabled={!onAuthor} style={styles.author}>
           <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle') }]}>
-            {post.avatar ? <Image source={post.avatar} style={StyleSheet.absoluteFill} contentFit="cover" /> : null}
+            {post.avatar ? (
+              <Image source={post.avatar} style={StyleSheet.absoluteFill} contentFit="cover" />
+            ) : (
+              <Text variant="Caption Strong" color="fg/accent">{post.name.charAt(0).toUpperCase()}</Text>
+            )}
           </View>
           <View style={styles.who}>
-            <Text variant="Body/M Strong" numberOfLines={1}>{post.name}</Text>
-            <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{post.meta}</Text>
+            <Text variant="Body/S Strong" numberOfLines={1}>{post.name}</Text>
+            <Text variant="Caption" color="fg/muted" numberOfLines={1}>{post.meta}</Text>
           </View>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={t('home.more')} hitSlop={space[8]} onPress={onMore}>
@@ -98,14 +102,14 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
 const styles = StyleSheet.create({
   post: { paddingBottom: space[24] },
   header: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingLeft: space[20], paddingRight: space[16], paddingVertical: space[12] },
-  avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden' },
+  avatar: { width: 32, height: 32, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   author: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[10] },
-  who: { flex: 1, gap: space[2] },
-  media: { height: 440, overflow: 'hidden' }, // Media 119:620 — square corners (radius 0)
+  who: { flex: 1, gap: space[2] }, // Figma gap 1 → nearest token
+  media: { height: 417, marginHorizontal: space[10], borderRadius: radius['2xl'], overflow: 'hidden' }, // Media 119:620 — 370×417, radius 32
   tagTL: { position: 'absolute', left: space[16], top: space[16] },
   counterBR: { position: 'absolute', right: space[16], bottom: space[16] },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: space[16], paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   spacer: { flex: 1 },
-  caption: { paddingHorizontal: space[20], gap: space[4] },
+  caption: { paddingHorizontal: space[20] },
 });
