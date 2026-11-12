@@ -682,7 +682,6 @@ allHolidays=Lihat semua hari raya
 today=Hari ini
 tomorrow=Besok
 story=Cerita hari ini
-storyTitle={{dish}} ala {{name}}
 latestEverywhere=Terbaru dari mana-mana
 holidays.seollal.name=Seollal
 holidays.seollal.food=Tteokguk, jeon, galbi-jjim

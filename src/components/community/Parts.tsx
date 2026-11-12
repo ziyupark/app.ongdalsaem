@@ -203,7 +203,7 @@ export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress }: { dis
 }
 
 /** Photo card with Card scrim (Country Card 280×180 r32 / Story Card 350×400). */
-/** `scrim`: 'story' = top + bottom shade (Story Card); 'bottom' = 120 pt fade to ink at the bottom only (Country Card). */
+/** `scrim`: 'story' = bottom half fades to ink (Story Card); 'bottom' = 120 pt fade to ink at the bottom only (Country Card). */
 export function PhotoCard({ photo, width, height, children, onPress, label, style, scrim = 'story' }: { photo: string; width: number; height: number; children: ReactNode; onPress: () => void; label: string; style?: StyleProp<ViewStyle>; scrim?: 'story' | 'bottom' }) {
   const { color } = useTheme();
   const ink = color('static/ink');
@@ -213,7 +213,7 @@ export function PhotoCard({ photo, width, height, children, onPress, label, styl
       {scrim === 'bottom' ? (
         <LinearGradient colors={[withAlpha(ink, 0), withAlpha(ink, 0.7)]} style={styles.bottomScrim} pointerEvents="none" />
       ) : (
-        <LinearGradient colors={[withAlpha(ink, 0.45), withAlpha(ink, 0), withAlpha(ink, 0), withAlpha(ink, 0.82)]} locations={[0, 0.3, 0.5, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
+        <LinearGradient colors={[withAlpha(ink, 0), withAlpha(ink, 0.82)]} locations={[0.5, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
       )}
       {children}
     </Pressable>

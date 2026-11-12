@@ -1,5 +1,5 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Send, Cookie, Moon, Plus, Star, Sun, type LucideIcon } from 'lucide-react-native';
+import { Send, Cookie, Moon, Plus, Star, Sun, type LucideIcon } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -175,14 +175,11 @@ function Global() {
         <View style={[styles.sectionS, styles.px]}>
           <SectionHeader title={t('community.story')} />
           <PhotoCard photo={story.photo} width={0} height={400} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
-            {/* Top: title (Title/L, 1 line) · chevron-right 20, gap 8. */}
-            <View style={styles.storyTop}>
-              <Text variant="Title/L" color="fg/on-photo" numberOfLines={1} style={styles.flex}>{t('community.storyTitle', { dish: story.name, name: story.creator.name })}</Text>
-              <Icon icon={ChevronRight} size={20} color="fg/on-photo" />
-            </View>
             <View style={styles.storyFoot}>
               <View style={styles.storyBody}>
                 <View style={[styles.flex, styles.storyText]}>
+                  {/* Dish name — Overline, 1 line, right above the statement. */}
+                  <Text variant="Overline" color="fg/on-photo-secondary" numberOfLines={1}>{story.name}</Text>
                   {story.description ? <Text variant="Statement" color="fg/on-photo" numberOfLines={3}>{story.description}</Text> : null}
                   <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{[story.creator.name, story.city, timeAgo(story.createdAt, t)].filter(Boolean).join(' · ')}</Text>
                 </View>
@@ -423,10 +420,9 @@ const styles = StyleSheet.create({
   countryFlag: { position: 'absolute', left: 18, top: space[12] },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
-  story: { width: '100%', padding: space[24], justifyContent: 'space-between' },
+  story: { width: '100%', padding: space[24], justifyContent: 'flex-end' },
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
-  storyTop: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   storyText: { gap: space[8] },
   challenge: { width: 220, height: 252, borderRadius: radius.xl, overflow: 'hidden', padding: space[16] },
   challengeTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

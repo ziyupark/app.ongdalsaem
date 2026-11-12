@@ -682,7 +682,6 @@ allHolidays=ดูเทศกาลทั้งหมด
 today=วันนี้
 tomorrow=พรุ่งนี้
 story=เรื่องราวประจำวัน
-storyTitle={{dish}} สไตล์ {{name}}
 latestEverywhere=ใหม่ล่าสุดจากทุกที่
 holidays.seollal.name=ซอลลัล
 holidays.seollal.food=ต็อกกุก จอน คาลบีจิม

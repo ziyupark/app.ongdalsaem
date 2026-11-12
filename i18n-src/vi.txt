@@ -682,7 +682,6 @@ allHolidays=Xem tất cả ngày lễ
 today=Hôm nay
 tomorrow=Ngày mai
 story=Câu chuyện hôm nay
-storyTitle={{dish}} theo cách của {{name}}
 latestEverywhere=Mới nhất từ khắp nơi
 holidays.seollal.name=Seollal
 holidays.seollal.food=Tteokguk, jeon, galbi-jjim

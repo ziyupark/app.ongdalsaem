@@ -682,7 +682,6 @@ allHolidays=祝祭日をすべて見る
 today=今日
 tomorrow=明日
 story=今日のストーリー
-storyTitle={{name}}さん流の{{dish}}
 latestEverywhere=世界中の新着
 holidays.seollal.name=ソルラル
 holidays.seollal.food=トックク、チヂミ、カルビチム

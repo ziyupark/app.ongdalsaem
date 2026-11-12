@@ -692,7 +692,6 @@ allHolidays=Ver todos os feriados
 today=Hoje
 tomorrow=Amanhã
 story=História do dia
-storyTitle={{dish}} do jeito de {{name}}
 latestEverywhere=Novidades de todo lugar
 holidays.seollal.name=Seollal
 holidays.seollal.food=Tteokguk, jeon, galbi-jjim
