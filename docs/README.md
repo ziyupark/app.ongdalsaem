@@ -7,7 +7,8 @@
   - 노드 링크 = 파일 URL + `?node-id=<id의 ':'를 '-'로>`
 - **기준 기기**: iPhone 390 × 844 pt · 라이트 모드 기본(다크 모드 토큰 준비됨)
 - **언어**: 앱 기본 언어 **English**(Figma 화면 문구 = 영어). **다국어 앱** — 1차 English · Korean, 기기 언어를 따르고 9.6에서 바꿀 수 있다. 문구는 i18n 키로 분리한다([05-behavior §9](05-behavior.md)).
-- **버전**: 앱 1.0.0 · 디자인 v1.2(기준선 v1.0) — 이력은 [CHANGELOG](CHANGELOG.md)
+- **버전**: 앱 1.0.0 · 문서 v1.8(기준선 v1.0) — 이력은 [CHANGELOG](CHANGELOG.md)
+- **"코드 기준" 표시**: Figma보다 앱에서 먼저 바뀐 화면·규칙은 본문에 "코드 기준"이라고 적었다. 그 부분은 **문서 = 앱**이고 Figma 프레임은 이전 디자인이다.
 
 ## 문서 구성
 
@@ -24,11 +25,11 @@
 
 | 화면 파일 | 화면 |
 |---|---|
-| [00-launch](04-screens/00-launch.md) | 1.1 Splash · 1.1b Welcome letter |
-| [01-sign-in-setup](04-screens/01-sign-in-setup.md) | 1.2 Sign in(Apple · Google) · 1.3 Profile setup · 1.4 Location · STATES |
+| [00-launch](04-screens/00-launch.md) | 1.1 Splash · 1.1b Welcome(앱 소개) |
+| [01-sign-in-setup](04-screens/01-sign-in-setup.md) | 1.2 Sign in(Apple · Google) · 1.3 Profile setup · 1.3b Taste · 1.4 Location · 1.5 Daily pick time · STATES |
 | [02-home](04-screens/02-home.md) | 2.1 Home(2.2 · 2.3 = 날씨별 예시) · 2.4 · 2.5–2.7 상태 · 2.8 Notifications |
-| [03-nearby](04-screens/03-nearby.md) | 3.1 Community · Nearby · 3.2–3.3 상태 · 3.4 Search · 3.5 Results · 3.6 Within 1 km · 3.7 Ask (3.7b 위치 꺼짐) · 3.8 Question |
-| [04-community](04-screens/04-community.md) | **Global**(4.1 · 템플릿 4.2 Tag(명절 포함) · 4.3 Country) · **Following**(4.4 · 4.4b · 4.4c · 4.5 · 4.6) · **Tables · Challenges**(4.7 · 4.8 · 4.8b · 4.10 · 4.10b · 4.10c · 4.9 · 2.1c) |
+| [03-nearby](04-screens/03-nearby.md) | 3.1 Nearby list(Our area 전체 목록) · 3.2–3.3 상태 · 3.4 Search · 3.5 Results · 3.6 범위 칩 · 3.7 Ask (3.7b 위치 꺼짐) · 3.8 Question |
+| [04-community](04-screens/04-community.md) | **Explore**(4.1 + Our area · 4.1b Holidays · 템플릿 4.2 Tag(명절 포함) · 4.3 Country, v2) · **Following**(4.4 · 4.4b · 4.4c · 4.5 · 4.6 · 4.11 Messages) · **Tables · Challenges**(4.7 · 4.8 · 4.8b · 4.10 · 4.10b · 4.10c · 4.9 · 2.1c) |
 | [05-timer](04-screens/05-timer.md) | 5.1 Kitchen timer · 5.2 Timer finished |
 | [06-profile](04-screens/06-profile.md) | 6.1 Dishes · 6.2 Saved · 6.3 Diary · 6.4 Offline · 6.4b Offline post |
 | [07-dish](04-screens/07-dish.md) | 7.1 Post detail · 7.1b Ate it · 7.2 Comments · 7.3 Report / block · 7.4 Share |
@@ -49,7 +50,7 @@
 
 1. **이름**: 앱 이름은 항상 소문자 `ongdalsaem`. 옛 이름(Hungi · Kozycast 등)은 코드·문구·식별자 어디에도 쓰지 않는다. 프로젝트 폴더명 `03_ongdalsam`은 그대로 둔다.
 2. **컬러**: 시맨틱 토큰([01-foundations §2.1](01-foundations.md))만 쓴다. **보라색 계열 금지.** 하드코딩 HEX 대신 테마 변수(`var(--bg-default)` 등).
-3. **폰트**: Display = **Fraunces**(serif), UI 전부 = **Outfit**(sans), 손글씨(1.1b 편지 전용) = **Gaegu**. **Noto Sans KR**은 한·중·일 글자 표시용(9.6의 언어 자체 표기, 한국어 로케일, 사용자가 쓴 한글). 크기·행간·자간은 [§2.6 타이포그래피](01-foundations.md) 그대로.
+3. **폰트**: Display = **Fraunces**(serif), UI 전부 = **Outfit**(sans), 손글씨 = **Gaegu**(지금 쓰는 화면 없음). **Noto Sans KR**은 한·중·일 글자 표시용(9.6의 언어 자체 표기, 한국어 로케일, 사용자가 쓴 한글). 크기·행간·자간은 [§2.6 타이포그래피](01-foundations.md) 그대로.
 4. **로고**: 텍스트 로고 `ongdalsaem`만. 심볼은 **도토리(Acorn Symbol)**만.
 5. **TabBar · FAB**: 탭은 4개(Home · Community · Timer · Profile). 공유 버튼(FAB)은 `+` 아이콘만, 라벨 없음, **TabBar 안에 포함된 한 묶음**(오른쪽 끝). 스크롤 다운 때 바와 함께 작아진다.
 6. **지도**: 앱 안에 지도 화면이 없다. 2.4 식당 카드 → 기기의 지도 앱으로 길찾기.
@@ -67,9 +68,9 @@
 1. 토큰([01-foundations](01-foundations.md)) → 테마 파일·폰트 로드.
 2. 기본 컴포넌트: Button · IconButton · Chip · Tab · Input · Switch · Radio · Avatar · Badge · Toast · ListRow · SectionHeader · TopBar · Auth Button.
 3. TabBar(Expanded/Collapsed + 스크롤 감지) + CreateFAB + 탭 라우팅.
-4. 카드: Weather Card(+ Refresh) · Mood Prompt · Story · Food(Grid/Row) · Country · Pick · Timer · Feed Post · Dish Tile · Weather Tag / Acorn Tag.
+4. 카드: Weather Card(+ Refresh) · Story · Food(Grid/Row) · Country · Pick · Timer · Feed Post · Dish Tile · Weather Tag / Acorn Tag.
 5. Launch·온보딩(00–01) → Home 2.1 → 상태 2.5/2.6/2.7 → 2.4.
-6. Community(Global · Nearby · Following) → Timer → Profile → Dish → Share → Settings.
+6. Community(Explore · Following · Challenges) → Timer → Profile → Dish → Share → Settings.
 7. 화면마다 Figma 링크의 `get_screenshot`과 비교 검수.
 
 ## 문서 갱신 규칙

@@ -50,19 +50,18 @@ interface Settings { appearance: 'system'|'light'|'dark'; tempUnit: 'C'|'F';   /
   /* marketing: v1 미사용(광고 없음) — DB 컬럼만 있음 */ }
 // 측정 단위·식단 선호 설정은 두지 않는다.
 // DB: supabase/migrations/20261030000000_dish_type_privacy_language.sql — foods(dish_type · place_name(예약) · allow_comments · region_precision) · profiles(언어 · 공개 기본값 · 메시지 · 위치)
-interface PickRequest { lat: number; lng: number; at: string; moodText?: string;   // Mood Prompt 원문(저장 안 함)
-  exclude?: string[] }                             // New picks: 이번 세션에 보여 준 dish id
-interface PickResponse { slots: { meal: Meal; dishId?: string }[]; todaysPick: string;
-  moodSignal?: { moods: string[]; traits: string[] }; label: string } // label 예: 'rainy 12° · “tired, want something warm”'
+// Today's pick · 끼니 슬롯은 서버 API 없이 앱이 공개 게시물 풀에서 고른다(src/services/recommend.ts, 규칙 = 05-behavior §6.1 · §6.2). Mood Prompt(기분 입력)는 없다.
+// 취향: profiles.favorite_tags(text[]) — 1.3b Taste에서 저장, Today's pick 취향 보너스에 사용
+// 매일 추천 알림 시간: 기기 prefs.pickTime("HH:MM", 기본 07:30, 1.5에서 정함) — 푸시 토큰과 함께 서버에 저장(20261108000000_daily_pick_push.sql)
 interface Notification { id: string; type: 'acorn'|'comment'|'follow'|'daily-pick'|'timer'|'moderation';
   actorIds: string[];            // 묶인 사람들(도토리 "A and N others")
   dishId?: string; commentId?: string; threadId?: string; timerId?: string;
   text: string; createdAt: string; readAt?: string }   // 30일 보관
-// ── v1 미사용(DM 제거 — 99-removed-in-v1) ──
+// ── 메시지(DM) — 4.11 · 4.5 Message에서 씀 ──
 interface Message { id: string; threadId: string; senderId: string; text: string; createdAt: string; seenAt?: string }
 interface Thread { id: string; memberIds: [string, string]; requestFor?: string; lastMessageAt: string } // requestFor = 아직 수락(답장) 안 한 쪽
 // DB: supabase/migrations/20261029000000_follows_and_messages.sql — follows · message_threads · messages (+ start_thread(other) RPC, 차단 시 팔로우·대화 차단)
-// ── v1 미사용(컬렉션 제거, 저장 = saves만) ──
+// ── 컬렉션 — 6.2 Saved에서 씀(만들기 · 담기 · 길게 눌러 삭제) ──
 interface Collection { id: string; ownerId: string; name: string; dishIds: string[]; createdAt: string; updatedAt: string } // 7.6 · 6.2, "All saved"는 saves 전체(가상)
 // DB: supabase/migrations/20261029010000_save_collections.sql — collections(이름 1–30자, 주인별 중복 금지) · collection_items(collection × save, 저장 해제 시 함께 삭제), 본인만 읽기/쓰기. 날씨 그룹은 저장하지 않고 foods 날씨로 계산
 interface Report { id: string; reporterId: string; foodId?: string; commentId?: string; reportedUserId?: string;
@@ -101,9 +100,18 @@ interface SupportTicket { id: string; userId: string; topic: 'bug'|'account'|'re
   appVersion: string; os: string; language: string;            // 자동 첨부
   status: 'open'|'answered'|'closed'; createdAt: string; closedAt?: string } // 9.8a — 처리 완료 후 3년 보관
 // DB: supabase/migrations/20261105010000_support_and_marketing.sql — support_tickets(본인만 insert · select) · (v1 미사용) profiles.marketing_ads · marketing_night_ads · marketing_consented_at(야간은 광고 동의가 있어야 켤 수 있음) · marketing_consent_log(바꿀 때마다 자동 기록, 9.9e "You agreed on …"과 2년 재확인용)
+interface NeighborhoodVote { userId: string; cell: string;   // 5자리 geohash(내 칸)
+  voteDate: string;                                // 현지 날짜 YYYY-MM-DD, 한 사람 하루 1표(unique user × date)
+  mood: 'rain'|'snow'|'clear'|'grey';              // 질문 계열(지금 날씨 → 4계열)
+  choice: string }                                 // '<계열>.<보기>'(예: 'rain.stew') 또는 직접 쓴 답(1–40자)
+// DB: supabase/migrations/20261112000000_neighborhood_votes.sql — neighborhood_votes(본인 insert만, 직접 읽기 불가) · geohash_cells_around(cell)(주변 9칸) · neighborhood_vote_results(cell, date)(그 칸과 주변 8칸의 보기별 수 + 내 표 여부만 반환) — 4.1 Our area "Today's vote"
+// DB: supabase/migrations/20261111000000_nearby_questions_wide.sql — nearby_questions_wide(geohash)(한 단계 넓은 3자리 칸, 규칙은 nearby_questions와 같음) — Our area 질문 채우기
+// Our area "Popular today"는 테이블 없이 foods(오늘 0시 이후 · geohash6 · neighborhood · city)를 앱에서 이름별로 묶어 계산
+// 냉장고 메모(6.3 Fridge)는 기기에만 저장(AsyncStorage, { name, zone: 'fridge'|'freezer', addedAt }) — DB 없음. "What you can cook now"는 foods.ingredients가 있는 최신 공개 게시물 200개와 비교
+// 주방 타이머(5.x)도 기기에만 저장
 interface Follow { followerId: string; followeeId: string; createdAt: string }
 interface Country { code: string; name: string; city: string; localTime: string; mood: WeatherMood;
   tempC: number; dishCount7d: number }
 ```
 
-> **v1에서 쓰지 않는 DB**(테이블은 남겨 둠):  `message_threads` · `messages` · `start_thread`, `collections` · `collection_items`, `profiles.message_policy`, 마케팅 컬럼 · `marketing_consent_log`. 다시 켤 때는 [99-removed-in-v1](04-screens/99-removed-in-v1.md).
+> **v1에서 쓰지 않는 DB**(테이블은 남겨 둠): 마케팅 컬럼 · `marketing_consent_log`. (`message_threads` · `messages` · `start_thread` · `profiles.message_policy` · `collections` · `collection_items`는 앱이 다시 쓴다.) 다시 켤 때는 [99-removed-in-v1](04-screens/99-removed-in-v1.md).

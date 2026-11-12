@@ -27,7 +27,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 |---|---|---|---|
 | **Button** | 6:192 | Label T · Show icon B · Icon I · Variant V[Primary/Secondary/Outline/Ghost/Kick/Destructive/Glass/White] · Size V[L/M/S] · State V[Default/Disabled] | 높이 L 56 / M 46 / S 36, radius full. Primary = bg/primary + fg/on-primary. Glass = 반투명 흰색 + blur(사진 위). **Label 텍스트는 모든 Variant(Glass · White 포함)에서 `Label` prop에 연결** — 인스턴스에서 Label만 바꾸면 된다 |
 | **IconButton** | 6:217 | Icon I · Style V[Solid/Soft/Glass/Ghost] · Size V[L/M] · **State V[Default/Pressed]** | L 48, M 40 원형. Soft = bg/subtle + 테두리. **Pressed** = 누른 상태(하트 variant — v1에서는 쓰지 않음, 반응은 도토리 하나). Pressed variant에는 Icon 교체 속성이 없다 |
-| **CreateFAB** | 12:193 | State V[Default/Collapsed] · Label T(숨김) | **TabBar 안에 포함**(화면에 따로 놓지 않음). Default **56px 원**, Collapsed **42px 원**(`+` 20, 선 1.5), `+` 아이콘만. 배경 bg/accent-subtle `#FFF3E6`, 그림자 = **TabBar와 동일** drop-shadow x0 y10 blur 30 spread 0 `#1A1A21` α0.08, `+` 28px 선 2px border/focus `#EE8B3D`. Label "Share a dish"는 숨김 레이어(접근성 라벨로 사용). 탭 → 8.1 |
+| **CreateFAB** | 12:193 | State V[Default/Collapsed] · Label T(숨김) | **앱 = §3.1 Liquid Glass(62 → 48 원, bg/kick, 흰 `+`)**. 아래는 Figma 값: **TabBar 안에 포함**(화면에 따로 놓지 않음). Default **56px 원**, Collapsed **42px 원**(`+` 20, 선 1.5), `+` 아이콘만. 배경 bg/accent-subtle `#FFF3E6`, 그림자 = **TabBar와 동일** drop-shadow x0 y10 blur 30 spread 0 `#1A1A21` α0.08, `+` 28px 선 2px border/focus `#EE8B3D`. Label "Share a dish"는 숨김 레이어(접근성 라벨로 사용). 탭 → 8.1 |
 | Acorn Button(이름 유지, 역할 = **I ate this 버튼**) | 12:309 | State V[Default/Eaten] · Size V[Bar/Compact] | **기록 버튼**: `utensils` + "I ate this · 12" 토글 → Eaten = "You ate this · 13"(bg/accent-subtle, `utensils` fg/accent). 7.1 Action bar에만 쓴다. 도토리(반응)와 다른 값 — 내 다이어리에 "만들었어요/먹었어요" 기록 + 후기. Compact(도토리+숫자)는 v1 미사용 |
 | **Action Count** | [288:7682](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=288-7682) | Type V[**Acorn/Acorn given**/Comment · Like/Liked(v1 미사용)] · Count T | 아이콘 24 + 숫자(Body/S Strong), gap 6. **Acorn = `acorn`(라인) fg/default · Acorn given = `acorn-color`(컬러)** · Comment = `message-circle`. Feed Post Actions에 사용 |
 | **Auth Button** | [201:801](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=201-801) | Provider V[Apple/Google] | 소셜 로그인 버튼, 350×46(FILL), radius full, padding 0 16, 가운데 정렬 [로고 20 + 제목 Outfit Medium 20/24], 로고–제목 간격 Apple 6 · Google 10. 아래 **브랜드 규정**을 지킨다 |
@@ -52,12 +52,12 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 
 | 컴포넌트 | ID | Props (T=text, B=boolean, I=instance swap, V=variant) | 구현 메모 |
 |---|---|---|---|
-| **Input** | 6:337 | Label T · Value T · Helper T · Show helper B · State V[Default/Focus/Filled/Error] | 라벨(Body/S Strong) → gap 6 → 필드 높이 56, radius 20, bg/subtle, padding 0 16, 값 Body/M(Default = 자리표시 fg/muted) → helper Caption fg/muted. 테두리: Default · Filled = 1px border/default, Focus = 2px border/focus, Error = 1px fg/destructive + helper fg/destructive |
+| **Input** | 6:337 | Label T · Value T · Helper T · Show helper B · State V[Default/Focus/Filled/Error] | 라벨(Body/S Strong, 앱에서는 생략 가능 — 냉장고 메모 · 투표 직접 입력) → gap 6 → 필드 높이 56(앱에서 바꿀 수 있음, 냉장고 메모 48), radius 20, bg/subtle, padding 0 16, 값 Body/M(Default = 자리표시 fg/muted) → helper Caption fg/muted. 테두리: Default · Filled = 1px border/default, Focus = 2px border/focus, Error = 1px fg/destructive + helper fg/destructive |
 | **Calorie Field** | [325:7926](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=325-7926) | State V[Filled/Empty/Focus] · Value T · Show helper B | 칼로리 입력: Head = Label "Calories (total)" + Hint "· optional (a rough estimate)"(Caption fg/muted) → Field **높이 48**(Comment Composer와 같음), radius full, bg/subtle, 1px border/default(Focus 1.5 border/focus), `flame` 18 · 숫자 Body/M · 단위 "kcal" Body/M Strong fg/muted → Helper(Show helper, **기본 Off** — 추정 안내는 Hint에 합침). 8.2 · 8.4 · 8.4b |
 | Search Field | 132:4454 | Clear V[No/Yes] · 값 T | 350×48 검색창(3.1, 3.2, 3.3, 9.6, 9.7). Clear=Yes = 오른쪽 지우기 아이콘 |
-| **Mood Prompt** | [329:389](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=329-389) | State V[Empty/Typed] | 한 줄 기분 입력 350×48(Comment Composer 입력칸과 같은 높이·pill): `sparkles` 18 fg/accent · 텍스트 Body/M(1줄 말줄임, Empty = "How do you feel right now?" fg/muted) · Send 36 원(Empty bg/muted · Typed bg/primary, `arrow-down` 18). Typed = 1.5px border/focus. 홈 Weather card 아래. 동작 [§6.2](05-behavior.md) |
-| **Chip** | 6:245 | Label T · Icon I · State V[Default/Selected/Glass] · Icon V[Yes/No] | 높이 36, radius full. Selected = bg/primary + 흰 글자 |
-| Tab | 6:252 | Label T · Active V[true/false] | 세그먼트/언더라인 탭 |
+| **Mood Prompt** | [329:389](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=329-389) | State V[Empty/Typed] | 한 줄 기분 입력 350×48(Comment Composer 입력칸과 같은 높이·pill): `sparkles` 18 fg/accent · 텍스트 Body/M(1줄 말줄임, Empty = "How do you feel right now?" fg/muted) · Send 36 원(Empty bg/muted · Typed bg/primary, `arrow-down` 18). Typed = 1.5px border/focus. **앱에서 쓰지 않음**(홈에 기분 입력 없음) |
+| **Chip** | 6:245 | Label T · Icon I · State V[Default/Selected/Glass] · Icon V[Yes/No] | 높이 36, radius full. Selected = bg/primary + 흰 글자. 테두리 색을 바꿀 수 있음(냉장고 메모: 7일 넘은 재료 fg/accent) |
+| Tab | 6:252 | Label T · Active V[true/false] | 세그먼트/언더라인 탭. 탭 화면 · 4.2 · 4.3은 **UnderlineTabs**(§3.1c), 이 컴포넌트 모양(24×3 bg/primary)은 그 밖의 탭 줄 |
 | Switch | 6:257 | On V[true/false] | On = bg/kick 트랙 |
 | Radio | 41:515 | Selected V[true/false] | |
 | Radio Row | 132:4897 | Label T | 7.3 신고 사유 행(Radio + 텍스트) |
@@ -70,7 +70,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 |---|---|---|---|
 | StatusBar | 6:286 | Tone V[Dark/Light] | 시스템 영역(44). 구현 시 SafeArea |
 | **TopBar** | 12:224 | Title T · Type V[Large/Inline/Overlay] · Show action B(기본 On) | Large = 좌측 대형 타이틀(탭 루트), Inline = 뒤로가기+가운데 타이틀, Overlay = 사진 위 Glass 버튼. **Show action Off** = 오른쪽 버튼만 숨기고 자리(Inline 40×40)는 유지해 제목이 가운데에 머문다. 기능 없는 `more`는 두지 않는다: 1.3 · 1.4 · 8.2a · 8.2d · 9.x는 Off |
-| **TabBar** | 12:182 | Active V[Home/Community/Timer/Profile] · State V[Expanded/Collapsed] | §3.1 참조. **CreateFAB 포함**(Glass 바 + FAB 한 묶음). Glass bar 그림자 drop-shadow x0 y10 blur 30 `#1A1A21` α0.08 (CreateFAB과 동일) |
+| **TabBar** | 12:182 | Active V[Home/Community/Timer/Profile] · State V[Expanded/Collapsed] | 앱은 §3.1(Liquid Glass) 기준. **CreateFAB 포함**(Glass 바 + FAB 한 묶음). Glass bar 그림자 drop-shadow x0 y10 blur 30 `#1A1A21` α0.08 (CreateFAB과 동일) |
 | Home Indicator | 6:291 | Tone V[Dark/Light] | 시스템 영역(34) |
 | Flow Top Bar | 132:4918 | 단계 텍스트 T | 공유 플로우 상단(닫기/뒤로 + "Step n of 3" + Next) |
 | Step Progress | 132:4957 | — (3칸 fill override) | 공유 플로우 3단 진행바 350×4 |
@@ -84,7 +84,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 | Pick Card | 54:554 | Eyebrow T · Title T · Byline T · (Weather Tag · Acorn Tag 노출) | 350×280 사진 카드(2.5). 아래 정렬: Meta → Tags 줄 |
 | **Food Card** | 12:399 | Title T · Byline T · Type V[Grid/Row] · (Grid: Weather Tag · Acorn Tag 노출) | Grid(167×251) = Media 167×208(좌하단 Weather Tag·우하단 Acorn Tag) + **Text 블록**(세로, gap 2, **좌우 padding 20**: 제목 Title/S **1줄 말줄임** + 태그 바이라인 Caption 1줄). 텍스트는 사진 가장자리보다 20px 안쪽에서 시작한다(디자이너 지정). Row = 가로 리스트(오버라인 "DINNER · 10°" / 제목 / 바이라인) |
 | Country Card | 12:400 | Title T · **Flag**(노출 인스턴스 Flag Tag, Country 변형) · (Weather Tag · Acorn Tag 노출) | 280×180(4.1 가로 스크롤) . 나라는 사진 위 **국기 Flag Tag**(**좌상단 x 12 · y 12 고정**, absolute — 카드 폭이 바뀌어도 위치 유지)로, 날씨·기온은 Weather Tag. Title 1줄 말줄임 |
-| Dish Tile | 128:4188 | (Weather Tag · Acorn Tag **노출 인스턴스** — 인스턴스에서 Temp · Weather icon · Count · State · Size를 바로 바꾼다) | 128×160, radius/xs 4, **좌하단 Weather Tag · 우하단 Acorn Tag**(인셋 8, 기본 Size=XL · **6.1은 L**). **내 프로필 6.1은 Acorn Tag State=Eaten(컬러 도토리)** — 내 요리가 받은 도토리 수라서. 다른 사람 프로필(4.5)은 보는 사람 기준(Default 라인) |
+| Dish Tile | 128:4188 · 670:20058 | (Weather Tag · Acorn Tag **노출 인스턴스**) | **앱(코드 기준) = 670:20058 모양**: 미디어 167:208 비율(radius xl, Our area는 2xl) + 좌하단 Weather Tag · 우하단 Acorn Tag(XL, 인셋 8) → 아래 제목 Title/S 1줄 · 바이라인 Caption "Comfort · Dinner"(Our area에서 넓혀 가져온 타일은 앞에 장소 라벨). 2열 그리드(열 16 · 줄 20)로 6.1 · 4.5 · 4.2 · 4.3 · 3.1에서 쓴다. **Acorn Tag = 도토리 토글**(6.1 · 4.5: 탭하면 주고/취소, 준 상태 = 채운 도토리). 128×160 3열(4:4 radius)은 이전 6.1 디자인 |
 | Weather Card | 136:4716 | 텍스트 props(기온·상태·H/L 등) | 홈 날씨 카드 350 폭, radius 2xl 32: Now 블록 + 구분선 + **Picks head**(Caption Strong "Picks for this weather" ··· **Refresh** 32 원 아이콘 버튼: `rotate-ccw` 16만, 1px 테두리, 글자 없음, 접근성 라벨 "New picks") + Meal Slot ×4 (2.1/2.2/2.3/2.6). Refresh 동작 [§6.1](05-behavior.md) |
 | Meal Slot | 131:4280 | State V[Filled/Empty] · 라벨·기온 T | 홈 끼니 타임라인 칸. 세로(padding 8 0 10 0, gap 6, 가운데 정렬): 라벨(Overline, **가운데 정렬, 칸 폭 채움**) → 썸네일 원 46 → 날씨 아이콘+기온. Filled = 썸네일 사진, Now 칸은 bg/muted 배경 + 선셋 링 override. Empty = 점선 원 + `+` |
 | **Weather Now** | [363:8179](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=363-8179) | Now T · Place T · Range T | Nearby 상단 고정 줄 350: glass/surface, radius 16, padding 12 16, gap 12 — 현재 날씨 아이콘 28 · Now Body/M Strong / Place Caption · Range Caption Strong. 3.1–3.6 |
@@ -115,7 +115,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 | SectionHeader | 12:225 | Eyebrow T · Title T · Action T · Show eyebrow B · Show action B | 오버라인 + Title/M + 우측 "See all" |
 | ListRow | 12:263 | Label T · Icon I · Trailing V[Chevron/Switch/Value/None] · Tone V[Default/Destructive] | 설정 행, 높이 52 |
 | Avatar | 6:307 | Size V[24/32/40/56/88] | 원형, 정사각(24·32·40·56·88 × 같은 높이). 사진 편집이 붙는 곳(1.3 · 9.2)은 **Avatar edit** 96×96 = Avatar 88(4, 4) + 카메라 배지 32(64, 64), 잘림(clip) 없음 |
-| Profile Header | 126:4345 | Tab V[Dishes/Saved/Diary] · Name T · Handle T · Bio T · Acorns T · Show actions B(기본 Off) · Show settings B · Show weather B · Weather T · Weather icon I · **Dishes 탭(노출 인스턴스, Label "Dishes 48")** | 프로필 공통 헤더 390×235(6.1–6.3 · 6.4, 4.8은 Actions 포함 297). 순서: **Top row**(왼쪽 Weather now pill — 실시간 점 6 fg/accent · 날씨 아이콘 16 · Caption Strong "Light rain · 12° · Mapo, Seoul" / 오른쪽 `settings`, Show settings — 내 프로필만) → **Row**: Avatar 88 + [Name Display/M → Handle Body/S muted → **도토리 pill** `acorn-color` 16 "312 acorns"](gap 6) → Bio → **Actions**(Show actions On: Button Primary M "Follow" + Outline M "Message", 각 171×46, gap 8, 4.8만) → **Tabs** Dishes · Saved · Diary. 요리 개수는 별도 pill 없이 **Dishes 탭 글자 오른쪽 숫자**("Dishes 48"). 4.5 = Show settings Off, 날씨 "Cloudy · 14° · Osaka", "Dishes 86" |
+| Profile Header | 126:4345 | Tab V[Dishes/Saved/Diary] · … | **앱은 이 컴포넌트 모양이 아니라** [06-profile](04-screens/06-profile.md) 공통 헤더(ScreenHeader + 유리 프로필 카드: 날씨 줄 · 아바타 · 이름 · @username · "Total acorns" 칩 · 상태 메시지 · Follow/Message → UnderlineTabs, 내 프로필은 아이콘 탭 Dishes · Diary · Saved). 이 컴포넌트는 Figma 이전 구성 |
 | **Cook Card** | [363:8256](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=363-8256) | Name T · Description T · Button(노출) | 추천 요리사 카드 110×176(4.4 · 4.4b): Avatar 56 → 이름 → 도시 · 분야 → Button Outline S Follow |
 | **Cook Row** | [363:8344](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=363-8344) | Name T · Meta T · Acorns T · Button(노출) | 요리사 목록 한 줄(4.6): Avatar 40 · 이름 Body/M Strong / "도시 · 지금 날씨" Caption / `acorn-color` 14 + "842 acorns" Caption Strong · Button S Follow(Primary) / Following(Secondary) |
 | City Row | 132:4683 | Selected V[Yes/No] · **City T · Country T · Temp T**(두 variant 공통) | 350×68 장소 선택 목록 한 줄: 날씨 아이콘 18(그 장소의 **현재 날씨**, stroke 1.5) → City / Country → 오른쪽 Temp. Selected=Yes = 체크 표시. 9.7 Change city(내 도시) · 8.2d Region(요리 지역)에서 사용 |
@@ -124,7 +124,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 | Recipe Step | 132:4806 | Timer V[No/Yes] · **Number T · Text T**(두 variant 공통) | 조리 단계 한 줄(번호 원 28 + 본문). Timer=Yes = "Start 15:00 timer" 버튼 포함. 7.1(8.2a 작성 화면은 표 형식 단계 줄) |
 | Feed Loader | 131:4592 | Text T | 피드 끝 스피너 + "Loading more like this…" |
 | Inline Banner | 136:5108 | Tone V[Neutral/Warning] · Text T | 아이콘 + 한 줄 안내(6.4 오프라인 = Neutral, 8.4 업로드 실패 = Warning) |
-| Toast | 12:264 | Message T | 350×42, bg/inverse, 하단 TabBar 위. 앞 아이콘 `acorn` 18 = fg/inverse(글자와 같은 색) |
+| Toast | 12:264 | Message T | 350×42, bg/inverse, 하단 TabBar 위. 앞 아이콘 `acorn` 18 = fg/inverse(글자와 같은 색). 4초 뒤 사라짐(길이 바꿀 수 있음), 전체를 누를 수 있게 할 수 있음(타이머 "— done" 토스트 → 5.1) |
 
 ### [09 Comments, messages & alerts](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=378-9966)
 
@@ -143,19 +143,26 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 | **Weather Mood** | [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=72-787) | Mood V ×18 | 날씨 무드 견본(그라데이션 = `Mood/<key>` 스타일). 이전 이름 "ㅋ" → Weather Mood |
 | **Mood Motif** | [518:820](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=518-820) | Mood V ×18 | 그라데이션 위에 얹는 흰 선 · 점 무늬(180×220 기준). 규칙 [01-foundations §2.4](01-foundations.md) |
 
-### 3.1 TabBar 동작 (중요)
+### 3.1 TabBar 동작 (중요) — 코드 기준(Liquid Glass)
 
-**TabBar와 CreateFAB은 항상 한 묶음**이다. FAB은 TabBar 컴포넌트 안에 들어 있고(레이어 이름 `CreateFAB`), 두 상태 모두에 있다. TabBar가 있는 모든 탭 루트 화면(2.x · 3.x · 4.x · 5.x · 6.x 등)에서 FAB도 함께 보인다.
+**TabBar와 CreateFAB은 항상 한 묶음**이다. TabBar가 있는 모든 화면(2.x · 4.1 · 4.2 · 4.3 · 4.5 · 5.x · 6.x)에서 FAB도 함께 보인다. Figma TabBar 12:182(Expanded/Collapsed pill)는 이전 모양이다.
 
-- **Expanded** (기본, 스크롤 최상단): 하단 고정. 한 줄에 **Glass 바(왼쪽) + CreateFAB(오른쪽 끝)**.
-  - Glass 바: x 16, 292 × 60, radius full, 4개 아이템 = 아이콘 + Nav label(`Home · Community · Timer · Profile` 순서), 양 끝 맞춤(좌우 padding 6).
-  - CreateFAB `State=Default` 56 원: x 318(오른쪽 여백 16), Glass 바와 세로 가운데(y 26), 바와 간격 10.
-- **Collapsed** (스크롤 다운 시): 라벨이 사라진 아이콘 pill **170 × 42** + 옆 8에 CreateFAB `State=Collapsed` **42 원**. 둘을 합친 220 폭이 화면 가운데(바 x 85, FAB x 263, y 42).
-  - 활성 아이템 40×36, radius full, 배경 bg/muted, 아이콘 Gradient/Dusk. 나머지 40×30.
-- **모션**: Expanded ↔ Collapsed는 **바와 FAB이 같은 모션**으로 함께 바뀐다 — smart-animate 250ms ease-out(같은 레이어 이름끼리 크기·위치 보간). 바는 292×60 → 170×42, FAB은 56 → 42, `+` 24 → 20. FAB을 따로 숨기지 않는다.
-- 스크롤 업 또는 pill 탭 → Expanded로 복귀.
-- 아이콘: Home `home`, Community `users`, Timer `timer`, Profile `user`. Discover 탭 없음(내 동네 = Community **Nearby** 탭).
-- Nav label 텍스트는 **투명도 60%**(활성·비활성 모두 레이어 opacity 0.6). 활성 아이콘 **Gradient/Dusk**, 비활성 fg/muted.
+- **Expanded**(기본, 스크롤 최상단): 하단(홈 인디케이터 위, 바닥 84 기준) 한 줄에 **유리 캡슐(왼쪽, 좌우 16) + FAB(오른쪽 끝)**, 간격 10.
+  - 유리 캡슐: 높이 62, radius full, 블러 + glass/surface, 1px border/default, Elevation/3 Float. 4개 아이템 = 아이콘 22 + Nav label(`Home · Community · Timer · Profile`). **활성** = 아이콘 Gradient/Dusk + 라벨 fg/accent, 뒤에 bg/accent-subtle 알약. 비활성 = 아이콘 · 라벨 fg/default.
+  - FAB: **62 원**, bg/kick + 1px border/default, 흰 `+` 24(선 2), Elevation/3 Float. 접근성 라벨 "Share a dish". 탭 → 8.1.
+- **Minimized**(스크롤 다운): 캡슐이 **48 유리 원**으로 줄며 지금 탭 아이콘만 남는다(탭 4개는 페이드아웃). FAB도 48로, `+`는 84 %. 작은 원을 탭하면 펼친다.
+- **모션**: 스크롤을 따라 움직인다 — 120pt를 내리는 동안 0→1, 각 단계는 250ms ease-out으로 뒤따라감. 멈추면 가까운 상태로 320ms에 정착, 최상단은 항상 Expanded, 탭으로 펼칠 때 260ms. ([§6.4](05-behavior.md))
+- 아이콘: Home `home`, Community `users`, Timer `timer`, Profile `user`.
+- 탭 화면 사이 이동은 애니메이션 없이 즉시.
+
+### 3.1b ScreenHeader · ScreenWash — 네 탭 공통(코드 기준)
+- **ScreenWash**: 날씨 무드 그라데이션 85 % + 날씨 효과, 높이 420, 화면 맨 뒤. 스크롤하면 내용과 함께 올라가며 사라진다. 위치가 꺼지고 도시도 없으면 wash 없음. StatusBar 글자색도 wash 밝기에 맞춘다.
+- **ScreenHeader**(좌우 20, 아래 12): 안전 영역 → 행 40(왼쪽 Logo Compact — 다른 요리사 프로필은 뒤로 버튼 / 오른쪽 `bell`(Home · Community, 안 읽음 점) · `settings`(내 프로필) · 빈 40(Timer · 다른 요리사)) → 20 → Overline 날짜 · 위치 → 12 → Display/XL 날씨 제목("Rainy " + fg/disabled 톤 "evening", 한 줄 맞춤). 위치 꺼짐 = "Location off · showing {city}" / "Hello there".
+- 글자색은 wash 위 위치(로고 12 % · 오버라인 26 % · 제목 33 %)의 밝기에 맞춘 잉크. 마지막 날씨 값은 앱을 다시 열 때도 먼저 보여 준다(기기 캐시).
+
+### 3.1c UnderlineTabs — 코드 기준
+- X 스타일 밑줄 탭: 전체 폭 **1px border/default 선(30 % 투명)** + 선택 탭 아래 **3px fg/default 막대**(라벨 글자 폭, radius full). 탭을 바꾸면 막대가 200ms에 미끄러져 간다. 탭 높이 43(위 10 · 아래 12). 선택 = fg/default, 나머지 fg/muted(wash 위에서는 wash 잉크). 아이콘 탭도 가능(6.x 내 프로필).
+- 쓰는 곳: Community(Explore · Following · Challenges) · Profile · 4.2 · 4.3. Figma `Tab` 6:252(24×3 bg/primary 막대)는 쓰지 않는다.
 
 ### 3.2 아이콘 목록 (Lucide + custom) — Figma에 남긴 82개(화면에서 쓰는 것만)
 
@@ -170,7 +177,8 @@ folder grid cloud-drizzle cloud-lightning cloud-fog haze cloud-sun-rain cloud-ha
 map copy corner-up-right arrow-down send fish grip-vertical
 custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 미사용 — Action Count Like 변형이 참조)
 ```
-- 앱 코드는 Lucide 라이브러리를 그대로 쓰므로, Figma에 없는 아이콘(예: `cloud-moon` · `calendar`)도 코드에서는 필요할 때 쓸 수 있다. 새로 쓰면 이 목록과 Figma에 추가한다.
+- 앱 코드는 Lucide 라이브러리를 그대로 쓰므로, Figma에 없는 아이콘(예: `cloud-moon` · `calendar`)도 코드에서는 필요할 때 쓸 수 있다. 새로 쓰면 이 목록과 Figma에 추가한다
+- 앱에서 Figma 목록 밖으로 쓰는 아이콘: `notebook-pen`(6.x Diary 탭) · `shield-check`(1.4 Why 박스) · `check`(1.3b 취향 카드). `bookmark` · `message-circle`은 Figma 3:42 · 3:50의 새 모양을 앱 커스텀 아이콘으로 옮겨 쓴다(bookmark 14×18, 둥근 말풍선)..
 ```
 기본 크기 20–24.
 
@@ -189,7 +197,7 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
   - 어두운 면(bg/inverse: Acorn Button Default · Toast) = `fg/inverse` · 주 버튼(Solid) = `fg/on-primary` · 위험 행(ListRow Destructive) = `fg/destructive`
   - 그 밖 = `fg/default`(보조는 `fg/secondary`·`fg/muted`)
 - **custom `acorn`**(icon/acorn 134:10304, 24×24): Cap·Nut = stroke(위 규칙의 두께), Stem = 채움. 짝이 되는 **`icon/acorn-color`**(134:10227, 같은 24×24 모양, 그라데이션 색 고정)는 먹음(Eaten) 상태에 쓴다. **라인 = 아직 안 먹음(기본), 컬러 = 먹음.** 브랜드 로고·심볼에는 `Acorn Symbol`(52:525).
-- **`icon/arrow-down`**: `arrow-up`을 세로로 뒤집은 것(Lucide arrow-down과 같은 모양). Mood Prompt 보내기 버튼에 쓴다.
+- **`icon/arrow-down`**: `arrow-up`을 세로로 뒤집은 것(Lucide arrow-down과 같은 모양). (Mood Prompt 보내기 버튼용, 지금 앱에서 Mood Prompt는 안 씀)
 - **custom `icon/grip-vertical`**(427:10106, 24×24): 드래그 손잡이 — 채운 점 6개(2열 × 3줄, 지름 3.2, 열 x 9 · 15, 줄 y 5 · 12 · 19). 선이 아니라 **면(fill)** 이라 색은 fill로 준다(8.2a 표 손잡이 = fg/muted). Lucide `grip-vertical`과 같은 배치. 8.2a 재료·단계 표, 8.2c 배경.
 - **`icon/fish`**: Lucide `fish`(ISC). 8.2 Meal의 **Seafood** 칩.
 - **`icon/heart-filled`**(285:741): v1에서는 쓰지 않는다(반응 = 도토리).
@@ -203,7 +211,7 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 |---|---|---|
 | 1 | **Header** | 가로, padding 12 16 12 20, gap 10, 세로 가운데 정렬. Avatar 32 → Who(세로, gap 1, 남은 폭 채움): **Name** Body/S Strong fg/default(`minji.cooks`) + **Meta** Caption fg/muted(`Mapo, Seoul · 40m`) → `more-horizontal` 20px(fg/secondary). *(날씨는 헤더가 아니라 사진 위 태그로 표시)* |
 | 2 | **Media** | 390 × 440, 사진 cover, clip, **radius/xs = 4px**(네 모서리). **좌상단(16, 16) Weather Tag**(Size=XL, **Show condition = On** → "`cloud-snow` Snow −4°", §3.4). 도토리 수는 Actions에 있으므로 사진 위 Acorn Tag는 숨김, **우하단(right 16, bottom 16) Photo Counter**(`1 / 3`, 노출 인스턴스 — 인스턴스에서 Count 값을 바꾼다). 피드는 사진을 넘기는 곳이라 장수 표시를 아래(넘기는 손 쪽)에 둔다. 가로 스와이프로 여러 장(사진 수 = Counter 분모) |
-| 3 | **Actions** | 가로, padding 12 20 8 20, gap 18, 아이콘 24px fg/default. **Acorn** = `Action Count`(Type=Acorn, 누르면 Acorn given, 숫자 = 받은 도토리) → **Comment** = `Action Count`(Type=Comment, → 7.2) → **Share** `share` → (spacer) → **Save** `bookmark`(오른쪽 끝). Direct(`send`)는 숨김(v1에서 DM 없음) |
+| 3 | **Actions** | 가로, padding 12 20 8 20, gap 18, 아이콘 24px fg/default. **Acorn** = `Action Count`(Type=Acorn, 누르면 Acorn given, 숫자 = 받은 도토리) → **Comment** = `Action Count`(Type=Comment, → 7.2) → **Share** `share` → (spacer) → **Save** `bookmark`(오른쪽 끝). Direct(`send`)는 숨김(DM은 4.5 Message로만 시작) |
 | 4 | **Caption block** | 세로, padding 0 20, gap 4. **Caption** Body/S fg/default, **최대 2줄 말줄임**. 해시태그 줄은 두지 않는다(요리 속성은 사진 위 Weather Tag와 7.1 태그 칩으로 보여 준다) |
 
 인터랙션:
@@ -230,7 +238,7 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 
 | 사용처 | 위치(안쪽 여백) |
 |---|---|
-| Dish Tile (6.1 · 4.5, 128×160) | 좌하단 8 / 우하단 8 |
+| Dish Tile (6.1 · 4.5 · 4.2 · 4.3 · 3.1, 167:208 미디어) | 좌하단 8 / 우하단 8 |
 | Food Card Grid (3.1 · 3.5 · 3.6 · 4.2 · 4.3) | 좌하단 8 / 우하단 8 |
 | **Feed Post Media**(홈 피드 · 4.4 · 6.4b · 8.3 피드 미리보기) | **좌상단 16 / 우상단 16**(태그) · Photo Counter **우하단 16** |
 | 상세 hero (7.x · 8.3 · 6.4b) | 좌하단 16 / 우하단 16(시트 시작선 위) · Photo Counter 우상단 |
@@ -247,7 +255,8 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 
 ```
 <Screen bg=var(--bg-default)>
-  [Mood wash]          absolute, top 0, 높이 ~420, top→base 그라데이션 (홈 계열만)
+  [ScreenWash]         absolute, top 0, 높이 420, 무드 그라데이션 85 % (Home · Community · Timer · Profile, §3.1b)
+  ScreenHeader         탭 화면 공통(§3.1b)
   StatusBar            44
   ...content (vertical stack, padding-x 20)
   [TabBar]   고정       bottom 34(홈 인디케이터 위), 탭 루트 화면만 — CreateFAB 포함

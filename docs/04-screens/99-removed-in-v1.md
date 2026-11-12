@@ -5,19 +5,19 @@
 | 뺀 기능 | 화면 | 대신 |
 |---|---|---|
 | 이메일 로그인 | 1.2b · 1.3 · 1.4 · 1.4b (+ 상태 4개) | Apple · Google 로그인만(1.2) |
-| 메시지(DM) | 4.11 · 7.5 | 공개 댓글(7.2) |
+| ~~메시지(DM)~~ → **앱에 다시 들어감** | 4.11(대화함 · 대화) · 7.5 | 지금 명세는 [04-community 4.11](04-community.md). 7.5 Send to 시트는 코드에 있지만 여는 버튼 없음 |
 | 마케팅 수신 동의 | 9.9e (+ 9.4 ADS & EVENTS) | 광고 · 이벤트 푸시를 보내지 않음 |
-| 컬렉션 | 7.6 · 7.6b | 저장(북마크) 한 가지 — 6.2 Saved가 날씨별로 묶음 |
+| ~~컬렉션~~ → **6.2 Saved 안에 다시 들어감** | 7.6 · 7.6b | 지금 명세는 [06-profile 6.2](06-profile.md)(저장 시 7.6 시트는 없음) |
 | 길찾기 | 2.4b | 식당 카드 → 지도 앱(카카오맵 · Apple 지도 · Google 지도) 열기 |
 | 테이블 Questions · About 탭 | 4.21c · 4.21d | 동네 질문(3.7 · 3.8), 규칙 줄 → 규칙 시트(개발 단계) |
-| 명절 템플릿 | 4.12 | 4.2 태그 템플릿 + 날짜 헤더 |
-| 나라 전체 보기 | 4.3 | 4.1 Trending by Country(See all 없음) |
+| 명절 템플릿 | 4.12 | 4.2 태그 템플릿(명절 태그) + 4.1b 명절 전체 목록 |
+| 나라 전체 보기 | 4.3 | 4.1 Trending Bites(See all 없음) |
 | 문서 오프라인 | 9.9d | 공통 연결 오류 처리 |
 | Eat together | 4.23 | 2단계 |
 
 Figma 컴포넌트 중 이 화면들에서만 쓰던 것(Chat Bubble · `calendar` · `phone` · `footprints` · `bus` · `car` · `arrow-up` 아이콘)은 삭제했다 — 이 섹션의 해당 인스턴스는 원본 없이 모양만 남아 있다. 되살릴 때 Figma 버전 기록에서 복구한다.
 
-DB 테이블(messages · message_threads · collections · collection_items · marketing 컬럼 등)은 남아 있지만 v1 앱에서는 쓰지 않는다.
+DB 테이블 중 messages · message_threads · collections · collection_items는 앱이 다시 쓴다. marketing 컬럼 등은 남아 있지만 쓰지 않는다.
 
 
 ## from 01-sign-in-setup.md

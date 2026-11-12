@@ -4,19 +4,30 @@
 
 ## 05 Timer — [섹션 59:2367](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2367)
 
-### 5.1 Kitchen timer — [20:748](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-748)
-- 블록: StatusBar → TopBar(Large) "Kitchen timer" → **Active timer 카드**: 링 가운데 라벨 "Simmer the stew"(Caption Strong), "12:08"(Numeric/Timer), "of 20:00 · done at 7:42 PM"(Caption), 원형 진행 링 **fg/accent(오렌지) — 실행 중**, 컨트롤 IconButton Soft L(`rotate-ccw` 리셋) · Solid L(`pause`/`play`) · Soft L(`plus` +1분) → 프리셋 칩: "Soft egg 6:30" · "Rice 15:00" · "Tea 3:00" → SectionHeader "Running" + action "+ Add timer" → Timer Card ×2: "Boil noodles 03:42", "Rest the dough 24:10" → TabBar(Timer, CreateFAB 포함 — 다른 탭과 같은 Home · Community · Timer · Profile 순서). TopBar `bell` → 2.8.
-- 동작: 여러 타이머 동시 실행, 백그라운드 로컬 알림. 종료 시 5.2.
+### 5.1 Kitchen timer — [20:748](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-748) · 코드 기준
+- 블록:
+  1. **ScreenWash + ScreenHeader**(네 탭 공통 — 로고 · 오른쪽 빈 자리(벨 없음) · 날짜·위치 · 날씨 제목)
+  2. **Active timer**(가운데 정렬, 위 30): 음식 이름 Display/M **“{Food Name}”**(있을 때, 1줄) → **큰 링** 196.8, 선 두께 **18**(진행 = fg/accent, 끝나면 fg/done 가득) — 가운데 시간 Numeric/Timer(끝나면 fg/done, 위에 Caption Strong "{label} — done"). 타이머가 없으면 "00:00" + Caption "Pick one below or add a timer".
+  3. **컨트롤**(타이머가 있을 때): RoundBtn `rotate-ccw` Reset · 가운데 Primary `pause`/`play`(끝났으면 `check` — 레시피 단계 타이머면 "Back to recipe" → 그 요리 7.1, 아니면 "Done" = 타이머 삭제) · `plus` + 작은 배지 "15s"(bg/kick) = **15초 추가**(끝난 타이머는 다시 시작).
+  4. **Add Timer** 버튼(bg/inverse, `timer` 24 + Button/M fg/inverse) → 5.1b.
+  5. **프리셋 칩**(가로 스크롤, `clock` 아이콘) **8개**: Soft egg 7 min · Hard egg 10 min · Ramen 4 min 30 s · Cup noodles 3 min · Pasta 9 min · Dumplings 8 min · Tea 3 min · Coffee 4 min. 탭 → 그 이름(음식 이름 = 프리셋 이름)으로 바로 시작, 큰 링으로.
+  6. **Running**(Title/L): 큰 링에 없는 타이머 카드 목록. **끝난 타이머가 맨 위**. 카드 = 작은 링 52(선 9) · 이름 Body/S Strong fg/muted("음식 · 라벨") + 시간 Numeric/L · 오른쪽 원 버튼(bg/inverse: 일시정지 / 계속 / 끝났으면 `plus` = +1분). **끝난 카드**: 테두리 fg/done, 이름 옆 **Done** 배지(bg/success-subtle, fg/done), 시간 자리에 "Done". 카드 탭 → 큰 링으로, 길게 누름 → 삭제 확인("Remove “{label}”?"). 다른 타이머가 없으면 빈 자리 카드(점선 `+` 모양, 누를 수 없음). 타이머가 있으면 아래 Caption "Press and hold a timer to remove it."
+  7. TabBar(Timer, CreateFAB) — 아래 여백 96 + 24.
+- **큰 링 고르기**: 방금 시작한 타이머(Add Timer · 프리셋 · 레시피 단계 "Start timer" — 화면을 열기 10초 안에 시작한 것 포함)가 항상 큰 링으로 온다 → 그다음 사용자가 탭한 것 → 끝난 것 → 가장 빨리 끝나는 것.
+- **링 드래그로 시간 바꾸기**: 큰 링을 **0.35초 누르고 있다가** 링을 따라 돌리면 남은 시간이 바뀐다(5초 단위, 최대 24시간, 반시계 = 늘림). 시작할 때 진동(중간), 단계마다 선택 햅틱. 드래그 중엔 스크롤이 멈춘다. 놓으면 그 시간으로(실행 중이었으면 계속 실행).
+- 링은 프레임마다 부드럽게 줄어들고, 숫자는 초 경계에 맞춰 바뀐다.
 
-### 5.2 State · Timer finished — [76:3268](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=76-3268)
-- 노트: *Triple feedback: sound, haptic and a pinned banner. Banner deep-links back to the recipe step.*
+### 5.1b Add timer — [669:11033](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=669-11033)
+- **가운데 대화상자**(8.2c Set timer와 같은 카드: 딤 + bg/default 카드, radius xl, 최대 폭 360): Overline fg/accent "NEW TIMER" → Input "Food Name"(placeholder "food name...", 40자) → 분 : 초 칸 → 힌트 → QUICK PICK 칩 1 · 2 · 5 · 10 · 15 min → Button **"Set m:ss timer"**(0이면 비활성). 최대 99:59. "No timer" 버튼 없음.
+- 설정하면 라벨 "Timer"로 시작하고 큰 링으로.
+
+### 5.2 State · Timer finished — [76:3268](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=76-3268) · 코드 기준
 - 색: 끝난 상태는 **세이지 그린(done) 토큰**으로 실행 중(오렌지)과 구분한다.
-- 블록: TopBar 아래 **Done banner**(bg/done-subtle, 1px border/done, 왼쪽 `check` 아이콘 fg/done): "Stew is ready" / "Kimchi jjigae · step 3 of 3" + Button S "+1 min" → Active timer 카드: "Simmer the stew — done" / **"00:00"(fg/done)**, 링 **fg/done(가득 참)** / "Next: add tofu and scallion" / Button Secondary M "+1 min" + Primary M "Back to recipe" → 프리셋, Running 리스트 동일.
-- 화면은 **세로 스크롤**(배너가 들어와 콘텐츠가 길어지므로 하단 Tab bar spacer 96).
-- 이동: +1 min → 5.1(1분 추가) · Back to recipe / 배너 → 7.1(해당 단계의 Steps 위치로 스크롤).
+- 끝나면: 큰 링 = fg/done 가득 + "00:00"(fg/done) + "{label} — done", 가운데 버튼이 `check`(Back to recipe / Done). Running 카드는 위 6번의 끝난 모양으로 맨 위로.
+- **알림**: 휴대폰이 **3번 진동**(Success, 0 · 0.4 · 0.8초). 앱이 열려 있으면 시스템 배너 대신 **앱 안 토스트 "{label} — done"**(어느 화면에서든, 하나씩 차례로; 탭하면 그 타이머를 5.1 큰 링으로) — 소리만 시스템 알림으로 난다. 앱이 닫혀 있으면 로컬 알림(제목 "{음식} · {라벨}", 레시피 단계면 본문 "{요리} · n/m", 소리, iOS **Time Sensitive**).
+- 상단 Done banner · "Next: …" 줄 · "+1 min" 버튼은 없다(Running 카드의 `plus`가 +1분).
 
 ---
 
 ### Kitchen timer란?
-레시피 단계와 연결된 **요리용 타이머**. 7.1 상세의 Steps나 8.3c에서 단계에 시간을 붙여 두면 "Start 15:00"으로 바로 시작된다. 여러 개를 동시에 돌릴 수 있고(Running 목록), 자주 쓰는 시간은 프리셋 칩(Soft egg · Rice · Tea)으로 한 번에 시작. 앱을 나가도 로컬 알림(소리·진동)이 오고, 끝나면 5.2에서 "+1 min" 또는 "Back to recipe"(그 단계로 돌아감).
-
+레시피 단계와 연결된 **요리용 타이머**. 7.1 상세의 Steps나 8.2c에서 단계에 시간을 붙여 두면 "Start timer"로 바로 시작된다. 여러 개를 동시에 돌릴 수 있고(Running 목록), 자주 쓰는 시간은 프리셋 칩 8개로 한 번에 시작. 타이머는 기기에만 저장된다. 앱을 나가도 로컬 알림(소리·진동)이 오고, 끝나면 "Back to recipe"(그 요리로) 또는 +1분.

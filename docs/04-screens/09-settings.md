@@ -69,6 +69,7 @@
 - **WHO SEES YOUR NEW DISHES**(Radio Row): **Everyone** · Only me + Switch **Allow comments**
   - 캡션: "These are the defaults for Share publicly and Allow comments in 8.2. You can still change them on each dish."
   - Only me를 고르면 Allow comments는 비활성(나만 보는 게시물이라).
+- **WHO CAN MESSAGE YOU**(Radio Row): **Everyone** · People I follow — 캡션 "Requests have no read receipts and hide photos and links until you reply."(4.11)
 - **LOCATION**: Use location for weather **on** · Shared precision **City only**
   - Shared precision(선택 시트): Neighborhood · **City only** · Country only — 게시물에 보이는 위치 범위(`Dish.regionPrecision`).
   - 캡션: "Your exact location never leaves your phone. Shared precision sets what others see on your dishes and is turned off when location is off. System permissions can be changed in Settings."
@@ -101,7 +102,7 @@
 - 각 행이 여는 화면과 무료 · 법적으로 안전한 운영 방법은 가이드 [guides/9.9-help-policies-guide.pdf](../guides/9.9-help-policies-guide.pdf). 세로 882.
 - **HELP**: **Help center**(`compass`) → 9.8c · Contact support(`mail`) → **9.8a** · Community guidelines(`users`) → 9.8c
 - **LEGAL**: Terms of service · Privacy policy · Location-based service terms → **9.8c**(문서 시트) · Open-source licenses → **9.8b**(Marketing consent terms 행은 숨김 — 광고 없음)
-- **ABOUT**: **A letter from us**(`acorn`) → **1.1b** Welcome letter 다시 보기 · Version **1.0.0 (100) · latest**(누르지 않음, 새 버전이 있을 때만 "Update available" → 스토어)
+- **ABOUT**: **A letter from us**(`acorn`) → **1.1b** Welcome(앱 소개) 다시 보기 · Version **1.0.0 (100) · latest**(누르지 않음, 새 버전이 있을 때만 "Update available" → 스토어)
   - 캡션: "ongdalsaem · help@ongdalsaem.app · Weather data by OpenWeather · Fonts: Fraunces, Outfit, Noto Sans KR (OFL) · Icons: Lucide (ISC)". 사업자로 등록하면 이 줄에 실제 사업자등록번호를 추가한다(자리표시자 번호는 쓰지 않음).
 - 문서 종류별 여는 방식: 긴 문서(약관 · 개인정보 · 위치 약관 · 가이드라인 · 도움말) = **웹뷰 시트**(호스팅한 웹 문서, expo-web-browser), 앱 데이터가 필요한 것(문의 · 라이선스 · 마케팅 동의) = 네이티브 푸시 화면.
 

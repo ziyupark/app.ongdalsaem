@@ -177,7 +177,7 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 | Wordmark | Outfit Medium | 34 / 36 | −1.2 | 로고 |
 | Wordmark/Compact | Outfit Medium | 24 / 26 | −0.8 | 헤더용 작은 로고(Logo Compact, 1.2) |
 | Auth label | Outfit Medium | 20 / 24 | −0.2 | Auth Button 제목(버튼 높이의 43%) |
-| Handwriting | Gaegu Bold | 20 / 24 | 0 | 1.1b 편지 서명 전용 |
+| Handwriting | Gaegu Bold | 20 / 24 | 0 | 앱에서 지금 쓰는 곳 없음(옛 1.1b 편지 서명) |
 | Tagline | Outfit | 11 / 14 | 2.4 | UPPERCASE |
 
 - 한글(Noto Sans KR): line-height 1.6 (16px 이상은 1.55), letter-spacing −0.2 ~ −0.4px.

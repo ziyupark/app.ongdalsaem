@@ -2,56 +2,45 @@
 
 > 블록 순서 = DOM 순서. 공통 골격·컴포넌트는 [02-components](../02-components.md), 이동 전체 표는 [03-ia-and-flows](../03-ia-and-flows.md). 색인 → [README](../README.md)
 
-## 03 Community · Nearby — [섹션 59:2363](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2363)
+## 03 Community · Nearby(Our area · Nearby list) — [섹션 59:2363](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2363)
 
-탭바에는 Discover가 없다. **내 동네 탐색 = Community의 Nearby 탭**(Global · **Nearby** · Following). TabBar 활성 = Community.
+Community에 **Nearby 탭은 없다**(Explore에 합침, [04-community 4.1](04-community.md)). 내 동네 탐색은 두 군데에서 한다: Explore의 **Our area** 섹션(요약)과, 거기서 여는 **3.1 Nearby list**(전체 목록). Figma 3.1–3.6 프레임은 Nearby 탭 시절 디자인이고, 아래는 코드 기준이다.
 
-### 3.1 Community · Nearby — [19:663](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-663)
-- 목적: **내 위치 근처**에서 지금 날씨에 올라온 요리 탐색 + 동네 질문. 세로 스크롤(프레임 390×1148).
+### 3.1 Nearby list — 코드 기준(Figma 3.1 [19:663](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-663)은 이전 탭 구성)
+- 여는 곳: Explore → Our area **"See more"**(그 섹션과 같은 범위 칩이 선택된 채) · Explore 검색창에서 검색어를 보낼 때(그 검색어로). 푸시 화면, TabBar 없음.
 - 블록:
-  1. [A] **Mood wash** — 홈과 같은 현재 날씨 무드 그라데이션(390×420, [§2.4](../01-foundations.md)). 날씨가 바뀌면 같이 바뀐다.
-  2. StatusBar → TopBar(Large) "Community"(4.1과 같은 상단)
-  3. 탭: Global · **Nearby**(active) · Following — 4.1과 같은 Block · Tabs
-  4. **Weather now**(좌우 20, 위 12, 아래 4) — 카드 가로, glass/surface, radius 16, padding 12 16, gap 12: 현재 날씨 아이콘 28(`cloud-rain`, 1.6) · "Light rain · 12°"(Body/M Strong) / "Mapo, Seoul · right now"(Caption fg/muted) ··· "H 14° · L 8°"(Caption Strong fg/muted).
-     - **현재 내 위치 기준**이고 화면을 스크롤해도 TopBar 아래에 **고정(sticky)**된다. 앱이 다시 열리거나 15분이 지나면 새로 조회.
-  5. 검색바 placeholder "Dishes, ingredients, moods"(`search`)
-  6. 지역 칩(가로 스크롤): **All**(Selected) · Within 1 km · Mapo-gu · Same weather · …
-  7. **Neighborhood questions**(gap 10): **Ask the neighborhood** 줄(bg/subtle + border/default, radius 16, `message-circle` 20 · "Ask your neighbors about food…" fg/muted) → **Question Card** 1개(사진 끔) — 가장 최근 · 답이 적은 질문 먼저.
-  8. 컨텍스트 라인 "Cooked near you on days like this"
-  9. **Food Card Grid 2열**(각 카드: 사진 + 좌하단 Weather Tag · 우하단 Acorn Tag, 제목 1줄 말줄임, 태그 "Cozy · Dinner"). 태그 값: Sujebi `cloud-rain` 12° · 128 / Pajeon `cloud-rain` 11° · 96 / Miso ramen `cloud` 13° · 74 / Hotteok `cloud-drizzle` 10° · 52:
-  - Sujebi, hand-torn — Cozy · Dinner / Pajeon & makgeolli — Rainy · Snack / Miso ramen at home — Warm · Dinner / Hotteok — Sweet · Snack
-- 이동: Ask 줄 → **3.7** · Question Card → **3.8** · 검색바 → **3.4** · 지역 칩 Within 1 km → **3.6**(다른 칩도 같은 필터 화면 구조) · 근처에 게시물이 없으면 3.2 · 카드 → 7.1 · Global 탭 → 4.1 · Following 탭 → 4.4 · `bell` → 2.8 · 탭바(+FAB).
+  1. TopBar(Inline) **"Our area"**(뒤로)
+  2. **검색 필드** "Dishes, ingredients, moods"(좌우 20, 위 16) — 입력 중에는 아래 대신 **3.4 입력 패널**. 보내면 같은 화면에서 결과(3.5).
+  3. **범위 칩**(가로 스크롤, 좌우 20, 위 16, gap 8): **All** · Within 1 km(위치가 있을 때) · {구 이름}(구를 알 때) · Same weather(날씨를 알 때). 하나만 선택.
+  4. 본문(좌우 20, 위 16 · 아래 12, gap 12):
+     - 컨텍스트 줄(날씨를 알 때): `cloud-rain` 16 + Body/S Strong fg/accent "Cooked near you on days like this" — 검색 결과면 "{n} dishes near you · best in {weather} first".
+     - 검색하지 않았을 때: **Ask 줄**(bg/subtle + border/default, radius lg, `message-circle` 20 · "Ask your neighbors about food…" fg/muted) → 3.7 · **Question Card** 1개(내 칸 질문 중 첫 번째) → 3.8.
+  5. **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20). **같은 날씨에 올라온 요리 먼저**, 그다음 최신.
+- 상태: 근처 게시물이 없으면 **3.2**, 검색 결과가 없으면 **3.3**.
+- 이동: 카드 → 7.1 · Ask 줄 → 3.7 · Question Card → 3.8 · 뒤로 → 4.1.
 
 ### 3.2 State · Nearby is empty — [76:2978](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=76-2978)
-- 노트: *First-of-its-kind framing: invites sharing instead of apologising.*
-- 3.1 상단 동일(Nearby active). Weather now = "Light snow · −2°" / "Daegu · right now" / "H 0° · L −5°"(`cloud-snow`), Mood wash = snow 톤.
-- 빈 상태: 일러스트/아이콘 → "Be the first table in this snow" → "Nobody near Daegu has shared a dish in today’s weather yet. Yours could start it." → Button Primary M "Share a dish" → 8.1.
+- 3.1 그리드 자리에 EmptyState(L): 지금 날씨 아이콘 → "Be the first table in this {weather}" → "Nobody near {place} has shared a dish in today’s weather yet. Yours could start it." → Button Primary M "Share a dish" → 8.1.
 
 ### 3.3 State · No results — [76:3114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=76-3114)
-- 노트: *Suggest neighbouring weather/mood tags so the search never dead-ends.*
-- 블록: 3.1 상단(탭 · Weather now) → 검색바 값 "durian soup in snow" → 빈 상태 "Nothing yet for that one" / "Try a nearby mood or weather — people often search these together." → 추천 칩(아이콘): Snowy · Cozy · Soup · Spicy → 탭 시 해당 필터로 3.1.
+- 검색 결과 0개: EmptyState(L) `search` → "Nothing for “{q}” yet" → "Try the weather or a mood tag instead." → 칩: 지금 날씨(→ 검색 지우고 Same weather 칩) · #cozy · #comforting · #spicy(→ 그 태그 4.2).
 
 ### 3.4 Search · Typing — [351:7294](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=351-7294)
-- 3.1 검색바를 탭하면 연다. 검색바 = Focus(1.5 border/focus), 값 "kimch", Clear `x`. 키보드가 올라오므로 TabBar는 숨김.
-- **SUGGESTIONS**(박스, 행 52): `search` 18 · 일치 부분 굵게(**kimch**i jjigae) · 오른쪽 "24 near you"(Caption) — kimchi jjigae · kimchi pancake · kimchi fried rice. 입력 1글자마다 갱신(250ms 디바운스), 요리명 → 재료 → 무드 순.
-- **RECENT**: `clock` · "sujebi" · "rainy day soup" · 행 끝 `x`(하나 지우기). 최근 10개, 기기에만 저장.
-- 힌트 "Search dishes, ingredients or moods near you. Nothing matches? We’ll suggest weather and mood tags."
-- 이동: 제안 행 / Return → **3.5** · 결과 0개 → 3.3 · Clear → 입력 비움 · 뒤로(취소) → 3.1.
+- Explore와 3.1의 검색 필드에 공통. 입력 중에는 아래 내용 대신 패널(좌우 20, 위 16, gap 10)이 보인다.
+- **SUGGESTIONS**: `search` · 일치 부분 굵게 · 오른쪽 "{n} near you"(Caption) — 내 도시 게시물 이름에서.
+- **RECENT**: 최근 검색 최대 6개(기기에만 저장), 행 끝 `x`로 하나씩 지우기.
+- 힌트 Caption "Search dishes, ingredients or moods near you. Nothing matches? We’ll suggest weather and mood tags."
+- 이동: 제안 행 / Return → 결과(Explore에서는 3.1을 그 검색어로 엶) · Clear → 입력 비움.
 
-### 3.5 Search results · kimchi jjigae — [351:8143](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=351-8143)
-- 3.1 레이아웃 그대로, 검색바 값 "kimchi jjigae"(Clear). 컨텍스트 "24 dishes near you · best in light rain first".
-- Food Card Grid: Kimchi jjigae for one(Cozy · Dinner, `cloud-rain` 12° · 95) · Budae jjigae for four(Together · Dinner, `cloud-drizzle` 11° · 74) · Kimchi sundubu(Comforting · Lunch, `cloud-rain` 10° · 61) · Tuna kimchi jjigae(Cozy · Late, `cloud` 13° · 38).
-- 정렬: 현재 날씨와 같은 날씨에 올라온 것 먼저 → 거리 → 도토리. 지역 칩으로 더 좁힐 수 있다.
-- 이동: 카드 → 7.1 · 검색바 → 3.4.
+### 3.5 Search results — [351:8143](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=351-8143)
+- 3.1 레이아웃 그대로, 검색 필드에 검색어. 컨텍스트 "24 dishes near you · best in light rain first". Ask 줄 · 질문 카드는 숨김.
+- 정렬: 지금 날씨와 같은 날씨에 올라온 것 먼저 → 최신. 범위 칩으로 더 좁힐 수 있다.
 
-### 3.6 Nearby · Within 1 km — [351:8336](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=351-8336)
-- 지역 칩 필터 예시: **Within 1 km** Selected(All은 Default). 컨텍스트 "6 dishes within 1 km · closest 120 m".
-- 카드 바이라인 = 거리 · 끼니(120 m · Dinner, 350 m · Snack, 600 m · Dinner, 900 m · Snack). 거리 = 게시물 위치(9.5 정밀도 기준 중심점)와 내 위치.
-- 다른 칩: Mapo-gu = 구 단위, Same weather = 지금 내 날씨와 같은 날씨로 올라온 근처 게시물. 칩은 하나만 선택.
-- 이동: All → 3.1 · 카드 → 7.1.
+### 3.6 Nearby · 범위 칩 — [351:8336](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=351-8336)
+- **Within 1 km** = 내 위치 주변 geohash 칸 · **{구}** = 같은 구 · **Same weather** = 지금 내 날씨와 같은 날씨로 올라온 게시물(같은 도시) · **All** = 내 도시 전체.
 
 ### 3.7 Ask the neighborhood — [469:11315](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-11315)
-- 섹션 04c의 NEIGHBORHOOD QUESTIONS에 있다. 3.1 Ask 줄에서 연다(푸시, TopBar Inline "Ask the neighborhood").
+- 섹션 04c의 NEIGHBORHOOD QUESTIONS에 있다. 4.1 Our area의 "Ask a question" · 3.1 Ask 줄에서 연다(푸시, TopBar Inline "Ask the neighborhood").
 - 블록(좌우 20, gap 20): **Area shown** pill(`map-pin` · "Your area shows as Mangwon-dong" + **Change** 작은 pill(bg/default, fg/accent) → 9.5) → 질문 칸(bg/subtle, focus 테두리, radius 16, Body/L, 예시 "Is there a place near the market that still does kalguksu after 9 PM?") + 아래 줄 **Photo**(`camera`, 선택 1장) ··· "71 / 200" → **What kind of question?** Chip: **Where to eat**(Selected) · Recipe help · Ingredients · Market & deals · Other → 안내 박스(bg/accent-subtle, Caption fg/secondary) "Neighbors near you see this — never your exact location. Questions stay up for 7 days. No names, phone numbers or addresses of people."
 - [고정] Button Primary L **Post question**(y 744, 01과 같은 위치) → 3.8.
 - 규칙: 5–200자, 카테고리 1개 필수. **보이는 장소 이름 = 9.5 Shared precision**(동네 → "Mangwon-dong", 도시 → "Seoul", 나라 → "Korea"). pill 문구도 그 값을 보여 준다. **누가 보는지**는 장소 이름과 별개로, 질문할 때의 위치를 약 5 km 칸(geohash 5자리)으로 줄여 서버에만 저장하고 같은 약 20 km 범위 사람에게 보여 준다. 정확한 위치와 칸 값은 누구에게도 보이지 않는다(DB question_areas, ask_question · nearby_questions). 위치가 꺼져 있으면 3.7 대신 **3.7b**.

@@ -2,6 +2,55 @@
 
 디자인 버전별 변경 요약이다. 본문 문서에는 최종 상태만 적고, 무엇이 바뀌었는지는 여기에만 남긴다. 새 변경은 맨 위에 추가한다.
 
+## v1.8 — 2026-11-12 (문서를 실제 앱(시뮬레이터 확인)에 맞춤)
+
+v1.7.1 이후 앱에서 바뀐 것을 문서에 반영했다. **Figma에는 없고 앱에서만 바뀐 부분은 본문에 "코드 기준"으로 표시**했다(Figma 프레임은 이전 디자인으로 남아 있음).
+
+**온보딩(00 · 01)**
+- 1.1b 손글씨 편지 → **앱 소개 화면**(제목 + 2×2 기능 카드 + "Get started"). 9.8 "A letter from us"는 이 화면을 다시 연다
+- 새 단계 **1.3b Taste**(좋아하는 태그 여러 개 → profiles.favorite_tags, 건너뛰기 가능) · **1.5 Daily pick time**(30분 단위 시간 휠 → 알림 권한). 단계 표시 STEP n OF 4
+- 1.4 Location: "Why do we need this?" 안내 박스, 다음 단계가 1.5로
+
+**공통**
+- Paper(종이 질감) 오버레이와 토큰 삭제
+- **ScreenHeader · ScreenWash**: Home · Community · Timer · Profile이 같은 헤더(로고 · 오른쪽 버튼 · 날짜·위치 · 날씨 제목)와 무드 wash를 씀. 마지막 날씨 값을 기기에 저장해 다음 실행 때 먼저 보여 줌
+- **UnderlineTabs**(전체 폭 1px 30 % 선 + 라벨 폭 3px 막대, 200ms 이동) — Community · Profile · 4.2 · 4.3
+- **TabBar = Liquid Glass**(캡슐 62 + FAB 62 → 스크롤 따라 48 원으로), 탭 전환 애니메이션 없음, 축소 모션이 손가락을 뒤따름(120pt · 250ms · 정착 320ms)
+- 아이콘 `bookmark` · `message-circle` 새 모양, `notebook-pen` · `shield-check` 추가 사용
+
+**Home(02)**
+- Today’s pick: 같은 날씨 계열 **±1 °C** → 없으면 같은 계열에서 가장 가까운 기온 → 전체에서 가장 가까운 기온. **내 요리는 제외**, 1.3b 취향 보너스
+- Today’s pick의 Acorn Tag = 도토리 토글
+- 문서에서 Mood Prompt · 피드 헤더 · Similar 칩 삭제(앱에 없음). Nearby card 문구 "Similar Bites / You Might Like"
+- 헤더 오른쪽 = 알림 벨(ScreenHeader)
+
+**Community(03 · 04)**
+- 탭 **Explore · Following · Challenges**. Global과 Nearby를 Explore로 합침
+- Explore 순서: 검색 → Story of the day → **Our area(Today’s table in our area)** → Trending Bites → Holidays → Trending tags → Explore Together. 데이터가 없어도 섹션이 사라지지 않게 기간을 넓혀 채움
+- **Our area**: Popular today(오늘 이름별 Top 3, 범위 넓히기) · **Today’s vote**(날씨 계열 질문, 보기 4개 + 직접 입력, 하루 1번, 결과 막대) · 동네 질문 3–5개(넓혀 채움) + Ask · 이웃 요리 3개 + See more
+- 새 화면 **3.1 Nearby list**(`/nearby-feed`, Our area 전체 목록 · 검색 결과) · **4.1b Holidays around the world**(명절 46개 2열)
+- Festive Card: 명절 음식 사진 · 나라 국기 배지(세계 공통은 globe), 명절 46개 · 날짜 2026–2035 생성 스크립트
+- 4.1 레이아웃을 Figma 19:818 간격에 맞춤(섹션 머리 → 내용 6/8, Story chevron, Country Card 국기 위치 · 아래 페이드)
+- **4.2 Tag · 4.3 Country = v2**(사진 슬라이드 히어로 + 제목 카드 · 밑줄 탭 · 정보 알약 + 끼니 필터 · 동그란 카테고리 · TabBar). Figma v2 프레임 718:11114 · 718:11248
+- **DM 다시 들어감**: 4.5 Message 버튼 → 4.11 대화, 받은 대화함 · 요청, 9.5 "Who can message you"(대화함 · Send to 시트를 여는 버튼은 아직 없음)
+
+**Timer(05)**
+- 큰 링 선 18 · 작은 링 9, 프레임 단위로 부드럽게, 숫자는 초에 맞춤. **링을 0.35초 누르고 돌려 시간 바꾸기**(햅틱)
+- 프리셋 8개, Add timer = 가운데 대화상자(Food Name 칸)
+- 방금 시작한 타이머가 큰 링으로("Food Name"이 따라 바뀜)
+- 끝나면: 3번 진동 + 앱 안 "— done" 토스트(시스템 배너 대신), 앱 밖은 Time Sensitive 알림. Running 카드는 Done 배지 · done 테두리 · 맨 위로. 상단 Done banner 없음
+
+**Profile(06)**
+- 공통 헤더 = 유리 프로필 카드(내 날씨 · 아바타 · 이름 · "Total acorns" · 상태 메시지) + UnderlineTabs. 내 프로필은 **아이콘 탭 Dishes · Diary · Saved**(Diary가 Saved 앞)
+- Dish Tile 2열, Acorn Tag = 도토리 토글(내 요리 · 다른 요리사)
+- Saved: 컬렉션 다시 씀 — "+ New" 가운데 대화상자, 길게 눌러 컬렉션 삭제, 요리 길게 눌러 컬렉션에 담기
+- Diary: 내가 올린 요리만(I ate this 기록 제외). 아래 **냉장고 메모**(냉장실 · 냉동실, 7일 지난 재료 강조, 기기에만 저장) + "What you can cook now"(재료가 겹치는 공개 레시피 5개)
+
+**데이터(06-data-model)**
+- 새 마이그레이션 `20261111000000_nearby_questions_wide.sql`(한 단계 넓은 칸 질문) · `20261112000000_neighborhood_votes.sql`(동네 투표 + 결과 RPC + 주변 9칸 함수)
+- `places-nearby`: 검색 범위를 반경 사각형으로 제한, 반경 밖 결과 제거, 캐시 키 v3
+- messages · collections 테이블을 앱이 다시 씀
+
 ## v1.7.1 — 2026-11-05 (00–01 구현 · 문서를 Figma에 맞춤)
 
 **문서 정정(Figma가 맞고 문서가 옛 값이던 곳)**

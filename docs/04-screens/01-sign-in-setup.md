@@ -4,13 +4,13 @@
 
 ## 01 Sign in & setup — [섹션 59:2359](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2359)
 
-1.2 Sign in(Welcome) · 1.3 Profile setup · 1.4 Location (가로 배치, 이 순서). 로그인은 **Apple · Google만**(이메일 로그인 1.2b · 1.3 · 1.4 · 1.4b는 [99-removed-in-v1](99-removed-in-v1.md)).
+1.2 Sign in(Welcome) · 1.3 Profile setup · 1.3b Taste · 1.4 Location · 1.5 Daily pick time (이 순서). **1.3b · 1.5는 앱에만 있고 Figma 프레임이 없다**(코드 기준). 로그인은 **Apple · Google만**(이메일 로그인 1.2b · 1.3 · 1.4 · 1.4b는 [99-removed-in-v1](99-removed-in-v1.md)).
 
-**공통 규칙(01 전 화면)**: TopBar가 있는 화면의 제목은 Display/L, 시작 위치 y 118(1.3 · 1.4는 STEP Overline이 118). 가운데 정렬 블록(아바타 · 오브 · 도시 · 하단 링크)은 패딩이 아니라 정렬(center)로 맞춘다.
+**공통 규칙(01 전 화면)**: TopBar가 있는 화면의 제목은 Display/L, 시작 위치 y 118(1.3 · 1.3b · 1.4 · 1.5는 STEP Overline이 118). 가운데 정렬 블록(아바타 · 오브 · 도시 · 하단 링크)은 패딩이 아니라 정렬(center)로 맞춘다.
 
 **버튼 위치 규칙(01 전 화면 공통)**: 주 버튼(검정 Primary L, 56)은 항상 **화면 아래 y 744–800**에 고정한다(Home Indicator 위 10). 보조 버튼이 있으면 그 위에 쌓는다(1.4 "Choose a city instead" 680–736, gap 8 · 1.2 Apple 698–744 · Google 754–800, gap 10). 레이어 = `Block · Button (fixed)`(absolute, 고정 요소 — 스크롤·키보드와 관계없이 같은 자리). 키보드가 올라오면 버튼은 키보드 바로 위로 함께 올라간다(구현).
 
-**흐름 원칙(짧게)**: 신규 = 1.2(Apple/Google) → 1.3(이름 미리 채움) → 1.4 → 2.1, 최대 3화면. 기존 사용자 = 1.2 → 2.1.
+**흐름 원칙**: 신규 = 1.2(Apple/Google) → 1.3(이름 미리 채움) → 1.3b(건너뛰기 가능) → 1.4 → 1.5(건너뛰기 가능) → 2.1. 단계 표시는 **STEP n OF 4**(1.3 = 1 · 1.3b = 2 · 1.4 = 3 · 1.5 = 4). 기존 사용자 = 1.2 → 2.1.
 
 ### 1.2 Sign in (Welcome) — [14:67](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-67)
 - 앱을 처음 열었을 때 보는 **보편적인 시작 화면**: 위 사진, 아래 로그인 버튼 2개(Apple · Google). 이메일 · 비밀번호 입력은 없다.
@@ -27,19 +27,37 @@
 - 요청 중에는 누른 버튼이 흐려지고 두 버튼 모두 비활성. 실패하면 Caption 자리에 fg/destructive "Sign-in is napping — tap to try again."
 
 ### 1.3 Profile setup — [14:260](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-260)
-- 블록: StatusBar → TopBar(Inline) → Overline "STEP 1 OF 2"(fg/accent) + 8 + 제목 "How should we / call you?" → 24 → **Avatar edit** 96×96(Avatar 88 + 오른쪽 아래 카메라 배지 32, 9.2와 같은 구성 — 탭하여 사진 선택(정사각 자르기), 사진이 없으면 이름 첫 글자) → 32 → Input(Focus) Display name "Jiyu", helper "Shown on dishes you share." → 16 → Caption(fg/muted, handle만 Caption Strong fg/default) "Your handle will be **@jiyu_4821** — you can change it anytime in Settings." → [고정] Button Primary L "Continue"(744–800).
+- 블록: StatusBar → TopBar(Inline) → Overline "STEP 1 OF 4"(fg/accent) + 8 + 제목 "How should we / call you?" → 24 → **Avatar edit** 96×96(Avatar 88 + 오른쪽 아래 카메라 배지 32, 9.2와 같은 구성 — 탭하여 사진 선택(정사각 자르기), 사진이 없으면 이름 첫 글자) → 32 → Input(Focus) Display name "Jiyu", helper "Shown on dishes you share." → 16 → Caption(fg/muted, handle만 Caption Strong fg/default) "Your handle will be **@jiyu_4821** — you can change it anytime in Settings." → [고정] Button Primary L "Continue"(744–800).
 - 사진은 Continue 때 512px JPEG로 줄여 Storage `avatars/<uid>/`에 올린다.
 - **입력은 Display name 하나만**. username 입력 칸은 두지 않는다(가입 마찰·중복 오류 제거).
   - Display name 미리 채우기: Apple/Google 로그인에서 받은 이름(Apple에서 이름을 가렸거나 없으면 빈 칸). 1–30자, 중복 허용, 비어 있으면 Continue Disabled.
   - **username 자동 생성**: display name을 소문자 로마자로 바꾸고(한글은 로마자 변환, 실패 시 `cook`) 허용 문자 `a–z 0–9 . _`만 남긴 뒤 `_` + 4자리 숫자를 붙인다(예: Jiyu → `jiyu_4821`). 중복이면 숫자를 다시 뽑는다. 3–20자. Display name을 고치면 캡션의 handle도 실시간으로 바뀐다.
   - username 변경은 9.2에서만. 처음 @멘션이나 프로필 공유를 할 때 "Pick your handle?" 제안을 1회만 띄운다(건너뛰기 가능).
-- 이동: 뒤로 → BACK · Continue → 1.4.
+- 이동: 뒤로 → BACK · Continue → **1.3b**.
+
+### 1.3b Taste — 앱 전용(Figma 프레임 없음)
+- 목적: 좋아하는 한 끼 취향을 골라 Today’s pick 추천에 반영한다. 여러 개 고를 수 있고 건너뛸 수 있다.
+- 블록: StatusBar → TopBar(Inline, 오른쪽 Button Ghost S **"Skip"**) → Overline "STEP 2 OF 4" + 12 + Display/L **"What kind of meal / do you love?"** + 12 + Body/M fg/secondary "Pick as many as you like. We’ll lean your picks this way." → 24 → **취향 카드 2열**(좌우 20, gap 10).
+  - 카드 = 가로(padding 16, gap 10, radius lg, 1px 테두리): 태그 아이콘 22 · Body/M Strong 라벨 · 오른쪽 체크 원 22. 기본 bg/subtle + border/default, 아이콘 fg/secondary, 빈 원(1px border/strong). **선택** = bg/accent-subtle + border/accent, 아이콘 fg/accent, 원 bg/inverse + `check` 14 fg/inverse.
+  - 태그 13개: 무드 10(cozy · calm · fresh · energized · comforting · nostalgic · celebrating · lazy · together · hearty) + 끼니 3(vegan · seafood · snack). 라벨은 8.2의 태그 이름과 같다.
+  - [고정] Button Primary L **"Continue"**. 저장 실패 시 버튼 위 Caption fg/destructive "Didn’t save — tap Continue to retry."
+- 저장: 고른 태그 → `profiles.favorite_tags`. 아무것도 안 골랐으면 저장 없이 넘어간다.
+- 이동: 뒤로 → BACK · Continue / Skip → 1.4.
 
 ### 1.4 Location — [14:314](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-314)
-- 블록: StatusBar → TopBar(Inline) → "STEP 2 OF 2" + 제목 "Let the weather / help you choose." + 본문 "We use your city’s forecast to suggest what others cooked in the same weather. Only your city is shared — never your exact location."(gap 12) → 40 → **날씨 오브** 220 원(지금 날씨의 3D 날씨 아이콘 `assets/weather3d/weather3d_{mood}.png`, 없는 무드는 `clear`) → 28 → **도시 pill**(bg/default + 1px border/default, radius full, padding 12 16, gap 10): `map-pin` 20 fg/accent · "Seoul, KR"(Body/M Strong) · "· 17° Clear"(Body/S fg/muted, 상태 이름 = Weather Tag 짧은 영어) → [고정] Button Ghost L "Choose a city instead"(680–736) + Button Primary L `navigation` "Use my location"(744–800).
+- 블록: StatusBar → TopBar(Inline) → "STEP 3 OF 4" + 제목 "Let the weather / help you choose." + 본문 "We use your city’s forecast to suggest what others cooked in the same weather. Only your city is shared — never your exact location."(gap 12) → 40 → **날씨 오브** 220 원(지금 날씨의 3D 날씨 아이콘 `assets/weather3d/weather3d_{mood}.png`, 없는 무드는 `clear`) → 28 → **도시 pill**(bg/default + 1px border/default, radius full, padding 12 16, gap 10): `map-pin` 20 fg/accent · "Seoul, KR"(Body/M Strong) · "· 17° Clear"(Body/S fg/muted, 상태 이름 = Weather Tag 짧은 영어) → 24 → **Why 박스**(좌우 20, bg/subtle + 1px border/default, radius lg, padding 16, gap 8): `shield-check` 20 fg/accent + Body/M Strong "Why do we need this?" / Body/S fg/secondary "For your neighborhood’s weather and places close by. We never save your exact coordinates — only your area is used." → [고정] Button Ghost L "Choose a city instead"(680–736) + Button Primary L `navigation` "Use my location"(744–800).
 - 도시 pill은 위치 권한이 이미 있으면 기기 도시, 없으면 기본 도시(Seoul)의 지금 날씨를 보여 준다.
-- 이동: 뒤로 → BACK · Use my location → (권한 요청) → 2.7 → 2.1 · Choose a city instead / 권한 거부 → 2.5.
+- 이동: 뒤로 → BACK · Use my location → (권한 요청) → **1.5** · Choose a city instead / 권한 거부 → **1.5**(위치 꺼짐 상태를 넘겨, 1.5 다음 Home이 2.5로 열림).
 - 개인정보: 서버에는 **도시/구 단위만** 전송(profiles.city · country · location_enabled). 좌표는 기기 안에서 도시 이름 · 날씨 조회에만 쓴다.
+
+
+### 1.5 Daily pick time — 앱 전용(Figma 프레임 없음)
+- 목적: 매일 Today’s pick 알림을 받을 시간을 정하고 알림 권한을 묻는다.
+- 블록: StatusBar → TopBar(Inline, 오른쪽 Button Ghost S **"Skip"**) → Overline "STEP 4 OF 4" + Display/L **"When should we send / your daily pick?"** + Body/M fg/secondary "One dish for today’s weather, every day at this time. You can change it in Settings." → 40 → **시간 휠**(좌우 20, 5줄 보임, 줄 높이 46, 30분 간격 48개, 시각 표기는 앱 언어 형식). 가운데 줄 = bg/subtle + 1px border/default radius md 강조, 글자 Title/L fg/default · 나머지 Body/L fg/muted(한 칸 떨어지면 70 %, 그 밖 40 %). 처음 위치 = 저장된 시간(기본 07:30).
+  - [고정] Button Primary L `bell` **"Turn on notifications"**
+- 동작: 버튼 → `prefs.pickTime` 저장 + Daily pick 알림 켬 → 시스템 알림 권한 요청 → 기기 토큰과 시간을 서버에 저장 → Home. Skip → 저장 없이 Home.
+- 이동: 1.4에서 위치가 꺼진 채 왔으면 Home은 2.5 상태로 연다.
+- 휠은 VoiceOver에서 조절 가능한 항목(위·아래로 30분씩).
 
 ---
 
