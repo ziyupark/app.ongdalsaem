@@ -1,16 +1,20 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Minus, MoreHorizontal, Plus, Timer } from 'lucide-react-native';
+import { Check, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from 'lucide-react-native';
 import { Bookmark, MessageCircle, Share } from '../icons/custom';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { useFridge } from '../../lib/fridge';
+import { hasIngredients } from '../../lib/ingredientMatch';
 import { scaleIngredient } from '../../lib/scaleIngredient';
+import { addShopping } from '../../lib/shopping';
 import { isPresetMeal, isPresetMood, mealIcon, moodIcon, temperatureIcon, temperatureTag } from '../../lib/tags';
 import type { Ingredient, Step } from '../../services/foods';
 import { radius, space, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Chip } from '../Chip';
+import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { AcornTag, PhotoCounter, WeatherTag } from '../PhotoTags';
 import { Text } from '../Text';
@@ -18,6 +22,8 @@ import { Text } from '../Text';
 export type Pic = number | { uri: string };
 
 export type DishViewData = {
+  /** The post's id — 7.1 only (enables "Add to shopping list"); the 8.3 preview has none. */
+  id?: string;
   photos: Pic[];
   name: string;
   mood: WeatherMood | null;
@@ -190,6 +196,18 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
   const base = dish.servings ?? null;
   const [servings, setServings] = useState(base ?? 0);
   useEffect(() => { setServings(base ?? 0); }, [base]);
+  // Add to shopping list: the ingredients at the current servings, minus what's already in my fridge.
+  const fridge = useFridge();
+  const fridgeNames = fridge.map((f) => f.name);
+  const inFridge = dish.ingredients.filter((ing) => hasIngredients([ing.name], fridgeNames));
+  const [added, setAdded] = useState(false);
+  useEffect(() => { setAdded(false); }, [servings, dish.id]);
+  const amountOf = (amount: string) => (base != null ? scaleIngredient(amount, base, servings) : amount);
+  const addToShopping = async () => {
+    const toBuy = dish.ingredients.filter((ing) => !inFridge.includes(ing)).map((ing) => ({ name: ing.name, amount: amountOf(ing.amount) }));
+    await addShopping(toBuy, dish.id);
+    setAdded(true);
+  };
   const hasRecipe = dish.ingredients.length > 0 || dish.steps.length > 0 || dish.calories != null;
   const facts = [
     dish.servings != null ? t('dish.serves', { n: dish.servings }) : null,
@@ -224,10 +242,23 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
                   {dish.ingredients.map((ing, i) => (
                     <View key={`${ing.name}-${i}`} style={[styles.ingredient, { borderBottomColor: color('border/default') }]}>
                       <Text variant="Body/M" style={styles.flex}>{ing.name}</Text>
-                      <Text variant="Body/M Strong" color="fg/secondary">{base != null ? scaleIngredient(ing.amount, base, servings) : ing.amount}</Text>
+                      <Text variant="Body/M Strong" color="fg/secondary">{amountOf(ing.amount)}</Text>
                     </View>
                   ))}
                 </View>
+                {dish.id ? (
+                  <View style={styles.shop}>
+                    <Button
+                      label={t(added ? 'shopping.added' : 'shopping.addFromRecipe')}
+                      icon={added ? Check : ShoppingCart}
+                      variant="Outline"
+                      size="M"
+                      disabled={added || inFridge.length === dish.ingredients.length}
+                      onPress={addToShopping}
+                    />
+                    {inFridge.length ? <Text variant="Caption" color="fg/muted" style={styles.shopNote}>{t('shopping.inFridge', { n: inFridge.length })}</Text> : null}
+                  </View>
+                ) : null}
               </View>
             ) : null}
             {dish.steps.length ? (
@@ -291,6 +322,8 @@ const styles = StyleSheet.create({
   section: { paddingHorizontal: space[20], gap: space[8] },
   steps: { gap: space[14] },
   gap32: { marginTop: space[32] },
+  shop: { paddingTop: space[12], gap: space[6] },
+  shopNote: { textAlign: 'center' },
   ingHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   servings: { height: 36, flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[12], borderRadius: radius.full, borderWidth: 1 },
   ingredient: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingVertical: space[8], borderBottomWidth: 1, gap: space[12] },

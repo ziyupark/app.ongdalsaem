@@ -89,6 +89,7 @@ export default function PostDetail() {
     if (!dish) return null;
     const where = dish.placeName ?? [dish.neighborhood, dish.city].filter(Boolean).join(', ');
     return {
+      id: dish.id,
       photos: dish.photos.map((uri) => ({ uri })),
       name: dish.name,
       mood: dish.mood,

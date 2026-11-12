@@ -1025,6 +1025,14 @@ canCook=現有食材能做的料理
 haveCount=已有 {{have}}/{{total}} 種食材
 needs=還缺：{{items}}
 canCookEmpty=加入食材後，會幫你找出能做的料理。
+[shopping]
+title=購物清單
+addFromRecipe=加入購物清單
+added=已加入購物清單
+inFridge=冰箱裡已有 {{n}} 樣
+empty=還沒有要買的東西。從食譜加入食材吧。
+toFridge=已購買 → 放進冰箱 ({{n}})
+remove=移除 {{name}}
 [welcome]
 introTitle=跟著天氣選的\n每日一餐。
 introBody=看看大家在和你一樣的天氣裡煮了什麼，決定今天吃什麼。

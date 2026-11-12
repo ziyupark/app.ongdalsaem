@@ -1042,6 +1042,14 @@ canCook=O que dá para cozinhar agora
 haveCount={{have}}/{{total}} ingredientes em casa
 needs=Falta: {{items}}
 canCookEmpty=Adicione ingredientes e mostramos pratos que você pode fazer.
+[shopping]
+title=Lista de compras
+addFromRecipe=Adicionar à lista de compras
+added=Adicionado à sua lista de compras
+inFridge=Já na sua geladeira: {{n}}
+empty=Nada para comprar ainda. Adicione ingredientes de uma receita.
+toFridge=Comprado → para a geladeira ({{n}})
+remove=Remover {{name}}
 [welcome]
 introTitle=Sua refeição do dia,\ncom o clima.
 introBody=Veja o que as pessoas cozinham num clima como o seu e decida o que comer hoje.

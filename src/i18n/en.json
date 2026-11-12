@@ -767,6 +767,15 @@
     "needs": "Need: {{items}}",
     "canCookEmpty": "Add ingredients and we’ll find dishes you can make with them."
   },
+  "shopping": {
+    "title": "Shopping list",
+    "addFromRecipe": "Add to shopping list",
+    "added": "Added to your shopping list",
+    "inFridge": "Already in your fridge: {{n}}",
+    "empty": "Nothing to buy yet. Add ingredients from a recipe.",
+    "toFridge": "Bought → to the fridge ({{n}})",
+    "remove": "Remove {{name}}"
+  },
   "community": {
     "title": "Community",
     "global": "Global",

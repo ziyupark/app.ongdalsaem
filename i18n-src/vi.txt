@@ -1025,6 +1025,14 @@ canCook=Món bạn nấu được ngay
 haveCount=Có {{have}}/{{total}} nguyên liệu
 needs=Thiếu: {{items}}
 canCookEmpty=Thêm nguyên liệu, chúng tôi sẽ tìm món bạn nấu được.
+[shopping]
+title=Danh sách đi chợ
+addFromRecipe=Thêm vào danh sách đi chợ
+added=Đã thêm vào danh sách đi chợ
+inFridge=Đã có trong tủ lạnh: {{n}}
+empty=Chưa có gì cần mua. Thêm nguyên liệu từ công thức nhé.
+toFridge=Đã mua → vào tủ lạnh ({{n}})
+remove=Xóa {{name}}
 [welcome]
 introTitle=Bữa ăn mỗi ngày,\ntheo thời tiết.
 introBody=Xem mọi người nấu gì trong thời tiết giống bạn và chọn món cho hôm nay.

@@ -757,6 +757,15 @@
     "needs": "Thiếu: {{items}}",
     "canCookEmpty": "Thêm nguyên liệu, chúng tôi sẽ tìm món bạn nấu được."
   },
+  "shopping": {
+    "title": "Danh sách đi chợ",
+    "addFromRecipe": "Thêm vào danh sách đi chợ",
+    "added": "Đã thêm vào danh sách đi chợ",
+    "inFridge": "Đã có trong tủ lạnh: {{n}}",
+    "empty": "Chưa có gì cần mua. Thêm nguyên liệu từ công thức nhé.",
+    "toFridge": "Đã mua → vào tủ lạnh ({{n}})",
+    "remove": "Xóa {{name}}"
+  },
   "community": {
     "title": "Cộng đồng",
     "global": "Toàn cầu",

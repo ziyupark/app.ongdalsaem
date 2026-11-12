@@ -9,6 +9,7 @@ import { radius, space, useTheme, WEATHER_ICON, type WeatherMood } from '../../t
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { FridgeList } from './FridgeList';
+import { ShoppingList } from './ShoppingList';
 
 const RAINY: WeatherMood[] = ['drizzle', 'rain', 'heavy-rain', 'shower', 'thunder'];
 const SNOWY: WeatherMood[] = ['sleet', 'flurries', 'snow', 'heavy-snow'];
@@ -109,6 +110,7 @@ export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void })
         </View>
       ) : null}
       <FridgeList />
+      <ShoppingList />
     </View>
   );
 }

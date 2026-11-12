@@ -757,6 +757,15 @@
     "needs": "Kurang: {{items}}",
     "canCookEmpty": "Tambahkan bahan, nanti kami carikan masakan yang bisa kamu buat."
   },
+  "shopping": {
+    "title": "Daftar belanja",
+    "addFromRecipe": "Tambah ke daftar belanja",
+    "added": "Sudah ditambahkan ke daftar belanja",
+    "inFridge": "Sudah ada di kulkas: {{n}}",
+    "empty": "Belum ada yang perlu dibeli. Tambahkan bahan dari resep.",
+    "toFridge": "Sudah dibeli → ke kulkas ({{n}})",
+    "remove": "Hapus {{name}}"
+  },
   "community": {
     "title": "Komunitas",
     "global": "Global",

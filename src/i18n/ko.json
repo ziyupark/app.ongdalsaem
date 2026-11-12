@@ -767,6 +767,15 @@
     "needs": "부족: {{items}}",
     "canCookEmpty": "재료를 넣으면 만들 수 있는 요리를 찾아 드려요."
   },
+  "shopping": {
+    "title": "장보기",
+    "addFromRecipe": "장보기 목록에 담기",
+    "added": "장보기 목록에 담았어요",
+    "inFridge": "냉장고에 있어요 {{n}}개",
+    "empty": "아직 살 게 없어요. 레시피에서 재료를 담아 보세요.",
+    "toFridge": "구매 완료 → 냉장고로 ({{n}})",
+    "remove": "{{name}} 삭제"
+  },
   "community": {
     "title": "커뮤니티",
     "global": "글로벌",

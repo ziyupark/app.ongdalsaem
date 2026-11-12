@@ -767,6 +767,15 @@
     "needs": "Falta: {{items}}",
     "canCookEmpty": "Añade ingredientes y te mostraremos platos que puedes preparar."
   },
+  "shopping": {
+    "title": "Lista de compras",
+    "addFromRecipe": "Añadir a la lista de compras",
+    "added": "Añadido a tu lista de compras",
+    "inFridge": "Ya en tu nevera: {{n}}",
+    "empty": "Aún no hay nada que comprar. Añade ingredientes desde una receta.",
+    "toFridge": "Comprado → a la nevera ({{n}})",
+    "remove": "Quitar {{name}}"
+  },
   "community": {
     "title": "Comunidad",
     "global": "Global",

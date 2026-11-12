@@ -757,6 +757,15 @@
     "needs": "不足: {{items}}",
     "canCookEmpty": "食材を入れると、作れる料理を探します。"
   },
+  "shopping": {
+    "title": "買い物リスト",
+    "addFromRecipe": "買い物リストに追加",
+    "added": "買い物リストに追加しました",
+    "inFridge": "冷蔵庫にあります {{n}}個",
+    "empty": "まだ買うものはありません。レシピから材料を追加しましょう。",
+    "toFridge": "購入済み → 冷蔵庫へ ({{n}})",
+    "remove": "{{name}}を削除"
+  },
   "community": {
     "title": "コミュニティ",
     "global": "グローバル",

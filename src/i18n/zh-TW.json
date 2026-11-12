@@ -757,6 +757,15 @@
     "needs": "還缺：{{items}}",
     "canCookEmpty": "加入食材後，會幫你找出能做的料理。"
   },
+  "shopping": {
+    "title": "購物清單",
+    "addFromRecipe": "加入購物清單",
+    "added": "已加入購物清單",
+    "inFridge": "冰箱裡已有 {{n}} 樣",
+    "empty": "還沒有要買的東西。從食譜加入食材吧。",
+    "toFridge": "已購買 → 放進冰箱 ({{n}})",
+    "remove": "移除 {{name}}"
+  },
   "community": {
     "title": "社群",
     "global": "全球",
