@@ -1,10 +1,11 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MoreHorizontal, Timer } from 'lucide-react-native';
+import { Minus, MoreHorizontal, Plus, Timer } from 'lucide-react-native';
 import { Bookmark, MessageCircle, Share } from '../icons/custom';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { scaleIngredient } from '../../lib/scaleIngredient';
 import { isPresetMeal, isPresetMood, mealIcon, moodIcon, temperatureIcon, temperatureTag } from '../../lib/tags';
 import type { Ingredient, Step } from '../../services/foods';
 import { radius, space, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
@@ -57,6 +58,8 @@ type Props = {
 };
 
 export const HERO_HEIGHT = 560;
+const SERVINGS_MIN = 1;
+const SERVINGS_MAX = 10;
 const SHEET_OVERLAP = 32;
 
 /**
@@ -183,6 +186,10 @@ export function useDishTags(dish: DishViewData) {
 export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStartTimer?: (stepIndex: number) => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
+  // Servings stepper (screen only, never saved): ingredient amounts are rescaled from the recipe's servings.
+  const base = dish.servings ?? null;
+  const [servings, setServings] = useState(base ?? 0);
+  useEffect(() => { setServings(base ?? 0); }, [base]);
   const hasRecipe = dish.ingredients.length > 0 || dish.steps.length > 0 || dish.calories != null;
   const facts = [
     dish.servings != null ? t('dish.serves', { n: dish.servings }) : null,
@@ -199,12 +206,25 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
             {dish.ingredients.length ? (
               <View style={styles.section}>
                 {facts ? <Text variant="Body/S" color="fg/secondary">{facts}</Text> : null}
-                <Text variant="Title/L">{t('dish.ingredients')}</Text>
+                <View style={styles.ingHead}>
+                  <Text variant="Title/L" style={styles.flex}>{t('dish.ingredients')}</Text>
+                  {base != null ? (
+                    <View style={[styles.servings, { borderColor: color('border/default') }]}>
+                      <Pressable accessibilityRole="button" accessibilityLabel={t('share.fewerServings')} disabled={servings <= SERVINGS_MIN} onPress={() => setServings((n) => Math.max(SERVINGS_MIN, n - 1))} hitSlop={space[8]}>
+                        <Icon icon={Minus} size={16} color={servings <= SERVINGS_MIN ? 'fg/disabled' : 'fg/default'} />
+                      </Pressable>
+                      <Text variant="Body/S Strong">{t('dish.serves', { n: servings })}</Text>
+                      <Pressable accessibilityRole="button" accessibilityLabel={t('share.moreServings')} disabled={servings >= SERVINGS_MAX} onPress={() => setServings((n) => Math.min(SERVINGS_MAX, n + 1))} hitSlop={space[8]}>
+                        <Icon icon={Plus} size={16} color={servings >= SERVINGS_MAX ? 'fg/disabled' : 'fg/default'} />
+                      </Pressable>
+                    </View>
+                  ) : null}
+                </View>
                 <View>
                   {dish.ingredients.map((ing, i) => (
                     <View key={`${ing.name}-${i}`} style={[styles.ingredient, { borderBottomColor: color('border/default') }]}>
                       <Text variant="Body/M" style={styles.flex}>{ing.name}</Text>
-                      <Text variant="Body/M Strong" color="fg/secondary">{ing.amount}</Text>
+                      <Text variant="Body/M Strong" color="fg/secondary">{base != null ? scaleIngredient(ing.amount, base, servings) : ing.amount}</Text>
                     </View>
                   ))}
                 </View>
@@ -271,6 +291,8 @@ const styles = StyleSheet.create({
   section: { paddingHorizontal: space[20], gap: space[8] },
   steps: { gap: space[14] },
   gap32: { marginTop: space[32] },
+  ingHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
+  servings: { height: 36, flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[12], borderRadius: radius.full, borderWidth: 1 },
   ingredient: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingVertical: space[8], borderBottomWidth: 1, gap: space[12] },
   step: { flexDirection: 'row', alignItems: 'flex-start', gap: space[14] },
   stepNo: { width: 28, height: 28, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
