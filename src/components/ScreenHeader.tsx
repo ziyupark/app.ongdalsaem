@@ -85,6 +85,9 @@ export function ScreenHeader({ right, onBack, onLogoLongPress }: { right: Right;
   const now = useMemo(() => new Date(), [f]);
   const dateLabel = now.toLocaleDateString(i18n.language, { weekday: 'short', month: 'short', day: 'numeric' });
   const city = here.place?.city ?? f?.city ?? '';
+  // The big weather title always shows the English copy; screen readers get the user's language.
+  const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
+  const part = dayPart(now);
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -108,17 +111,17 @@ export function ScreenHeader({ right, onBack, onLogoLongPress }: { right: Right;
         {off ? (
           <>
             <Text variant="Overline" color="fg/muted">{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
-            <Text variant="Display/XL" accessibilityRole="header" numberOfLines={1} adjustsFontSizeToFit>
-              {t('home.locationOff.titleA')}
-              <Text variant="Display/XL" color="fg/disabled">{t('home.locationOff.titleB')}</Text>
+            <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${t('home.locationOff.titleA')}${t('home.locationOff.titleB')}`} numberOfLines={1} adjustsFontSizeToFit>
+              {en('home.locationOff.titleA')}
+              <Text variant="Display/XL" color="fg/disabled">{en('home.locationOff.titleB')}</Text>
             </Text>
           </>
         ) : (
           <>
             <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
-            <Text variant="Display/XL" accessibilityRole="header" numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
-              {f ? `${t(`home.titleMood.${mood}`)} ` : ''}
-              <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{t(`home.dayPart.${dayPart(now)}`)}</Text>
+            <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
+              {f ? `${en(`home.titleMood.${mood}`)} ` : ''}
+              <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{en(`home.dayPart.${part}`)}</Text>
             </Text>
           </>
         )}
