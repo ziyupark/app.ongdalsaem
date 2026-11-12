@@ -70,6 +70,33 @@
     "continue": "Continuar",
     "error": "No se guardó: toca Continuar para reintentar."
   },
+  "diet": {
+    "title": "Dieta y alergias",
+    "step": "Opcional",
+    "setupTitle": "¿Hay algo\nque no comes?",
+    "setupBody": "Dejaremos esos platos fuera de tus recomendaciones y búsquedas. Puedes cambiarlo cuando quieras en Ajustes.",
+    "dietLabel": "Dieta",
+    "none": "Sin restricciones",
+    "diets": {
+      "vegetarian": "Vegetariana",
+      "vegan": "Vegana",
+      "pescatarian": "Pescetariana"
+    },
+    "allergiesLabel": "Alergias",
+    "allergyCount": "Alergias: {{n}}",
+    "note": "Revisamos el nombre del plato y la lista de ingredientes, así que algo podría escaparse: ante la duda, pregunta a quien lo cocinó.",
+    "allergens": {
+      "peanut": "Cacahuetes",
+      "tree_nut": "Frutos secos",
+      "milk": "Leche",
+      "egg": "Huevo",
+      "wheat": "Trigo",
+      "shellfish": "Mariscos",
+      "fish": "Pescado",
+      "soy": "Soja",
+      "sesame": "Sésamo"
+    }
+  },
   "notify": {
     "step": "Paso 4 de 4",
     "title": "¿A qué hora te enviamos\ntu sugerencia diaria?",
@@ -380,6 +407,7 @@
     "madeThis": "Lo preparé",
     "madeBy": "Lo prepararon {{n}} cocineros",
     "cookedFromRecipe": "Hecho con la receta de {{name}}",
+    "allergyWarning": "Alerta de alergia: {{items}}",
     "commentsTitle": "Comentarios · {{n}}",
     "commentsError": "No se pudieron cargar los comentarios · Toca para reintentar",
     "noComments": "Aún no hay comentarios: di algo bonito.",

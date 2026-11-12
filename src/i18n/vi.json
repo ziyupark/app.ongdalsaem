@@ -70,6 +70,33 @@
     "continue": "Tiếp tục",
     "error": "Chưa lưu được — nhấn Tiếp tục để thử lại."
   },
+  "diet": {
+    "title": "Chế độ ăn & dị ứng",
+    "step": "Tùy chọn",
+    "setupTitle": "Bạn có kiêng\nmón gì không?",
+    "setupBody": "Những món đó sẽ không xuất hiện trong gợi ý và kết quả tìm kiếm. Bạn có thể đổi bất cứ lúc nào trong Cài đặt.",
+    "dietLabel": "Chế độ ăn",
+    "none": "Không hạn chế",
+    "diets": {
+      "vegetarian": "Ăn chay",
+      "vegan": "Thuần chay",
+      "pescatarian": "Ăn chay có cá"
+    },
+    "allergiesLabel": "Dị ứng",
+    "allergyCount": "{{n}} dị ứng",
+    "note": "Chúng tôi kiểm tra tên món và danh sách nguyên liệu nên có thể sót — nếu lo, hãy hỏi người nấu.",
+    "allergens": {
+      "peanut": "Đậu phộng",
+      "tree_nut": "Các loại hạt",
+      "milk": "Sữa",
+      "egg": "Trứng",
+      "wheat": "Lúa mì",
+      "shellfish": "Giáp xác",
+      "fish": "Cá",
+      "soy": "Đậu nành",
+      "sesame": "Mè"
+    }
+  },
   "notify": {
     "step": "Bước 4/4",
     "title": "Mấy giờ gửi\ngợi ý mỗi ngày?",
@@ -377,6 +404,7 @@
     "madeThis": "Tôi đã nấu thử",
     "madeBy": "{{n}} người đã nấu",
     "cookedFromRecipe": "Nấu theo công thức của {{name}}",
+    "allergyWarning": "Cảnh báo dị ứng: {{items}}",
     "commentsTitle": "Bình luận · {{n}}",
     "commentsError": "Không tải được bình luận · Chạm để thử lại",
     "noComments": "Chưa có bình luận — hãy nói điều gì đó ấm áp.",

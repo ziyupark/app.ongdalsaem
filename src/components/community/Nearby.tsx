@@ -5,6 +5,7 @@ import { Clock, CloudRain, MapPin, Search, SlidersHorizontal, X } from 'lucide-r
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useDietPrefs } from '../../lib/dietPrefs';
 import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
 import {
@@ -41,6 +42,7 @@ export function useNearbyDishes(here: Here, area: Area, query: string, filters: 
   const f = here.forecast;
   const { city, district } = placeOf(here);
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
+  const diet = useDietPrefs();
   const load = useCallback(async () => {
     if (here.status === 'loading') return;
     setDishes(null);
@@ -54,13 +56,14 @@ export function useNearbyDishes(here: Here, area: Area, query: string, filters: 
         maxMinutes: filters.maxMinutes,
         difficulty: filters.difficulty,
         ingredients: filters.ingredients,
+        diet,
       });
       // "best in <weather> first": same-weather dishes lead, then newest.
       setDishes(f?.mood ? [...list.filter((d) => d.mood === f.mood), ...list.filter((d) => d.mood !== f.mood)] : list);
     } catch {
       setDishes([]);
     }
-  }, [here.status, here.coords, city, district, area, f?.mood, query, filters]);
+  }, [here.status, here.coords, city, district, area, f?.mood, query, filters, diet]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
   return dishes;
 }

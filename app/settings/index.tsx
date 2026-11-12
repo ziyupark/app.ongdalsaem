@@ -1,13 +1,14 @@
 import * as Application from 'expo-application';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Moon, Thermometer } from 'lucide-react-native';
+import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Moon, Salad, Thermometer } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from '../../src/components/Icon';
 import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components/settings/Settings';
 import { Text } from '../../src/components/Text';
+import { useDietPrefs } from '../../src/lib/dietPrefs';
 import { setPrefs, usePrefs, type Appearance } from '../../src/lib/prefs';
 import { signOut } from '../../src/services/auth';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
@@ -17,6 +18,7 @@ import { radius, space, useTheme } from '../../src/theme';
 export default function Settings() {
   const { color } = useTheme();
   const { t } = useTranslation();
+  const diet = useDietPrefs();
   const prefs = usePrefs();
   const [me, setMe] = useState<MyProfile | null>(null);
   useFocusEffect(useCallback(() => { getMyProfile().then(setMe).catch(() => undefined); }, []));
@@ -63,6 +65,12 @@ export default function Settings() {
         <SettingsRow icon={Moon} label={t('settings.appearance')} value={t(`settings.appearanceOptions.${prefs.appearance}`)} onPress={pickAppearance} />
         <SettingsRow icon={Thermometer} label={t('settings.temperature')} value={prefs.tempUnit === 'F' ? '°F' : '°C'} onPress={pickUnit} />
         <SettingsRow icon={Globe} label={t('settings.language')} value={t(`settings.languages.${prefs.language ?? 'device'}`)} onPress={() => router.push('/settings/language')} />
+        <SettingsRow
+          icon={Salad}
+          label={t('diet.title')}
+          value={[diet.diet ? t(`diet.diets.${diet.diet}`) : null, diet.allergies.length ? t('diet.allergyCount', { n: diet.allergies.length }) : null].filter(Boolean).join(' · ') || t('diet.none')}
+          onPress={() => router.push('/settings/diet')}
+        />
       </SettingsGroup>
       <SettingsGroup label={t('settings.privacySafety')}>
         <SettingsRow icon={Eye} label={t('settings.privacyLocation')} onPress={() => router.push('/settings/privacy')} />

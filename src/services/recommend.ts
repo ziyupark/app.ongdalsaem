@@ -1,5 +1,6 @@
 // Home recommendations — docs/05-behavior.md §6.1 Meal slots · §6.2 Today's pick · Mood prompt.
 // Runs on the client over a pool of recent public dishes; swap for an RPC when the pool outgrows one query.
+import { clashes, type DietPrefs } from '../lib/allergens';
 import type { Meal } from '../lib/meals';
 import { supabase } from '../lib/supabase';
 import { WEATHER_MOODS, type WeatherMood } from '../theme';
@@ -18,6 +19,8 @@ export type PoolDish = {
   neighborhood: string | null;
   createdAt: Date;
   creator: Person;
+  /** Ingredient names — diet & allergy check (Today's pick). */
+  ingredients: string[];
 };
 
 export type Place = { city?: string | null; neighborhood?: string | null };
@@ -26,7 +29,7 @@ export type Ctx = { mood?: WeatherMood | null; tempC?: number | null; place?: Pl
 const POOL_DAYS = 60;
 const POOL_LIMIT = 300;
 const SELECT =
-  'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, city, neighborhood, created_at, ' +
+  'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, city, neighborhood, created_at, ingredients, ' +
   'likes(count), creator:profiles!creator_id(id, display_name, username, avatar_url)';
 
 const asMood = (v: unknown): WeatherMood | null => (typeof v === 'string' && (WEATHER_MOODS as readonly string[]).includes(v) ? (v as WeatherMood) : null);
@@ -58,6 +61,7 @@ export async function fetchPool(): Promise<PoolDish[]> {
       neighborhood: r.neighborhood ?? null,
       createdAt: new Date(r.created_at),
       creator: toPerson(r.creator),
+      ingredients: Array.isArray(r.ingredients) ? (r.ingredients as Row[]).map((i) => String(i?.name ?? '')).filter(Boolean) : [],
     }));
 }
 
@@ -153,13 +157,14 @@ export const PICK_TEMP_RANGE = 1;
  * Location off (2.5) → the chosen city's best. No weather (2.6) → every dish is a candidate.
  * `excludeCreator` = my user id: my own dishes are never my pick.
  * `favoriteTags` (profiles.favorite_tags) = taste bonus, only between dishes with the same exact-weather match.
+ * `diet` (profiles.diet · allergies) = dishes that clash are never picked.
  */
 export function pickToday(
   all: PoolDish[],
-  ctx: Ctx & { meal?: Meal; excludeCreator?: string | null; favoriteTags?: readonly string[] },
+  ctx: Ctx & { meal?: Meal; excludeCreator?: string | null; favoriteTags?: readonly string[]; diet?: DietPrefs | null },
 ): PoolDish | null {
   const { mood, tempC } = ctx;
-  const pool = ctx.excludeCreator ? all.filter((d) => d.creator.id !== ctx.excludeCreator) : all;
+  const pool = all.filter((d) => (!ctx.excludeCreator || d.creator.id !== ctx.excludeCreator) && !clashes([d.name, ...d.ingredients], ctx.diet ?? null));
   const weight = (d: PoolDish) =>
     score(d, ctx.place) *
     (mood && d.mood === mood ? 1.6 : 1) *

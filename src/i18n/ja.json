@@ -70,6 +70,33 @@
     "continue": "続ける",
     "error": "保存できませんでした — 「続ける」をタップして再試行してください。"
   },
+  "diet": {
+    "title": "食事制限・アレルギー",
+    "step": "任意",
+    "setupTitle": "避けている食べ物は\nありますか？",
+    "setupBody": "該当する料理はおすすめと検索から外します。設定からいつでも変更できます。",
+    "dietLabel": "食事スタイル",
+    "none": "制限なし",
+    "diets": {
+      "vegetarian": "ベジタリアン",
+      "vegan": "ヴィーガン",
+      "pescatarian": "ペスカタリアン"
+    },
+    "allergiesLabel": "アレルギー",
+    "allergyCount": "アレルギー {{n}}件",
+    "note": "料理名と材料リストで判断するため、漏れることがあります。気になるときは作った人に確認してください。",
+    "allergens": {
+      "peanut": "ピーナッツ",
+      "tree_nut": "ナッツ類",
+      "milk": "乳",
+      "egg": "卵",
+      "wheat": "小麦",
+      "shellfish": "甲殻類",
+      "fish": "魚",
+      "soy": "大豆",
+      "sesame": "ごま"
+    }
+  },
   "notify": {
     "step": "ステップ 4/4",
     "title": "毎日何時に\nおすすめを受け取りますか？",
@@ -377,6 +404,7 @@
     "madeThis": "作ってみた",
     "madeBy": "作った人 {{n}}人",
     "cookedFromRecipe": "{{name}}さんのレシピで作りました",
+    "allergyWarning": "アレルギー注意: {{items}}",
     "commentsTitle": "コメント · {{n}}",
     "commentsError": "コメントを読み込めませんでした · タップして再試行",
     "noComments": "まだコメントはありません — あたたかい一言をどうぞ。",

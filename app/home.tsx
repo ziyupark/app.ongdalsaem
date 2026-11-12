@@ -17,6 +17,7 @@ import { WeatherCard, type SlotView } from '../src/components/home/WeatherCard';
 import { Toast } from '../src/components/Toast';
 import { mealAt, mealTimeline, type Meal } from '../src/lib/meals';
 import { resetShareDraft, updateShareDraft } from '../src/lib/shareDraft';
+import { useDietPrefs } from '../src/lib/dietPrefs';
 import { fetchPool, pickForSlot, pickToday, sameGroup, type Ctx, type PoolDish } from '../src/services/recommend';
 import { resetOnboardingForDev, signOut } from '../src/services/auth';
 import { fetchFeed, fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
@@ -52,6 +53,7 @@ export default function HomeScreen() {
   const [myId, setMyId] = useState<string | null>(null);
   useEffect(() => { supabase.auth.getSession().then(({ data }) => setMyId(data.session?.user.id ?? null)); }, []);
   const [favoriteTags, setFavoriteTags] = useState<string[]>([]);
+  const diet = useDietPrefs();
   useEffect(() => { fetchMyFavoriteTags().then(setFavoriteTags).catch(() => undefined); }, []);
   useFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, []));
   useFocusEffect(
@@ -171,8 +173,8 @@ export default function HomeScreen() {
 
   // §6.2 Today's pick — today's weather family within ±1 °C (else the closest temperature), then meal · place · acorns · freshness (the mood prompt was removed in 2.1 19:191).
   const pick = useMemo(
-    () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now), excludeCreator: myId, favoriteTags }),
-    [pool, myId, favoriteTags, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
+    () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now), excludeCreator: myId, favoriteTags, diet }),
+    [pool, myId, favoriteTags, diet, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
   );
   // Today's pick acorn: whether I gave one (from my marks) + my change since load, so the count moves at once.
   const [pickAcorn, setPickAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });

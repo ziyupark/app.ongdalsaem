@@ -70,6 +70,33 @@
     "continue": "계속",
     "error": "저장하지 못했어요 — 계속을 눌러 다시 시도해 주세요."
   },
+  "diet": {
+    "title": "식단·알레르기",
+    "step": "선택",
+    "setupTitle": "피하는 음식이\n있나요?",
+    "setupBody": "이 요리들은 추천과 검색에서 빼 드릴게요. 설정에서 언제든 바꿀 수 있어요.",
+    "dietLabel": "식단",
+    "none": "제한 없음",
+    "diets": {
+      "vegetarian": "채식",
+      "vegan": "비건",
+      "pescatarian": "페스코"
+    },
+    "allergiesLabel": "알레르기",
+    "allergyCount": "알레르기 {{n}}개",
+    "note": "요리 이름과 재료 목록으로 판단해서 빠지는 경우가 있을 수 있어요. 걱정되면 만든 사람에게 확인하세요.",
+    "allergens": {
+      "peanut": "땅콩",
+      "tree_nut": "견과류",
+      "milk": "우유",
+      "egg": "달걀",
+      "wheat": "밀",
+      "shellfish": "갑각류",
+      "fish": "생선",
+      "soy": "대두",
+      "sesame": "참깨"
+    }
+  },
   "notify": {
     "step": "4 / 4단계",
     "title": "매일 몇 시에\n추천을 받을까요?",
@@ -380,6 +407,7 @@
     "madeThis": "만들어 봤어요",
     "madeBy": "만들어 본 사람 {{n}}명",
     "cookedFromRecipe": "{{name}}님의 레시피로 만들었어요",
+    "allergyWarning": "알레르기 주의: {{items}}",
     "commentsTitle": "댓글 · {{n}}",
     "commentsError": "댓글을 불러오지 못했어요 · 탭해서 다시 시도",
     "noComments": "아직 댓글이 없어요. 따뜻한 한마디를 남겨주세요.",

@@ -1,10 +1,12 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Check, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from 'lucide-react-native';
+import { AlertTriangle, Check, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from 'lucide-react-native';
 import { Bookmark, MessageCircle, Share } from '../icons/custom';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { allergensIn } from '../../lib/allergens';
+import { useDietPrefs } from '../../lib/dietPrefs';
 import { useFridge } from '../../lib/fridge';
 import { hasIngredients } from '../../lib/ingredientMatch';
 import { scaleIngredient } from '../../lib/scaleIngredient';
@@ -208,6 +210,9 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
     await addShopping(toBuy, dish.id);
     setAdded(true);
   };
+  // 7.1 allergy warning — my allergens found in the dish name or ingredients.
+  const { allergies } = useDietPrefs();
+  const warn = dish.id && allergies.length ? allergensIn([dish.name, ...dish.ingredients.map((i) => i.name)], allergies) : [];
   const hasRecipe = dish.ingredients.length > 0 || dish.steps.length > 0 || dish.calories != null;
   const facts = [
     dish.servings != null ? t('dish.serves', { n: dish.servings }) : null,
@@ -221,6 +226,14 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
             <View style={styles.dividerRow}>
               <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
             </View>
+            {warn.length ? (
+              <View style={[styles.section, styles.warnRow]}>
+                <View style={[styles.warn, { backgroundColor: color('bg/destructive-subtle') }]}>
+                  <Icon icon={AlertTriangle} size={14} color="fg/destructive" />
+                  <Text variant="Caption Strong" color="fg/destructive">{t('dish.allergyWarning', { items: warn.map((a) => t(`diet.allergens.${a}`)).join(', ') })}</Text>
+                </View>
+              </View>
+            ) : null}
             {dish.ingredients.length ? (
               <View style={styles.section}>
                 {facts ? <Text variant="Body/S" color="fg/secondary">{facts}</Text> : null}
@@ -322,6 +335,8 @@ const styles = StyleSheet.create({
   section: { paddingHorizontal: space[20], gap: space[8] },
   steps: { gap: space[14] },
   gap32: { marginTop: space[32] },
+  warnRow: { paddingBottom: space[16] },
+  warn: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   shop: { paddingTop: space[12], gap: space[6] },
   shopNote: { textAlign: 'center' },
   ingHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },

@@ -70,6 +70,33 @@
     "continue": "Continuar",
     "error": "Não salvou — toque em Continuar para tentar de novo."
   },
+  "diet": {
+    "title": "Dieta e alergias",
+    "step": "Opcional",
+    "setupTitle": "Tem algo que\nvocê evita?",
+    "setupBody": "Vamos deixar esses pratos fora das suas sugestões e buscas. Dá para mudar quando quiser em Configurações.",
+    "dietLabel": "Dieta",
+    "none": "Sem restrição",
+    "diets": {
+      "vegetarian": "Vegetariana",
+      "vegan": "Vegana",
+      "pescatarian": "Pescetariana"
+    },
+    "allergiesLabel": "Alergias",
+    "allergyCount": "Alergias: {{n}}",
+    "note": "Verificamos o nome do prato e a lista de ingredientes, então algo pode passar — na dúvida, confirme com quem cozinhou.",
+    "allergens": {
+      "peanut": "Amendoim",
+      "tree_nut": "Castanhas",
+      "milk": "Leite",
+      "egg": "Ovo",
+      "wheat": "Trigo",
+      "shellfish": "Crustáceos",
+      "fish": "Peixe",
+      "soy": "Soja",
+      "sesame": "Gergelim"
+    }
+  },
   "notify": {
     "step": "Etapa 4 de 4",
     "title": "Que horas enviamos\nsua sugestão diária?",
@@ -380,6 +407,7 @@
     "madeThis": "Eu fiz este",
     "madeBy": "Feito por {{n}} pessoas",
     "cookedFromRecipe": "Feito com a receita de {{name}}",
+    "allergyWarning": "Alerta de alergia: {{items}}",
     "commentsTitle": "Comentários · {{n}}",
     "commentsError": "Não foi possível carregar os comentários · Toque para tentar de novo",
     "noComments": "Nenhum comentário ainda — diga algo carinhoso.",

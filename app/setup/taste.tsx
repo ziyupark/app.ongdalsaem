@@ -22,7 +22,7 @@ export default function TasteStep() {
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
 
-  const next = () => router.push('/setup/location');
+  const next = () => router.push('/setup/diet');
   const toggle = (key: string) => setPicked((p) => (p.includes(key) ? p.filter((k) => k !== key) : [...p, key]));
 
   const submit = async () => {

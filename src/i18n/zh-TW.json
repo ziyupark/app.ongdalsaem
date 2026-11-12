@@ -70,6 +70,33 @@
     "continue": "繼續",
     "error": "未能儲存 — 點「繼續」重試。"
   },
+  "diet": {
+    "title": "飲食與過敏",
+    "step": "選填",
+    "setupTitle": "有不吃的\n食物嗎？",
+    "setupBody": "這些料理不會出現在推薦和搜尋結果中。隨時可以在設定中更改。",
+    "dietLabel": "飲食方式",
+    "none": "不限",
+    "diets": {
+      "vegetarian": "蛋奶素",
+      "vegan": "全素",
+      "pescatarian": "海鮮素"
+    },
+    "allergiesLabel": "過敏",
+    "allergyCount": "{{n}} 項過敏",
+    "note": "我們依料理名稱和食材清單判斷，可能會有遺漏 — 不確定時請向做菜的人確認。",
+    "allergens": {
+      "peanut": "花生",
+      "tree_nut": "堅果",
+      "milk": "牛奶",
+      "egg": "蛋",
+      "wheat": "小麥",
+      "shellfish": "甲殼類",
+      "fish": "魚",
+      "soy": "黃豆",
+      "sesame": "芝麻"
+    }
+  },
   "notify": {
     "step": "第 4 步，共 4 步",
     "title": "每天幾點\n傳送推薦給你？",
@@ -377,6 +404,7 @@
     "madeThis": "我做過了",
     "madeBy": "{{n}} 人做過",
     "cookedFromRecipe": "用 {{name}} 的食譜做的",
+    "allergyWarning": "過敏注意：{{items}}",
     "commentsTitle": "留言 · {{n}}",
     "commentsError": "無法載入留言 · 點一下重試",
     "noComments": "還沒有留言——說點溫暖的話吧。",

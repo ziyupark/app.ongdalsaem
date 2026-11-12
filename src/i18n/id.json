@@ -70,6 +70,33 @@
     "continue": "Lanjutkan",
     "error": "Gagal menyimpan — ketuk Lanjutkan untuk mencoba lagi."
   },
+  "diet": {
+    "title": "Pola makan & alergi",
+    "step": "Opsional",
+    "setupTitle": "Ada makanan\nyang kamu hindari?",
+    "setupBody": "Masakan seperti itu tidak akan muncul di rekomendasi dan pencarian. Bisa diubah kapan saja di Pengaturan.",
+    "dietLabel": "Pola makan",
+    "none": "Tanpa batasan",
+    "diets": {
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "pescatarian": "Pescatarian"
+    },
+    "allergiesLabel": "Alergi",
+    "allergyCount": "{{n}} alergi",
+    "note": "Kami memeriksa nama masakan dan daftar bahan, jadi mungkin ada yang terlewat — tanyakan ke pemasaknya jika ragu.",
+    "allergens": {
+      "peanut": "Kacang tanah",
+      "tree_nut": "Kacang pohon",
+      "milk": "Susu",
+      "egg": "Telur",
+      "wheat": "Gandum",
+      "shellfish": "Kerang & udang",
+      "fish": "Ikan",
+      "soy": "Kedelai",
+      "sesame": "Wijen"
+    }
+  },
   "notify": {
     "step": "Langkah 4 dari 4",
     "title": "Jam berapa kami kirim\nrekomendasi harianmu?",
@@ -377,6 +404,7 @@
     "madeThis": "Saya sudah coba",
     "madeBy": "Dibuat oleh {{n}} orang",
     "cookedFromRecipe": "Dibuat dengan resep {{name}}",
+    "allergyWarning": "Awas alergi: {{items}}",
     "commentsTitle": "Komentar · {{n}}",
     "commentsError": "Gagal memuat komentar · Ketuk untuk mencoba lagi",
     "noComments": "Belum ada komentar — tulis sesuatu yang hangat.",

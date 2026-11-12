@@ -70,6 +70,33 @@
     "continue": "Continue",
     "error": "Didn’t save — tap Continue to retry."
   },
+  "diet": {
+    "title": "Diet & allergies",
+    "step": "Optional",
+    "setupTitle": "Anything you\nstay away from?",
+    "setupBody": "We’ll leave these dishes out of your picks and search. You can change this anytime in Settings.",
+    "dietLabel": "Diet",
+    "none": "No restriction",
+    "diets": {
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "pescatarian": "Pescatarian"
+    },
+    "allergiesLabel": "Allergies",
+    "allergyCount": "Allergies: {{n}}",
+    "note": "We check dish names and ingredient lists, so some may slip through — check with the cook when in doubt.",
+    "allergens": {
+      "peanut": "Peanuts",
+      "tree_nut": "Tree nuts",
+      "milk": "Milk",
+      "egg": "Eggs",
+      "wheat": "Wheat",
+      "shellfish": "Shellfish",
+      "fish": "Fish",
+      "soy": "Soy",
+      "sesame": "Sesame"
+    }
+  },
   "notify": {
     "step": "Step 4 of 4",
     "title": "When should we send\nyour daily pick?",
@@ -380,6 +407,7 @@
     "madeThis": "I made this",
     "madeBy": "Made by {{n}} cooks",
     "cookedFromRecipe": "Made with {{name}}’s recipe",
+    "allergyWarning": "Allergy alert: {{items}}",
     "commentsTitle": "Comments · {{n}}",
     "commentsError": "Couldn’t load comments · Tap to retry",
     "noComments": "No comments yet — say something warm.",
