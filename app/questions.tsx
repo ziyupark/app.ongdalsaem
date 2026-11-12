@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { ChevronLeft, EllipsisVertical, Plus, Search } from 'lucide-react-native';
-import { useCallback, useRef, useState } from 'react';
+import { ChevronLeft, EllipsisVertical, Plus } from 'lucide-react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,8 +24,10 @@ import { blockUser } from '../src/services/moderation';
 import { radius, space, useTheme, WEATHER_ICON } from '../src/theme';
 
 const PAGE = 20;
-/** Bottom of the floating "+ Ask" (Kick M): 16 above the 110 tab-bar area. */
+/** Tab-bar area the list / empty state clear at the bottom. */
 const TAB_AREA = 110;
+/** Typing pause before the search runs. */
+const SEARCH_DELAY = 300;
 
 /** "Title\nrest" → title (first line) · preview (the rest on one line). */
 const split = (body: string) => {
@@ -35,8 +37,8 @@ const split = (body: string) => {
 
 /**
  * 4.5 Questions · List (Figma 778:11783) · 4.5b Empty (778:11961).
- * Top bar (back · Title/L · search) → category chips + 1px border/default → rows (px 20, 1px border/default between)
- * → floating "+ Ask" (Kick M) above the TabBar. Your area first, then wider ranges; 20 at a time.
+ * Top bar (back · Title/L · + Ask 44) → search field (px 20, always shown) → category chips + 1px border/default
+ * → rows (px 20, 1px border/default between). Your area first, then wider ranges; 20 at a time.
  */
 export default function Questions() {
   const { color } = useTheme();
@@ -46,7 +48,6 @@ export default function Questions() {
   const { here } = useHere();
   const bar = useTabBarScroll();
   const [category, setCategory] = useState<QuestionCategory | null>(null);
-  const [searching, setSearching] = useState(false);
   const [draft, setDraft] = useState('');
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<Question[] | null>(null);
@@ -54,6 +55,14 @@ export default function Questions() {
   const [more, setMore] = useState(false);
   const [reporting, setReporting] = useState<Question | null>(null);
   const run = useRef(0);
+
+  // Search title + body as the user types (debounced); clearing resets at once.
+  useEffect(() => {
+    const q = draft.trim();
+    if (!q) { setQuery(''); return; }
+    const h = setTimeout(() => setQuery(q), SEARCH_DELAY);
+    return () => clearTimeout(h);
+  }, [draft]);
 
   const at = { geohash: here.cell, district: here.place?.district ?? null, city: here.place?.city ?? here.forecast?.city ?? null };
   const ready = here.status !== 'loading';
@@ -168,38 +177,25 @@ export default function Questions() {
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
-      {/* TopBar · Inline — back 40 · Title/L · search 40. */}
+      {/* TopBar · Inline — back 40 · Title/L · + Ask (Plus 24 in 44×44). */}
       <View style={styles.bar}>
         <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[4]} onPress={() => router.back()} style={styles.btn}>
           <Icon icon={ChevronLeft} size={22} />
         </Pressable>
         <Text variant="Title/L" numberOfLines={1}>{t('community.area.questionsTitle')}</Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('questions.search')}
-          accessibilityState={{ selected: searching }}
-          hitSlop={space[4]}
-          onPress={() => {
-            if (searching && query) setQuery('');
-            setDraft('');
-            setSearching((s) => !s);
-          }}
-          style={styles.btn}
-        >
-          <Icon icon={Search} size={22} />
+        <Pressable accessibilityRole="button" accessibilityLabel={t('community.area.ask')} onPress={() => router.push('/ask')} style={styles.add}>
+          <Icon icon={Plus} size={24} color="fg/default" />
         </Pressable>
       </View>
-      {searching ? (
-        <View style={styles.search}>
-          <SearchField
-            value={draft}
-            onChangeText={(v) => { setDraft(v); if (!v) setQuery(''); }}
-            onSubmit={() => setQuery(draft.trim())}
-            placeholder={t('questions.search')}
-            autoFocus
-          />
-        </View>
-      ) : null}
+      {/* Search — always shown, px 20; searches title + body. */}
+      <View style={styles.search}>
+        <SearchField
+          value={draft}
+          onChangeText={setDraft}
+          onSubmit={() => setQuery(draft.trim())}
+          placeholder={t('questions.search')}
+        />
+      </View>
 
       {/* Category chips — p 8 20 12 · gap 8, then 1px border/default. */}
       <View style={[styles.chipsBlock, { borderBottomColor: color('border/default') }]}>
@@ -227,7 +223,7 @@ export default function Questions() {
           keyExtractor={(q) => q.id}
           renderItem={row}
           ItemSeparatorComponent={() => <View style={[styles.divider, { backgroundColor: color('border/default') }]} />}
-          contentContainerStyle={[styles.list, { paddingBottom: TAB_AREA + 46 + space[32] }]}
+          contentContainerStyle={[styles.list, { paddingBottom: TAB_AREA + space[16] }]}
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
           onScroll={onScroll}
@@ -237,11 +233,6 @@ export default function Questions() {
         />
       )}
 
-      {items?.length ? (
-        <View style={[styles.fab, { bottom: TAB_AREA + space[16] }]}>
-          <Button label={t('community.area.ask')} variant="Kick" size="M" icon={Plus} onPress={() => router.push('/ask')} />
-        </View>
-      ) : null}
       <TabBar active="community" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
       <ReportSheet
         visible={!!reporting}
@@ -263,6 +254,7 @@ const styles = StyleSheet.create({
   center: { textAlign: 'center' },
   bar: { height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[12] },
   btn: { width: 40, height: 40, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  add: { width: 44, height: 44, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   search: { paddingHorizontal: space[20], paddingBottom: space[8] },
   chipsBlock: { borderBottomWidth: 1 },
   chips: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20], paddingTop: space[8], paddingBottom: space[12] },
@@ -281,5 +273,4 @@ const styles = StyleSheet.create({
   orb: { width: 64, height: 64, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   emptyTitle: { marginTop: space[16] },
   emptyBody: { marginTop: space[6], marginBottom: space[24] },
-  fab: { position: 'absolute', right: space[20] },
 });
