@@ -32,6 +32,10 @@ export type DishViewData = {
   ingredients: Ingredient[];
   steps: Step[];
   calories: number | null;
+  /** "Serves 2 · 20 min · Easy" line above Ingredients — only the values that are set. */
+  servings?: number | null;
+  cookMinutes?: number | null;
+  difficulty?: 'easy' | 'medium' | 'hard' | null;
 };
 
 type Props = {
@@ -180,6 +184,11 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
   const { color } = useTheme();
   const { t } = useTranslation();
   const hasRecipe = dish.ingredients.length > 0 || dish.steps.length > 0 || dish.calories != null;
+  const facts = [
+    dish.servings != null ? t('dish.serves', { n: dish.servings }) : null,
+    dish.cookMinutes != null ? t(dish.cookMinutes >= 60 ? 'dish.minutesPlus' : 'dish.minutes', { n: Math.min(dish.cookMinutes, 60) }) : null,
+    dish.difficulty ? t(`dish.difficulty${dish.difficulty[0].toUpperCase()}${dish.difficulty.slice(1)}`) : null,
+  ].filter(Boolean).join(' · ');
   return (
     <>
         {hasRecipe ? (
@@ -189,6 +198,7 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
             </View>
             {dish.ingredients.length ? (
               <View style={styles.section}>
+                {facts ? <Text variant="Body/S" color="fg/secondary">{facts}</Text> : null}
                 <Text variant="Title/L">{t('dish.ingredients')}</Text>
                 <View>
                   {dish.ingredients.map((ing, i) => (

@@ -104,6 +104,9 @@ export default function PostDetail() {
       ingredients: dish.ingredients,
       steps: dish.steps,
       calories: dish.calories,
+      servings: dish.servings,
+      cookMinutes: dish.cookMinutes,
+      difficulty: dish.difficulty,
     };
   }, [dish, acorns, commentCount, t]);
 

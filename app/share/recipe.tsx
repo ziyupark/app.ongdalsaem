@@ -1,16 +1,17 @@
 import { router } from 'expo-router';
-import { Check, Flame, GripVertical, Plus, Timer, X } from 'lucide-react-native';
+import { Check, Flame, GripVertical, Minus, Plus, Timer, X } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/Button';
+import { Chip } from '../../src/components/Chip';
 import { Icon } from '../../src/components/Icon';
 import { SortableList } from '../../src/components/share/SortableList';
 import { formatTimer, TimerSheet } from '../../src/components/share/TimerSheet';
 import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
-import { updateShareDraft, useShareDraft, type DraftIngredient, type DraftStep } from '../../src/lib/shareDraft';
+import { updateShareDraft, useShareDraft, type Difficulty, type DraftIngredient, type DraftStep } from '../../src/lib/shareDraft';
 import { radius, space, text, useTheme } from '../../src/theme';
 
 const MAX_INGREDIENTS = 30;
@@ -19,6 +20,15 @@ const MAX_NAME = 40;
 const MAX_AMOUNT = 20;
 const MAX_STEP = 300;
 const MAX_KCAL = 5;
+const SERVINGS_MIN = 1;
+const SERVINGS_MAX = 10;
+/** Cook time chips in minutes — 60 reads "60+ min". */
+const COOK_MINUTES = [10, 20, 30, 60] as const;
+const DIFFICULTIES: { key: Difficulty; label: string }[] = [
+  { key: 'easy', label: 'dish.difficultyEasy' },
+  { key: 'medium', label: 'dish.difficultyMedium' },
+  { key: 'hard', label: 'dish.difficultyHard' },
+];
 
 // iOS TextInput mis-centres text when lineHeight is set — keep font, size and tracking only.
 const { lineHeight: _lh, ...fieldText } = text['Body/M'];
@@ -297,6 +307,46 @@ export default function RecipeEditor() {
 
         <View style={styles.calories}>
           <View style={styles.calHead}>
+            <Text variant="Body/S Strong">{t('share.servingsLabel')}</Text>
+            <Text variant="Caption" color="fg/muted">{t('share.optional')}</Text>
+          </View>
+          <View style={[styles.stepper, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+            <Pressable accessibilityRole="button" accessibilityLabel={t('share.fewerServings')} disabled={d.servings <= SERVINGS_MIN} onPress={() => updateShareDraft({ servings: Math.max(SERVINGS_MIN, d.servings - 1) })} hitSlop={space[10]}>
+              <Icon icon={Minus} size={18} color={d.servings <= SERVINGS_MIN ? 'fg/disabled' : 'fg/default'} />
+            </Pressable>
+            <Text variant="Body/M Strong" style={styles.stepperValue}>{t('dish.serves', { n: d.servings })}</Text>
+            <Pressable accessibilityRole="button" accessibilityLabel={t('share.moreServings')} disabled={d.servings >= SERVINGS_MAX} onPress={() => updateShareDraft({ servings: Math.min(SERVINGS_MAX, d.servings + 1) })} hitSlop={space[10]}>
+              <Icon icon={Plus} size={18} color={d.servings >= SERVINGS_MAX ? 'fg/disabled' : 'fg/default'} />
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.calories}>
+          <View style={styles.calHead}>
+            <Text variant="Body/S Strong">{t('share.cookTimeLabel')}</Text>
+            <Text variant="Caption" color="fg/muted">{t('share.optional')}</Text>
+          </View>
+          <View style={styles.chips}>
+            {COOK_MINUTES.map((m) => (
+              <Chip key={m} label={t(m === 60 ? 'dish.minutesPlus' : 'dish.minutes', { n: m })} selected={d.cookMinutes === m} onPress={() => updateShareDraft({ cookMinutes: d.cookMinutes === m ? null : m })} />
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.calories}>
+          <View style={styles.calHead}>
+            <Text variant="Body/S Strong">{t('share.difficultyLabel')}</Text>
+            <Text variant="Caption" color="fg/muted">{t('share.optional')}</Text>
+          </View>
+          <View style={styles.chips}>
+            {DIFFICULTIES.map((x) => (
+              <Chip key={x.key} label={t(x.label)} selected={d.difficulty === x.key} onPress={() => updateShareDraft({ difficulty: d.difficulty === x.key ? null : x.key })} />
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.calories}>
+          <View style={styles.calHead}>
             <Text variant="Body/S Strong">{t('share.caloriesLabel')}</Text>
             <Text variant="Caption" color="fg/muted">{t('share.caloriesHint')}</Text>
           </View>
@@ -374,5 +424,8 @@ const styles = StyleSheet.create({
   calories: { gap: space[6] },
   calHead: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   calField: { height: 48, flexDirection: 'row', alignItems: 'center', gap: space[6], paddingHorizontal: space[16], borderRadius: radius.full, borderWidth: 1 },
+  stepper: { height: 48, flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[16], borderRadius: radius.full, borderWidth: 1 },
+  stepperValue: { flex: 1, textAlign: 'center' },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[6] },
   cta: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: space[16], paddingHorizontal: space[20], borderTopWidth: 1 },
 });

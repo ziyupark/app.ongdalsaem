@@ -3,7 +3,7 @@
 import * as Crypto from 'expo-crypto';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { supabase } from '../lib/supabase';
-import type { ShareDraft } from '../lib/shareDraft';
+import type { Difficulty, ShareDraft } from '../lib/shareDraft';
 import { geohash } from '../lib/geohash';
 import { temperatureTag } from '../lib/tags';
 import { WEATHER_MOODS, type WeatherMood } from '../theme';
@@ -31,6 +31,9 @@ export type Dish = DishSummary & {
   ingredients: Ingredient[];
   steps: Step[];
   calories: number | null;
+  servings: number | null;
+  cookMinutes: number | null;
+  difficulty: Difficulty | null;
   city: string | null;
   neighborhood: string | null;
   placeName: string | null;
@@ -56,7 +59,7 @@ export type Comment = { id: string; body: string; createdAt: Date; author: Perso
 // `!creator_id` / `!user_id`: foods↔profiles also meet through likes/saves/comments, so the direct FK is named.
 export const SUMMARY_SELECT = 'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, likes(count)';
 const DISH_SELECT =
-  'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, ' +
+  'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, servings, cook_minutes, difficulty, ' +
   'city, neighborhood, country, place_name, created_at, taken_at, dish_type, landscape, allow_comments, visibility, ' +
   'creator:profiles!creator_id(id, display_name, username, avatar_url), food_images(image_url, display_order), likes(count), comments(count), food_eaten_counts(count)';
 
@@ -102,6 +105,9 @@ function toDish(r: Row): Dish {
     ingredients,
     steps,
     calories: r.calories ?? null,
+    servings: r.servings ?? null,
+    cookMinutes: r.cook_minutes ?? null,
+    difficulty: r.difficulty === 'easy' || r.difficulty === 'medium' || r.difficulty === 'hard' ? r.difficulty : null,
     city: r.city ?? null,
     neighborhood: r.neighborhood ?? null,
     placeName: r.place_name ?? null,
@@ -422,6 +428,9 @@ export async function createDish(draft: ShareDraft): Promise<string> {
       ingredients: draft.type === 'home' ? draft.ingredients.map((i) => ({ name: i.name.trim(), amount: i.amount.trim() })) : [],
       steps: draft.type === 'home' ? draft.steps.map((st) => (st.timerSec ? { text: st.text.trim(), timer_sec: st.timerSec } : { text: st.text.trim() })) : [],
       calories: draft.type === 'home' && /^\d+$/.test(draft.calories.trim()) ? Number(draft.calories.trim()) : null,
+      servings: draft.type === 'home' ? draft.servings : 2,
+      cook_minutes: draft.type === 'home' ? draft.cookMinutes : null,
+      difficulty: draft.type === 'home' ? draft.difficulty : null,
     };
     let { error: foodError } = await supabase.from('foods').insert(row);
     // PGRST204 = unknown column: migration 20261106010000 (taken_at · weather_source · neighborhood) not applied yet.
@@ -468,6 +477,9 @@ export function editDraftFrom(dish: Dish): Partial<ShareDraft> {
     ingredients: dish.ingredients.map((i) => ({ name: i.name, amount: i.amount })),
     steps: dish.steps.map((st) => ({ text: st.text, timerSec: st.timerSec })),
     calories: dish.calories != null ? String(dish.calories) : '',
+    servings: dish.servings ?? 2,
+    cookMinutes: dish.cookMinutes,
+    difficulty: dish.difficulty,
     placeEdited: false,
     uploadFailed: null,
     challenge: null,
@@ -534,6 +546,9 @@ export async function updateDish(foodId: string, draft: ShareDraft): Promise<voi
       ingredients: draft.type === 'home' ? draft.ingredients.map((i) => ({ name: i.name.trim(), amount: i.amount.trim() })) : [],
       steps: draft.type === 'home' ? draft.steps.map((st) => (st.timerSec ? { text: st.text.trim(), timer_sec: st.timerSec } : { text: st.text.trim() })) : [],
       calories: draft.type === 'home' && /^\d+$/.test(draft.calories.trim()) ? Number(draft.calories.trim()) : null,
+      servings: draft.type === 'home' ? draft.servings : 2,
+      cook_minutes: draft.type === 'home' ? draft.cookMinutes : null,
+      difficulty: draft.type === 'home' ? draft.difficulty : null,
     };
     if (draft.placeEdited && ctx) {
       row.city = ctx.place?.city ?? null;

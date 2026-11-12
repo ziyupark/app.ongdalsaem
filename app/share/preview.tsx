@@ -46,6 +46,9 @@ export default function SharePreview() {
       ingredients: d.type === 'home' ? d.ingredients : [],
       steps: d.type === 'home' ? d.steps : [],
       calories: d.type === 'home' && /^\d+$/.test(d.calories) ? Number(d.calories) : null,
+      servings: d.type === 'home' ? d.servings : null,
+      cookMinutes: d.type === 'home' ? d.cookMinutes : null,
+      difficulty: d.type === 'home' ? d.difficulty : null,
     };
   }, [d, me, t]);
 

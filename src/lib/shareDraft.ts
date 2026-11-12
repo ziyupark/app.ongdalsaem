@@ -32,6 +32,7 @@ export type DraftContext = {
 
 export type DraftIngredient = { name: string; amount: string };
 export type DraftStep = { text: string; timerSec?: number };
+export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export type ShareDraft = {
   photos: DraftPhoto[];
@@ -49,6 +50,10 @@ export type ShareDraft = {
   ingredients: DraftIngredient[];
   steps: DraftStep[];
   calories: string;
+  /** 8.2a servings (1–10), cook time in minutes (60 = 60+) and difficulty — all optional. */
+  servings: number;
+  cookMinutes: number | null;
+  difficulty: Difficulty | null;
   /** 8.2d: the cook picked the place by hand → weather_source 'place-edited'. */
   placeEdited: boolean;
   /** 8.4: index of the photo that failed to upload on the last try (null = none). */
@@ -65,7 +70,7 @@ export type ShareDraft = {
 
 const empty = (): ShareDraft => ({
   photos: [], context: null, contextState: 'idle', type: 'home', name: '', placeName: '', description: '',
-  meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', placeEdited: false, uploadFailed: null, challenge: null, landscape: null, editId: null, editBefore: [],
+  meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', servings: 2, cookMinutes: null, difficulty: null, placeEdited: false, uploadFailed: null, challenge: null, landscape: null, editId: null, editBefore: [],
 });
 
 let draft = empty();
