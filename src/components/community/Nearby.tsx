@@ -243,10 +243,13 @@ function TopToday({ here }: { here: Here }) {
       fetchTodayTopDishes({ cells, district, city }).then(setTop).catch(() => setTop({ items: [], range: null }));
     }, [here.coords, here.cell, district, city]),
   );
-  // Same header as Trending Bites (SectionHeader · section p32 · gap 6); the range it came from under the list.
+  // Same header as Trending Bites (SectionHeader · section p32 · gap 6). Badge on the right: my neighbourhood's name
+  // while the list is from my own area (cells / district); "{place} basis" once it widened to the city.
+  const mine = district ?? city;
+  const badge = top == null ? undefined : top.range && top.range !== district ? t('community.area.basis', { place: top.range }) : mine ?? undefined;
   return (
     <View style={styles.section}>
-      <SectionHeader title={t('community.area.topTitle')} />
+      <SectionHeader title={t('community.area.topTitle')} badge={badge} />
       <View style={[styles.px, styles.block]}>
       {top == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
@@ -271,7 +274,6 @@ function TopToday({ here }: { here: Here }) {
       ) : (
         <Text variant="Body/S" color="fg/muted">{t('community.area.topEmpty')}</Text>
       )}
-      {top?.range ? <Text variant="Caption" color="fg/muted" numberOfLines={1}>{t('community.area.basis', { place: top.range })}</Text> : null}
       </View>
     </View>
   );
