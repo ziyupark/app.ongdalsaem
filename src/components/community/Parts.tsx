@@ -257,12 +257,12 @@ export function Faces({ people, size = 24 }: { people: { id: string; avatarUrl: 
 }
 
 /** Question Card — author · place · time · category pill / body / answers · me too. */
-/** `rounded`: card corner radius token (default lg; Explore · Our area uses 2xl like the Story card there). */
-export function QuestionCard({ q, onPress, onMeToo, showImage, rounded = 'lg' }: { q: Question; onPress?: () => void; onMeToo?: () => void; showImage?: boolean; rounded?: 'lg' | '2xl' }) {
+/** `style` overrides the card box (Explore · Our area: its shared box — no border, 2xl). `showImage`: 4:5 photo, full card width. */
+export function QuestionCard({ q, onPress, onMeToo, showImage, style }: { q: Question; onPress?: () => void; onMeToo?: () => void; showImage?: boolean; style?: StyleProp<ViewStyle> }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
-    <Pressable accessibilityRole="button" disabled={!onPress} onPress={onPress} style={[styles.qCard, { borderRadius: radius[rounded], backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+    <Pressable accessibilityRole="button" disabled={!onPress} onPress={onPress} style={[styles.qCard, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }, style]}>
       <View style={styles.qTop}>
         <Avatar url={q.author.avatarUrl} name={q.author.name} size={32} />
         <View style={styles.flex}>
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   qTop: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
   qPlace: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
   qCat: { paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
-  qImage: { height: 140, borderRadius: radius.md },
+  qImage: { width: '100%', aspectRatio: 4 / 5, borderRadius: radius.md }, // 4:5 like the post photos
   qFoot: { flexDirection: 'row', gap: space[16] },
   qStat: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   cookRow: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[16], paddingRight: space[14], paddingVertical: space[12] },

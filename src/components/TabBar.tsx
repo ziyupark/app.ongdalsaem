@@ -28,6 +28,8 @@ const TABS: { key: TabKey; icon: LucideIcon }[] = [
  * fg/accent label on a bg/accent-subtle pill.
  */
 const EXP = { h: 62, fab: 62 };
+/** Create FAB size in the expanded bar — also the Questions list photo. */
+export const FAB_SIZE = EXP.fab;
 const MIN = { h: 48, fab: 48 };
 const GAP = 10;
 const SIDE = 16;

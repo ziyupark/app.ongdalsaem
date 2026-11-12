@@ -11,7 +11,7 @@ import { SearchField } from '../src/components/community/Parts';
 import { ReportSheet } from '../src/components/dish/ReportSheet';
 import { Icon } from '../src/components/Icon';
 import { MessageCircle } from '../src/components/icons/custom';
-import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
+import { FAB_SIZE, TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
 import { useTemp } from '../src/lib/prefs';
 import { timeAgo } from '../src/lib/time';
@@ -273,9 +273,9 @@ const styles = StyleSheet.create({
   row: { paddingVertical: space[16], gap: space[8] },
   top: { flexDirection: 'row', alignItems: 'center' },
   tag: { paddingHorizontal: space[8], paddingVertical: space[2], borderRadius: radius.full },
-  body: { flexDirection: 'row', gap: space[12] },
+  body: { flexDirection: 'row', alignItems: 'center', gap: space[12] }, // text (≤ 2 + 1 lines) centred on the photo
   text: { gap: space[4] },
-  photo: { width: 88, height: 88, borderRadius: radius.md },
+  photo: { width: FAB_SIZE, height: FAB_SIZE, borderRadius: radius.md }, // = expanded Create FAB
   meta: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: space[24] },
   orb: { width: 64, height: 64, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },

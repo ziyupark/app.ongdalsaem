@@ -263,7 +263,7 @@ function TopToday({ here }: { here: Here }) {
       {top == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
       ) : top.items.length ? (
-        <ListCard>
+        <ListCard style={styles.areaCard}>
           {top.items.map((d, i) => (
             <ListRow
               key={d.dishId}
@@ -331,7 +331,7 @@ export function OurArea() {
       <View style={styles.section}>
         <SectionHeader title={t('community.area.questionsTitle')} onMore={() => router.push('/questions')} />
         <View style={[styles.px, styles.block]}>
-          {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} rounded="2xl" onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
+          {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} style={styles.areaCard} onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
           <Button label={t('community.area.ask')} variant="Outline" size="M" icon={MessageCircle} onPress={() => router.push('/questions')} />
         </View>
       </View>
@@ -434,6 +434,8 @@ const styles = StyleSheet.create({
   // See all — Button · Outline · M, full width inside p20.
   offCard: { alignItems: 'center', gap: space[12], padding: space[20], borderRadius: radius['2xl'], borderWidth: 1 },
   offText: { textAlign: 'center' },
+  // Our area boxes (Popular today · questions) — one look: bg/subtle, no border, 2xl.
+  areaCard: { borderRadius: radius['2xl'], borderWidth: 0 },
   // Our area content under each SectionHeader (cards · Ask), gap 10.
   block: { gap: space[10] },
   rankLead: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
