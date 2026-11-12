@@ -189,9 +189,9 @@ function Global() {
   // Explore: Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
   return (
     <View>
-      {/* Group 88:3081 — p42 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
+      {/* Group 88:3081 — p22 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
-        <View style={[styles.sectionS, styles.px]}>
+        <View style={[styles.sectionS, styles.px, styles.storyTop]}>
           {/* Title — Fraunces like the header weather title, always English; screen readers get the local string. */}
           <Text variant="Display/M" accessibilityRole="header" accessibilityLabel={t('community.story')} numberOfLines={1}>{en('community.story')}</Text>
           <PhotoCard photo={story.photo} width={0} height={400} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
@@ -466,6 +466,7 @@ const styles = StyleSheet.create({
   viralBadge: { flexShrink: 1, paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
+  storyTop: { paddingTop: space[42] - space[20] },
   story: { width: '100%', padding: space[24], justifyContent: 'flex-end' },
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
