@@ -786,7 +786,6 @@ findCooks=Tìm người nấu
 within1km=Trong vòng 1 km
 viralBites=Món đang gây sốt
 challengesTab=Thử thách
-exploreTogether=Cùng khám phá
 area.topTitle=Phổ biến hôm nay
 area.basis=Theo {{place}}
 area.last3Days=3 ngày qua

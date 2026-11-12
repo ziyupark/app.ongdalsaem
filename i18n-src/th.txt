@@ -786,7 +786,6 @@ findCooks=หาคนทำอาหาร
 within1km=ภายใน 1 กม.
 viralBites=เมนูไวรัล
 challengesTab=ชาเลนจ์
-exploreTogether=สำรวจไปด้วยกัน
 area.topTitle=ยอดนิยมวันนี้
 area.basis=อิงจาก {{place}}
 area.last3Days=3 วันล่าสุด

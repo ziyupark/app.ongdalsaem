@@ -20,7 +20,7 @@ import { AcornTag, WeatherTag } from '../src/components/PhotoTags';
 import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
 import { UnderlineTabs } from '../src/components/UnderlineTabs';
 import { Text } from '../src/components/Text';
-import { CUSTOM_MOOD_ICON, LANDSCAPES, MOOD_TAGS } from '../src/lib/tags';
+import { CUSTOM_MOOD_ICON, MOOD_TAGS } from '../src/lib/tags';
 import { timeAgo } from '../src/lib/time';
 import { follow } from '../src/services/activity';
 import { hasUnreadMessages } from '../src/services/messages';
@@ -109,20 +109,15 @@ export default function Community() {
 // ------------------------------------------------------------------------------------------------ Explore (4.1 Global + Nearby)
 
 function Global() {
-  const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
-  const [scape, setScape] = useState<string | null>(null);
-  const [explore, setExplore] = useState<CardDish[] | null>(null);
-  const [showAll, setShowAll] = useState(false);
   const [viral, setViral] = useState<ViralItem[]>([]);
   const [story, setStory] = useState<CardDish | null>(null);
   // My acorn on the Story of the day: given (filled) + count change since the last load.
   const [storyAcorn, setStoryAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });
   const [tag, setTag] = useState<string | null>(null);
   const [saved, setSavedIds] = useState<Set<string>>(new Set());
-  const together = explore;
 
   const storyMark = storyAcorn.id === story?.id ? storyAcorn : { given: false, delta: 0 };
   const toggleStoryAcorn = () => {
@@ -151,17 +146,6 @@ function Global() {
       }).catch(() => setDishes([]));
     }, []),
   );
-  // Explore Together — the landscape chips filter only this section (All = everything, newest first).
-  useEffect(() => {
-    setExplore(null);
-    setShowAll(false);
-    fetchGlobal(scape).then(async (l) => {
-      setExplore(l);
-      const marks = await fetchMyMarks(l.map((d) => d.id)).catch(() => null);
-      if (marks) setSavedIds((s) => new Set([...s, ...marks.saved]));
-    }).catch(() => setExplore([]));
-  }, [scape]);
-
   const tags = useMemo(() => (dishes ? topTags(dishes, 'moods', 6) : []), [dishes]);
   useEffect(() => { if (tags.length && (!tag || !tags.includes(tag))) setTag(tags[0]); }, [tags, tag]);
   const tagged = (dishes ?? []).filter((d) => tag && d.moods.includes(tag)).slice(0, 2);
@@ -186,7 +170,7 @@ function Global() {
     />
   );
 
-  // Explore: Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags → Explore Together.
+  // Explore: Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags.
   return (
     <View>
       {/* Group 88:3081 — p22 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
@@ -267,19 +251,6 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Explore Together 676:20621 — p42 · gap 9: All · landscape chips → Food Cards of that landscape. */}
-      <View style={styles.sectionM}>
-        <SectionHeader title={t('community.exploreTogether')} onMore={!showAll && (together?.length ?? 0) > 4 ? () => setShowAll(true) : undefined} />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
-          <Chip label={t('community.all')} selected={!scape} onPress={() => setScape(null)} />
-          {LANDSCAPES.map((l) => <Chip key={l.key} label={t(`landscape.${l.key}`)} selected={scape === l.key} onPress={() => setScape(l.key)} />)}
-        </ScrollView>
-        {together == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : together.length ? (
-          <View style={styles.rows}>{together.slice(0, showAll ? 20 : 4).map(row)}</View>
-        ) : (
-          <View style={styles.px}><Text variant="Body/S" color="fg/muted">{t('community.emptyBody')}</Text></View>
-        )}
-      </View>
     </View>
   );
 }
@@ -457,7 +428,7 @@ const styles = StyleSheet.create({
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },
   section: { paddingTop: space[24], gap: space[12] },
-  // 4.1 groups: p42 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags · Explore).
+  // 4.1 groups: p42 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags).
   sectionS: { paddingTop: space[42], gap: space[6] },
   sectionM: { paddingTop: space[42], gap: space[8] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },

@@ -796,7 +796,6 @@ findCooks=Encontrar pessoas
 within1km=Até 1 km
 viralBites=Pratos virais
 challengesTab=Desafios
-exploreTogether=Explore junto
 area.topTitle=Mais populares hoje
 area.basis=Com base em {{place}}
 area.last3Days=Últimos 3 dias

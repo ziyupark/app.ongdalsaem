@@ -786,7 +786,6 @@ findCooks=料理する人を探す
 within1km=1 km以内
 viralBites=いまバズってる料理
 challengesTab=チャレンジ
-exploreTogether=みんなで探す
 area.topTitle=今日の人気料理
 area.basis={{place}}基準
 area.last3Days=直近3日
