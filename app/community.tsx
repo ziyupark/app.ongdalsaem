@@ -245,9 +245,9 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — p42 · gap 6: eyebrow · title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
+      {/* Group · Festive 398:9710 — p42 · gap 6: title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
       <View style={styles.sectionS}>
-        <SectionHeader eyebrow={t('community.festiveEyebrow')} title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
+        <SectionHeader title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
           {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
         </ScrollView>
