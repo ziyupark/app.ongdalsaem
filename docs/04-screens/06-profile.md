@@ -30,17 +30,27 @@
 - 이동: 행 → 7.1.
 
 ### 6.3 Profile · Diary — [20:1110](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-1110) · 코드 기준(내 프로필만)
-- **내가 올린 요리만** 보여 준다("I ate this" 기록은 달력 · 목록 · 월 집계에 넣지 않는다).
-- 월 헤더 "November 2026" + `chevron-left`/`chevron-right`(이번 달 이후로는 못 감) → 달력(7열, 요일 한 글자) — 요리한 날 = 그 요리 사진 + 날씨 아이콘 → **월 요약 카드**(bg/accent-subtle, radius xl, padding 16): Body/S Strong fg/accent "{month}, mostly {날씨}"(없으면 "A quiet {month}") + 본문 "You cooked 12 times — 6 of them in the rain."(비 · 눈 횟수가 있으면 그 문장, 없으면 "Nothing cooked yet this month. …") → 날짜를 고르면 그날 요리 목록(썸네일 · 이름 · "You cooked this") → 7.1.
-- 그 아래 **Fridge memo**(아래).
+- **내가 올린 요리만** 보여 준다("I ate this" 기록은 이번 주 줄 · 월 보기 · 월 요약에 넣지 않는다).
+- 순서(위→아래): **이번 주 한 줄** → **월 요약 한 줄** → **Fridge memo**(냉장실/냉동실 → What you can cook now) → **Shopping list**.
+- **이번 주 한 줄**
+  - 헤더: Title/M "This week" + Caption fg/muted 날짜 범위("Nov 8 – Nov 14") · `chevron-left`/`chevron-right`(지난주/다음주, 제한 없음) · 오른쪽 Body/S Strong fg/accent "Month view". 이번 주가 아니면 제목 자리에 날짜 범위.
+  - 7칸(로케일 주 시작 요일을 따름 — 기기 Intl 정보, 없으면 es · vi = 월요일, 나머지 = 일요일). 칸 = 요일 한 글자 · 날짜 · 날씨 줄(아이콘 14) · 원형 36. **오늘 칸** = border/focus 2 + 요일 · 날짜 fg/accent.
+  - **지난 날**: 그날 날씨 아이콘 + 내가 만든 요리 원형 사진. 없으면 빈칸. 탭 → 그 요리 7.1.
+  - **오늘 · 앞으로**: 예보 날씨 아이콘 + 최고기온 + 계획한 요리(사진, 없으면 이름 첫 글자 · bg/accent-subtle). 계획 없으면 점선 원 `plus`. 예보가 없는 먼 날짜는 날씨 생략.
+  - 칸 탭 → **그날 식단 시트**(BottomSheet): 계획한 요리(삭제 X) · 끼니 칩 Lunch / Dinner · "Good for {날씨}" — 그날 예보로 Today's pick 추천 3개 · "From your saved dishes" → 고르면 그날 그 끼니에 저장(같은 끼니는 교체).
+  - 계획 칸 **길게 누르기** → "Remove from your meal plan?" 확인(요리마다 Remove 버튼) 후 삭제.
+  - 식단 계획은 **기기에만 저장**(서버에 올리지 않음), 30일 지난 계획은 지운다.
+- **월 요약 한 줄**: 아이콘 16(fg/accent, 이번 달 가장 많은 날씨) + Body/S "{month}, mostly {날씨} · You cooked 12 times — 6 of them in the rain."(요리가 없으면 "A quiet {month}"만).
+- **Month view**(가운데 팝업, 타이머 팝업과 같은 모양: overlay/scrim · bg/default 카드 radius xl, 최대 너비 360, 바깥 탭 → 닫기): 월 헤더 "November 2026" + `chevron-left`/`chevron-right`(이번 달 이후로는 못 감) → 달력(7열, 요일 한 글자) — 요리한 날 = 그 요리 사진 + 날씨 아이콘 → 날짜를 고르면 그날 요리 목록(썸네일 · 이름 · "You cooked this") → 팝업 닫고 7.1.
+- 7.1 더보기 **Add to meal plan**: 날짜(오늘 + 6일) · 끼니(Lunch / Dinner) 선택 → 식단에 추가.
 
 ### 6.3 Fridge memo(Diary 탭 아래) — 코드 기준, Figma 없음
 - **기기에만 저장**(서버에 올리지 않음).
 - Title/M "Fridge" → **칸 선택** 2개(높이 48, radius input 20): **Fridge** · **Freezer**(선택 = bg/inverse + fg/inverse, 아니면 bg/subtle + border/default).
-- **"What you can cook now" 박스**(bg/accent-subtle): 냉장고 재료로 만들 수 있는 공개 레시피 **최대 5개**(사진 · 이름 · Caption fg/accent "{have}/{total} ingredients on hand" · Caption fg/muted "Need: {부족한 재료 2개}") → 7.1. 재료가 없으면 "Add ingredients and we’ll find dishes you can make with them."
-  - 규칙: 재료 목록이 있는 최신 공개 게시물 200개(10분 캐시)에서, 내 재료와 겹치는 비율 → 겹친 개수 순. 하나도 안 겹치면 제외. 재료 이름은 소문자 · 복수형 · 수식어를 정리해서 비교.
 - **입력 줄**(높이 48): Input "Add an ingredient" + Button M "Add" → 고른 칸에 추가.
 - **칸별 상자** Fridge / Freezer: 재료 칩. 넣은 지 **7일이 넘으면 칩 테두리 fg/accent**. 칩 탭 → "Remove {name}?" 확인 후 삭제. 비었으면 "Nothing in the fridge yet. Add what you just put in."
+- **"What you can cook now" 박스**(bg/accent-subtle): 냉장고 재료로 만들 수 있는 공개 레시피 **최대 5개**(사진 · 이름 · Caption fg/accent "{have}/{total} ingredients on hand" · Caption fg/muted "Need: {부족한 재료 2개}") → 7.1. 재료가 없으면 "Add ingredients and we’ll find dishes you can make with them."
+  - 규칙: 재료 목록이 있는 최신 공개 게시물 200개(10분 캐시)에서, 내 재료와 겹치는 비율 → 겹친 개수 순. 하나도 안 겹치면 제외. 재료 이름은 소문자 · 복수형 · 수식어를 정리해서 비교.
 
 > 설정은 **09 Settings**(9.1 Settings). 프로필의 `settings` 아이콘은 9.1로 간다.
 
