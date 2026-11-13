@@ -1121,6 +1121,7 @@ wheel=Waktu notifikasi
 [post]
 edit=Edit
 [following]
+title=Meja Tetangga
 todayTable=Meja hari ini
 yesterdayTable=Meja kemarin
 placeMine=Taruh hidanganmu

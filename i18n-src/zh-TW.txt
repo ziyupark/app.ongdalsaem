@@ -1121,6 +1121,7 @@ wheel=通知時間
 [post]
 edit=編輯
 [following]
+title=鄰里餐桌
 todayTable=今天的餐桌
 yesterdayTable=昨天的餐桌
 placeMine=放上你的料理

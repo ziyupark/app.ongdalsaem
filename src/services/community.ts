@@ -388,6 +388,48 @@ export async function fetchSuggestedPlates(limit = 3): Promise<CardDish[]> {
   return [...best.values()].sort((a, b) => b.total - a.total).slice(0, limit).map((b) => b.dish);
 }
 
+/** 4.4 Table · ③ — neighbours' plates per day section (max 9, one per cook). */
+export const NEIGHBOR_PLATES = 9;
+
+/**
+ * 4.4 Table · ③ Neighbours — public dishes since `since` from cooks you don't follow, near you: your area cell
+ * (`cell`, 5-char) first, then the neighbouring cells (`cells`), then your district. Per local day: at most
+ * NEIGHBOR_PLATES, one per cook (nearest range wins, then newest). Leaves out you, `exclude` (followees) and blocked cooks.
+ */
+export async function fetchNeighborPlates(at: { cell: string | null; cells: string[]; district?: string | null; city?: string | null }, since: Date, exclude: string[]): Promise<CardDish[]> {
+  const me = await uid();
+  if (!me) return [];
+  const ok = (c: string | null | undefined): c is string => !!c && /^[0-9b-hjkmnp-z]{5}$/.test(c);
+  const from = () => publicFoods().gte('created_at', since.toISOString());
+  const wide = at.cells.filter((c) => ok(c) && c !== at.cell);
+  const tiers: (() => any)[] = [];
+  if (ok(at.cell)) tiers.push(() => from().like('geohash6', `${at.cell}%`));
+  if (wide.length) tiers.push(() => from().or(wide.map((c) => `geohash6.like.${c}*`).join(',')));
+  if (at.district) tiers.push(() => (at.city ? from().eq('city', at.city) : from()).eq('neighborhood', at.district!));
+  if (!tiers.length) return [];
+
+  const [blocked, ...pages] = await Promise.all([
+    supabase.from('blocks').select('blocked_id').eq('blocker_id', me),
+    ...tiers.map((load) => load().order('created_at', { ascending: false }).limit(200)),
+  ]);
+  const skip = new Set([me, ...exclude, ...((blocked.data ?? []) as Row[]).map((r) => r.blocked_id as string)]);
+  const days = new Map<string, { cooks: Set<string>; ids: Set<string>; dishes: CardDish[] }>();
+  for (const page of pages) {
+    if (page.error) continue;
+    for (const d of (page.data as Row[]).map(toCard)) {
+      if (skip.has(d.creator.id)) continue;
+      const k = localDate(d.createdAt);
+      const day = days.get(k) ?? { cooks: new Set<string>(), ids: new Set<string>(), dishes: [] };
+      days.set(k, day);
+      if (day.dishes.length >= NEIGHBOR_PLATES || day.cooks.has(d.creator.id) || day.ids.has(d.id)) continue;
+      day.cooks.add(d.creator.id);
+      day.ids.add(d.id);
+      day.dishes.push(d);
+    }
+  }
+  return [...days.values()].flatMap((d) => d.dishes);
+}
+
 export type CookCard = Person & { city: string | null; acorns: number; following: boolean; mood: WeatherMood | null; tempC: number | null };
 
 /** 4.4 Suggested for you / 4.6 Cooks in your weather — cooks who recently shared in `mood`, closest temperature first, then acorns. */

@@ -1376,6 +1376,7 @@
     "edit": "Edit"
   },
   "following": {
+    "title": "Neighbors' Table",
     "todayTable": "Today's table",
     "yesterdayTable": "Yesterday's table",
     "placeMine": "Place your dish",

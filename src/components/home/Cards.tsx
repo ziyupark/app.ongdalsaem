@@ -10,6 +10,7 @@ import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { AcornTag, WeatherTag } from '../PhotoTags';
 import { Text } from '../Text';
+import { Avatar } from '../community/Parts';
 
 /** Gradient/Card scrim — ink 45 % at 0 → 0 at 30 % → 0 at 50 % → ink 82 % at 100 %. */
 function CardScrim() {
@@ -89,22 +90,36 @@ export function NearbyCard({ photo, title, meta, onPress }: { photo: Pic; title:
   );
 }
 
-/** Pick Card 54:554 (2.5: 350×366) — photo, bottom scrim 190 (ink 0 → 82 %), padding 20, gap 14, aligned to the bottom. */
-export function PickCard({ photo, title, byline, mood, tempC, acorns, onPress, given, onAcorn }: { photo: Pic; title: string; byline: string; mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void; given?: boolean; onAcorn?: () => void }) {
+/**
+ * Pick Card 54:554 — same make-up as Explore's Story of the day card (4.1 75:2431): 350×400, radius 2xl, Card scrim
+ * (bottom half → ink 82 %), padding 24, content at the bottom (gap 16): dish name (Statement, 2 lines) → description
+ * (Body/M, 2 lines, only when there is one) → byline (Body/S) with the cook's avatar 40 on the right; then weather tag ·
+ * acorns.
+ */
+export function PickCard({ photo, title, description, byline, cookName, cookAvatar, mood, tempC, acorns, onPress, given, onAcorn }: {
+  photo: Pic; title: string; description?: string; byline: string; cookName: string; cookAvatar?: string | null;
+  mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void; given?: boolean; onAcorn?: () => void;
+}) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const ink = color('static/ink');
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={styles.pick}>
-      <Image source={photo} style={StyleSheet.absoluteFill} contentFit="cover" />
-      <LinearGradient colors={[withAlpha(ink, 0), withAlpha(ink, 0.82)]} style={styles.pickScrim} pointerEvents="none" />
-      <View style={styles.pickMeta}>
-        <Text variant="Display/L" color="fg/on-photo">{title}</Text>
-        <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{byline}</Text>
-      </View>
-      <View style={styles.tags}>
-        <WeatherTag mood={mood} tempC={tempC} condition={t(`weather.${mood}`)} />
-        <AcornToggle count={acorns} given={given} onPress={onAcorn} />
+    <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[styles.pick, { backgroundColor: color('bg/muted') }]}>
+      <Image source={photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
+      <LinearGradient colors={[withAlpha(ink, 0), withAlpha(ink, 0.82)]} locations={[0.5, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
+      <View style={styles.pickFoot}>
+        <View style={styles.pickBody}>
+          <View style={[styles.flex, styles.pickText]}>
+            <Text variant="Statement" color="fg/on-photo" numberOfLines={2}>{title}</Text>
+            {description ? <Text variant="Body/M" color="fg/on-photo-secondary" numberOfLines={2}>{description}</Text> : null}
+            <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{byline}</Text>
+          </View>
+          <Avatar url={cookAvatar ?? null} name={cookName} size={40} />
+        </View>
+        <View style={styles.tags}>
+          <WeatherTag mood={mood} tempC={tempC} condition={t(`weather.${mood}`)} />
+          <AcornToggle count={acorns} given={given} onPress={onAcorn} />
+        </View>
       </View>
     </Pressable>
   );
@@ -144,9 +159,11 @@ const styles = StyleSheet.create({
   nearby: { flexDirection: 'row', alignItems: 'center', gap: space[14], padding: space[14], borderRadius: radius['2xl'], borderWidth: 1, alignSelf: 'stretch' },
   nearbyPhoto: { width: 72, height: 72, borderRadius: radius.lg },
   nearbyText: { flex: 1, gap: 3 },
-  pick: { height: 366, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[20], gap: space[14], justifyContent: 'flex-end', alignSelf: 'stretch' },
-  pickScrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 190 },
-  pickMeta: { gap: space[6] },
+  // Pick = Story of the day card (app/community.tsx): 400 high, r2xl, p24, bottom-aligned; foot gap 16 · body gap 16 · text gap 8.
+  pick: { height: 400, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[24], justifyContent: 'flex-end', alignSelf: 'stretch' },
+  pickFoot: { gap: space[16] },
+  pickBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
+  pickText: { gap: space[8] },
   location: { borderRadius: radius['2xl'], borderWidth: 1, padding: space[20], gap: space[12], alignSelf: 'stretch' },
   locationRow: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   pin: { width: 44, height: 44, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },

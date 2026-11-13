@@ -1121,6 +1121,7 @@ wheel=เวลาแจ้งเตือน
 [post]
 edit=แก้ไข
 [following]
+title=โต๊ะอาหารเพื่อนบ้าน
 todayTable=โต๊ะอาหารวันนี้
 yesterdayTable=โต๊ะอาหารเมื่อวาน
 placeMine=วางจานของคุณ

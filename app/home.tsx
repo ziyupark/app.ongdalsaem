@@ -244,6 +244,8 @@ export default function HomeScreen() {
                   photo={{ uri: pick.photo }}
                   title={pick.name}
                   byline={pickByline}
+                  cookName={pick.creator.name}
+                  cookAvatar={pick.creator.avatarUrl}
                   mood={pick.mood ?? FALLBACK_MOOD}
                   tempC={pick.tempC ?? 0}
                   acorns={pick.acorns + pickMark.delta}
