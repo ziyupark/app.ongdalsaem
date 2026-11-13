@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { addFridge, removeFridge, useFridge, type FridgeItem, type FridgeZone } from '../../lib/fridge';
+import { addShopping, moveCheckedToFridge, removeShopping, toggleShopping, useShopping, type ShoppingItem } from '../../lib/shopping';
 import { matchRecipes } from '../../lib/ingredientMatch';
 import { fetchRecipeCandidates, type RecipeCandidate } from '../../services/foods';
 import { radius, space, useTheme } from '../../theme';
@@ -14,6 +15,9 @@ import { Text } from '../Text';
 
 const DAY = 24 * 60 * 60 * 1000;
 const ZONES: FridgeZone[] = ['fridge', 'freezer'];
+/** Top selector: the two fridge zones + the shopping memo (goes to the shopping list, not the fridge). */
+type Target = FridgeZone | 'shopping';
+const TARGETS: Target[] = [...ZONES, 'shopping'];
 const ROW = 48;
 const CARD = 140;
 
@@ -24,14 +28,20 @@ function daysSince(iso: string) {
   return Math.round((new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime() - new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime()) / DAY);
 }
 
-/** Fridge memo — bottom of 6.3 Diary. Fridge / freezer, saved on this device only. */
+/** Fridge memo — bottom of 6.3 Diary. Fridge / freezer / shopping memo, saved on this device only. */
 export function FridgeList() {
   const { t } = useTranslation();
   const { color } = useTheme();
   const items = useFridge();
-  const [zone, setZone] = useState<FridgeZone>('fridge');
+  const shopping = useShopping();
+  const checked = shopping.filter((i) => i.checked).length;
+  const [zone, setZone] = useState<Target>('fridge');
   const [name, setName] = useState('');
-  const add = () => { addFridge(name, zone); setName(''); };
+  const add = () => {
+    if (zone === 'shopping') { if (name.trim()) addShopping([{ name }]); }
+    else addFridge(name, zone);
+    setName('');
+  };
   const [recipes, setRecipes] = useState<RecipeCandidate[] | null>(null);
   useEffect(() => {
     let alive = true;
@@ -39,12 +49,17 @@ export function FridgeList() {
     return () => { alive = false; };
   }, []);
   const matches = useMemo(() => (recipes ? matchRecipes(items.map((i) => i.name), recipes) : []), [items, recipes]);
-  const zoneLabel = (z: FridgeZone) => t(z === 'fridge' ? 'fridge.fridgeZone' : 'fridge.freezerZone');
+  const zoneLabel = (z: Target) => t(z === 'fridge' ? 'fridge.fridgeZone' : z === 'freezer' ? 'fridge.freezerZone' : 'fridge.shoppingZone');
 
   // Tap a chip → confirm once → remove.
   const ask = (it: FridgeItem) => Alert.alert(t('fridge.removeAsk', { name: it.name }), undefined, [
     { text: t('common.cancel'), style: 'cancel' },
     { text: t('fridge.remove', { name: it.name }), style: 'destructive', onPress: () => removeFridge(it.id) },
+  ]);
+  // Shopping memo: tap = check / uncheck, long press → confirm once → remove.
+  const askShopping = (it: ShoppingItem) => Alert.alert(t('fridge.removeAsk', { name: it.name }), undefined, [
+    { text: t('common.cancel'), style: 'cancel' },
+    { text: t('shopping.remove', { name: it.name }), style: 'destructive', onPress: () => removeShopping(it.id) },
   ]);
 
   return (
@@ -55,7 +70,7 @@ export function FridgeList() {
       </View>
 
       <View style={styles.row}>
-        {ZONES.map((z) => {
+        {TARGETS.map((z) => {
           const on = z === zone;
           return (
             <Pressable
@@ -104,6 +119,33 @@ export function FridgeList() {
           </View>
         );
       })}
+      <View style={[styles.box, { backgroundColor: color('bg/subtle') }]}>
+        <View style={styles.head}>
+          <Text variant="Body/M Strong">{zoneLabel('shopping')}</Text>
+          <Text variant="Body/M Strong" color="fg/muted" style={styles.flex}>{String(shopping.length)}</Text>
+          {checked > 0 ? (
+            <Pressable accessibilityRole="button" onPress={moveCheckedToFridge} hitSlop={space[10]}>
+              <Text variant="Body/S Strong" color="fg/accent">{t('fridge.moveToFridge')}</Text>
+            </Pressable>
+          ) : null}
+        </View>
+        {shopping.length === 0 ? (
+          <Text variant="Body/S" color="fg/muted">{t('fridge.shoppingEmpty')}</Text>
+        ) : (
+          <View style={styles.chips}>
+            {shopping.map((it) => (
+              <Chip
+                key={it.id}
+                label={it.amount ? `${it.name} ${it.amount}` : it.name}
+                struck={it.checked}
+                accessibilityLabel={it.name}
+                onPress={() => toggleShopping(it.id)}
+                onLongPress={() => askShopping(it)}
+              />
+            ))}
+          </View>
+        )}
+      </View>
       {/* What I can cook with what's in the fridge — public recipes ranked by how many of their ingredients I have. */}
       <View style={[styles.box, { backgroundColor: color('bg/accent-subtle') }]}>
         <Text variant="Body/M Strong">{t('fridge.canCook')}</Text>

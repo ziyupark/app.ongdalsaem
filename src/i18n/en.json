@@ -803,7 +803,10 @@
     "canCook": "What you can cook now",
     "haveCount": "{{have}}/{{total}} ingredients on hand",
     "needs": "Need: {{items}}",
-    "canCookEmpty": "Add ingredients and we’ll find dishes you can make with them."
+    "canCookEmpty": "Add ingredients and we’ll find dishes you can make with them.",
+    "shoppingZone": "Shopping memo",
+    "moveToFridge": "Bought → to fridge",
+    "shoppingEmpty": "Nothing on your shopping memo yet. Pick Shopping memo above and add what to buy."
   },
   "shopping": {
     "title": "Shopping list",

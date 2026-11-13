@@ -17,6 +17,8 @@ type Props = {
   static?: boolean;
   /** Border colour override for the default chip (fridge memo: fg/accent when older than 7 days). */
   borderColor?: ColorToken;
+  /** Struck through + fg/muted (shopping memo: checked item). */
+  struck?: boolean;
   accessibilityLabel?: string;
 };
 
@@ -24,7 +26,7 @@ type Props = {
  * Chip 6:245 — 36 high, padding 0 16, radius full.
  * Default = bg/subtle + 1px border/strong · Selected = bg/inverse + fg/inverse · Add = bg/subtle + 1px dashed border/focus, fg/accent.
  */
-export function Chip({ label, selected, icon, variant = 'default', onPress, onLongPress, static: readOnly, borderColor, accessibilityLabel }: Props) {
+export function Chip({ label, selected, icon, variant = 'default', onPress, onLongPress, static: readOnly, borderColor, struck, accessibilityLabel }: Props) {
   const { color } = useTheme();
   const add = variant === 'add';
   const glass = variant === 'glass';
@@ -48,11 +50,12 @@ export function Chip({ label, selected, icon, variant = 'default', onPress, onLo
       ]}
     >
       {icon ? <Icon icon={icon} size={18} color={fg} /> : null}
-      <Text variant="Body/M" color={fg}>{label}</Text>
+      <Text variant="Body/M" color={struck ? 'fg/muted' : fg} style={struck ? styles.struck : undefined}>{label}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   chip: { height: 36, paddingHorizontal: space[16], borderRadius: radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
+  struck: { textDecorationLine: 'line-through' },
 });

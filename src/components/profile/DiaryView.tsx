@@ -10,7 +10,6 @@ import { radius, space, useTheme, WEATHER_ICON, type WeatherMood } from '../../t
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { FridgeList } from './FridgeList';
-import { ShoppingList } from './ShoppingList';
 import { firstDayOfWeek, WeekStrip } from './WeekStrip';
 
 const RAINY: WeatherMood[] = ['drizzle', 'rain', 'heavy-rain', 'shower', 'thunder'];
@@ -27,7 +26,7 @@ const popIn = () => {
   };
 };
 
-/** 6.3 Profile · Diary — this week in one row · this month in one line · fridge (+ what I can cook) · shopping. The month calendar opens as a popup. */
+/** 6.3 Profile · Diary — this week in one row · this month in one line · fridge / freezer / shopping memo (+ what I can cook). The month calendar opens as a popup. */
 export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void }) {
   const { t, i18n } = useTranslation();
   const [days, setDays] = useState<DiaryDay[] | null>(null);
@@ -64,7 +63,6 @@ export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void })
         </View>
       )}
       <FridgeList />
-      <ShoppingList />
       <MonthPopup visible={month} onClose={() => setMonth(false)} />
     </View>
   );

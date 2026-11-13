@@ -1044,6 +1044,9 @@ canCook=เมนูที่ทำได้ตอนนี้
 haveCount=มีวัตถุดิบ {{have}}/{{total}} อย่าง
 needs=ขาด: {{items}}
 canCookEmpty=เพิ่มวัตถุดิบ แล้วเราจะหาเมนูที่ทำได้ให้
+shoppingZone=โน้ตซื้อของ
+moveToFridge=ซื้อแล้ว → เข้าช่องเย็น
+shoppingEmpty=ยังไม่มีโน้ตซื้อของ เลือกโน้ตซื้อของด้านบนแล้วจดของที่ต้องซื้อ
 [shopping]
 title=รายการซื้อของ
 addFromRecipe=เพิ่มในรายการซื้อของ
