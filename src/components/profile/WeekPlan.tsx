@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 import { useDietPrefs } from '../../lib/dietPrefs';
 import { dateKey, PLAN_MEALS, removePlan, setPlan, useMealPlan, type PlanMeal } from '../../lib/mealPlan';
 import { useHere } from '../../lib/useHere';
+import { fetchNearby } from '../../services/community';
 import { fetchSavedDishes, type DishSummary } from '../../services/foods';
 import { fetchPool, pickToday, type PoolDish } from '../../services/recommend';
 import { fetchDailyForecast, type DailyForecast } from '../../services/weather';
@@ -13,6 +14,7 @@ import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
 import { BottomSheet } from '../BottomSheet';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
+import { SearchField } from '../community/Parts';
 import { DishTile } from '../dish/DishTile';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
@@ -20,6 +22,8 @@ import { Text } from '../Text';
 const DAYS = 7;
 const TILE_W = 112;
 const PICKS = 3;
+const RESULTS = 12;
+const DEBOUNCE_MS = 300;
 
 /** Today and the next 6 days (local dates). */
 export function weekDates() {
@@ -43,7 +47,7 @@ export function useDailyForecast() {
   return days;
 }
 
-/** One day: what's planned (remove) · lunch / dinner · 3 picks for that day's forecast (Today's pick logic) · my saved dishes. */
+/** One day: what's planned (remove) · breakfast / lunch / dinner · dish search · 3 picks for that day's forecast (Today's pick logic) · my saved dishes. */
 export function DayPlanSheet({ date, forecast, onClose }: { date: string | null; forecast: DailyForecast | null; onClose: () => void }) {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -53,16 +57,35 @@ export function DayPlanSheet({ date, forecast, onClose }: { date: string | null;
   const [meal, setMeal] = useState<PlanMeal>('dinner');
   const [pool, setPool] = useState<PoolDish[] | null>(null);
   const [saved, setSaved] = useState<DishSummary[] | null>(null);
+  const [term, setTerm] = useState('');
+  const [focused, setFocused] = useState(false);
+  const [results, setResults] = useState<DishSummary[] | null>(null);
+  const query = term.trim();
 
   useEffect(() => {
     if (!date) return;
     // Start on the first meal with nothing planned yet.
     const planned = plan.filter((p) => p.date === date).map((p) => p.meal);
     setMeal(PLAN_MEALS.find((m) => !planned.includes(m)) ?? 'dinner');
+    setTerm('');
     if (!pool) fetchPool().then(setPool).catch(() => setPool([]));
     if (!saved) fetchSavedDishes().then(setSaved).catch(() => setSaved([]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
+
+  // Dish-name search, 300ms after typing stops.
+  useEffect(() => {
+    setResults(null);
+    if (!query) return;
+    let alive = true;
+    const timer = setTimeout(() => {
+      const needle = query.toLowerCase();
+      fetchNearby({ query })
+        .then((rows) => alive && setResults(rows.filter((d) => d.name.toLowerCase().includes(needle)).slice(0, RESULTS)))
+        .catch(() => alive && setResults([]));
+    }, DEBOUNCE_MS);
+    return () => { alive = false; clearTimeout(timer); };
+  }, [query]);
 
   const picks = useMemo(() => {
     if (!pool) return null;
@@ -83,6 +106,7 @@ export function DayPlanSheet({ date, forecast, onClose }: { date: string | null;
   const title = day.toLocaleDateString(i18n.language, { weekday: 'long', month: 'long', day: 'numeric' });
   const planned = PLAN_MEALS.map((m) => plan.find((p) => p.date === date && p.meal === m)).filter(Boolean);
   const choose = (d: DishSummary) => { setPlan(date, meal, { foodId: d.id, name: d.name, photo: d.photo }); };
+  const isToday = date === dateKey(new Date());
 
   const tiles = (list: DishSummary[]) => (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
@@ -92,7 +116,7 @@ export function DayPlanSheet({ date, forecast, onClose }: { date: string | null;
 
   return (
     <BottomSheet visible onClose={onClose} title={title} maxHeightRatio={0.85}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheet}>
+      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.sheet}>
         {planned.length ? (
           <View style={[styles.box, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
             {planned.map((p, i) => (
@@ -109,33 +133,54 @@ export function DayPlanSheet({ date, forecast, onClose }: { date: string | null;
           </View>
         ) : null}
 
-        <View style={styles.group}>
-          <Text variant="Overline" color="fg/muted">{t('mealPlan.planFor')}</Text>
-          <View style={styles.wrap}>
-            {PLAN_MEALS.map((m) => <Chip key={m} label={t(`mealPlan.meals.${m}`)} selected={meal === m} onPress={() => setMeal(m)} />)}
-          </View>
+        <View style={styles.wrap}>
+          {PLAN_MEALS.map((m) => <Chip key={m} label={t(`mealPlan.meals.${m}`)} selected={meal === m} onPress={() => setMeal(m)} />)}
         </View>
 
-        <View style={styles.group}>
-          <View style={styles.head}>
-            <Text variant="Body/M Strong" style={styles.flex}>
-              {forecast ? t('mealPlan.forWeather', { weather: t(`weather.${forecast.mood}`) }) : t('mealPlan.suggested')}
-            </Text>
-            {forecast ? <Icon icon={WEATHER_ICON[forecast.mood]} size={18} color="fg/secondary" /> : null}
-          </View>
-          {picks == null ? <ActivityIndicator color={color('fg/muted')} /> : picks.length ? tiles(picks) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noPicks')}</Text>}
-        </View>
+        <SearchField
+          value={term}
+          onChangeText={setTerm}
+          placeholder={t('mealPlan.searchPlaceholder')}
+          focused={focused}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+        />
 
-        <View style={styles.group}>
-          <Text variant="Body/M Strong">{t('mealPlan.fromSaved')}</Text>
-          {saved == null ? <ActivityIndicator color={color('fg/muted')} /> : saved.length ? tiles(saved) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noSaved')}</Text>}
-        </View>
+        {query ? (
+          <View style={styles.group}>
+            <Text variant="Body/M Strong">{t('mealPlan.searchResults')}</Text>
+            {results == null ? (
+              <ActivityIndicator color={color('fg/muted')} />
+            ) : results.length ? (
+              tiles(results)
+            ) : (
+              <Button label={t('mealPlan.addAsText', { term: query })} variant="Outline" size="M" onPress={() => setPlan(date, meal, { name: query })} />
+            )}
+          </View>
+        ) : (
+          <>
+            <View style={styles.group}>
+              <View style={styles.head}>
+                <Text variant="Body/M Strong" style={styles.flex}>
+                  {forecast ? t(isToday ? 'mealPlan.fitsNow' : 'mealPlan.fitsThatDay') : t('mealPlan.suggested')}
+                </Text>
+                {forecast ? <Icon icon={WEATHER_ICON[forecast.mood]} size={18} color="fg/secondary" /> : null}
+              </View>
+              {picks == null ? <ActivityIndicator color={color('fg/muted')} /> : picks.length ? tiles(picks) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noPicks')}</Text>}
+            </View>
+
+            <View style={styles.group}>
+              <Text variant="Body/M Strong">{t('mealPlan.fromSaved')}</Text>
+              {saved == null ? <ActivityIndicator color={color('fg/muted')} /> : saved.length ? tiles(saved) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noSaved')}</Text>}
+            </View>
+          </>
+        )}
       </ScrollView>
     </BottomSheet>
   );
 }
 
-/** 7.1 More → Add to meal plan: pick a day (this week) and lunch / dinner. */
+/** 7.1 More → Add to meal plan: pick a day (this week) and breakfast / lunch / dinner. */
 export function AddToPlanSheet({ dish, visible, onClose, onAdded }: { dish: { id: string; name: string; photo: string }; visible: boolean; onClose: () => void; onAdded: () => void }) {
   const { t, i18n } = useTranslation();
   const dates = useMemo(weekDates, []);

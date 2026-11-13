@@ -817,8 +817,12 @@
     "today": "Today",
     "plan": "+ Plan",
     "planFor": "For",
-    "forWeather": "Good for {{weather}}",
+    "fitsNow": "Good for the weather now",
+    "fitsThatDay": "Good for that day’s weather",
     "suggested": "Suggested",
+    "searchPlaceholder": "Search dishes",
+    "searchResults": "Search results",
+    "addAsText": "Add “{{term}}” as is",
     "noPicks": "No dishes to suggest yet.",
     "fromSaved": "From your saved dishes",
     "noSaved": "Nothing saved yet.",
@@ -829,6 +833,7 @@
     "add": "Add",
     "added": "Added to your meal plan",
     "meals": {
+      "breakfast": "Breakfast",
       "lunch": "Lunch",
       "dinner": "Dinner"
     },

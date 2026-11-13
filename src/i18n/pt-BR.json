@@ -817,8 +817,12 @@
     "today": "Hoje",
     "plan": "+ Planejar",
     "planFor": "Para",
-    "forWeather": "Combina com {{weather}}",
+    "fitsNow": "Combina com o clima de agora",
+    "fitsThatDay": "Combina com o clima desse dia",
     "suggested": "Sugestões",
+    "searchPlaceholder": "Buscar pratos",
+    "searchResults": "Resultados da busca",
+    "addAsText": "Adicionar “{{term}}” assim mesmo",
     "noPicks": "Ainda não há pratos para sugerir.",
     "fromSaved": "Dos seus salvos",
     "noSaved": "Nada salvo ainda.",
@@ -829,6 +833,7 @@
     "add": "Adicionar",
     "added": "Adicionado ao seu cardápio",
     "meals": {
+      "breakfast": "Café da manhã",
       "lunch": "Almoço",
       "dinner": "Jantar"
     },

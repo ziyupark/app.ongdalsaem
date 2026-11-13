@@ -1,9 +1,10 @@
-// Meal plan (6.3 Diary · This week) — what I plan to cook for lunch / dinner. Device-only: AsyncStorage, never synced.
+// Meal plan (6.3 Diary · This week) — what I plan to cook for breakfast / lunch / dinner. Device-only: AsyncStorage, never synced.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSyncExternalStore } from 'react';
 
-export type PlanMeal = 'lunch' | 'dinner';
-export const PLAN_MEALS: PlanMeal[] = ['lunch', 'dinner'];
+export type PlanMeal = 'breakfast' | 'lunch' | 'dinner';
+/** Display / sort order. Plans saved before breakfast existed are still 'lunch' | 'dinner'. */
+export const PLAN_MEALS: PlanMeal[] = ['breakfast', 'lunch', 'dinner'];
 /** A planned dish: a post (`foodId`, with its name and photo for display) or just a name. */
 export type PlanItem = { id: string; /** Local date YYYY-MM-DD. */ date: string; meal: PlanMeal; foodId?: string; name: string; photo?: string };
 
@@ -39,7 +40,7 @@ function save(next: PlanItem[]) {
 export function getMealPlan() {
   return items;
 }
-/** Plan a dish for a day's lunch / dinner — replaces what was planned for that meal. */
+/** Plan a dish for a day's breakfast / lunch / dinner — replaces what was planned for that meal. */
 export async function setPlan(date: string, meal: PlanMeal, dish: { foodId?: string; name: string; photo?: string }) {
   if (!loaded) await load();
   const name = dish.name.trim();

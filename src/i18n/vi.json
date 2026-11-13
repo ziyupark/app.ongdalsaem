@@ -809,8 +809,12 @@
     "today": "Hôm nay",
     "plan": "+ Lên kế hoạch",
     "planFor": "Bữa",
-    "forWeather": "Hợp với trời {{weather}}",
+    "fitsNow": "Hợp với thời tiết bây giờ",
+    "fitsThatDay": "Hợp với thời tiết hôm đó",
     "suggested": "Gợi ý",
+    "searchPlaceholder": "Tìm món",
+    "searchResults": "Kết quả tìm kiếm",
+    "addAsText": "Thêm “{{term}}” như vậy",
     "noPicks": "Chưa có món nào để gợi ý.",
     "fromSaved": "Từ món đã lưu",
     "noSaved": "Chưa lưu món nào.",
@@ -821,6 +825,7 @@
     "add": "Thêm",
     "added": "Đã thêm vào thực đơn",
     "meals": {
+      "breakfast": "Bữa sáng",
       "lunch": "Bữa trưa",
       "dinner": "Bữa tối"
     },
