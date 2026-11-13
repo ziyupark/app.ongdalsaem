@@ -380,7 +380,10 @@
     "moveTop": "Pindah ke paling atas",
     "landscape": "Pemandangan",
     "saveChanges": "Simpan perubahan",
-    "changesSaved": "Perubahan disimpan"
+    "changesSaved": "Perubahan disimpan",
+    "inChallenge": "Ikut: {{name}}",
+    "challengeOnePhoto": "Tantangan hanya bisa satu foto",
+    "pickHintChallenge": "Satu foto untuk tantangan"
   },
   "dish": {
     "temperature": {
@@ -1270,7 +1273,9 @@
     "topEntries": "Unggahan teratas",
     "recentlyEnded": "Baru selesai",
     "entriesN": "{{n}} hidangan",
-    "seasonal": "Meja musiman"
+    "seasonal": "Meja musiman",
+    "youreInCta": "Kamu sudah ikut!",
+    "cookedLabel": "Memasak"
   },
   "messages": {
     "title": "Pesan",

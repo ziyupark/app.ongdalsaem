@@ -293,6 +293,9 @@ moveTop=Mover para o topo
 landscape=Paisagem
 saveChanges=Salvar alterações
 changesSaved=Alterações salvas
+inChallenge=Participando de: {{name}}
+challengeOnePhoto=Desafios aceitam só uma foto
+pickHintChallenge=Uma foto para o desafio
 [dish]
 temperature.cold=Frio
 temperature.cool=Fresco
@@ -976,6 +979,8 @@ topEntries=Mais votados
 recentlyEnded=Encerrados
 entriesN={{n}} pratos
 seasonal=Mesas da estação
+youreInCta=Você está dentro!
+cookedLabel=Cozinharam
 [messages]
 title=Mensagens
 chats=Conversas

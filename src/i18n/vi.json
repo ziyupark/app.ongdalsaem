@@ -380,7 +380,10 @@
     "moveTop": "Lên đầu",
     "landscape": "Phong cảnh",
     "saveChanges": "Lưu thay đổi",
-    "changesSaved": "Đã lưu thay đổi"
+    "changesSaved": "Đã lưu thay đổi",
+    "inChallenge": "Đang tham gia: {{name}}",
+    "challengeOnePhoto": "Thử thách chỉ đăng được 1 ảnh",
+    "pickHintChallenge": "Một ảnh cho thử thách"
   },
   "dish": {
     "temperature": {
@@ -1270,7 +1273,9 @@
     "topEntries": "Bài nổi bật",
     "recentlyEnded": "Vừa kết thúc",
     "entriesN": "{{n}} món",
-    "seasonal": "Bàn ăn theo mùa"
+    "seasonal": "Bàn ăn theo mùa",
+    "youreInCta": "Bạn đã tham gia!",
+    "cookedLabel": "Đã nấu"
   },
   "messages": {
     "title": "Tin nhắn",

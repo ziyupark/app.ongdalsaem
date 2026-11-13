@@ -1,172 +1,130 @@
-import { Image } from 'expo-image';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Check, ChevronLeft, Trophy } from 'lucide-react-native';
-import { useCallback, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Bell, ChevronLeft, Trophy } from 'lucide-react-native';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '../../src/components/Button';
-import { EmptyState, Faces, FlagTag } from '../../src/components/community/Parts';
-import { GlassIconButton } from '../../src/components/GlassIconButton';
-import { Icon } from '../../src/components/Icon';
-import { MoodGradient } from '../../src/components/MoodGradient';
+import { ChallengeHero, EntryGrid, Stat } from '../../src/components/community/ChallengesTab';
+import { EmptyState, FlagTag } from '../../src/components/community/Parts';
+import { IconButton } from '../../src/components/IconButton';
+import { ScreenWash } from '../../src/components/ScreenHeader';
+import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
-import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
-import { fetchChallenge, fetchChallengeEntries, fetchChallengeFaces, setChallengeJoined, timeLeft, type Challenge } from '../../src/services/community';
-import type { DishSummary, Person } from '../../src/services/foods';
-import { radius, space, useTheme } from '../../src/theme';
+import { useWashScroll } from '../../src/lib/useWashScroll';
+import { fetchChallenge, fetchChallengeEntries, fetchChallenges, type Challenge } from '../../src/services/community';
+import type { DishSummary } from '../../src/services/foods';
+import { space, useTheme } from '../../src/theme';
 
-/** 4.10 Challenge (470:10224) · 4.10b Joined (470:11467) · 4.10c Ended (502:12476). */
+/** Expanded TabBar height (12:182). */
+const TAB_BAR_H = 110;
+const ENTRIES = 30;
+const COLS = 3;
+
+/** Back to the Challenges tab (focus=join → scrolled to its Join button). */
+const toChallenges = (focus?: 'join') =>
+  router.dismissTo({ pathname: '/community', params: { tab: 'challenges', at: String(Date.now()), ...(focus ? { focus } : {}) } });
+
+/**
+ * 4.10c Challenge · Ended (826:16963) — mood wash · back · bell → flag · Display/M name · Body/M description → Entries ·
+ * Cooked → this week's running challenge (pill "Ended {date}"; tap → Challenges tab at its Join button) → Latest entries
+ * (3-column photos → post). No Join here. A running / upcoming challenge (old link, notification) opens the Challenges tab.
+ */
 export default function ChallengeScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const bar = useTabBarScroll();
+  const wash = useWashScroll();
   const [c, setC] = useState<Challenge | null | undefined>(undefined);
-  const [entries, setEntries] = useState<DishSummary[]>([]);
-  const [faces, setFaces] = useState<Person[]>([]);
-  const [busy, setBusy] = useState(false);
-  const tile = (width - space[20] * 2 - space[8] * 2) / 3;
+  const [entries, setEntries] = useState<DishSummary[] | null>(null);
+  const [live, setLive] = useState<Challenge | null>(null);
 
-  const load = useCallback(async () => {
-    const ch = await fetchChallenge(slug).catch(() => null);
-    setC(ch);
-    if (!ch) return;
-    fetchChallengeEntries(ch.id).then(setEntries).catch(() => undefined);
-    fetchChallengeFaces(ch.id).then(setFaces).catch(() => undefined);
+  useEffect(() => {
+    let alive = true;
+    fetchChallenge(String(slug ?? ''))
+      .then((ch) => {
+        if (!alive) return;
+        if (ch && ch.phase !== 'ended') return router.replace({ pathname: '/community', params: { tab: 'challenges' } });
+        setC(ch);
+        if (!ch) return;
+        fetchChallengeEntries(ch.id, ENTRIES).then((l) => alive && setEntries(l)).catch(() => alive && setEntries([]));
+        // This week's challenge — the running one closing soonest.
+        fetchChallenges()
+          .then((l) => alive && setLive(l.filter((x) => x.phase === 'running').sort((a, b) => a.endsAt.getTime() - b.endsAt.getTime())[0] ?? null))
+          .catch(() => undefined);
+      })
+      .catch(() => alive && setC(null));
+    return () => { alive = false; };
   }, [slug]);
-  useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  if (c === undefined) return <View style={[styles.center, { backgroundColor: color('bg/default') }]}><ActivityIndicator color={color('fg/muted')} /></View>;
-  if (c === null) {
-    return (
-      <View style={[styles.root, { paddingTop: insets.top + space[8], backgroundColor: color('bg/default') }]}>
-        <View style={styles.px}><GlassIconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => router.back()} /></View>
-        <EmptyState icon={Trophy} title={t('challenge.missing')} />
-      </View>
-    );
-  }
-
-  const closing = c.phase === 'running' && c.endsAt.getTime() - Date.now() < 3 * 864e5;
-  const status = c.phase === 'ended' ? t('challenge.ended') : c.phase === 'soon' ? t('challenge.startsSoon') : closing ? t('challenge.closingSoon') : t('challenge.running');
-  const endDay = c.endsAt.toLocaleString(i18n.language, { weekday: 'long', hour: 'numeric', minute: '2-digit' });
-  const others = Math.max(0, c.participants - faces.slice(0, 2).length);
-
-  const join = async () => {
-    setBusy(true);
-    try { await setChallengeJoined(c.id, true); setC({ ...c, joined: true, participants: c.participants + 1 }); }
-    catch { Alert.alert(t('settings.saveFailed')); }
-    finally { setBusy(false); }
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    bar.onY(e.nativeEvent.contentOffset.y);
+    wash.onY(e.nativeEvent.contentOffset.y);
   };
-  const leave = () => Alert.alert(t('challenge.leaveTitle'), undefined, [
-    { text: t('common.cancel'), style: 'cancel' },
-    { text: t('challenge.leave'), style: 'destructive', onPress: async () => { try { await setChallengeJoined(c.id, false); setC({ ...c, joined: false, participants: Math.max(0, c.participants - 1) }); } catch { Alert.alert(t('settings.saveFailed')); } } },
-  ]);
-  const postEntry = () => {
-    resetShareDraft();
-    updateShareDraft({ challenge: { id: c.id, tag: c.tag }, description: `#${c.tag} `, isPublic: true });
-    router.push('/share/pick');
-  };
+  const onTab = (k: TabKey) => router.replace(`/${k}`);
+  const tile = (width - space[20] * 2 - space[8] * (COLS - 1)) / COLS;
+  const n = (v: number) => v.toLocaleString(i18n.language);
+  const endedOn = useMemo(() => (c ? t('challenge.endedOn', { date: c.endsAt.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' }) }) : ''), [c, t, i18n.language]);
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScrollView contentContainerStyle={{ paddingBottom: c.phase === 'ended' ? insets.bottom + space[24] : 120 }}>
-        {/* Hero 390×278 — Weather Mood wash, padding 56 20 24, gap 12: badges · Display/M · Body/M · stats. */}
-        <View style={[styles.hero, { paddingTop: insets.top + 2 }]}>
-          <MoodGradient mood={c.phase === 'ended' ? 'overcast' : 'rain'} style={StyleSheet.absoluteFill} />
-          <View style={styles.badges}>
-            <GlassIconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => router.back()} />
-            {c.country ? <FlagTag code={c.country} /> : null}
-            <View style={[styles.status, { backgroundColor: color('bg/default') }]}>
-              <Text variant="Caption Strong" color={c.phase === 'ended' ? 'fg/secondary' : 'fg/accent'}>{status}</Text>
+      <ScreenWash scrollStyle={wash.style} />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }}>
+        {/* Header · Row — back · bell (Soft 40), px 20. */}
+        <View style={styles.bar}>
+          <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => toChallenges()} />
+          <IconButton icon={Bell} accessibilityLabel={t('home.notifications')} onPress={() => router.push('/notifications')} />
+        </View>
+
+        {c === undefined ? (
+          <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
+        ) : c === null ? (
+          <EmptyState icon={Trophy} title={t('challenge.missing')} />
+        ) : (
+          <>
+            {/* Hero — p24 20 · gap 12: flag → Display/M → Body/M. */}
+            <View style={styles.hero}>
+              {c.country ? <View style={styles.badges}><FlagTag code={c.country} /></View> : null}
+              <Text variant="Display/M" accessibilityRole="header">{c.title}</Text>
+              {c.description ? <Text variant="Body/M">{c.description}</Text> : null}
             </View>
-          </View>
-          <Text variant="Display/M">{c.title}</Text>
-          {c.description ? <Text variant="Body/M">{c.description}</Text> : null}
-          {c.phase !== 'ended' ? (
+
+            {/* Stats — p4 20 0 · gap 8: Entries · Cooked. */}
             <View style={styles.stats}>
-              <Stat value={c.phase === 'soon' ? timeLeft(c.startsAt) : timeLeft(c.endsAt)} label={t(c.phase === 'soon' ? 'challenge.startsIn' : 'challenge.endsIn')} />
-              <Stat value={c.participants.toLocaleString()} label={t('challenge.cookingLabel')} />
-              <Stat value={c.entries.toLocaleString()} label={t('challenge.entriesLabel')} />
+              <Stat value={n(c.entries)} label={t('challenge.entriesLabel')} />
+              <Stat value={n(c.participants)} label={t('challenge.cookedLabel')} />
             </View>
-          ) : null}
-        </View>
 
-        <View style={styles.group}>
-          {c.joined && c.phase !== 'ended' ? (
-            // 4.10b Your progress — bg/done-subtle, check 20 fg/done.
-            <Pressable accessibilityRole="button" onLongPress={leave} style={[styles.youreIn, { backgroundColor: color('bg/done-subtle') }]}>
-              <Icon icon={Check} size={20} color="fg/done" />
-              <View style={styles.flex}>
-                <Text variant="Body/S Strong">{t('challenge.youreIn')}</Text>
-                <Text variant="Caption" color="fg/secondary">{t('challenge.youreInBody', { tag: c.tag, when: endDay })}</Text>
+            {/* This week's challenge — p20 20 0; tap → the Challenges tab, at its Join button. */}
+            {live ? (
+              <View style={styles.live}>
+                <ChallengeHero
+                  c={live}
+                  faces={[]}
+                  pill={{ dot: 'fg/destructive', text: endedOn, color: 'fg/secondary' }}
+                  onPress={() => toChallenges('join')}
+                />
               </View>
-            </Pressable>
-          ) : null}
+            ) : null}
 
-          {faces.length ? (
-            <View style={styles.faces}>
-              <Faces people={faces} size={28} />
-              <Text variant="Body/S" color="fg/secondary" numberOfLines={1} style={styles.flex}>
-                {t(c.phase === 'ended' ? 'challenge.othersCooked' : 'challenge.othersCooking', { names: faces.slice(0, 2).map((p) => p.name).join(', '), n: others.toLocaleString() })}
-              </Text>
-            </View>
-          ) : null}
-
-          {c.phase !== 'ended' ? (
-            <View style={styles.how}>
-              <Text variant="Title/L">{t('challenge.howItWorks')}</Text>
-              <View>
-                {[
-                  ['join', t('challenge.howJoin')],
-                  ['cook', c.rule ?? t('challenge.howCookFallback')],
-                  ['post', t('challenge.howPost', { tag: c.tag })],
-                ].map(([k, v]) => (
-                  <View key={k} style={[styles.howRow, { borderBottomColor: color('border/default') }]}>
-                    <Text variant="Body/M">{t(`challenge.how.${k}`)}</Text>
-                    <Text variant="Body/M Strong" color="fg/secondary" numberOfLines={1} style={styles.howValue}>{v}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          ) : null}
-
-          <View style={styles.entriesHead}>
-            <Text variant="Title/M" style={styles.flex}>{t('challenge.latestEntries')}</Text>
-            <Text variant="Body/S" color="fg/muted">{c.entries.toLocaleString()}</Text>
-          </View>
-          {entries.length ? (
+            {/* Latest entries — p24 20 · gap 10: Title/M · count → 3-column photos. */}
             <View style={styles.entries}>
-              {entries.map((e) => (
-                <Pressable key={e.id} accessibilityRole="imagebutton" accessibilityLabel={e.name} onPress={() => router.push(`/dish/${e.id}`)}>
-                  <Image source={{ uri: e.photo }} style={[{ width: tile, height: tile, borderRadius: radius.md, backgroundColor: color('bg/muted') }]} contentFit="cover" transition={150} />
-                </Pressable>
-              ))}
+              <View style={styles.entriesHead}>
+                <Text variant="Title/M" style={styles.flex}>{t('challenge.latestEntries')}</Text>
+                <Text variant="Body/S" color="fg/muted">{n(c.entries)}</Text>
+              </View>
+              {entries == null ? (
+                <ActivityIndicator color={color('fg/muted')} />
+              ) : entries.length ? (
+                <EntryGrid entries={entries} size={tile} />
+              ) : <Text variant="Body/S" color="fg/muted">{t('challenge.noEntries')}</Text>}
             </View>
-          ) : <Text variant="Body/S" color="fg/muted">{t('challenge.noEntries')}</Text>}
-        </View>
+          </>
+        )}
       </ScrollView>
-
-      {c.phase !== 'ended' ? (
-        <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom + space[6], 40), backgroundColor: color('bg/default'), borderTopColor: color('border/default') }]}>
-          {c.joined ? (
-            <Button label={t('challenge.postEntry')} size="L" disabled={c.phase !== 'running'} onPress={postEntry} />
-          ) : (
-            <Button label={t('challenge.join')} size="L" loading={busy} onPress={join} />
-          )}
-        </View>
-      ) : null}
-    </View>
-  );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  const { color } = useTheme();
-  return (
-    <View style={[styles.stat, { backgroundColor: color('bg/default') }]}>
-      <Text variant="Title/M">{value}</Text>
-      <Text variant="Caption" color="fg/muted">{label}</Text>
+      <TabBar active="community" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
     </View>
   );
 }
@@ -174,20 +132,12 @@ function Stat({ value, label }: { value: string; label: string }) {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   flex: { flex: 1 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  px: { paddingHorizontal: space[20] },
-  hero: { paddingHorizontal: space[20], paddingBottom: space[24], gap: space[12], overflow: 'hidden' },
+  loading: { marginTop: space[40] },
+  bar: { height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[20] },
+  hero: { paddingTop: space[24], paddingHorizontal: space[20], paddingBottom: space[24], gap: space[12] },
   badges: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
-  status: { paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
-  stats: { flexDirection: 'row', gap: space[8], paddingTop: space[4] },
-  stat: { flex: 1, borderRadius: radius.md, paddingHorizontal: space[12], paddingVertical: space[10], gap: space[2] },
-  group: { paddingTop: space[20], paddingHorizontal: space[20], gap: space[24] },
-  youreIn: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[16], paddingVertical: space[14], borderRadius: radius.lg },
-  faces: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
-  how: { gap: space[8] },
-  howRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[16], paddingVertical: space[8], borderBottomWidth: 1 },
-  howValue: { flexShrink: 1, textAlign: 'right' },
-  entriesHead: { flexDirection: 'row', alignItems: 'center', gap: space[8], marginBottom: -space[16] },
-  entries: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
-  bar: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: space[20], paddingTop: space[16], borderTopWidth: 1 },
+  stats: { flexDirection: 'row', gap: space[8], paddingTop: space[4], paddingHorizontal: space[20] },
+  live: { paddingTop: space[20], paddingHorizontal: space[20] },
+  entries: { paddingTop: space[24], paddingHorizontal: space[20], gap: space[10] },
+  entriesHead: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
 });

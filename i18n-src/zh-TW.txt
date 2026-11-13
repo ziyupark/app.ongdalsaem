@@ -290,6 +290,9 @@ moveTop=移到最上面
 landscape=風景
 saveChanges=儲存變更
 changesSaved=已儲存變更
+inChallenge=參加中：{{name}}
+challengeOnePhoto=挑戰只能上傳 1 張照片
+pickHintChallenge=挑戰用的 1 張照片
 [dish]
 temperature.cold=寒冷
 temperature.cool=涼爽
@@ -960,6 +963,8 @@ topEntries=熱門作品
 recentlyEnded=最近結束
 entriesN={{n}} 道料理
 seasonal=季節餐桌
+youreInCta=已參加！
+cookedLabel=下廚人數
 [messages]
 title=訊息
 chats=對話

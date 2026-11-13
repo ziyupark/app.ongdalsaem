@@ -380,7 +380,10 @@
     "moveTop": "いちばん上へ",
     "landscape": "風景",
     "saveChanges": "変更を保存",
-    "changesSaved": "変更を保存しました"
+    "changesSaved": "変更を保存しました",
+    "inChallenge": "参加中: {{name}}",
+    "challengeOnePhoto": "チャレンジは写真1枚だけ投稿できます",
+    "pickHintChallenge": "チャレンジ用の写真1枚"
   },
   "dish": {
     "temperature": {
@@ -1270,7 +1273,9 @@
     "topEntries": "人気の投稿",
     "recentlyEnded": "最近終了",
     "entriesN": "{{n}}品",
-    "seasonal": "季節の食卓"
+    "seasonal": "季節の食卓",
+    "youreInCta": "参加しました！",
+    "cookedLabel": "作った人"
   },
   "messages": {
     "title": "メッセージ",

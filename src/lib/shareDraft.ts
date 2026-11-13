@@ -58,8 +58,8 @@ export type ShareDraft = {
   placeEdited: boolean;
   /** 8.4: index of the photo that failed to upload on the last try (null = none). */
   uploadFailed: number | null;
-  /** 4.10b "Post my entry": the shared dish is entered into this challenge. */
-  challenge: { id: string; tag: string } | null;
+  /** 4.10 "Join challenge": the shared dish is entered into this challenge (one photo only — see CHALLENGE_PHOTOS). */
+  challenge: { id: string; tag: string; title: string } | null;
   /** Optional landscape (forest / sea / …). */
   landscape: string | null;
   /** 7.1 "I made this": the recipe post this dish was cooked from (saved as cooked_from_id). */
@@ -74,6 +74,27 @@ const empty = (): ShareDraft => ({
   photos: [], context: null, contextState: 'idle', type: 'home', name: '', placeName: '', description: '',
   meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', servings: 2, cookMinutes: null, difficulty: null, placeEdited: false, uploadFailed: null, challenge: null, landscape: null, cookedFromId: null, editId: null, editBefore: [],
 });
+
+/** A challenge entry is a single photo. */
+export const CHALLENGE_PHOTOS = 1;
+
+/** Start a challenge entry: a fresh draft tagged #tag, public, entered into the challenge on share. */
+export function startChallengeDraft(c: { id: string; tag: string; title: string }) {
+  draft = { ...empty(), challenge: { id: c.id, tag: c.tag, title: c.title }, description: `#${c.tag} `, isPublic: true };
+  emit();
+}
+
+// ---- Challenge entry posted: the Challenges tab reads this once to refresh and show "You're in!". ----
+let enteredChallenge: string | null = null;
+export function markChallengeEntered(id: string) {
+  enteredChallenge = id;
+}
+/** The challenge just entered (once), or null. */
+export function takeChallengeEntered() {
+  const id = enteredChallenge;
+  enteredChallenge = null;
+  return id;
+}
 
 let draft = empty();
 const listeners = new Set<() => void>();

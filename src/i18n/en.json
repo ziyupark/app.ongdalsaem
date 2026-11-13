@@ -383,7 +383,10 @@
     "moveTop": "Move to top",
     "landscape": "Landscape",
     "saveChanges": "Save changes",
-    "changesSaved": "Changes saved"
+    "changesSaved": "Changes saved",
+    "inChallenge": "Joining: {{name}}",
+    "challengeOnePhoto": "Challenges take one photo only",
+    "pickHintChallenge": "One photo for the challenge"
   },
   "dish": {
     "temperature": {
@@ -1289,7 +1292,9 @@
     "topEntries": "Top entries",
     "recentlyEnded": "Recently ended",
     "entriesN": "{{n}} dishes",
-    "seasonal": "Seasonal tables"
+    "seasonal": "Seasonal tables",
+    "youreInCta": "You’re in!",
+    "cookedLabel": "Cooked"
   },
   "messages": {
     "title": "Messages",

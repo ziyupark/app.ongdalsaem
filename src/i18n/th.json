@@ -380,7 +380,10 @@
     "moveTop": "ย้ายไปบนสุด",
     "landscape": "ทิวทัศน์",
     "saveChanges": "บันทึกการเปลี่ยนแปลง",
-    "changesSaved": "บันทึกการเปลี่ยนแปลงแล้ว"
+    "changesSaved": "บันทึกการเปลี่ยนแปลงแล้ว",
+    "inChallenge": "กำลังร่วม: {{name}}",
+    "challengeOnePhoto": "ชาเลนจ์ลงได้แค่ 1 รูป",
+    "pickHintChallenge": "รูปเดียวสำหรับชาเลนจ์"
   },
   "dish": {
     "temperature": {
@@ -1270,7 +1273,9 @@
     "topEntries": "ผลงานยอดนิยม",
     "recentlyEnded": "เพิ่งจบไป",
     "entriesN": "{{n}} จาน",
-    "seasonal": "โต๊ะตามฤดูกาล"
+    "seasonal": "โต๊ะตามฤดูกาล",
+    "youreInCta": "เข้าร่วมแล้ว!",
+    "cookedLabel": "คนที่ทำ"
   },
   "messages": {
     "title": "ข้อความ",

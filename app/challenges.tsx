@@ -51,7 +51,7 @@ export default function Challenges() {
                   key={c.id}
                   last={i === g.items.length - 1}
                   muted={c.phase === 'ended'}
-                  onPress={() => router.push(`/challenge/${c.slug}`)}
+                  onPress={() => router.dismissTo({ pathname: '/community', params: { tab: 'challenges', at: String(Date.now()) } })}
                   leading={
                     <View style={[styles.thumb, c.phase === 'ended' && styles.dim]}>
                       {c.theme === 'diwali' ? <MoodGradient mood={THUMB_MOOD[c.phase]} style={StyleSheet.absoluteFill} /> : <Image source={themeImage(c.theme)} style={StyleSheet.absoluteFill} contentFit="cover" />}

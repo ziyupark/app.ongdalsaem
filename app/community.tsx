@@ -1,8 +1,8 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Send, Cookie, Moon, Plus, Star, Sun, type LucideIcon } from 'lucide-react-native';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Send, Cookie, Moon, Star, Sun, type LucideIcon } from 'lucide-react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
 import { Chip } from '../src/components/Chip';
 import {
   Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag,
@@ -11,8 +11,6 @@ import { ChallengesTab } from '../src/components/community/ChallengesTab';
 import { OurArea } from '../src/components/community/Nearby';
 import { upcomingFestive } from '../src/lib/holidays';
 import { FestiveCard } from '../src/components/community/FestiveCard';
-import { Icon } from '../src/components/Icon';
-import { MoodGradient } from '../src/components/MoodGradient';
 import { ScreenHeader, ScreenWash, useScreenInk } from '../src/components/ScreenHeader';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useWashScroll } from '../src/lib/useWashScroll';
@@ -26,7 +24,7 @@ import { follow } from '../src/services/activity';
 import { hasUnreadMessages } from '../src/services/messages';
 import {
   fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay, fetchSuggestedPlates,
-  fetchViralBites, localDate, localMidnight, timeLeft, topTags, type CardDish, type Challenge, type FollowingItem, type ViralItem,
+  fetchViralBites, localDate, localMidnight, topTags, type CardDish, type FollowingItem, type ViralItem,
 } from '../src/services/community';
 import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../src/components/community/PlateTable';
 import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
@@ -44,7 +42,8 @@ type Seg = 'global' | 'following' | 'challenges';
  * 4.4 Following 183:5713 · 4.4b empty). ScreenHeader (bell) → Tabs → content.
  */
 export default function Community() {
-  const params = useLocalSearchParams<{ tab?: Seg }>();
+  // tab=challenges from the share flow / 4.10c (at = a fresh value each time); focus=join scrolls to the Join button.
+  const params = useLocalSearchParams<{ tab?: Seg; at?: string; focus?: string }>();
   const { color } = useTheme();
   const { t } = useTranslation();
   const [seg, setSegState] = useState<Seg>(params.tab ?? 'global');
@@ -60,6 +59,31 @@ export default function Community() {
   const tabInk = useScreenInk(0.55);
   const [unreadDm, setUnreadDm] = useState(false);
   useFocusEffect(useCallback(() => { hasUnreadMessages().then(setUnreadDm); }, []));
+
+  // Re-open a tab when navigated back here with ?tab=…; ?focus=join brings the Challenges Join button into view.
+  const scroll = useRef<ScrollViewInstance>(null);
+  const tabsY = useRef(0);
+  const challengesY = useRef(0);
+  const joinY = useRef<number | null>(null);
+  const wantJoin = useRef(false);
+  const toJoin = useCallback(() => {
+    if (!wantJoin.current || joinY.current == null) return;
+    wantJoin.current = false;
+    scroll.current?.scrollTo({ y: Math.max(0, tabsY.current + challengesY.current + joinY.current - space[42] * 3), animated: true });
+  }, []);
+  useEffect(() => {
+    if (params.tab) setSeg(params.tab);
+    if (params.focus === 'join') {
+      wantJoin.current = true;
+      // Already laid out (tab kept mounted) → scroll once this frame settles; otherwise onJoinY does it.
+      requestAnimationFrame(toJoin);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.tab, params.at, params.focus]);
+  const onJoinY = useCallback((y: number) => {
+    joinY.current = y;
+    toJoin();
+  }, [toJoin]);
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
@@ -77,12 +101,13 @@ export default function Community() {
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
       <ScrollView
+        ref={scroll}
         contentContainerStyle={{ paddingBottom: 110 + space[24] }}
         onScroll={onScroll}
         scrollEventThrottle={16}
       >
         <ScreenHeader right="notifications" />
-        <Animated.View entering={FadeIn.duration(150)}>
+        <Animated.View entering={FadeIn.duration(150)} onLayout={(e) => { tabsY.current = e.nativeEvent.layout.y; }}>
         {/* Block · Tabs 330:7325 — no fill: the mood wash runs behind the title and the tabs. */}
         <View>
           <UnderlineTabs
@@ -100,7 +125,11 @@ export default function Community() {
         {/* Tabs stay mounted once opened — switching only swaps what's under the tabs (no reload, data and images kept). */}
         {visited.has('global') ? <View style={seg === 'global' ? null : styles.gone}><Global /></View> : null}
         {visited.has('following') ? <View style={seg === 'following' ? null : styles.gone}><Following /></View> : null}
-        {visited.has('challenges') ? <View style={seg === 'challenges' ? null : styles.gone}><ChallengesTab /></View> : null}
+        {visited.has('challenges') ? (
+          <View style={seg === 'challenges' ? null : styles.gone} onLayout={(e) => { challengesY.current = e.nativeEvent.layout.y; }}>
+            <ChallengesTab onJoinY={onJoinY} />
+          </View>
+        ) : null}
         </Animated.View>
       </ScrollView>
       <TabBar active="community" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
@@ -279,35 +308,6 @@ export function ViralBadge({ item }: { item: Pick<ViralItem, 'kind' | 'growth'> 
         {rising ? t('viral.rising', { n: (item.growth ?? 0).toLocaleString() }) : t('viral.editor')}
       </Text>
     </View>
-  );
-}
-
-export function ChallengeCard({ c }: { c: Challenge }) {
-  const { color } = useTheme();
-  const { t } = useTranslation();
-  const left = c.phase === 'soon'
-    ? t('challenge.starts', { day: c.startsAt.toLocaleDateString(undefined, { weekday: 'short' }) })
-    : t('challenge.left', { time: timeLeft(c.endsAt) });
-  return (
-    <Pressable accessibilityRole="button" accessibilityLabel={c.title} onPress={() => router.push(`/challenge/${c.slug}`)} style={styles.challenge}>
-      <MoodGradient mood={c.phase === 'soon' ? 'clear' : 'rain'} style={StyleSheet.absoluteFill} />
-      <View style={styles.challengeTop}>
-        {c.country ? <FlagTag code={c.country} /> : <View />}
-        <View style={[styles.timeLeft, { backgroundColor: color('bg/subtle') }]}>
-          {c.phase === 'running' && c.endsAt.getTime() - Date.now() < 3 * 864e5 ? <View style={[styles.live, { backgroundColor: color('fg/accent') }]} /> : null}
-          <Text variant="Caption Strong">{left}</Text>
-        </View>
-      </View>
-      <View style={styles.flex} />
-      <Text variant="Title/L" numberOfLines={2}>{c.title}</Text>
-      {c.description ? <Text variant="Body/S" color="fg/secondary" numberOfLines={2} style={styles.challengeDesc}>{c.description}</Text> : null}
-      <View style={styles.challengeFoot}>
-        <Text variant="Caption Strong" style={styles.flex}>{t('challenge.cooking', { n: c.participants.toLocaleString() })}</Text>
-        <View style={[styles.plus, { backgroundColor: color('bg/primary') }]}>
-          <Icon icon={Plus} size={18} color="fg/on-primary" />
-        </View>
-      </View>
-    </Pressable>
   );
 }
 
@@ -493,12 +493,5 @@ const styles = StyleSheet.create({
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
   storyText: { gap: space[8] },
-  challenge: { width: 220, height: 252, borderRadius: radius.xl, overflow: 'hidden', padding: space[16] },
-  challengeTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  timeLeft: { flexDirection: 'row', alignItems: 'center', gap: space[6], paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
-  live: { width: 6, height: 6, borderRadius: 3 },
-  challengeDesc: { marginTop: space[6] },
-  challengeFoot: { flexDirection: 'row', alignItems: 'center', gap: space[8], marginTop: space[14], height: 36 },
-  plus: { width: 36, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   suggest: { width: 128, alignItems: 'center', gap: space[4], padding: space[12], borderRadius: radius.xl, borderWidth: 1 },
 });

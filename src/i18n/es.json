@@ -383,7 +383,10 @@
     "moveTop": "Mover al principio",
     "landscape": "Paisaje",
     "saveChanges": "Guardar cambios",
-    "changesSaved": "Cambios guardados"
+    "changesSaved": "Cambios guardados",
+    "inChallenge": "Participas en: {{name}}",
+    "challengeOnePhoto": "Los retos solo admiten una foto",
+    "pickHintChallenge": "Una foto para el reto"
   },
   "dish": {
     "temperature": {
@@ -1289,7 +1292,9 @@
     "topEntries": "Lo más votado",
     "recentlyEnded": "Terminados hace poco",
     "entriesN": "{{n}} platos",
-    "seasonal": "Mesas de temporada"
+    "seasonal": "Mesas de temporada",
+    "youreInCta": "¡Ya participas!",
+    "cookedLabel": "Cocinaron"
   },
   "messages": {
     "title": "Mensajes",

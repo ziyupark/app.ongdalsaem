@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { resetShareDraft, updateShareDraft } from '../../lib/shareDraft';
+import { startChallengeDraft } from '../../lib/shareDraft';
 import { timeLeft, type Challenge } from '../../services/community';
 import { radius, space, useTheme } from '../../theme';
 import { FlagTag } from '../community/Parts';
@@ -12,12 +12,11 @@ export function ChallengeBanner({ c }: { c: Challenge }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const post = () => {
-    resetShareDraft();
-    updateShareDraft({ challenge: { id: c.id, tag: c.tag }, description: `#${c.tag} `, isPublic: true });
+    startChallengeDraft(c);
     router.push('/share/pick');
   };
   return (
-    <Pressable accessibilityRole="button" onPress={() => router.push(`/challenge/${c.slug}`)} style={[styles.card, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+    <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/community', params: { tab: 'challenges' } })} style={[styles.card, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
       {c.country ? <FlagTag code={c.country} /> : null}
       <View style={styles.flex}>
         <Text variant="Body/S Strong" numberOfLines={1}>{c.title}</Text>
