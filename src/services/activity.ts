@@ -1,7 +1,7 @@
 // 2.8 Notifications — built from real activity on my dishes (acorns, comments) + new followers.
 // There is no notifications table yet; "new" = after the last time the screen was opened (kept on device).
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { supabase } from '../lib/supabase';
+import { myUserId, supabase } from '../lib/supabase';
 
 export type Activity =
   | { kind: 'acorns'; id: string; at: Date; foodId: string; foodName: string; photo: string; who: Who; others: number }
@@ -23,8 +23,7 @@ export async function markSeen() {
 }
 
 export async function fetchActivity(): Promise<Activity[]> {
-  const { data: auth } = await supabase.auth.getUser();
-  const uid = auth.user?.id;
+  const uid = await myUserId();
   if (!uid) return [];
   const since = new Date(Date.now() - DAYS * 86400000).toISOString();
 
@@ -77,8 +76,7 @@ export async function fetchActivity(): Promise<Activity[]> {
 }
 
 export async function follow(userId: string, on: boolean) {
-  const { data: auth } = await supabase.auth.getUser();
-  const uid = auth.user?.id;
+  const uid = await myUserId();
   if (!uid) throw new Error('Not signed in');
   const { error } = on
     ? await supabase.from('follows').insert({ follower_id: uid, followee_id: userId })

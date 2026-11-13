@@ -239,10 +239,17 @@ export function useTimers() {
   return useSyncExternalStore((l) => { listeners.add(l); return () => { listeners.delete(l); }; }, () => timers);
 }
 
-/** Re-render on every second boundary while mounted; stops while the app is in the background. */
-export function useNow() {
+/** Re-render on every second boundary while mounted and `active`; stops while the app is in the background. */
+export function useNow(active = true) {
   const [now, setNow] = useState(Date.now());
+  // Turning on (a timer starts) → read the clock in this render, not the stale value from when ticking stopped.
+  const [wasActive, setWasActive] = useState(active);
+  if (wasActive !== active) {
+    setWasActive(active);
+    if (active) setNow(Date.now());
+  }
   useEffect(() => {
+    if (!active) return;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     let interval: ReturnType<typeof setInterval> | undefined;
     const stop = () => {
@@ -264,7 +271,7 @@ export function useNow() {
       stop();
       sub.remove();
     };
-  }, []);
+  }, [active]);
   return now;
 }
 

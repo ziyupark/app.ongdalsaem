@@ -27,13 +27,6 @@ function CardScrim() {
   );
 }
 
-type StoryProps = {
-  title: string; statement: string; photo: Pic; cookAvatar?: Pic; cookInitial: string;
-  mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void;
-  /** Acorn Tag becomes a toggle: `given` fills the acorn, `onAcorn` gives / takes back. */
-  given?: boolean; onAcorn?: () => void;
-};
-
 /** Acorn Tag that gives / takes back an acorn when `onPress` is set (filled = given); a plain tag otherwise. */
 function AcornToggle({ count, given, onPress }: { count: number; given?: boolean; onPress?: () => void }) {
   const { t } = useTranslation();
@@ -41,35 +34,6 @@ function AcornToggle({ count, given, onPress }: { count: number; given?: boolean
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={t('home.acorns', { count })} accessibilityState={{ selected: !!given }} hitSlop={space[8]} onPress={onPress}>
       <AcornTag count={count} given={given} />
-    </Pressable>
-  );
-}
-
-/** Story Card 41:493 (Home: 350×273, Show focus/byline Off) — photo fill + Card scrim, padding 24, space-between. */
-export function StoryCard({ title, statement, photo, cookAvatar, cookInitial, mood, tempC, acorns, onPress, given, onAcorn }: StoryProps) {
-  const { color } = useTheme();
-  const { t } = useTranslation();
-  return (
-    <Pressable accessibilityRole="button" accessibilityLabel={`${title}. ${statement}`} onPress={onPress} style={styles.story}>
-      <Image source={photo} style={StyleSheet.absoluteFill} contentFit="cover" />
-      <CardScrim />
-      <View style={styles.storyTop}>
-        <Text variant="Title/L" color="fg/on-photo" numberOfLines={1} style={styles.flex}>{title}</Text>
-        <Icon icon={ChevronRight} size={20} color="fg/on-photo" />
-      </View>
-      <View style={styles.storyFooter}>
-        <View style={styles.storyBody}>
-          <Text variant="Statement" color="fg/on-photo" numberOfLines={3} style={styles.flex}>{statement}</Text>
-          <View style={[styles.cook, { backgroundColor: color('bg/accent-subtle') }]}>
-            <Text variant="Caption Strong" color="fg/accent">{cookInitial}</Text>
-            {cookAvatar ? <Image source={cookAvatar} style={StyleSheet.absoluteFill} contentFit="cover" /> : null}
-          </View>
-        </View>
-        <View style={styles.tags}>
-          <WeatherTag mood={mood} tempC={tempC} condition={t(`weather.${mood}`)} />
-          <AcornToggle count={acorns} given={given} onPress={onAcorn} />
-        </View>
-      </View>
     </Pressable>
   );
 }
@@ -156,11 +120,7 @@ export function LocationCard({ onChooseCity, onAllowLocation, busy }: { onChoose
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  story: { height: 273, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[24], justifyContent: 'space-between', alignSelf: 'stretch' },
   storyTop: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
-  storyFooter: { gap: space[16] },
-  storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
-  cook: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   tags: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   nearby: { flexDirection: 'row', alignItems: 'center', gap: space[14], padding: space[14], borderRadius: radius['2xl'], borderWidth: 1, alignSelf: 'stretch' },
   nearbyPhoto: { width: 72, height: 72, borderRadius: radius.lg },

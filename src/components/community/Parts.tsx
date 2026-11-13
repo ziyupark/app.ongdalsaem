@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
-import type { CardDish, CookCard, Question } from '../../services/community';
-import { iconRing, moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
+import type { CardDish, CookCard, Question, ViralItem } from '../../services/community';
+import { iconRing, moods, radius, space, text, useTheme, withAlpha, type WeatherMood } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
@@ -93,22 +93,6 @@ export function Tabs<K extends string>({ items, value, onChange, style, ink }: {
           </Pressable>
         );
       })}
-    </View>
-  );
-}
-
-/** Weather Now 350×63 — glass, r16, icon 28 · "Light rain · 12°" / place · H/L. */
-export function WeatherNow({ mood, tempC, place, hi, lo }: { mood: WeatherMood | null; tempC: number | null; place: string; hi?: number; lo?: number }) {
-  const { color } = useTheme();
-  const { t } = useTranslation();
-  return (
-    <View style={[styles.now, { backgroundColor: color('glass/surface') }]}>
-      <Icon icon={WEATHER_ICON[mood ?? 'overcast']} size={28} color={mood ? 'fg/default' : 'fg/muted'} />
-      <View style={styles.flex}>
-        <Text variant="Body/M Strong" numberOfLines={1}>{mood && tempC != null ? `${t(`weather.${mood}`)} · ${displayTemp(tempC)}°` : t('home.noWeather')}</Text>
-        <Text variant="Caption" color="fg/muted" numberOfLines={1}>{place}</Text>
-      </View>
-      {hi != null && lo != null ? <Text variant="Caption Strong" color="fg/muted">{t('home.hiLo', { hi: displayTemp(hi), lo: displayTemp(lo) })}</Text> : null}
     </View>
   );
 }
@@ -324,19 +308,6 @@ export function FollowButton({ following, onPress, outline }: { following: boole
   return <Button label={t(following ? 'cook.following' : 'cook.follow')} size="S" variant={following ? 'Secondary' : outline ? 'Outline' : 'Primary'} onPress={onPress} style={outline ? styles.stretch : undefined} />;
 }
 
-/** Cook Card 363:8256 — 110×176, padding 16 8 14 8, gap 6, r24, bg/subtle + border/default, avatar 56, Outline S. */
-export function CookTile({ cook, sub, onPress, onFollow }: { cook: CookCard; sub: string; onPress: () => void; onFollow: () => void }) {
-  const { color } = useTheme();
-  return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.cookCard, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-      <Avatar url={cook.avatarUrl} name={cook.name} size={56} />
-      <Text variant="Body/S Strong" numberOfLines={1}>{cook.handle ?? cook.name}</Text>
-      <Text variant="Caption" color="fg/muted" numberOfLines={1}>{sub || ' '}</Text>
-      <FollowButton outline following={cook.following} onPress={onFollow} />
-    </Pressable>
-  );
-}
-
 /** Grouped list surface — bg/subtle, r24, rows separated by border/default. */
 export function ListCard({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const { color } = useTheme();
@@ -378,7 +349,22 @@ export function EmptyState({ icon, title, body, children, size = 'M' }: { icon: 
   );
 }
 
+/** Viral badge (4.1 / 4.7) — pill p4 10 · radius full · Caption Strong fg/inverse: rising = bg/kick, editor pick = bg/inverse. */
+export function ViralBadge({ item }: { item: Pick<ViralItem, 'kind' | 'growth'> }) {
+  const { color } = useTheme();
+  const { t } = useTranslation();
+  const rising = item.kind === 'rising';
+  return (
+    <View style={[styles.viralBadge, { backgroundColor: color(rising ? 'bg/kick' : 'bg/inverse') }]}>
+      <Text variant="Caption Strong" color="fg/inverse" numberOfLines={1}>
+        {rising ? t('viral.rising', { n: (item.growth ?? 0).toLocaleString() }) : t('viral.editor')}
+      </Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  viralBadge: { flexShrink: 1, paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   flex: { flex: 1 },
   center: { textAlign: 'center' },
   flagTag: { paddingHorizontal: space[8], paddingVertical: space[4], borderRadius: radius.full, alignSelf: 'flex-start' },
@@ -390,7 +376,6 @@ const styles = StyleSheet.create({
   tabs: { flexDirection: 'row', gap: space[24], paddingLeft: space[20] },
   tab: { height: 43, paddingTop: space[10], paddingHorizontal: space[2], gap: space[8], alignItems: 'center', justifyContent: 'center' },
   indicator: { width: 24, height: 3, borderRadius: 2 },
-  now: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.lg },
   search: { height: 48, borderRadius: radius.full, borderWidth: 1.5, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16] },
   card: { gap: space[6] },
   media: { borderRadius: radius.xl, overflow: 'hidden' },
@@ -413,7 +398,6 @@ const styles = StyleSheet.create({
   qStat: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   cookRow: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[16], paddingRight: space[14], paddingVertical: space[12] },
   stretch: { alignSelf: 'stretch' },
-  cookCard: { width: 110, alignItems: 'center', gap: space[6], paddingTop: space[16], paddingHorizontal: space[8], paddingBottom: space[14], borderRadius: radius.xl, borderWidth: 1 },
   listCard: { borderRadius: radius.lg, overflow: 'hidden' },
   listRow: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[12], paddingRight: space[14], paddingVertical: space[12] },
   empty: { alignItems: 'center', paddingHorizontal: space[40] },

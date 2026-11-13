@@ -2,7 +2,7 @@
 // Acorns = rows in `likes`. Images live in bucket `food-illustrations/<uid>/<foodId>-<n>.jpg`.
 import * as Crypto from 'expo-crypto';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { supabase } from '../lib/supabase';
+import { myUserId, supabase } from '../lib/supabase';
 import type { Difficulty, ShareDraft } from '../lib/shareDraft';
 import { geohash } from '../lib/geohash';
 import { temperatureTag } from '../lib/tags';
@@ -126,10 +126,7 @@ function toDish(r: Row): Dish {
   };
 }
 
-async function myId() {
-  const { data } = await supabase.auth.getUser();
-  return data.user?.id ?? null;
-}
+const myId = myUserId;
 
 // ---------------------------------------------------------------------------------------------- reads
 
@@ -661,8 +658,20 @@ export async function setInCollection(collectionId: string, saveId: string, on: 
 }
 
 export type DiaryDay = { date: string; mood: WeatherMood | null; cooked: DishSummary[] };
+/** One request per month at a time — the week row, the month line and the month popup ask for the same month together. */
+const diaryInFlight = new Map<string, Promise<DiaryDay[]>>();
+export function fetchDiaryMonth(year: number, month: number): Promise<DiaryDay[]> {
+  const k = `${year}-${month}`;
+  let p = diaryInFlight.get(k);
+  if (!p) {
+    p = loadDiaryMonth(year, month).finally(() => diaryInFlight.delete(k));
+    diaryInFlight.set(k, p);
+  }
+  return p;
+}
+
 /** One month of my kitchen: dishes I posted (any visibility), grouped by local day. */
-export async function fetchDiaryMonth(year: number, month: number): Promise<DiaryDay[]> {
+async function loadDiaryMonth(year: number, month: number): Promise<DiaryDay[]> {
   const uid = await myId();
   if (!uid) return [];
   const start = new Date(year, month, 1);

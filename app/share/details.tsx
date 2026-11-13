@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { AlertCircle, ChefHat, ChevronRight, RotateCcw, Globe, List, Map as MapIcon, MapPin, Plus, type LucideIcon } from 'lucide-react-native';
+import { AlertCircle, ChefHat, ChevronRight, Globe, List, Map as MapIcon, MapPin, Plus, type LucideIcon } from 'lucide-react-native';
 import { MessageCircle } from '../../src/components/icons/custom';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

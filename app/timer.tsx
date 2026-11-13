@@ -46,9 +46,10 @@ const PRESETS = [
 /** 5.1 Kitchen timer + 5.1b Add timer sheet + 5.2 Timer finished (Figma 20:748 · 669:11033 · 76:3268). */
 export default function KitchenTimerScreen() {
   const { color } = useTheme();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const timers = useTimers();
-  const tick = useNow();
+  // Ticks only while some timer has an end time (running or just finished) — no per-second re-render otherwise.
+  const tick = useNow(timers.some((x) => x.endAt != null));
   // A ring that empties between ticks moves `now` up to that moment, so the finished state shows on the same frame.
   const [endedAt, setEndedAt] = useState(0);
   const now = Math.max(tick, endedAt);

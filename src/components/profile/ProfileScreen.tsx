@@ -26,7 +26,7 @@ import { useWashScroll } from '../../lib/useWashScroll';
 import { displayTemp, usePrefs } from '../../lib/prefs';
 import { fetchAcornTotal, fetchMyMarks, fetchProfileDishes, setAcorn, type DishSummary, type ProfileTab } from '../../services/foods';
 import { getMyProfile, MAX_BIO, updateMyAvatar, updateMyBio, type MyProfile } from '../../services/profile';
-import { supabase } from '../../lib/supabase';
+import { myUserId, supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
 import { startThread } from '../../services/messages';
 import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
@@ -119,12 +119,12 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 
   // Another cook: their public profile + whether I follow them. Opening yourself goes to the real Profile tab.
   const loadOther = async (id: string): Promise<MyProfile | null> => {
-    const { data: auth } = await supabase.auth.getUser();
-    if (auth.user?.id === id) { router.replace('/profile'); return null; }
+    const me = await myUserId();
+    if (me === id) { router.replace('/profile'); return null; }
     const { data } = await supabase.from('profiles').select('id, display_name, username, avatar_url, city, bio').eq('id', id).maybeSingle();
     if (!data) { setMissing(true); return null; }
-    if (auth.user) {
-      const { data: f } = await supabase.from('follows').select('followee_id').eq('follower_id', auth.user.id).eq('followee_id', id).maybeSingle();
+    if (me) {
+      const { data: f } = await supabase.from('follows').select('followee_id').eq('follower_id', me).eq('followee_id', id).maybeSingle();
       setFollowing(!!f);
     }
     return { id: data.id, displayName: data.display_name || data.username, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: true };
@@ -354,7 +354,6 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: space[20], paddingBottom: space[8], gap: 13 },
   cardGroup: { gap: space[12] },
   center: { alignItems: 'center', justifyContent: 'center' },
-  camera: { position: 'absolute', right: 0, bottom: 0, width: 28, height: 28, borderRadius: radius.full, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   bioRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[8] },
   btns: { flexDirection: 'row', gap: space[10] },
   bioField: { borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: space[16], paddingTop: space[12], paddingBottom: space[8], gap: space[4] },

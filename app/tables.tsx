@@ -113,6 +113,5 @@ const styles = StyleSheet.create({
   mineRow: { gap: space[10] },
   mine: { width: 170, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingVertical: space[10], paddingLeft: space[10], paddingRight: space[14], borderRadius: radius.lg, borderWidth: 1 },
   cover: { overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  join: { height: 36, paddingHorizontal: space[16], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   loading: { marginTop: space[40] },
 });

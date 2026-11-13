@@ -23,14 +23,6 @@ const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: 'dish.difficultyEas
 
 export const hasFilters = (f: SearchFilters) => f.maxMinutes != null || f.difficulty != null || f.ingredients.length > 0;
 
-/** Route params ⇄ filters (Explore → nearby-feed). */
-export function filtersToParams(f: SearchFilters): Record<string, string> {
-  const p: Record<string, string> = {};
-  if (f.maxMinutes) p.time = String(f.maxMinutes);
-  if (f.difficulty) p.level = f.difficulty;
-  if (f.ingredients.length) p.ing = JSON.stringify(f.ingredients);
-  return p;
-}
 export function filtersFromParams(p: { time?: string; level?: string; ing?: string }): SearchFilters {
   let ingredients: string[] = [];
   try {

@@ -37,3 +37,12 @@ AppState.addEventListener("change", (state) => {
     supabase.auth.stopAutoRefresh();
   }
 });
+
+/**
+ * My user id from the stored session (no network) — `auth.getUser()` asks the auth server every time.
+ * Only for "who am I" in queries; row access is still checked by RLS on the server.
+ */
+export async function myUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.id ?? null;
+}

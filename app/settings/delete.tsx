@@ -3,17 +3,16 @@ import { Image as ImageIcon, User } from 'lucide-react-native';
 import { Bookmark, MessageCircle } from '../../src/components/icons/custom';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Button } from '../../src/components/Button';
 import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components/settings/Settings';
 import { Text } from '../../src/components/Text';
 import { supabase } from '../../src/lib/supabase';
 import { deleteMyAccount } from '../../src/services/settings';
-import { radius, space, useTheme } from '../../src/theme';
+import { space } from '../../src/theme';
 
 /** 9.9 Delete account (Figma 194:6780) — confirm twice, then delete_own_account() and back to 1.1 Splash. */
 export default function DeleteAccount() {
-  const { color } = useTheme();
   const { t } = useTranslation();
   const [count, setCount] = useState(0);
   const [busy, setBusy] = useState(false);

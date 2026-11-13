@@ -1,4 +1,4 @@
-import { Moon, Clock, CloudSun, Megaphone, Timer, Users } from 'lucide-react-native';
+import { Clock, CloudSun, Timer, Users } from 'lucide-react-native';
 import { MessageCircle } from '../../src/components/icons/custom';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

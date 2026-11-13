@@ -1,11 +1,10 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Send, Cookie, Moon, Star, Sun, type LucideIcon } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
 import { Chip } from '../src/components/Chip';
 import {
-  Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag,
+  Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag, ViralBadge,
 } from '../src/components/community/Parts';
 import { ChallengesTab } from '../src/components/community/ChallengesTab';
 import { OurArea } from '../src/components/community/Nearby';
@@ -21,7 +20,6 @@ import { Text } from '../src/components/Text';
 import { CUSTOM_MOOD_ICON, MOOD_TAGS } from '../src/lib/tags';
 import { timeAgo } from '../src/lib/time';
 import { follow } from '../src/services/activity';
-import { hasUnreadMessages } from '../src/services/messages';
 import {
   fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay, fetchSuggestedPlates,
   fetchViralBites, localDate, localMidnight, topTags, type CardDish, type FollowingItem, type ViralItem,
@@ -30,7 +28,7 @@ import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../src/
 import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
 import { cellsAround } from '../src/lib/geohash';
 import { useHere } from '../src/lib/useHere';
-import { radius, space, useTheme } from '../src/theme';
+import { space, useTheme } from '../src/theme';
 
 /** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
 const FESTIVE_CAROUSEL = 8;
@@ -57,8 +55,6 @@ export default function Community() {
   // the content and fades out (~300 pt). Tabs sit ≈ 55 % down the 420 wash, under the header.
   const wash = useWashScroll();
   const tabInk = useScreenInk(0.55);
-  const [unreadDm, setUnreadDm] = useState(false);
-  useFocusEffect(useCallback(() => { hasUnreadMessages().then(setUnreadDm); }, []));
 
   // Re-open a tab when navigated back here with ?tab=…; ?focus=join brings the Challenges Join button into view.
   const scroll = useRef<ScrollViewInstance>(null);
@@ -297,20 +293,6 @@ function Global() {
   );
 }
 
-/** Viral badge (4.1 / 4.7) — pill p4 10 · radius full · Caption Strong fg/inverse: rising = bg/kick, editor pick = bg/inverse. */
-export function ViralBadge({ item }: { item: Pick<ViralItem, 'kind' | 'growth'> }) {
-  const { color } = useTheme();
-  const { t } = useTranslation();
-  const rising = item.kind === 'rising';
-  return (
-    <View style={[styles.viralBadge, { backgroundColor: color(rising ? 'bg/kick' : 'bg/inverse') }]}>
-      <Text variant="Caption Strong" color="fg/inverse" numberOfLines={1}>
-        {rising ? t('viral.rising', { n: (item.growth ?? 0).toLocaleString() }) : t('viral.editor')}
-      </Text>
-    </View>
-  );
-}
-
 // ------------------------------------------------------------------------------------------------ Table (4.4)
 
 /** Plates per day before "See more" (3 rows × 3). */
@@ -349,7 +331,8 @@ function Following() {
     try {
       const since = localMidnight();
       since.setDate(since.getDate() - 1);
-      const [list, ids, my] = await Promise.all([fetchFollowingFeed('people'), fetchFolloweeIds(), fetchMyDishesSince(since)]);
+      const idsReq = fetchFolloweeIds();
+      const [list, ids, my] = await Promise.all([idsReq.then((f) => fetchFollowingFeed('people', f)), idsReq, fetchMyDishesSince(since)]);
       const from = localMidnight();
       from.setDate(from.getDate() - (NEIGHBOR_DAYS - 1));
       const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : [];
@@ -359,7 +342,7 @@ function Following() {
       setFollowees(ids.length);
       setNeighbors(near);
       setFollowed(new Set());
-      if (!ids.length && !near.length) fetchSuggestedPlates(3).then(setSuggest).catch(() => undefined);
+      if (!ids.length && !near.length) fetchSuggestedPlates(3, ids).then(setSuggest).catch(() => undefined);
     } catch {
       setFeed((f) => f ?? []);
       setFollowees((n) => n ?? 0);
@@ -473,19 +456,14 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
   tabRow: { gap: space[24], paddingHorizontal: space[20] },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
-  dot: { position: 'absolute', right: -2, top: -2, width: 8, height: 8, borderRadius: 4 },
-  chipsTop: { paddingTop: space[16] },
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },
-  section: { paddingTop: space[24], gap: space[12] },
   // 4.1 groups: p42 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags).
   sectionS: { paddingTop: space[42], gap: space[6] },
   sectionM: { paddingTop: space[42], gap: space[8] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
   countryCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'flex-end', gap: space[10] },
   countryFlag: { position: 'absolute', left: 18, top: space[12], right: 18, flexDirection: 'row', alignItems: 'center', gap: space[8] },
-  viralBadge: { flexShrink: 1, paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
   storyTop: { paddingTop: space[42] - space[20] },
@@ -493,5 +471,4 @@ const styles = StyleSheet.create({
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
   storyText: { gap: space[8] },
-  suggest: { width: 128, alignItems: 'center', gap: space[4], padding: space[12], borderRadius: radius.xl, borderWidth: 1 },
 });

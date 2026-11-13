@@ -1,7 +1,7 @@
 // My diet & allergies (profiles.diet · profiles.allergies), loaded once and kept in memory for picks, search and 7.1.
 import { useSyncExternalStore } from 'react';
 import { ALLERGENS, DIETS, type Allergen, type Diet, type DietPrefs } from './allergens';
-import { supabase } from './supabase';
+import { myUserId, supabase } from './supabase';
 
 const NONE: DietPrefs = { diet: null, allergies: [] };
 let prefs: DietPrefs = NONE;
@@ -19,9 +19,9 @@ export function loadDietPrefs(): Promise<DietPrefs> {
   if (!loading) {
     loading = (async () => {
       try {
-        const { data: auth } = await supabase.auth.getUser();
-        if (!auth.user) return NONE;
-        const { data, error } = await supabase.from('profiles').select('diet, allergies').eq('id', auth.user.id).maybeSingle();
+        const uid = await myUserId();
+        if (!uid) return NONE;
+        const { data, error } = await supabase.from('profiles').select('diet, allergies').eq('id', uid).maybeSingle();
         if (error) throw error;
         prefs = parse(data);
         emit();
@@ -52,9 +52,9 @@ export function getDietPrefs() {
 }
 
 export async function saveDietPrefs(next: DietPrefs) {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) throw new Error('Not signed in');
-  const { error } = await supabase.from('profiles').update({ diet: next.diet, allergies: next.allergies }).eq('id', auth.user.id);
+  const uid = await myUserId();
+  if (!uid) throw new Error('Not signed in');
+  const { error } = await supabase.from('profiles').update({ diet: next.diet, allergies: next.allergies }).eq('id', uid);
   if (error) throw error;
   prefs = { diet: next.diet, allergies: ALLERGENS.filter((a) => next.allergies.includes(a)) };
   loading = Promise.resolve(prefs);

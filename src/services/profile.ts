@@ -1,20 +1,20 @@
 // profiles row for onboarding (docs/06-data-model.md User · Settings, DB = supabase/migrations).
 import * as ImageManipulator from 'expo-image-manipulator';
-import { supabase } from '../lib/supabase';
+import { myUserId, supabase } from '../lib/supabase';
 import { makeHandle, randomHandleDigits } from './username';
 
 export type MyProfile = { id: string; displayName: string | null; username: string | null; avatarUrl: string | null; city: string | null; bio: string | null; locationEnabled: boolean };
 
 export async function getMyProfile(): Promise<MyProfile | null> {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return null;
+  const uid = await myUserId();
+  if (!uid) return null;
   const { data, error } = await supabase
     .from('profiles')
     .select('id, display_name, username, avatar_url, city, bio, location_enabled')
-    .eq('id', auth.user.id)
+    .eq('id', uid)
     .maybeSingle();
   if (error) throw error;
-  if (!data) return { id: auth.user.id, displayName: null, username: null, avatarUrl: null, city: null, bio: null, locationEnabled: true };
+  if (!data) return { id: uid, displayName: null, username: null, avatarUrl: null, city: null, bio: null, locationEnabled: true };
   return { id: data.id, displayName: data.display_name, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: data.location_enabled ?? true };
 }
 
@@ -40,9 +40,9 @@ async function uploadAvatar(userId: string, localUri: string) {
  * Returns the handle that was saved.
  */
 export async function saveProfileSetup(input: { displayName: string; digits: string; avatarUri?: string }) {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) throw new Error('Not signed in');
-  const avatarUrl = input.avatarUri ? await uploadAvatar(auth.user.id, input.avatarUri) : undefined;
+  const uid = await myUserId();
+  if (!uid) throw new Error('Not signed in');
+  const avatarUrl = input.avatarUri ? await uploadAvatar(uid, input.avatarUri) : undefined;
 
   let digits = input.digits;
   for (let attempt = 0; attempt < 6; attempt++) {
@@ -50,7 +50,7 @@ export async function saveProfileSetup(input: { displayName: string; digits: str
     const { error } = await supabase
       .from('profiles')
       .upsert({
-        id: auth.user.id,
+        id: uid,
         display_name: input.displayName.trim(),
         username,
         handle_auto_generated: true,
@@ -65,27 +65,27 @@ export async function saveProfileSetup(input: { displayName: string; digits: str
 
 /** 1.4: city/country only — never coordinates (docs/04-screens/01 1.4 개인정보). */
 export async function saveLocationChoice(input: { city?: string; country?: string; locationEnabled: boolean }) {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) throw new Error('Not signed in');
+  const uid = await myUserId();
+  if (!uid) throw new Error('Not signed in');
   const { error } = await supabase
     .from('profiles')
     .update({ location_enabled: input.locationEnabled, ...(input.city ? { city: input.city, country: input.country ?? null } : {}) })
-    .eq('id', auth.user.id);
+    .eq('id', uid);
   if (error) throw error;
 }
 
 /** Onboarding taste step: preset tag keys (lib/tags) the user likes — Today's pick leans toward them. */
 export async function saveFavoriteTags(tags: string[]) {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) throw new Error('Not signed in');
-  const { error } = await supabase.from('profiles').update({ favorite_tags: tags }).eq('id', auth.user.id);
+  const uid = await myUserId();
+  if (!uid) throw new Error('Not signed in');
+  const { error } = await supabase.from('profiles').update({ favorite_tags: tags }).eq('id', uid);
   if (error) throw error;
 }
 
 export async function fetchMyFavoriteTags(): Promise<string[]> {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return [];
-  const { data } = await supabase.from('profiles').select('favorite_tags').eq('id', auth.user.id).maybeSingle();
+  const uid = await myUserId();
+  if (!uid) return [];
+  const { data } = await supabase.from('profiles').select('favorite_tags').eq('id', uid).maybeSingle();
   return (data?.favorite_tags as string[] | null) ?? [];
 }
 
@@ -93,20 +93,20 @@ export const MAX_BIO = 80;
 
 /** 6.1 tap avatar — upload a new photo and save it on the profile. Returns the public URL. */
 export async function updateMyAvatar(localUri: string) {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) throw new Error('Not signed in');
-  const url = await uploadAvatar(auth.user.id, localUri);
-  const { error } = await supabase.from('profiles').update({ avatar_url: url }).eq('id', auth.user.id);
+  const uid = await myUserId();
+  if (!uid) throw new Error('Not signed in');
+  const url = await uploadAvatar(uid, localUri);
+  const { error } = await supabase.from('profiles').update({ avatar_url: url }).eq('id', uid);
   if (error) throw error;
   return url;
 }
 
 /** 6.1 status message (bio) — empty clears it. */
 export async function updateMyBio(bio: string) {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) throw new Error('Not signed in');
+  const uid = await myUserId();
+  if (!uid) throw new Error('Not signed in');
   const value = bio.trim().slice(0, MAX_BIO) || null;
-  const { error } = await supabase.from('profiles').update({ bio: value }).eq('id', auth.user.id);
+  const { error } = await supabase.from('profiles').update({ bio: value }).eq('id', uid);
   if (error) throw error;
   return value;
 }

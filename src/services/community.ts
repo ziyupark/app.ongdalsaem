@@ -2,7 +2,7 @@
 // supabase/migrations/20261029000000_follows_and_messages.sql and 20261030020000_tables_questions_challenges.sql.
 import { clashes, type DietPrefs } from '../lib/allergens';
 import { hasIngredients } from '../lib/ingredientMatch';
-import { supabase } from '../lib/supabase';
+import { myUserId, supabase } from '../lib/supabase';
 import type { WeatherMood } from '../theme';
 import { countOf, SUMMARY_SELECT, toPerson, toSummary, type DishSummary, type Person, type Row } from './foods';
 
@@ -37,10 +37,7 @@ const toCard = (r: Row): CardDish => ({
 
 const publicFoods = (select = CARD_SELECT) => supabase.from('foods').select(select).eq('visibility', 'everyone').eq('status', 'published');
 
-async function uid() {
-  const { data } = await supabase.auth.getUser();
-  return data.user?.id ?? null;
-}
+const uid = myUserId;
 async function needUid() {
   const id = await uid();
   if (!id) throw new Error('Not signed in');
@@ -339,11 +336,11 @@ export async function fetchFolloweeIds() {
 
 export type FollowingItem = CardDish & { fromTable: string | null };
 
-/** 4.4 Following — dishes from cooks you follow, plus the dishes posted in your tables. */
-export async function fetchFollowingFeed(only: 'all' | 'people' | 'tables' = 'all'): Promise<FollowingItem[]> {
+/** 4.4 Following — dishes from cooks you follow, plus the dishes posted in your tables. Pass `followees` when already loaded. */
+export async function fetchFollowingFeed(only: 'all' | 'people' | 'tables' = 'all', followees?: string[]): Promise<FollowingItem[]> {
   const me = await uid();
   if (!me) return [];
-  const [ids, tables] = await Promise.all([fetchFolloweeIds(), only === 'people' ? Promise.resolve([]) : fetchMyTables()]);
+  const [ids, tables] = await Promise.all([followees ?? fetchFolloweeIds(), only === 'people' ? Promise.resolve([]) : fetchMyTables()]);
   const out = new Map<string, FollowingItem>();
   if (only !== 'tables' && ids.length) {
     const { data, error } = await publicFoods().in('creator_id', ids).order('created_at', { ascending: false }).limit(40);
@@ -375,12 +372,12 @@ export async function fetchMyDishesSince(since: Date): Promise<CardDish[]> {
 }
 
 /** 4.4b Table · no follows yet — recent popular cooks (acorns over 14 days), each with their most-liked dish. */
-export async function fetchSuggestedPlates(limit = 3): Promise<CardDish[]> {
+export async function fetchSuggestedPlates(limit = 3, followees?: string[]): Promise<CardDish[]> {
   const me = await uid();
   const { data, error } = await publicFoods().gte('created_at', new Date(Date.now() - 14 * 864e5).toISOString())
     .order('created_at', { ascending: false }).limit(200);
   if (error) throw error;
-  const followed = new Set(await fetchFolloweeIds());
+  const followed = new Set(followees ?? await fetchFolloweeIds());
   const best = new Map<string, { dish: CardDish; total: number }>();
   for (const d of (data as Row[]).map(toCard)) {
     if (d.creator.id === me || followed.has(d.creator.id)) continue;

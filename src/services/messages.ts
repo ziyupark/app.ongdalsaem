@@ -1,6 +1,6 @@
 // Direct messages (4.11 Message · 7.5 Send to) — message_threads / messages / start_thread() in
 // supabase/migrations/20261029000000_follows_and_messages.sql (+ message_policy in 20261030000000).
-import { supabase } from '../lib/supabase';
+import { myUserId, supabase } from '../lib/supabase';
 import { toPerson, type Person, type Row } from './foods';
 
 export type Thread = { id: string; other: Person; lastBody: string | null; lastAt: Date; unread: number; isRequest: boolean; iAsked: boolean };
@@ -12,9 +12,9 @@ export type Target = Person & { relation: Relation };
 export const DISH_LINK = /ongdalsaem:\/\/dish\/([0-9a-f-]{36})/i;
 
 async function needUid() {
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) throw new Error('Not signed in');
-  return data.user.id;
+  const id = await myUserId();
+  if (!id) throw new Error('Not signed in');
+  return id;
 }
 
 export async function fetchInbox(): Promise<Thread[]> {
@@ -48,16 +48,6 @@ export async function fetchInbox(): Promise<Thread[]> {
       isRequest: r.request_for === me,
       iAsked: r.request_for != null && r.request_for !== me,
     }));
-}
-
-export async function hasUnreadMessages() {
-  try {
-    const me = await needUid();
-    const { count } = await supabase.from('messages').select('id', { count: 'exact', head: true }).neq('sender_id', me).is('seen_at', null);
-    return (count ?? 0) > 0;
-  } catch {
-    return false;
-  }
 }
 
 /** Opens (or creates) the 1:1 thread. Throws `messages_restricted` / `blocked` from the RPC. */

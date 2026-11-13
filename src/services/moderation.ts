@@ -1,13 +1,13 @@
 // Reports & blocks — DB: reports (reason check in 20261030010000_moderation.sql), blocks.
-import { supabase } from '../lib/supabase';
+import { myUserId, supabase } from '../lib/supabase';
 
 export const REPORT_REASONS = ['sexual', 'child_safety', 'harassment', 'hate_violence', 'copyright', 'spam', 'unsafe_recipe', 'off_topic', 'other'] as const;
 export type ReportReason = (typeof REPORT_REASONS)[number];
 
 async function myId() {
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) throw new Error('Not signed in');
-  return data.user.id;
+  const id = await myUserId();
+  if (!id) throw new Error('Not signed in');
+  return id;
 }
 
 export async function reportDish(foodId: string, ownerId: string, reason: ReportReason, note?: string) {

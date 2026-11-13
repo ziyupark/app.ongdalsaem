@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/Button';
-import { FlagTag, FoodGrid } from '../../src/components/community/Parts';
+import { FlagTag, FoodGrid, ViralBadge } from '../../src/components/community/Parts';
 import { Icon } from '../../src/components/Icon';
 import { MessageCircle } from '../../src/components/icons/custom';
 import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
@@ -13,7 +13,6 @@ import { Text } from '../../src/components/Text';
 import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
 import { fetchPostsByName, findViral, type CardDish, type ViralItem } from '../../src/services/community';
 import { radius, space, useTheme } from '../../src/theme';
-import { ViralBadge } from '../community';
 
 /** Expanded TabBar height (12:182). */
 const TAB_BAR_H = 110;
