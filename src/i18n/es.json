@@ -437,7 +437,12 @@
     "reportCommentTitle": "¿Denunciar este comentario?",
     "seeAllComments": "Ver los {{n}} comentarios",
     "direct": "Enviar",
-    "offlineCopy": "Estás sin conexión: esta copia guardada sigue funcionando. Las bellotas y los comentarios vuelven al conectarte."
+    "offlineCopy": "Estás sin conexión: esta copia guardada sigue funcionando. Las bellotas y los comentarios vuelven al conectarte.",
+    "selectAll": "Seleccionar todo",
+    "clearSelection": "Quitar selección",
+    "addSelectedToShopping": "Añadir {{n}} a la lista de compras",
+    "inShopping": "Añadido",
+    "inFridge": "En la nevera"
   },
   "profile": {
     "settings": "Ajustes",
@@ -811,7 +816,7 @@
   "shopping": {
     "title": "Lista de compras",
     "addFromRecipe": "Añadir a la lista de compras",
-    "added": "Añadido a tu lista de compras",
+    "added": "{{n}} añadidos a tu lista de compras",
     "inFridge": "Ya en tu nevera: {{n}}",
     "empty": "Aún no hay nada que comprar. Añade ingredientes desde una receta.",
     "toFridge": "Comprado → a la nevera ({{n}})",

@@ -434,7 +434,12 @@
     "reportCommentTitle": "要檢舉這則留言嗎？",
     "seeAllComments": "查看全部 {{n}} 則留言",
     "direct": "傳送",
-    "offlineCopy": "你目前離線——這份儲存的副本仍可使用。橡實和留言會在上線後回來。"
+    "offlineCopy": "你目前離線——這份儲存的副本仍可使用。橡實和留言會在上線後回來。",
+    "selectAll": "全選",
+    "clearSelection": "取消選取",
+    "addSelectedToShopping": "將選取的 {{n}} 項加入購物清單",
+    "inShopping": "已加入",
+    "inFridge": "冰箱裡有"
   },
   "profile": {
     "settings": "設定",
@@ -801,7 +806,7 @@
   "shopping": {
     "title": "購物清單",
     "addFromRecipe": "加入購物清單",
-    "added": "已加入購物清單",
+    "added": "已將 {{n}} 項加入購物清單",
     "inFridge": "冰箱裡已有 {{n}} 樣",
     "empty": "還沒有要買的東西。從食譜加入食材吧。",
     "toFridge": "已購買 → 放進冰箱 ({{n}})",

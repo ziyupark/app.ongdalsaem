@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AlertTriangle, Check, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from 'lucide-react-native';
 import { Bookmark, MessageCircle, Share } from '../icons/custom';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { allergensIn } from '../../lib/allergens';
@@ -10,7 +10,7 @@ import { useDietPrefs } from '../../lib/dietPrefs';
 import { useFridge } from '../../lib/fridge';
 import { hasIngredients } from '../../lib/ingredientMatch';
 import { scaleIngredient } from '../../lib/scaleIngredient';
-import { addShopping } from '../../lib/shopping';
+import { addShopping, useShopping } from '../../lib/shopping';
 import { isPresetMeal, isPresetMood, mealIcon, moodIcon, temperatureIcon, temperatureTag } from '../../lib/tags';
 import type { Ingredient, Step } from '../../services/foods';
 import { radius, space, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
@@ -59,6 +59,8 @@ type Props = {
   onAuthor?: () => void;
   /** Step timer button (7.1 "Start 15:00 timer"). */
   onStartTimer?: (stepIndex: number) => void;
+  /** 7.1: picked ingredients went into the shopping memo (n = how many). */
+  onAddedToShopping?: (n: number) => void;
   /** Rendered after the Details row (7.1 "More from …"). */
   footer?: ReactNode;
   /** Space kept under the content for the fixed action bar. */
@@ -74,7 +76,7 @@ const SHEET_OVERLAP = 32;
  * 7.1 Post detail / 8.3 Preview body (Figma 20:1380, 309:7358): photo hero 560 (swipe) with scrims, title, Weather/Acorn tags,
  * then the sheet (radius 32, overlapping 32): Feed Post header · actions · caption → dish tags → Ingredients → Steps → Calories.
  */
-export function DishView({ dish, given, saved, onAcorn, onComments, onShare, onSave, onMore, onAuthor, onStartTimer, footer, bottomInset }: Props) {
+export function DishView({ dish, given, saved, onAcorn, onComments, onShare, onSave, onMore, onAuthor, onStartTimer, onAddedToShopping, footer, bottomInset }: Props) {
   const { width } = useWindowDimensions();
   const { color } = useTheme();
   const { t } = useTranslation();
@@ -168,7 +170,7 @@ export function DishView({ dish, given, saved, onAcorn, onComments, onShare, onS
           </View>
         ) : null}
 
-        <DishRecipe dish={dish} onStartTimer={onStartTimer} />
+        <DishRecipe dish={dish} onStartTimer={onStartTimer} onAddedToShopping={onAddedToShopping} />
         {footer}
       </View>
     </ScrollView>
@@ -191,24 +193,30 @@ export function useDishTags(dish: DishViewData) {
 }
 
 /** Divider → Ingredients → Steps (with timer buttons) → Calories. Shared by 7.1 and 8.3. */
-export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStartTimer?: (stepIndex: number) => void }) {
+export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: DishViewData; onStartTimer?: (stepIndex: number) => void; onAddedToShopping?: (n: number) => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   // Servings stepper (screen only, never saved): ingredient amounts are rescaled from the recipe's servings.
   const base = dish.servings ?? null;
   const [servings, setServings] = useState(base ?? 0);
   useEffect(() => { setServings(base ?? 0); }, [base]);
-  // Add to shopping list: the ingredients at the current servings, minus what's already in my fridge.
+  // Pick ingredients one by one → shopping memo (7.1 only). In my fridge = badge, still pickable; already in the memo = "added", locked.
   const fridge = useFridge();
-  const fridgeNames = fridge.map((f) => f.name);
-  const inFridge = dish.ingredients.filter((ing) => hasIngredients([ing.name], fridgeNames));
-  const [added, setAdded] = useState(false);
-  useEffect(() => { setAdded(false); }, [servings, dish.id]);
+  const shopping = useShopping();
+  const inFridge = useMemo(() => { const names = fridge.map((f) => f.name); return dish.ingredients.map((ing) => hasIngredients([ing.name], names)); }, [fridge, dish.ingredients]);
+  const inShopping = useMemo(() => { const names = shopping.map((s) => s.name); return dish.ingredients.map((ing) => hasIngredients([ing.name], names)); }, [shopping, dish.ingredients]);
+  const [picked, setPicked] = useState<Set<number>>(new Set());
+  useEffect(() => { setPicked(new Set()); }, [dish.id]);
+  const chosen = [...picked].filter((i) => !inShopping[i]);
+  const toggle = (i: number) => setPicked((p) => { const n = new Set(p); if (n.has(i)) n.delete(i); else n.add(i); return n; });
+  // "Select all" leaves out what's already in my fridge.
+  const selectAll = () => setPicked(new Set(dish.ingredients.map((_, i) => i).filter((i) => !inFridge[i] && !inShopping[i])));
   const amountOf = (amount: string) => (base != null ? scaleIngredient(amount, base, servings) : amount);
   const addToShopping = async () => {
-    const toBuy = dish.ingredients.filter((ing) => !inFridge.includes(ing)).map((ing) => ({ name: ing.name, amount: amountOf(ing.amount) }));
-    await addShopping(toBuy, dish.id);
-    setAdded(true);
+    if (!chosen.length) return;
+    await addShopping(chosen.map((i) => ({ name: dish.ingredients[i].name, amount: amountOf(dish.ingredients[i].amount) })), dish.id);
+    setPicked(new Set());
+    onAddedToShopping?.(chosen.length);
   };
   // 7.1 allergy warning — my allergens found in the dish name or ingredients.
   const { allergies } = useDietPrefs();
@@ -251,25 +259,67 @@ export function DishRecipe({ dish, onStartTimer }: { dish: DishViewData; onStart
                     </View>
                   ) : null}
                 </View>
+                {dish.id ? (
+                  <View style={styles.pickRow}>
+                    <Pressable accessibilityRole="button" onPress={selectAll} hitSlop={space[8]}>
+                      <Text variant="Body/S Strong" color="fg/accent">{t('dish.selectAll')}</Text>
+                    </Pressable>
+                    <Pressable accessibilityRole="button" disabled={!chosen.length} onPress={() => setPicked(new Set())} hitSlop={space[8]}>
+                      <Text variant="Body/S Strong" color={chosen.length ? 'fg/secondary' : 'fg/disabled'}>{t('dish.clearSelection')}</Text>
+                    </Pressable>
+                  </View>
+                ) : null}
                 <View>
-                  {dish.ingredients.map((ing, i) => (
-                    <View key={`${ing.name}-${i}`} style={[styles.ingredient, { borderBottomColor: color('border/default') }]}>
-                      <Text variant="Body/M" style={styles.flex}>{ing.name}</Text>
-                      <Text variant="Body/M Strong" color="fg/secondary">{amountOf(ing.amount)}</Text>
-                    </View>
-                  ))}
+                  {dish.ingredients.map((ing, i) => {
+                    const rowStyle = [styles.ingredient, { borderBottomColor: color('border/default') }];
+                    if (!dish.id) {
+                      return (
+                        <View key={`${ing.name}-${i}`} style={rowStyle}>
+                          <Text variant="Body/M" style={styles.flex}>{ing.name}</Text>
+                          <Text variant="Body/M Strong" color="fg/secondary">{amountOf(ing.amount)}</Text>
+                        </View>
+                      );
+                    }
+                    const locked = inShopping[i];
+                    const on = locked || picked.has(i);
+                    return (
+                      <Pressable
+                        key={`${ing.name}-${i}`}
+                        accessibilityRole="checkbox"
+                        accessibilityState={{ checked: on, disabled: locked }}
+                        accessibilityLabel={ing.name}
+                        disabled={locked}
+                        onPress={() => toggle(i)}
+                        style={[rowStyle, styles.pickable]}
+                      >
+                        <View style={[styles.check, locked ? { backgroundColor: color('bg/muted') } : on ? { backgroundColor: color('bg/inverse') } : { borderWidth: 1.5, borderColor: color('border/strong') }]}>
+                          {on ? <Icon icon={Check} size={14} color={locked ? 'fg/disabled' : 'fg/inverse'} /> : null}
+                        </View>
+                        <Text variant="Body/M" color={locked ? 'fg/muted' : 'fg/default'} style={styles.flex}>{ing.name}</Text>
+                        {locked ? (
+                          <View style={[styles.badge, { backgroundColor: color('bg/muted') }]}>
+                            <Text variant="Caption Strong" color="fg/muted">{t('dish.inShopping')}</Text>
+                          </View>
+                        ) : inFridge[i] ? (
+                          <View style={[styles.badge, { backgroundColor: color('bg/accent-subtle') }]}>
+                            <Text variant="Caption Strong" color="fg/accent">{t('dish.inFridge')}</Text>
+                          </View>
+                        ) : null}
+                        <Text variant="Body/M Strong" color="fg/secondary">{amountOf(ing.amount)}</Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
                 {dish.id ? (
                   <View style={styles.shop}>
                     <Button
-                      label={t(added ? 'shopping.added' : 'shopping.addFromRecipe')}
-                      icon={added ? Check : ShoppingCart}
+                      label={t('dish.addSelectedToShopping', { n: chosen.length })}
+                      icon={ShoppingCart}
                       variant="Outline"
                       size="M"
-                      disabled={added || inFridge.length === dish.ingredients.length}
+                      disabled={chosen.length === 0}
                       onPress={addToShopping}
                     />
-                    {inFridge.length ? <Text variant="Caption" color="fg/muted" style={styles.shopNote}>{t('shopping.inFridge', { n: inFridge.length })}</Text> : null}
                   </View>
                 ) : null}
               </View>
@@ -338,7 +388,10 @@ const styles = StyleSheet.create({
   warnRow: { paddingBottom: space[16] },
   warn: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   shop: { paddingTop: space[12], gap: space[6] },
-  shopNote: { textAlign: 'center' },
+  pickRow: { flexDirection: 'row', justifyContent: 'flex-end', gap: space[16] },
+  pickable: { alignItems: 'center' },
+  check: { width: 20, height: 20, borderRadius: radius.xs, alignItems: 'center', justifyContent: 'center' },
+  badge: { paddingHorizontal: space[8], paddingVertical: space[2], borderRadius: radius.full },
   ingHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   servings: { height: 36, flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[12], borderRadius: radius.full, borderWidth: 1 },
   ingredient: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingVertical: space[8], borderBottomWidth: 1, gap: space[12] },

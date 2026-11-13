@@ -62,6 +62,8 @@ export default function PostDetail() {
   const [offline, setOffline] = useState(false);
   const [sheet, setSheet] = useState<'report' | 'share' | 'send' | 'plan' | null>(null);
   const [planToast, setPlanToast] = useState(false);
+  // Picked ingredients → shopping memo: "Added n" toast; tap → Profile · Diary's shopping memo.
+  const [shopToast, setShopToast] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -212,6 +214,7 @@ export default function PostDetail() {
   const hideToast = useCallback(() => setToast(false), []);
   const hideSavedToast = useCallback(() => setSavedToast(false), []);
   const hidePlanToast = useCallback(() => setPlanToast(false), []);
+  const hideShopToast = useCallback(() => setShopToast(0), []);
 
   if (state.kind !== 'ready' || !view || !dish) {
     return (
@@ -339,6 +342,7 @@ export default function PostDetail() {
         onAuthor={openAuthor}
         onBack={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
         onStartTimer={startStep}
+        onAddedToShopping={setShopToast}
         actionBar={actionBar}
         comments={comments}
         more={made || moreFrom ? <>{made}{moreFrom}</> : null}
@@ -354,6 +358,7 @@ export default function PostDetail() {
       <Toast visible={toast} message={t('dish.ateToast')} action={t('dish.undo')} onAction={undoAte} onHide={hideToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <Toast visible={savedToast} message={t('share.changesSaved')} onHide={hideSavedToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
 
+      <Toast visible={shopToast > 0} message={t('shopping.added', { n: shopToast })} onPress={() => { setShopToast(0); router.push({ pathname: '/profile', params: { tab: 'diary', focus: 'shopping', at: String(Date.now()) } }); }} onHide={hideShopToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <Toast visible={planToast} message={t('mealPlan.added')} onHide={hidePlanToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <AddToPlanSheet visible={sheet === 'plan'} dish={{ id: dish.id, name: dish.name, photo: dish.photo }} onClose={() => setSheet(null)} onAdded={() => { setSheet(null); setPlanToast(true); }} />
       <SendToSheet visible={sheet === 'send'} dish={{ id: dish.id, name: dish.name }} onClose={() => setSheet(null)} />

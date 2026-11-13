@@ -27,6 +27,8 @@ type Props = {
   onAuthor?: () => void;
   onBack: () => void;
   onStartTimer?: (i: number) => void;
+  /** Picked ingredients went into the shopping memo. */
+  onAddedToShopping?: (n: number) => void;
   /** Action bar · Comments · More from — placed after the recipe (Figma 601:12935). */
   actionBar?: ReactNode;
   comments: ReactNode;
@@ -46,7 +48,7 @@ const MEDIA_HEIGHT = 440;
  * 7.1 Post detail (Figma 601:12935) — Cook row → photos 440 (Weather Tag + counter) → actions → title (Display/L) · caption
  * → tags → recipe → action bar → comments → More from.
  */
-export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onDirect, onSave, onMore, onAuthor, onBack, onStartTimer, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
+export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onDirect, onSave, onMore, onAuthor, onBack, onStartTimer, onAddedToShopping, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
@@ -142,7 +144,7 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onD
         </View>
       ) : null}
 
-      <DishRecipe dish={dish} onStartTimer={onStartTimer} />
+      <DishRecipe dish={dish} onStartTimer={onStartTimer} onAddedToShopping={onAddedToShopping} />
 
       {actionBar ? <View style={styles.actionBar}>{actionBar}</View> : <View style={{ height: space[24] }} />}
       <View onLayout={(e) => { commentsY.current = e.nativeEvent.layout.y; }}>{comments}</View>

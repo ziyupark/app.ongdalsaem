@@ -1,10 +1,10 @@
 import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { NotebookPen, Utensils, type LucideIcon } from 'lucide-react-native';
 import { Bookmark } from '../icons/custom';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { AcornIcon } from '../AcornIcon';
@@ -59,6 +59,17 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const f = here.forecast;
   const now: Now | null = f ? { mood: f.mood, tempC: f.tempC, hi: f.hi, lo: f.lo, until: f.until } : null;
   const [tab, setTab] = useState<ProfileTab>('dishes');
+  // `?tab=diary&focus=shopping` (7.1 "Added to shopping memo" toast) → open Diary and scroll down to the shopping memo.
+  const params = useLocalSearchParams<{ tab?: string; focus?: string; at?: string }>();
+  const listRef = useRef<FlatList<DishSummary>>(null);
+  const focus = isMe && params.tab === 'diary' && params.focus === 'shopping' ? params.at ?? '1' : null;
+  useEffect(() => {
+    if (!isMe || params.tab !== 'diary') return;
+    setTab('diary');
+    if (!focus) return;
+    const h = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 400);
+    return () => clearTimeout(h);
+  }, [isMe, params.tab, focus]);
   const tabs = isMe ? TABS : OTHER_TABS;
   const [following, setFollowing] = useState(false);
   const [lists, setLists] = useState<Partial<Record<ProfileTab, DishSummary[]>>>({});
@@ -286,6 +297,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
       <FlatList
+        ref={listRef}
         data={tab === 'dishes' ? data ?? [] : []}
         extraData={[given, acornDelta]} // re-render tiles when an acorn is given / taken back
         keyExtractor={(d) => d.id}
@@ -295,7 +307,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         contentContainerStyle={styles.grid}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        ListFooterComponent={tab === 'saved' ? <SavedView onOffline={onOffline} /> : tab === 'diary' ? <DiaryView onOffline={onOffline} /> : undefined}
+        ListFooterComponent={tab === 'saved' ? <SavedView onOffline={onOffline} /> : tab === 'diary' ? <DiaryView onOffline={onOffline} focus={focus} /> : undefined}
         ListEmptyComponent={tab !== 'dishes' ? undefined : 
           data == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : (
             <View style={styles.empty}>

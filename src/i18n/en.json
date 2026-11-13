@@ -437,7 +437,12 @@
     "reportCommentTitle": "Report this comment?",
     "seeAllComments": "See all {{n}} comments",
     "direct": "Send",
-    "offlineCopy": "You’re offline — this saved copy still works. Acorns and comments come back online."
+    "offlineCopy": "You’re offline — this saved copy still works. Acorns and comments come back online.",
+    "selectAll": "Select all",
+    "clearSelection": "Clear selection",
+    "addSelectedToShopping": "Add {{n}} selected to shopping",
+    "inShopping": "Added",
+    "inFridge": "In fridge"
   },
   "profile": {
     "settings": "Settings",
@@ -811,7 +816,7 @@
   "shopping": {
     "title": "Shopping list",
     "addFromRecipe": "Add to shopping list",
-    "added": "Added to your shopping list",
+    "added": "Added {{n}} to your shopping memo",
     "inFridge": "Already in your fridge: {{n}}",
     "empty": "Nothing to buy yet. Add ingredients from a recipe.",
     "toFridge": "Bought → to the fridge ({{n}})",

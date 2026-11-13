@@ -341,6 +341,11 @@ reportCommentTitle=Laporkan komentar ini?
 seeAllComments=Lihat semua {{n}} komentar
 direct=Kirim
 offlineCopy=Kamu sedang offline — salinan tersimpan ini tetap bisa dipakai. Biji ek dan komentar muncul lagi saat online.
+selectAll=Pilih semua
+clearSelection=Hapus pilihan
+addSelectedToShopping=Tambah {{n}} ke catatan belanja
+inShopping=Ditambahkan
+inFridge=Ada di kulkas
 [profile]
 settings=Pengaturan
 signOut=Keluar
@@ -1050,7 +1055,7 @@ shoppingEmpty=Catatan belanja masih kosong. Pilih Catatan belanja di atas dan tu
 [shopping]
 title=Daftar belanja
 addFromRecipe=Tambah ke daftar belanja
-added=Sudah ditambahkan ke daftar belanja
+added={{n}} ditambahkan ke catatan belanja
 inFridge=Sudah ada di kulkas: {{n}}
 empty=Belum ada yang perlu dibeli. Tambahkan bahan dari resep.
 toFridge=Sudah dibeli → ke kulkas ({{n}})

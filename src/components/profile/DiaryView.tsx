@@ -27,7 +27,7 @@ const popIn = () => {
 };
 
 /** 6.3 Profile · Diary — this week in one row · this month in one line · fridge / freezer / shopping memo (+ what I can cook). The month calendar opens as a popup. */
-export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void }) {
+export function DiaryView({ onOffline, focus }: { onOffline?: (off: boolean) => void; /** Changes when 7.1 sends me to the shopping memo. */ focus?: string | null }) {
   const { t, i18n } = useTranslation();
   const [days, setDays] = useState<DiaryDay[] | null>(null);
   const [month, setMonth] = useState(false);
@@ -62,7 +62,7 @@ export function DiaryView({ onOffline }: { onOffline?: (off: boolean) => void })
           <Text variant="Body/S" style={styles.flex}>{body ? `${head} · ${body}` : head}</Text>
         </View>
       )}
-      <FridgeList />
+      <FridgeList focusShopping={focus} />
       <MonthPopup visible={month} onClose={() => setMonth(false)} />
     </View>
   );

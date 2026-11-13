@@ -29,13 +29,14 @@ function daysSince(iso: string) {
 }
 
 /** Fridge memo — bottom of 6.3 Diary. Fridge / freezer / shopping memo, saved on this device only. */
-export function FridgeList() {
+export function FridgeList({ focusShopping }: { focusShopping?: string | null } = {}) {
   const { t } = useTranslation();
   const { color } = useTheme();
   const items = useFridge();
   const shopping = useShopping();
   const checked = shopping.filter((i) => i.checked).length;
-  const [zone, setZone] = useState<Target>('fridge');
+  const [zone, setZone] = useState<Target>(focusShopping ? 'shopping' : 'fridge');
+  useEffect(() => { if (focusShopping) setZone('shopping'); }, [focusShopping]);
   const [name, setName] = useState('');
   const add = () => {
     if (zone === 'shopping') { if (name.trim()) addShopping([{ name }]); }

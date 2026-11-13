@@ -437,7 +437,12 @@
     "reportCommentTitle": "Denunciar este comentário?",
     "seeAllComments": "Ver os {{n}} comentários",
     "direct": "Enviar",
-    "offlineCopy": "Você está offline — esta cópia salva continua funcionando. Bolotas e comentários voltam quando estiver online."
+    "offlineCopy": "Você está offline — esta cópia salva continua funcionando. Bolotas e comentários voltam quando estiver online.",
+    "selectAll": "Selecionar tudo",
+    "clearSelection": "Limpar seleção",
+    "addSelectedToShopping": "Adicionar {{n}} à lista de compras",
+    "inShopping": "Adicionado",
+    "inFridge": "Na geladeira"
   },
   "profile": {
     "settings": "Ajustes",
@@ -811,7 +816,7 @@
   "shopping": {
     "title": "Lista de compras",
     "addFromRecipe": "Adicionar à lista de compras",
-    "added": "Adicionado à sua lista de compras",
+    "added": "{{n}} adicionados à sua lista de compras",
     "inFridge": "Já na sua geladeira: {{n}}",
     "empty": "Nada para comprar ainda. Adicione ingredientes de uma receita.",
     "toFridge": "Comprado → para a geladeira ({{n}})",

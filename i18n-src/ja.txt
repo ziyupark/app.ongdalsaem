@@ -341,6 +341,11 @@ reportCommentTitle=このコメントを報告しますか？
 seeAllComments=コメント{{n}}件をすべて見る
 direct=送る
 offlineCopy=オフラインです — 保存済みのコピーは使えます。どんぐりとコメントはオンラインに戻ると表示されます。
+selectAll=すべて選択
+clearSelection=選択解除
+addSelectedToShopping=選んだ{{n}}個を買い物メモへ
+inShopping=追加済み
+inFridge=冷蔵庫にあります
 [profile]
 settings=設定
 signOut=サインアウト
@@ -1050,7 +1055,7 @@ shoppingEmpty=買い物メモは空です。上で買い物メモを選んで、
 [shopping]
 title=買い物リスト
 addFromRecipe=買い物リストに追加
-added=買い物リストに追加しました
+added=買い物メモに{{n}}個追加しました
 inFridge=冷蔵庫にあります {{n}}個
 empty=まだ買うものはありません。レシピから材料を追加しましょう。
 toFridge=購入済み → 冷蔵庫へ ({{n}})

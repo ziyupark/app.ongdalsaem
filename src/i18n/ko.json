@@ -437,7 +437,12 @@
     "reportCommentTitle": "이 댓글을 신고할까요?",
     "seeAllComments": "댓글 {{n}}개 모두 보기",
     "direct": "보내기",
-    "offlineCopy": "오프라인이에요 — 저장된 사본은 그대로 볼 수 있어요. 도토리와 댓글은 다시 연결되면 돌아와요."
+    "offlineCopy": "오프라인이에요 — 저장된 사본은 그대로 볼 수 있어요. 도토리와 댓글은 다시 연결되면 돌아와요.",
+    "selectAll": "전체 선택",
+    "clearSelection": "선택 해제",
+    "addSelectedToShopping": "선택한 {{n}}개 장보기에 담기",
+    "inShopping": "담김",
+    "inFridge": "냉장고에 있어요"
   },
   "profile": {
     "settings": "설정",
@@ -811,7 +816,7 @@
   "shopping": {
     "title": "장보기",
     "addFromRecipe": "장보기 목록에 담기",
-    "added": "장보기 목록에 담았어요",
+    "added": "장보기 메모에 {{n}}개 담았어요",
     "inFridge": "냉장고에 있어요 {{n}}개",
     "empty": "아직 살 게 없어요. 레시피에서 재료를 담아 보세요.",
     "toFridge": "구매 완료 → 냉장고로 ({{n}})",
