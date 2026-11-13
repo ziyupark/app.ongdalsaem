@@ -85,22 +85,38 @@ export function findIngredient(name: string, names: string[]): number {
   return k ? names.findIndex((n) => keyOf(n) === k) : -1;
 }
 
-/** Kept in the freezer: anything sold frozen, plus ice cream, ice and dumplings. Everything else → fridge. */
+/** Kept in the freezer: anything sold frozen, meat and fish (seafood too), ice cream, ice and dumplings. Everything else → fridge. */
 const FROZEN = /냉동|frozen|冷凍|冷冻|congelad|beku|đông lạnh|แช่แข็ง/;
-const FREEZER_ITEMS = [
-  '아이스크림', 'ice cream', 'アイスクリーム', '冰淇淋', 'helado', 'sorvete', 'es krim', 'kem', 'ไอศกรีม',
-  '얼음', 'ice', '氷', '冰塊', '冰块', 'hielo', 'gelo', 'es batu', 'đá viên', 'น้ำแข็ง',
-  '만두', 'mandu', 'dumplings', 'gyoza', '餃子', '饺子', '水餃', 'empanadillas', 'bánh bao', 'เกี๊ยว',
-].map(clean);
+/** Latin-script words (any language) — matched as whole words, plural s/es allowed: "ice" ≠ "rice", "pork belly" ✓. */
+const FREEZER_WORDS = [
+  'ice cream', 'helado', 'sorvete', 'es krim', 'kem', 'ice', 'hielo', 'gelo', 'es batu', 'đá viên',
+  'dumplings', 'mandu', 'gyoza', 'empanadilla', 'bánh bao',
+  // meat
+  'meat', 'beef', 'pork', 'chicken', 'lamb', 'mutton', 'duck', 'turkey', 'bacon', 'steak', 'mince', 'carne', 'cerdo', 'porco',
+  'pollo', 'frango', 'daging', 'ayam', 'thịt',
+  // fish · seafood
+  'fish', 'salmon', 'cod', 'mackerel', 'shrimp', 'prawn', 'squid', 'octopus', 'clam', 'mussel', 'scallop', 'crab', 'lobster',
+  'pescado', 'peixe', 'salmón', 'salmão', 'camarón', 'camarão', 'gamba', 'calamar', 'lula', 'ikan', 'udang', 'cumi', 'cá', 'tôm', 'mực',
+];
+/** Other scripts — found anywhere in the name ("돼지고기", "닭가슴살", "冷凍うどん"). */
+const FREEZER_PARTS = [
+  '아이스크림', '얼음', '만두', 'アイス', '氷', '冰', '餃子', '饺子', '水餃', 'ไอศกรีม', 'น้ำแข็ง', 'เกี๊ยว',
+  '고기', '삼겹살', '목살', '닭', '오리', '생선', '연어', '고등어', '갈치', '대구', '새우', '오징어', '문어', '조개', '홍합', '꽃게', '대게', '게살',
+  '肉', '魚', '鱼', '鮭', 'サーモン', 'エビ', 'えび', '海老', '蝦', '虾', 'イカ', '烏賊', '鱿', '魷', 'タコ', '蛸',
+  'เนื้อ', 'หมู', 'ไก่', 'เป็ด', 'ปลา', 'กุ้ง', 'ปลาหมึก', 'หอย',
+];
+/** Not raw meat or fish, even though the name says so — sauces, stocks, dried and canned goods stay out. */
+const NOT_FROZEN = /sauce|stock|broth|powder|paste|flakes|dried|canned|\bcan\b|소스|육수|액젓|가루|다시다|말린|건조|통조림|캔|게맛살|ソース|だし|出汁|醤|醬|粉|缶|罐|肉桂|น้ำปลา|ซอส|kaleng|kecap|nước mắm|salsa|caldo|molho|enlatad|en lata|seco|seca/;
 
 /** Where a bought ingredient goes in my fridge memo (shopping memo "Bought → fridge"). */
 export function storageZone(name: string): FridgeZone {
   const c = clean(name);
   if (FROZEN.test(c)) return 'freezer';
-  // Whole word for Latin ("ice" ≠ "rice", "dumpling wrappers" stay in the fridge), ending for other scripts ("고기만두").
-  return FREEZER_ITEMS.some((w) => (/^[a-z ]+$/.test(w) ? c === w || c === `${w}s` : c.replace(/ /g, '').endsWith(w.replace(/ /g, ''))))
-    ? 'freezer'
-    : 'fridge';
+  if (NOT_FROZEN.test(c)) return 'fridge';
+  const words = ` ${c} `;
+  const flat = c.replace(/ /g, '');
+  const hit = FREEZER_WORDS.some((w) => new RegExp(` ${w}(s|es)? `).test(words)) || FREEZER_PARTS.some((w) => flat.includes(w));
+  return hit ? 'freezer' : 'fridge';
 }
 
 /** Search filter "with ingredients": every wanted ingredient is in the recipe (synonyms count, e.g. 계란 = egg). */
