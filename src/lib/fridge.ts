@@ -37,6 +37,10 @@ export function addFridge(name: string, zone: FridgeZone = 'fridge') {
   if (!n) return;
   save([{ id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name: n, addedAt: new Date().toISOString(), zone }, ...items]);
 }
+/** Move an item to the other zone (Diary drag & drop) — keeps when it went in. */
+export function setFridgeZone(id: string, zone: FridgeZone) {
+  save(items.map((i) => (i.id === id ? { ...i, zone } : i)));
+}
 export function removeFridge(id: string) {
   save(items.filter((i) => i.id !== id));
 }
