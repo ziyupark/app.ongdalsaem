@@ -42,14 +42,17 @@ type Props = {
   bottomInset?: number;
 };
 
-const MEDIA_HEIGHT = 440;
+// Media 601:12860 — 370×417 on a 390 frame: 10 in from each side, radius 32.
+const MEDIA_HEIGHT = 417;
+const MEDIA_INSET = space[10];
 
 /**
- * 7.1 Post detail (Figma 601:12935) — Cook row → photos 440 (Weather Tag + counter) → actions → title (Display/L) · caption
+ * 7.1 Post detail (Figma 601:12935) — Cook row → photos 370×417 r32 (Weather Tag + counter) → actions → title (Display/L) · caption
  * → tags → recipe → action bar → comments → More from.
  */
 export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onDirect, onSave, onMore, onAuthor, onBack, onStartTimer, onAddedToShopping, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
-  const { width } = useWindowDimensions();
+  const { width: screenW } = useWindowDimensions();
+  const width = screenW - MEDIA_INSET * 2;
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
   const { t } = useTranslation();
@@ -160,8 +163,8 @@ const styles = StyleSheet.create({
   backRow: { height: 44, justifyContent: 'center', paddingLeft: space[12] },
   avatar: { width: 48, height: 48, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   who: { flex: 1, gap: space[2] },
-  media: { overflow: 'hidden' }, // square corners, like Feed Post Media 119:620
-  tagTL: { position: 'absolute', left: space[16], top: space[16] },
+  media: { marginHorizontal: MEDIA_INSET, borderRadius: radius['2xl'], overflow: 'hidden' },
+  tagTL: { position: 'absolute', left: space[20], top: space[16] },
   counterBR: { position: 'absolute', right: space[16], bottom: space[16] },
   actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
