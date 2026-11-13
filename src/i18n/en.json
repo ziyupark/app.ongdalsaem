@@ -783,7 +783,7 @@
     "cooked_one": "You cooked once this month.",
     "cooked_other": "You cooked {{count}} times this month.",
     "youCooked": "You cooked this",
-    "thisWeek": "This week",
+    "thisWeek": "Weekly Menu",
     "prevWeek": "Previous week",
     "nextWeek": "Next week",
     "monthView": "Month view"

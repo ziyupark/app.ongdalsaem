@@ -783,7 +783,7 @@
     "cooked_one": "이번 달 {{count}}번 요리했어요.",
     "cooked_other": "이번 달 {{count}}번 요리했어요.",
     "youCooked": "내가 만든 요리",
-    "thisWeek": "이번 주",
+    "thisWeek": "일주일 메뉴",
     "prevWeek": "지난주",
     "nextWeek": "다음 주",
     "monthView": "월 보기"

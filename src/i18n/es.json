@@ -783,7 +783,7 @@
     "cooked_one": "Cocinaste una vez este mes.",
     "cooked_other": "Cocinaste {{count}} veces este mes.",
     "youCooked": "Cocinaste esto",
-    "thisWeek": "Esta semana",
+    "thisWeek": "Menú semanal",
     "prevWeek": "Semana anterior",
     "nextWeek": "Semana siguiente",
     "monthView": "Ver mes"
