@@ -775,8 +775,6 @@
     "quiet": "静かな{{month}}",
     "none": "今月はまだ料理がありません。料理をシェアするとここに残ります。",
     "cooked_other": "今月は{{count}}回料理しました。",
-    "cookedRain_other": "{{count}}回料理しました — そのうち{{rainy}}回は雨の日。",
-    "cookedSnow_other": "{{count}}回料理しました — そのうち{{snowy}}回は雪の日。",
     "youCooked": "あなたが作った料理",
     "thisWeek": "今週",
     "prevWeek": "前の週",

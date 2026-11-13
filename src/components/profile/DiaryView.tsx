@@ -12,8 +12,6 @@ import { Text } from '../Text';
 import { FridgeList } from './FridgeList';
 import { firstDayOfWeek, WeekStrip } from './WeekStrip';
 
-const RAINY: WeatherMood[] = ['drizzle', 'rain', 'heavy-rain', 'shower', 'thunder'];
-const SNOWY: WeatherMood[] = ['sleet', 'flurries', 'snow', 'heavy-snow'];
 const pad = (n: number) => String(n).padStart(2, '0');
 const CARD_MAX = 360;
 
@@ -45,13 +43,11 @@ export function DiaryView({ onOffline, focus }: { onOffline?: (off: boolean) => 
 
   const monthName = new Date(y, m, 1).toLocaleDateString(i18n.language, { month: 'long' });
   const cooked = (days ?? []).reduce((n, d) => n + d.cooked.length, 0);
-  const rainy = (days ?? []).reduce((n, d) => n + d.cooked.filter((c) => c.mood && RAINY.includes(c.mood)).length, 0);
-  const snowy = (days ?? []).reduce((n, d) => n + d.cooked.filter((c) => c.mood && SNOWY.includes(c.mood)).length, 0);
   const moodCount = new Map<WeatherMood, number>();
   (days ?? []).forEach((d) => d.cooked.forEach((c) => c.mood && moodCount.set(c.mood, (moodCount.get(c.mood) ?? 0) + 1)));
   const top = [...moodCount.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
   const head = top ? t('diary.mostly', { month: monthName, mood: t(`home.titleMood.${top}`).toLowerCase() }) : t('diary.quiet', { month: monthName });
-  const body = cooked === 0 ? null : rainy ? t('diary.cookedRain', { count: cooked, rainy }) : snowy ? t('diary.cookedSnow', { count: cooked, snowy }) : t('diary.cooked', { count: cooked });
+  const body = cooked === 0 ? null : t('diary.cooked', { count: cooked });
 
   return (
     <View style={styles.root}>

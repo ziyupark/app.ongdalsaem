@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react-native';
+import { CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
@@ -80,14 +80,14 @@ export function WeekStrip({ onMonth }: { onMonth: () => void }) {
           <Text variant="Title/M">{offset === 0 ? t('diary.thisWeek') : range}</Text>
           {offset === 0 ? <Text variant="Caption" color="fg/muted">{range}</Text> : null}
         </View>
+        <Pressable accessibilityRole="button" accessibilityLabel={t('diary.monthView')} onPress={onMonth} hitSlop={space[8]}>
+          <Icon icon={CalendarDays} size={20} color="fg/accent" />
+        </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={t('diary.prevWeek')} onPress={() => setOffset((o) => o - 1)} hitSlop={space[8]}>
           <Icon icon={ChevronLeft} size={20} color="fg/muted" />
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={t('diary.nextWeek')} onPress={() => setOffset((o) => o + 1)} hitSlop={space[8]}>
           <Icon icon={ChevronRight} size={20} color="fg/muted" />
-        </Pressable>
-        <Pressable accessibilityRole="button" onPress={onMonth} hitSlop={space[8]}>
-          <Text variant="Body/S Strong" color="fg/accent">{t('diary.monthView')}</Text>
         </Pressable>
       </View>
 

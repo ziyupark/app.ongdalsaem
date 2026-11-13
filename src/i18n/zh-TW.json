@@ -775,8 +775,6 @@
     "quiet": "安靜的{{month}}",
     "none": "這個月還沒下廚。分享一道料理，它就會出現在這裡。",
     "cooked_other": "你這個月下廚了 {{count}} 次。",
-    "cookedRain_other": "你下廚了 {{count}} 次——其中 {{rainy}} 次在雨天。",
-    "cookedSnow_other": "你下廚了 {{count}} 次——其中 {{snowy}} 次在雪天。",
     "youCooked": "你做過這道",
     "thisWeek": "本週",
     "prevWeek": "上一週",
