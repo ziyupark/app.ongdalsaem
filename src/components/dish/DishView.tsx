@@ -210,7 +210,6 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
   useEffect(() => { setPicked(new Set()); }, [dish.id]);
   const chosen = [...picked].filter((i) => !inShopping[i]);
   const toggle = (i: number) => setPicked((p) => { const n = new Set(p); if (n.has(i)) n.delete(i); else n.add(i); return n; });
-  const selectAll = () => setPicked(new Set(dish.ingredients.map((_, i) => i).filter((i) => !inShopping[i])));
   const amountOf = (amount: string) => (base != null ? scaleIngredient(amount, base, servings) : amount);
   const addToShopping = async () => {
     if (!chosen.length) return;
@@ -259,16 +258,6 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
                     </View>
                   ) : null}
                 </View>
-                {dish.id ? (
-                  <View style={styles.pickRow}>
-                    <Pressable accessibilityRole="button" onPress={selectAll} hitSlop={space[8]}>
-                      <Text variant="Body/S Strong" color="fg/accent">{t('dish.selectAll')}</Text>
-                    </Pressable>
-                    <Pressable accessibilityRole="button" disabled={!chosen.length} onPress={() => setPicked(new Set())} hitSlop={space[8]}>
-                      <Text variant="Body/S Strong" color={chosen.length ? 'fg/secondary' : 'fg/disabled'}>{t('dish.clearSelection')}</Text>
-                    </Pressable>
-                  </View>
-                ) : null}
                 <View>
                   {dish.ingredients.map((ing, i) => {
                     const rowStyle = [styles.ingredient, { borderBottomColor: color('border/default') }];
@@ -388,10 +377,9 @@ const styles = StyleSheet.create({
   warnRow: { paddingBottom: space[16] },
   warn: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   shop: { paddingTop: space[12], gap: space[6] },
-  pickRow: { flexDirection: 'row', justifyContent: 'flex-end', gap: space[16] },
   pickable: { alignItems: 'center' },
   // Picked row: bg/accent-subtle under the row, reaching a little past its text so the row's inner spacing stays.
-  picked: { position: 'absolute', top: 0, bottom: 0, left: -space[8], right: -space[8], borderRadius: radius.md },
+  picked: { position: 'absolute', top: 0, bottom: 0, left: -space[8], right: -space[8], borderRadius: 1 },
   badge: { paddingHorizontal: space[8], paddingVertical: space[2], borderRadius: radius.full },
   ingHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   servings: { height: 36, flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[12], borderRadius: radius.full, borderWidth: 1 },

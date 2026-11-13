@@ -438,8 +438,6 @@
     "seeAllComments": "댓글 {{n}}개 모두 보기",
     "direct": "보내기",
     "offlineCopy": "오프라인이에요 — 저장된 사본은 그대로 볼 수 있어요. 도토리와 댓글은 다시 연결되면 돌아와요.",
-    "selectAll": "전체 선택",
-    "clearSelection": "선택 해제",
     "inShopping": "담김",
     "addToShopping": "장보기에 담기",
     "inFridgeZone": "냉장실에 있어요",
