@@ -3,6 +3,7 @@ import { Image, type ImageSource } from 'expo-image';
 type Pic = number | ImageSource;
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronRight, MapPin } from 'lucide-react-native';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { radius, space, useTheme, withAlpha, type WeatherMood } from '../../theme';
@@ -92,22 +93,24 @@ export function NearbyCard({ photo, title, meta, onPress }: { photo: Pic; title:
 
 /**
  * Pick Card 54:554 — same make-up as Explore's Story of the day card (4.1 75:2431): 350×400, radius 2xl, Card scrim,
- * padding 24, space-between. Top: section title (Title/L) + chevron. Bottom (gap 16): dish name (Statement, 2 lines) →
+ * padding 24, space-between. Top: section title (Display/M like Story of the day's title, always English) + chevron. Bottom (gap 16): dish name (Statement, 2 lines) →
  * description (Body/M, 2 lines, only when there is one) → byline (Body/S) with the cook's avatar 40 on the right; then
  * weather tag · acorns.
  */
-export function PickCard({ heading, photo, title, description, byline, cookName, cookAvatar, mood, tempC, acorns, onPress, given, onAcorn }: {
-  heading: string; photo: Pic; title: string; description?: string; byline: string; cookName: string; cookAvatar?: string | null;
+export function PickCard({ headingKey, photo, title, description, byline, cookName, cookAvatar, mood, tempC, acorns, onPress, given, onAcorn }: {
+  /** i18n key of the title on the photo — shown in English, read out in the local language. */
+  headingKey: string; photo: Pic; title: string; description?: string; byline: string; cookName: string; cookAvatar?: string | null;
   mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void; given?: boolean; onAcorn?: () => void;
 }) {
   const { color } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={`${heading}. ${title}`} onPress={onPress} style={[styles.pick, { backgroundColor: color('bg/muted') }]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={`${t(headingKey)}. ${title}`} onPress={onPress} style={[styles.pick, { backgroundColor: color('bg/muted') }]}>
       <Image source={photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
       <CardScrim />
       <View style={styles.storyTop}>
-        <Text variant="Title/L" color="fg/on-photo" numberOfLines={1} style={styles.flex}>{heading}</Text>
+        <Text variant="Display/M" color="fg/on-photo" numberOfLines={1} style={styles.flex}>{en(headingKey)}</Text>
         <Icon icon={ChevronRight} size={20} color="fg/on-photo" />
       </View>
       <View style={styles.pickFoot}>

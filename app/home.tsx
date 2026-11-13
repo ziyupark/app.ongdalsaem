@@ -240,7 +240,7 @@ export default function HomeScreen() {
             <View style={styles.pickBlock}>
               {pick ? (
                 <PickCard
-                  heading={t('home.todaysPick')}
+                  headingKey="home.todaysPick"
                   photo={{ uri: pick.photo }}
                   title={pick.name}
                   byline={pickByline}
@@ -275,7 +275,7 @@ export default function HomeScreen() {
               {pick ? (
                 <>
                   <PickCard
-                    heading={t('home.todaysPick')}
+                    headingKey="home.todaysPick"
                     photo={{ uri: pick.photo }}
                     title={pick.name}
                     byline={pickByline}
