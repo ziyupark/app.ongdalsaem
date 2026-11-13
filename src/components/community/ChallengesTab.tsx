@@ -91,7 +91,7 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
     <View>
       {featured ? (
         <>
-          {/* Group · This week's challenge — p20 20 0 · gap 12: SectionHeader → Challenge Hero 350×400. */}
+          {/* Group · This week's challenge — p20 20 0 · gap 6: SectionHeader → Challenge Hero 350×400. */}
           <View style={styles.featured}>
             <SectionHeader title={t('challenge.featured')} />
             <ChallengeHero
@@ -131,7 +131,7 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
         </>
       ) : null}
 
-      {/* Group · Coming up — p32 · gap 12: header (more → all) → 168×220 Challenge Cards; Join early in place. */}
+      {/* Group · Coming up — p32 · gap 6: header (more → all) → 168×220 Challenge Cards; Join early in place. */}
       {coming.length ? (
         <View style={styles.section}>
           <View style={styles.px}><SectionHeader title={t('challenge.comingUp')} onMore={() => router.push('/challenges')} /></View>
@@ -157,7 +157,7 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
         </View>
       ) : null}
 
-      {/* Recently ended — p32 · gap 12: header (more → the latest ended, 4.10c) → cards (→ that challenge's 4.10c). */}
+      {/* Recently ended — p32 · gap 6: header (more → the latest ended, 4.10c) → cards (→ that challenge's 4.10c). */}
       {ended.length ? (
         <View style={styles.section}>
           <View style={styles.px}><SectionHeader title={t('challenge.recentlyEnded')} onMore={() => router.push(`/challenge/${ended[0].slug}`)} /></View>
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   px: { paddingHorizontal: space[20] },
   flex: { flex: 1 },
   pressed: { opacity: 0.85 },
-  featured: { paddingTop: space[20], paddingHorizontal: space[20], gap: space[12] },
+  featured: { paddingTop: space[20], paddingHorizontal: space[20], gap: space[6] },
   hero: { height: 400, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[20], gap: space[8] },
   heroTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   pill: { flexDirection: 'row', alignItems: 'center', gap: space[6], paddingHorizontal: space[10], height: 28, borderRadius: radius.full },
@@ -321,7 +321,8 @@ const styles = StyleSheet.create({
   entriesHead: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
   entry: { borderRadius: radius.md },
-  section: { paddingTop: space[32], gap: space[12] },
+  // Title → cards gap 6, same as Explore (Story · Trending Bites) and Following tables.
+  section: { paddingTop: space[32], gap: space[6] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
   card: { width: 168, height: 220, borderRadius: radius.xl, overflow: 'hidden', padding: space[16], gap: space[6] },
   badge: { width: 36, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
