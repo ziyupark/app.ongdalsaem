@@ -91,22 +91,25 @@ export function NearbyCard({ photo, title, meta, onPress }: { photo: Pic; title:
 }
 
 /**
- * Pick Card 54:554 — same make-up as Explore's Story of the day card (4.1 75:2431): 350×400, radius 2xl, Card scrim
- * (bottom half → ink 82 %), padding 24, content at the bottom (gap 16): dish name (Statement, 2 lines) → description
- * (Body/M, 2 lines, only when there is one) → byline (Body/S) with the cook's avatar 40 on the right; then weather tag ·
- * acorns.
+ * Pick Card 54:554 — same make-up as Explore's Story of the day card (4.1 75:2431): 350×400, radius 2xl, Card scrim,
+ * padding 24, space-between. Top: section title (Title/L) + chevron. Bottom (gap 16): dish name (Statement, 2 lines) →
+ * description (Body/M, 2 lines, only when there is one) → byline (Body/S) with the cook's avatar 40 on the right; then
+ * weather tag · acorns.
  */
-export function PickCard({ photo, title, description, byline, cookName, cookAvatar, mood, tempC, acorns, onPress, given, onAcorn }: {
-  photo: Pic; title: string; description?: string; byline: string; cookName: string; cookAvatar?: string | null;
+export function PickCard({ heading, photo, title, description, byline, cookName, cookAvatar, mood, tempC, acorns, onPress, given, onAcorn }: {
+  heading: string; photo: Pic; title: string; description?: string; byline: string; cookName: string; cookAvatar?: string | null;
   mood: WeatherMood; tempC: number; acorns: number; onPress?: () => void; given?: boolean; onAcorn?: () => void;
 }) {
   const { color } = useTheme();
   const { t } = useTranslation();
-  const ink = color('static/ink');
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[styles.pick, { backgroundColor: color('bg/muted') }]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={`${heading}. ${title}`} onPress={onPress} style={[styles.pick, { backgroundColor: color('bg/muted') }]}>
       <Image source={photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
-      <LinearGradient colors={[withAlpha(ink, 0), withAlpha(ink, 0.82)]} locations={[0.5, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
+      <CardScrim />
+      <View style={styles.storyTop}>
+        <Text variant="Title/L" color="fg/on-photo" numberOfLines={1} style={styles.flex}>{heading}</Text>
+        <Icon icon={ChevronRight} size={20} color="fg/on-photo" />
+      </View>
       <View style={styles.pickFoot}>
         <View style={styles.pickBody}>
           <View style={[styles.flex, styles.pickText]}>
@@ -159,8 +162,8 @@ const styles = StyleSheet.create({
   nearby: { flexDirection: 'row', alignItems: 'center', gap: space[14], padding: space[14], borderRadius: radius['2xl'], borderWidth: 1, alignSelf: 'stretch' },
   nearbyPhoto: { width: 72, height: 72, borderRadius: radius.lg },
   nearbyText: { flex: 1, gap: 3 },
-  // Pick = Story of the day card (app/community.tsx): 400 high, r2xl, p24, bottom-aligned; foot gap 16 · body gap 16 · text gap 8.
-  pick: { height: 400, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[24], justifyContent: 'flex-end', alignSelf: 'stretch' },
+  // Pick = Story of the day card (app/community.tsx): 400 high, r2xl, p24; title on top · foot at the bottom; foot gap 16 · body gap 16 · text gap 8.
+  pick: { height: 400, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[24], justifyContent: 'space-between', alignSelf: 'stretch' },
   pickFoot: { gap: space[16] },
   pickBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },
   pickText: { gap: space[8] },
