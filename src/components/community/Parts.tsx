@@ -9,7 +9,7 @@ import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle 
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
 import type { CardDish, CookCard, Question } from '../../services/community';
-import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
+import { iconRing, moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
@@ -368,7 +368,7 @@ export function EmptyState({ icon, title, body, children, size = 'M' }: { icon: 
   const L = size === 'L';
   return (
     <View style={[styles.empty, L ? styles.emptyL : styles.emptyM]}>
-      <View style={[L ? styles.orbL : styles.orbM, { backgroundColor: color(L ? 'bg/subtle' : 'bg/muted') }, L && { borderWidth: 1, borderColor: color('border/default') }]}>
+      <View style={[L ? styles.orbL : styles.orbM, { backgroundColor: color(L ? 'bg/subtle' : 'bg/muted') }, L && { borderWidth: iconRing, borderColor: color('border/default') }]}>
         <Icon icon={icon} size={L ? 36 : 30} />
       </View>
       <Text variant={L ? 'Display/M' : 'Title/L'} style={styles.center}>{title}</Text>

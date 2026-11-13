@@ -17,7 +17,7 @@ import { useWashScroll } from '../src/lib/useWashScroll';
 import {
   addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useFocusRequest, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
-import { elevation, radius, space, useTheme } from '../src/theme';
+import { elevation, iconRing, radius, space, useTheme } from '../src/theme';
 
 /** A timer started this recently before the screen opened is treated as new and takes the big ring. */
 const JUST_STARTED_MS = 10_000;
@@ -323,7 +323,7 @@ function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label:
       onPress={onPress}
       style={({ pressed }) => [
         styles.round,
-        primary ? { backgroundColor: color('bg/primary') } : [{ backgroundColor: color('bg/subtle'), borderColor: color('border/default'), borderWidth: 1 }, elevation['Elevation/1 Low']],
+        primary ? { backgroundColor: color('bg/primary') } : [{ backgroundColor: color('bg/subtle'), borderColor: color('border/default'), borderWidth: iconRing }, elevation['Elevation/1 Low']],
         pressed && { opacity: 0.85 },
       ]}
     >

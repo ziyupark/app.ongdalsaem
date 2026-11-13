@@ -7,7 +7,7 @@ import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { dateKey, PLAN_MEALS, removePlan, useMealPlan, type PlanItem } from '../../lib/mealPlan';
 import { useTemp } from '../../lib/prefs';
 import { fetchDiaryMonth, type DiaryDay } from '../../services/foods';
-import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
+import { iconRing, radius, space, useTheme, WEATHER_ICON } from '../../theme';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { DayPlanSheet, useDailyForecast } from './WeekPlan';
@@ -151,5 +151,5 @@ const styles = StyleSheet.create({
   cell: { flex: 1, alignItems: 'center', gap: space[4], paddingVertical: space[8], borderRadius: radius.lg, borderWidth: 2 },
   wx: { flexDirection: 'row', alignItems: 'center', gap: space[2], height: 16 },
   dot: { width: DOT, height: DOT, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  add: { borderWidth: 1, borderStyle: 'dashed' },
+  add: { borderWidth: iconRing, borderStyle: 'dashed' },
 });
