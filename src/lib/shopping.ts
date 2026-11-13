@@ -2,6 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSyncExternalStore } from 'react';
 import { addFridge } from './fridge';
+import { storageZone } from './ingredientMatch';
 
 export type ShoppingItem = { id: string; name: string; amount?: string; /** The dish it came from (7.1 "Add to shopping list"). */ fromFoodId?: string; checked: boolean };
 
@@ -54,10 +55,10 @@ export function toggleShopping(id: string) {
 export function removeShopping(id: string) {
   save(items.filter((i) => i.id !== id));
 }
-/** "Bought → to the fridge": checked items go into the fridge (fridge zone) and leave the list. */
+/** "Bought → to the fridge": checked items go into the fridge memo — freezer or fridge by how they're kept — and leave the list. */
 export function moveCheckedToFridge() {
   const done = items.filter((i) => i.checked);
-  done.forEach((i) => addFridge(i.name, 'fridge'));
+  done.forEach((i) => addFridge(i.name, storageZone(i.name)));
   save(items.filter((i) => !i.checked));
 }
 export function useShopping() {

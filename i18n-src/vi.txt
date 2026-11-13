@@ -1049,7 +1049,7 @@ haveCount=Có {{have}}/{{total}} nguyên liệu
 needs=Thiếu: {{items}}
 canCookEmpty=Thêm nguyên liệu, chúng tôi sẽ tìm món bạn nấu được.
 shoppingZone=Ghi chú đi chợ
-moveToFridge=Đã mua → vào ngăn mát
+moveToFridge=Đã mua → vào tủ lạnh
 shoppingEmpty=Ghi chú đi chợ đang trống. Chọn Ghi chú đi chợ ở trên và ghi món cần mua.
 [shopping]
 added=Đã thêm {{n}} món vào ghi chú đi chợ

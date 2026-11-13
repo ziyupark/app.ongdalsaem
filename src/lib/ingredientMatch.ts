@@ -1,5 +1,6 @@
 // Fridge memo → "what can I cook now": match what's in my fridge against public recipes' ingredient lists.
 import type { RecipeCandidate } from '../services/foods';
+import type { FridgeZone } from './fridge';
 
 /** One word per ingredient family — every name in a group matches the others. */
 const SYNONYMS: string[][] = [
@@ -82,6 +83,24 @@ export function matchRecipes(fridge: string[], recipes: RecipeCandidate[], limit
 export function findIngredient(name: string, names: string[]): number {
   const k = keyOf(name);
   return k ? names.findIndex((n) => keyOf(n) === k) : -1;
+}
+
+/** Kept in the freezer: anything sold frozen, plus ice cream, ice and dumplings. Everything else → fridge. */
+const FROZEN = /냉동|frozen|冷凍|冷冻|congelad|beku|đông lạnh|แช่แข็ง/;
+const FREEZER_ITEMS = [
+  '아이스크림', 'ice cream', 'アイスクリーム', '冰淇淋', 'helado', 'sorvete', 'es krim', 'kem', 'ไอศกรีม',
+  '얼음', 'ice', '氷', '冰塊', '冰块', 'hielo', 'gelo', 'es batu', 'đá viên', 'น้ำแข็ง',
+  '만두', 'mandu', 'dumplings', 'gyoza', '餃子', '饺子', '水餃', 'empanadillas', 'bánh bao', 'เกี๊ยว',
+].map(clean);
+
+/** Where a bought ingredient goes in my fridge memo (shopping memo "Bought → fridge"). */
+export function storageZone(name: string): FridgeZone {
+  const c = clean(name);
+  if (FROZEN.test(c)) return 'freezer';
+  // Whole word for Latin ("ice" ≠ "rice", "dumpling wrappers" stay in the fridge), ending for other scripts ("고기만두").
+  return FREEZER_ITEMS.some((w) => (/^[a-z ]+$/.test(w) ? c === w || c === `${w}s` : c.replace(/ /g, '').endsWith(w.replace(/ /g, ''))))
+    ? 'freezer'
+    : 'fridge';
 }
 
 /** Search filter "with ingredients": every wanted ingredient is in the recipe (synonyms count, e.g. 계란 = egg). */

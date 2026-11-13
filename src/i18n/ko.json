@@ -809,7 +809,7 @@
     "needs": "부족: {{items}}",
     "canCookEmpty": "재료를 넣으면 만들 수 있는 요리를 찾아 드려요.",
     "shoppingZone": "장보기 메모",
-    "moveToFridge": "구매 완료 → 냉장실로",
+    "moveToFridge": "구매 완료 → 냉장고로",
     "shoppingEmpty": "장보기 메모가 비어 있어요. 위에서 장보기 메모를 고르고 살 재료를 적어 보세요."
   },
   "shopping": {

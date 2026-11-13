@@ -1049,7 +1049,7 @@ haveCount=食材 {{have}}/{{total}} 個あり
 needs=不足: {{items}}
 canCookEmpty=食材を入れると、作れる料理を探します。
 shoppingZone=買い物メモ
-moveToFridge=購入済み → 冷蔵室へ
+moveToFridge=購入済み → 冷蔵庫へ
 shoppingEmpty=買い物メモは空です。上で買い物メモを選んで、買うものを書きましょう。
 [shopping]
 added=買い物メモに{{n}}個追加しました

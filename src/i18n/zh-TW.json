@@ -799,7 +799,7 @@
     "needs": "還缺：{{items}}",
     "canCookEmpty": "加入食材後，會幫你找出能做的料理。",
     "shoppingZone": "購物清單",
-    "moveToFridge": "已購買 → 放進冷藏",
+    "moveToFridge": "已購買 → 放進冰箱",
     "shoppingEmpty": "購物清單還是空的。在上方選擇購物清單，記下要買的東西。"
   },
   "shopping": {
