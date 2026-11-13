@@ -232,7 +232,7 @@ export function AreaChips({ here, area, onChange, withAll, tight }: { here: Here
 // ------------------------------------------------------------------------------------------------ Our area (Explore)
 
 /** Our area · Popular today — top 3 dish names nearby today, widened step by step until 3 (see fetchTodayTopDishes). */
-function TopToday({ here }: { here: Here }) {
+function TopToday({ here, excludeId }: { here: Here; excludeId: string | null | undefined }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { city, district } = placeOf(here);
@@ -240,10 +240,14 @@ function TopToday({ here }: { here: Here }) {
   const [top, setTop] = useState<{ items: TopDish[]; scope: TopScope } | null>(null);
   useFocusEffect(
     useCallback(() => {
+      // Wait for Story of the day (undefined = still loading) so its post is never in this list.
+      if (excludeId === undefined) return;
       const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : here.cell ? [here.cell] : [];
-      fetchTodayTopDishes({ cells, district, city, mood }).then(setTop).catch(() => setTop({ items: [], scope: 'area' }));
-    }, [here.coords, here.cell, district, city, mood]),
+      fetchTodayTopDishes({ cells, district, city, mood }, excludeId ? [excludeId] : []).then(setTop).catch(() => setTop({ items: [], scope: 'area' }));
+    }, [here.coords, here.cell, district, city, mood, excludeId]),
   );
+  // Belt and braces: if the story changes on refocus while the old list is still up, its post is hidden at once too.
+  const items = (top?.items ?? []).filter((d) => d.dishId !== excludeId);
   // Same header as Trending Bites (SectionHeader · section p32 · gap 6). Badge on the right = how far the list widened:
   // my neighbourhood · district · city · "city · last 3 days" · "weather · recent".
   const badge = (() => {
@@ -262,12 +266,12 @@ function TopToday({ here }: { here: Here }) {
       <View style={[styles.px, styles.block]}>
       {top == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
-      ) : top.items.length ? (
+      ) : items.length ? (
         <ListCard style={styles.areaCard}>
-          {top.items.map((d, i) => (
+          {items.map((d, i) => (
             <ListRow
               key={d.dishId}
-              last={i === top.items.length - 1}
+              last={i === items.length - 1}
               onPress={() => router.push(`/dish/${d.dishId}`)}
               leading={
                 <View style={styles.rankLead}>
@@ -293,7 +297,10 @@ function TopToday({ here }: { here: Here }) {
  * are the Trending Bites SectionHeader; questions' See more = its chevron (→ app/questions). Location off → a card
  * to turn it on.
  */
-export function OurArea() {
+export function OurArea({ excludeId }: {
+  /** Story of the day's dish id — left out of Popular today. undefined while the story is loading; null = no story. */
+  excludeId: string | null | undefined;
+}) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { here, allow } = useHere();
@@ -326,7 +333,7 @@ export function OurArea() {
   return (
     <View>
       {/* Popular today */}
-      <TopToday here={here} />
+      <TopToday here={here} excludeId={excludeId} />
       {/* Area questions + Ask */}
       <View style={styles.section}>
         <SectionHeader title={t('community.area.questionsTitle')} onMore={() => router.push('/questions')} />

@@ -280,7 +280,9 @@ const TOP_N = 3;
  * today in the city → the city's last 3 days → the same weather (`mood`) over the last 7 days, anywhere. `scope` = the
  * widest step that added a name. Fewer than 3 after every step → just those.
  */
-export async function fetchTodayTopDishes(at: { cells: string[]; district?: string | null; city?: string | null; mood?: WeatherMood | null }): Promise<{ items: TopDish[]; scope: TopScope }> {
+export async function fetchTodayTopDishes(at: { cells: string[]; district?: string | null; city?: string | null; mood?: WeatherMood | null }, excludeIds: string[] = []): Promise<{ items: TopDish[]; scope: TopScope }> {
+  // `excludeIds` (Story of the day) never shows up here — not even inside a name group.
+  const skip = new Set(excludeIds);
   const daysAgo = (n: number) => new Date(Date.now() - n * 864e5).toISOString();
   const today = localMidnight().toISOString();
   const from = (since: string) => publicFoods(`${SUMMARY_SELECT}, created_at`).gte('created_at', since);
@@ -303,6 +305,7 @@ export async function fetchTodayTopDishes(at: { cells: string[]; district?: stri
     if (error) continue;
     const groups = new Map<string, { count: number; acorns: number; rep: DishSummary }>();
     for (const d of (data as Row[]).map(toSummary)) {
+      if (skip.has(d.id)) continue;
       const k = key(d.name ?? '');
       if (!k) continue;
       const g = groups.get(k);

@@ -125,6 +125,8 @@ function Global() {
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
   const [viral, setViral] = useState<ViralItem[]>([]);
   const [story, setStory] = useState<CardDish | null>(null);
+  // Story of the day fetched (or failed) — Popular today waits for it so the two never show the same post.
+  const [storyReady, setStoryReady] = useState(false);
   // My acorn on the Story of the day: given (filled) + count change since the last load.
   const [storyAcorn, setStoryAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });
   const [tag, setTag] = useState<string | null>(null);
@@ -145,11 +147,12 @@ function Global() {
       fetchViralBites().then(setViral).catch(() => undefined);
       fetchStoryOfTheDay().then(async (d) => {
         setStory(d);
+        setStoryReady(true);
         if (!d) return;
         setStoryAcorn({ id: d.id, given: false, delta: 0 });
         const marks = await fetchMyMarks([d.id]).catch(() => null);
         if (marks) setStoryAcorn({ id: d.id, given: marks.given.has(d.id), delta: 0 });
-      }).catch(() => undefined);
+      }).catch(() => { setStory(null); setStoryReady(true); });
       fetchGlobal(null).then(async (l) => {
         setDishes(l);
         const marks = await fetchMyMarks(l.map((d) => d.id)).catch(() => null);
@@ -217,7 +220,7 @@ function Global() {
       ) : null}
 
       {/* Our area — today's table: popular today · questions + Ask (or turn location on). */}
-      <OurArea />
+      <OurArea excludeId={storyReady ? story?.id ?? null : undefined} />
 
       {/* Viral Bites 88:3078 — p42 · gap 6: header → Country Cards 280×180, gap 12. Editor picks first, then rising dishes. */}
       {viral.length ? (
