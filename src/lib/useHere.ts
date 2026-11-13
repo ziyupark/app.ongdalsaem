@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { getMyProfile } from '../services/profile';
 import { hasLocationPermission, requestDeviceLocation, reverseGeocodeCity, type Coordinates, type Place } from '../services/location';
 import { fetchForecast, type Forecast } from '../services/weather';
@@ -68,6 +69,16 @@ function load({ ask = false, force = false } = {}): Promise<boolean> {
     .finally(() => { inflight = null; });
   return inflight;
 }
+
+// Screens stay mounted (Home is a tab), so mounting alone isn't enough: re-read when the app comes back to the
+// foreground and every TTL while it's open — both still respect the TTL, so this never fetches more than once per 10 min.
+let tick: ReturnType<typeof setInterval> | null = null;
+const startTick = () => { if (!tick) tick = setInterval(() => { if (subs.size) load(); }, TTL); };
+const stopTick = () => { if (tick) clearInterval(tick); tick = null; };
+AppState.addEventListener('change', (s) => {
+  if (s === 'active') { if (subs.size) load(); startTick(); } else stopTick();
+});
+if (AppState.currentState === 'active') startTick();
 
 /** The latest shared reading (outside React). */
 export function getHere() {
