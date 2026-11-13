@@ -104,7 +104,7 @@ export function SavedView({ onOffline }: { onOffline?: (off: boolean) => void })
   return (
     <View style={styles.root}>
       <View style={styles.head}>
-        <Text variant="Title/L" style={styles.flex}>{t('saved.collections')}</Text>
+        <Text variant="Title/M" style={styles.flex}>{t('saved.collections')}</Text>
         <Pressable accessibilityRole="button" onPress={newCollection} hitSlop={space[8]}>
           <Text variant="Body/S Strong" color="fg/muted">{t('saved.new')}</Text>
         </Pressable>
