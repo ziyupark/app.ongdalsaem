@@ -343,9 +343,10 @@ direct=傳送
 offlineCopy=你目前離線——這份儲存的副本仍可使用。橡實和留言會在上線後回來。
 selectAll=全選
 clearSelection=取消選取
-addSelectedToShopping=將選取的 {{n}} 項加入購物清單
 inShopping=已加入
-inFridge=冰箱裡有
+addToShopping=加入購物清單
+inFridgeZone=冷藏有
+inFreezerZone=冷凍有
 [profile]
 settings=設定
 signOut=登出
@@ -1053,12 +1054,7 @@ shoppingZone=購物清單
 moveToFridge=已購買 → 放進冷藏
 shoppingEmpty=購物清單還是空的。在上方選擇購物清單，記下要買的東西。
 [shopping]
-title=購物清單
-addFromRecipe=加入購物清單
 added=已將 {{n}} 項加入購物清單
-inFridge=冰箱裡已有 {{n}} 樣
-empty=還沒有要買的東西。從食譜加入食材吧。
-toFridge=已購買 → 放進冰箱 ({{n}})
 remove=移除 {{name}}
 [mealPlan]
 title=本週菜單

@@ -440,9 +440,10 @@
     "offlineCopy": "Você está offline — esta cópia salva continua funcionando. Bolotas e comentários voltam quando estiver online.",
     "selectAll": "Selecionar tudo",
     "clearSelection": "Limpar seleção",
-    "addSelectedToShopping": "Adicionar {{n}} à lista de compras",
     "inShopping": "Adicionado",
-    "inFridge": "Na geladeira"
+    "addToShopping": "Adicionar à lista",
+    "inFridgeZone": "Na geladeira",
+    "inFreezerZone": "No freezer"
   },
   "profile": {
     "settings": "Ajustes",
@@ -814,12 +815,7 @@
     "shoppingEmpty": "Sua lista de compras está vazia. Escolha Lista de compras acima e adicione o que comprar."
   },
   "shopping": {
-    "title": "Lista de compras",
-    "addFromRecipe": "Adicionar à lista de compras",
     "added": "{{n}} adicionados à sua lista de compras",
-    "inFridge": "Já na sua geladeira: {{n}}",
-    "empty": "Nada para comprar ainda. Adicione ingredientes de uma receita.",
-    "toFridge": "Comprado → para a geladeira ({{n}})",
     "remove": "Remover {{name}}"
   },
   "mealPlan": {

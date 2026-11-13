@@ -78,6 +78,12 @@ export function matchRecipes(fridge: string[], recipes: RecipeCandidate[], limit
     .slice(0, limit);
 }
 
+/** Index of the first name in `names` that is the same ingredient as `name` (synonyms count) · -1 when none. */
+export function findIngredient(name: string, names: string[]): number {
+  const k = keyOf(name);
+  return k ? names.findIndex((n) => keyOf(n) === k) : -1;
+}
+
 /** Search filter "with ingredients": every wanted ingredient is in the recipe (synonyms count, e.g. 계란 = egg). */
 export function hasIngredients(wanted: string[], ingredients: string[]): boolean {
   const have = new Set(ingredients.map(keyOf).filter(Boolean));

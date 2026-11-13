@@ -1,14 +1,15 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { AlertTriangle, Check, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from 'lucide-react-native';
+import { AlertTriangle, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from 'lucide-react-native';
 import { Bookmark, MessageCircle, Share } from '../icons/custom';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { allergensIn } from '../../lib/allergens';
 import { useDietPrefs } from '../../lib/dietPrefs';
 import { useFridge } from '../../lib/fridge';
-import { hasIngredients } from '../../lib/ingredientMatch';
+import { findIngredient, hasIngredients } from '../../lib/ingredientMatch';
 import { scaleIngredient } from '../../lib/scaleIngredient';
 import { addShopping, useShopping } from '../../lib/shopping';
 import { isPresetMeal, isPresetMood, mealIcon, moodIcon, temperatureIcon, temperatureTag } from '../../lib/tags';
@@ -200,17 +201,16 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
   const base = dish.servings ?? null;
   const [servings, setServings] = useState(base ?? 0);
   useEffect(() => { setServings(base ?? 0); }, [base]);
-  // Pick ingredients one by one → shopping memo (7.1 only). In my fridge = badge, still pickable; already in the memo = "added", locked.
+  // Pick ingredients one by one → shopping memo (7.1 only). A picked row that's in my fridge says which zone; already in the memo = "added", locked.
   const fridge = useFridge();
   const shopping = useShopping();
-  const inFridge = useMemo(() => { const names = fridge.map((f) => f.name); return dish.ingredients.map((ing) => hasIngredients([ing.name], names)); }, [fridge, dish.ingredients]);
+  const fridgeZone = useMemo(() => { const names = fridge.map((f) => f.name); return dish.ingredients.map((ing) => fridge[findIngredient(ing.name, names)]?.zone ?? null); }, [fridge, dish.ingredients]);
   const inShopping = useMemo(() => { const names = shopping.map((s) => s.name); return dish.ingredients.map((ing) => hasIngredients([ing.name], names)); }, [shopping, dish.ingredients]);
   const [picked, setPicked] = useState<Set<number>>(new Set());
   useEffect(() => { setPicked(new Set()); }, [dish.id]);
   const chosen = [...picked].filter((i) => !inShopping[i]);
   const toggle = (i: number) => setPicked((p) => { const n = new Set(p); if (n.has(i)) n.delete(i); else n.add(i); return n; });
-  // "Select all" leaves out what's already in my fridge.
-  const selectAll = () => setPicked(new Set(dish.ingredients.map((_, i) => i).filter((i) => !inFridge[i] && !inShopping[i])));
+  const selectAll = () => setPicked(new Set(dish.ingredients.map((_, i) => i).filter((i) => !inShopping[i])));
   const amountOf = (amount: string) => (base != null ? scaleIngredient(amount, base, servings) : amount);
   const addToShopping = async () => {
     if (!chosen.length) return;
@@ -281,7 +281,8 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
                       );
                     }
                     const locked = inShopping[i];
-                    const on = locked || picked.has(i);
+                    const on = !locked && picked.has(i);
+                    const zone = on ? fridgeZone[i] : null;
                     return (
                       <Pressable
                         key={`${ing.name}-${i}`}
@@ -292,18 +293,16 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
                         onPress={() => toggle(i)}
                         style={[rowStyle, styles.pickable]}
                       >
-                        <View style={[styles.check, locked ? { backgroundColor: color('bg/muted') } : on ? { backgroundColor: color('bg/inverse') } : { borderWidth: 1.5, borderColor: color('border/strong') }]}>
-                          {on ? <Icon icon={Check} size={14} color={locked ? 'fg/disabled' : 'fg/inverse'} /> : null}
-                        </View>
+                        {on ? <Animated.View entering={FadeIn.duration(120)} exiting={FadeOut.duration(120)} style={[styles.picked, { backgroundColor: color('bg/accent-subtle') }]} /> : null}
                         <Text variant="Body/M" color={locked ? 'fg/muted' : 'fg/default'} style={styles.flex}>{ing.name}</Text>
                         {locked ? (
                           <View style={[styles.badge, { backgroundColor: color('bg/muted') }]}>
                             <Text variant="Caption Strong" color="fg/muted">{t('dish.inShopping')}</Text>
                           </View>
-                        ) : inFridge[i] ? (
-                          <View style={[styles.badge, { backgroundColor: color('bg/accent-subtle') }]}>
-                            <Text variant="Caption Strong" color="fg/accent">{t('dish.inFridge')}</Text>
-                          </View>
+                        ) : zone ? (
+                          <Animated.View entering={FadeIn.duration(120)} exiting={FadeOut.duration(120)}>
+                            <Text variant="Caption Strong" color="fg/accent">{t(zone === 'freezer' ? 'dish.inFreezerZone' : 'dish.inFridgeZone')}</Text>
+                          </Animated.View>
                         ) : null}
                         <Text variant="Body/M Strong" color="fg/secondary">{amountOf(ing.amount)}</Text>
                       </Pressable>
@@ -313,7 +312,8 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
                 {dish.id ? (
                   <View style={styles.shop}>
                     <Button
-                      label={t('dish.addSelectedToShopping', { n: chosen.length })}
+                      label={t('dish.addToShopping')}
+                      badge={chosen.length}
                       icon={ShoppingCart}
                       variant="Outline"
                       size="M"
@@ -390,7 +390,8 @@ const styles = StyleSheet.create({
   shop: { paddingTop: space[12], gap: space[6] },
   pickRow: { flexDirection: 'row', justifyContent: 'flex-end', gap: space[16] },
   pickable: { alignItems: 'center' },
-  check: { width: 20, height: 20, borderRadius: radius.xs, alignItems: 'center', justifyContent: 'center' },
+  // Picked row: bg/accent-subtle under the row, reaching a little past its text so the row's inner spacing stays.
+  picked: { position: 'absolute', top: 0, bottom: 0, left: -space[8], right: -space[8], borderRadius: radius.md },
   badge: { paddingHorizontal: space[8], paddingVertical: space[2], borderRadius: radius.full },
   ingHead: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   servings: { height: 36, flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[12], borderRadius: radius.full, borderWidth: 1 },

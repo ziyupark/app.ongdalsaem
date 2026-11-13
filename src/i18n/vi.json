@@ -437,9 +437,10 @@
     "offlineCopy": "Bạn đang ngoại tuyến — bản đã lưu này vẫn dùng được. Hạt sồi và bình luận sẽ trở lại khi có mạng.",
     "selectAll": "Chọn tất cả",
     "clearSelection": "Bỏ chọn",
-    "addSelectedToShopping": "Thêm {{n}} món vào ghi chú đi chợ",
     "inShopping": "Đã thêm",
-    "inFridge": "Có trong tủ lạnh"
+    "addToShopping": "Thêm vào đi chợ",
+    "inFridgeZone": "Có trong ngăn mát",
+    "inFreezerZone": "Có trong ngăn đá"
   },
   "profile": {
     "settings": "Cài đặt",
@@ -804,12 +805,7 @@
     "shoppingEmpty": "Ghi chú đi chợ đang trống. Chọn Ghi chú đi chợ ở trên và ghi món cần mua."
   },
   "shopping": {
-    "title": "Danh sách đi chợ",
-    "addFromRecipe": "Thêm vào danh sách đi chợ",
     "added": "Đã thêm {{n}} món vào ghi chú đi chợ",
-    "inFridge": "Đã có trong tủ lạnh: {{n}}",
-    "empty": "Chưa có gì cần mua. Thêm nguyên liệu từ công thức nhé.",
-    "toFridge": "Đã mua → vào tủ lạnh ({{n}})",
     "remove": "Xóa {{name}}"
   },
   "mealPlan": {

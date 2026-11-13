@@ -19,6 +19,8 @@ type Props = {
   loading?: boolean;
   style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
+  /** Small count pill right of the label (7.1 "Add to shopping" n) — bg/inverse · fg/inverse, radius full. */
+  badge?: number;
 };
 
 // Button 6:192 — height L 56 / M 46 / S 36, radius full, Disabled = 40% opacity.
@@ -39,7 +41,7 @@ const TONE: Record<Variant, { bg?: ColorToken; fg: ColorToken; border?: ColorTok
   White: { bg: 'static/white', fg: 'fg/default' },
 };
 
-export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, disabled, loading, style, accessibilityLabel }: Props) {
+export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, disabled, loading, style, accessibilityLabel, badge }: Props) {
   const { color } = useTheme();
   const s = SIZE[size];
   const tone = TONE[variant];
@@ -74,6 +76,11 @@ export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, 
         <>
           {icon ? <Icon icon={icon} size={s.icon} color={tone.fg} /> : null}
           <Text variant={s.text} color={tone.fg}>{label}</Text>
+          {badge != null ? (
+            <View style={[styles.badge, { backgroundColor: color('bg/inverse') }]}>
+              <Text variant="Caption Strong" color="fg/inverse">{String(badge)}</Text>
+            </View>
+          ) : null}
         </>
       )}
     </Pressable>
@@ -86,5 +93,6 @@ const styles = StyleSheet.create({
   clip: { overflow: 'hidden' },
   pressed: { opacity: 0.85 },
   dots: { flexDirection: 'row', gap: space[6] },
+  badge: { minWidth: 20, height: 20, paddingHorizontal: space[6], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   dot: { width: space[6], height: space[6], borderRadius: radius.full },
 });

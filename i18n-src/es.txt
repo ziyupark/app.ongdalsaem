@@ -346,9 +346,10 @@ direct=Enviar
 offlineCopy=Estás sin conexión: esta copia guardada sigue funcionando. Las bellotas y los comentarios vuelven al conectarte.
 selectAll=Seleccionar todo
 clearSelection=Quitar selección
-addSelectedToShopping=Añadir {{n}} a la lista de compras
 inShopping=Añadido
-inFridge=En la nevera
+addToShopping=Añadir a la lista
+inFridgeZone=En la nevera
+inFreezerZone=En el congelador
 [profile]
 settings=Ajustes
 signOut=Cerrar sesión
@@ -1070,12 +1071,7 @@ shoppingZone=Lista de compras
 moveToFridge=Comprado → a la nevera
 shoppingEmpty=Tu lista de compras está vacía. Elige Lista de compras arriba y añade lo que necesitas.
 [shopping]
-title=Lista de compras
-addFromRecipe=Añadir a la lista de compras
 added={{n}} añadidos a tu lista de compras
-inFridge=Ya en tu nevera: {{n}}
-empty=Aún no hay nada que comprar. Añade ingredientes desde una receta.
-toFridge=Comprado → a la nevera ({{n}})
 remove=Quitar {{name}}
 [mealPlan]
 title=Menú de esta semana

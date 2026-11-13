@@ -440,9 +440,10 @@
     "offlineCopy": "You’re offline — this saved copy still works. Acorns and comments come back online.",
     "selectAll": "Select all",
     "clearSelection": "Clear selection",
-    "addSelectedToShopping": "Add {{n}} selected to shopping",
     "inShopping": "Added",
-    "inFridge": "In fridge"
+    "addToShopping": "Add to shopping",
+    "inFridgeZone": "In the fridge",
+    "inFreezerZone": "In the freezer"
   },
   "profile": {
     "settings": "Settings",
@@ -814,12 +815,7 @@
     "shoppingEmpty": "Nothing on your shopping memo yet. Pick Shopping memo above and add what to buy."
   },
   "shopping": {
-    "title": "Shopping list",
-    "addFromRecipe": "Add to shopping list",
     "added": "Added {{n}} to your shopping memo",
-    "inFridge": "Already in your fridge: {{n}}",
-    "empty": "Nothing to buy yet. Add ingredients from a recipe.",
-    "toFridge": "Bought → to the fridge ({{n}})",
     "remove": "Remove {{name}}"
   },
   "mealPlan": {
