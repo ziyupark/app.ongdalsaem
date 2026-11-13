@@ -12,6 +12,8 @@ export const radius = {
 } as const;
 
 /** Icon stroke by rendered size — docs/02-components.md §3.2. */
+/** Ring on round icon buttons (IconButton Soft · cook-along · share sheet · place info · new picks) — border/default. */
+export const iconRing = 0.22;
 export const iconStroke = (size: number) => (size >= 22 ? 1.6 : size >= 17 ? 1.5 : 1.4);
 
 /** Fixed bottom button position used on every 01 screen (y 744–800 on a 844 frame). */

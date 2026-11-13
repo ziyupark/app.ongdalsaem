@@ -6,7 +6,7 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Share, StyleSheet, View } from 'react-native';
 import { loadClipboard, loadSharing, loadViewShot } from '../../lib/optionalNative';
-import { radius, space, useTheme, type WeatherMood } from '../../theme';
+import { iconRing, radius, space, useTheme, type WeatherMood } from '../../theme';
 import { BottomSheet } from '../BottomSheet';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1, gap: space[2] },
   actions: { flexDirection: 'row', justifyContent: 'space-between' },
   action: { width: 76, alignItems: 'center', gap: space[8] },
-  circle: { width: 56, height: 56, borderRadius: radius.full, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  circle: { width: 56, height: 56, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
   center: { textAlign: 'center' },
   offscreen: { position: 'absolute', left: -2000, top: 0 },
   card: { width: 360, borderRadius: radius.xl, overflow: 'hidden' },

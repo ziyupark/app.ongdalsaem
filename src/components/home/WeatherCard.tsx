@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { elevation, moods, radius, space, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
+import { elevation, iconRing, moods, radius, space, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
 import type { Meal } from '../../lib/meals';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
@@ -90,7 +90,7 @@ export function WeatherCard({ tempC, mood, condition, detail, slots, picksHead, 
       <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
       <View style={styles.head}>
         <Text variant="Caption Strong" color="fg/muted" style={styles.flex}>{picksHead}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={t('home.newPicks')} hitSlop={space[6]} onPress={refresh} style={[styles.refresh, { borderColor: color('fg/muted') }]}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t('home.newPicks')} hitSlop={space[6]} onPress={refresh} style={[styles.refresh, { borderColor: color('border/default') }]}>
           <Animated.View style={spinStyle}>
             <Icon icon={RotateCcw} size={16} />
           </Animated.View>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, alignSelf: 'stretch' },
   head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flex: { flex: 1 },
-  refresh: { width: 32, height: 32, borderRadius: radius.full, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  refresh: { width: 32, height: 32, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
   timeline: { flexDirection: 'row', gap: space[4] },
   highlight: { position: 'absolute', left: 0, top: 0, bottom: 0, borderRadius: radius.xl },
   slot: { flex: 1, alignItems: 'center', gap: space[6], paddingTop: space[8], paddingBottom: space[10], borderRadius: radius.xl },

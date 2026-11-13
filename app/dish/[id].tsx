@@ -27,7 +27,7 @@ import {
   ateToday as fetchAteToday, deleteDish, editDraftFrom, fetchCookedFrom, fetchDish, fetchMoreFrom, fetchRecipeAuthor, fetchMyMarks, logEaten, setAcorn, setSaved, unlogEaten, type Dish, type DishSummary, type Person,
 } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
-import { radius, space, useTheme } from '../../src/theme';
+import { iconRing, radius, space, useTheme } from '../../src/theme';
 
 type State = { kind: 'loading' } | { kind: 'missing' } | { kind: 'ready'; dish: Dish };
 
@@ -394,5 +394,5 @@ const styles = StyleSheet.create({
   moreRow: { gap: space[16], paddingHorizontal: space[20] },
   ate: { flex: 1, height: 52, borderRadius: radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
   dim: { opacity: 0.7 },
-  cook: { width: 48, height: 48, borderRadius: radius.full, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  cook: { width: 48, height: 48, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
 });

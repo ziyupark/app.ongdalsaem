@@ -15,7 +15,7 @@ import { loadClipboard, loadMaps } from '../src/lib/optionalNative';
 const Maps = loadMaps();
 import { useHere } from '../src/lib/useHere';
 import { formatDistance } from '../src/services/places';
-import { elevation, radius, space, useTheme } from '../src/theme';
+import { elevation, iconRing, radius, space, useTheme } from '../src/theme';
 
 type Params = { name: string; address?: string; kind?: string; lat: string; lon: string; mapsUri?: string; dish?: string; photo?: string };
 
@@ -171,5 +171,5 @@ const styles = StyleSheet.create({
   addr: { flexDirection: 'row', alignItems: 'center', gap: space[10], padding: space[14], borderRadius: radius.lg, borderWidth: 1 },
   copy: { flexDirection: 'row', alignItems: 'center', gap: space[4], height: 32, paddingHorizontal: space[12], borderRadius: radius.full },
   actions: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
-  round56: { width: 56, height: 56, borderRadius: radius.full, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  round56: { width: 56, height: 56, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
 });

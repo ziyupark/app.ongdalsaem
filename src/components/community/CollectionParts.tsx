@@ -1,79 +1,67 @@
 import { Image } from 'expo-image';
-import { ChevronLeft, List, type LucideIcon } from 'lucide-react-native';
-import { useState } from 'react';
+import { ChevronLeft, List, Share2, type LucideIcon } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import type { CardDish } from '../../services/community';
-import { radius, space, useTheme } from '../../theme';
+import { radius, space, useTheme, type ColorToken } from '../../theme';
 import { BottomSheet } from '../BottomSheet';
 import { Chip } from '../Chip';
-import { GlassIconButton } from '../GlassIconButton';
 import { Icon } from '../Icon';
 import { IconButton } from '../IconButton';
 import { Text } from '../Text';
-import { FlagTag } from './Parts';
+import { PhotoCard } from './Parts';
 
-// Shared blocks of 4.2 Tag (v2 718:11114) and 4.3 Country (v2 718:11248).
+// Shared blocks of 4.2 Tag (v2 826:14271) and 4.3 Country (v2 826:15002).
 
-const HERO_H = 420;
-/** The title card rides up over the bottom of the photos. */
-const OVERLAP = space[40];
+/** Hero carousel — Story-of-the-day sized cards (400 high), gap 6, the first few dishes. */
+const HERO_H = 400;
+const HERO_GAP = space[6];
+const HERO_COUNT = 3;
 const CATEGORY = 64;
 
-/** Hero — swipeable photos (420, page dots) with a glass back button, and the title card overlapping their bottom. */
-export function CollectionHero({ dishes, width, onOpen, onBack, overline, flag, title, band }: {
-  dishes: CardDish[];
+/**
+ * Collection top (4.2 / 4.3 v2) — TopBar · Overlay (back · share, Soft 40) → Header · Title (Display/XL, p22 20 12) →
+ * Group (p22 · gap 6): headline (Display/M) over 400-high photo cards (gap 6). Sits on the screen's mood wash; `titleInk`
+ * / `headInk` are the wash inks at the title and headline. The title is shown as given; `titleLabel` is read out.
+ */
+export function CollectionTop({ dishes, width, onOpen, onBack, onShare, title, titleLabel, headline, titleInk, headInk }: {
+  dishes: CardDish[] | null;
   width: number;
   onOpen: (d: CardDish) => void;
   onBack: () => void;
-  overline: string;
-  flag?: string;
+  onShare: () => void;
   title: string;
-  band: string;
+  titleLabel: string;
+  headline: string;
+  titleInk?: ColorToken;
+  headInk?: ColorToken;
 }) {
   const { color } = useTheme();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
-  const [page, setPage] = useState(0);
-  const photos = dishes.slice(0, 3);
-  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => setPage(Math.round(e.nativeEvent.contentOffset.x / width));
-
+  const cardW = width - space[20] * 2;
+  const hero = (dishes ?? []).slice(0, HERO_COUNT);
   return (
     <View>
-      <View style={[styles.photos, { backgroundColor: color('bg/muted') }]}>
-        <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={onScroll}>
-          {photos.map((d) => (
-            <Pressable key={d.id} accessibilityRole="button" accessibilityLabel={d.name} onPress={() => onOpen(d)}>
-              <Image source={{ uri: d.photo }} style={{ width, height: HERO_H }} contentFit="cover" transition={150} recyclingKey={d.id} />
-            </Pressable>
-          ))}
-        </ScrollView>
-        <View style={[styles.back, { top: insets.top + space[6] }]}>
-          <GlassIconButton icon={ChevronLeft} onPress={onBack} accessibilityLabel={t('common.back')} />
-        </View>
-        {photos.length > 1 ? (
-          <View style={styles.dots} pointerEvents="none">
-            {photos.map((d, i) => (
-              <View key={d.id} style={[styles.dot, i === page && styles.dotOn, { backgroundColor: color(i === page ? 'fg/on-photo' : 'fg/on-photo-tertiary') }]} />
-            ))}
-          </View>
-        ) : null}
+      <View style={styles.bar}>
+        <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={onBack} />
+        <IconButton icon={Share2} accessibilityLabel={t('home.share')} onPress={onShare} />
       </View>
-
-      <View style={styles.cardWrap}>
-        <View style={[styles.card, { backgroundColor: color('bg/accent-subtle') }]}>
-          <View style={styles.cardBody}>
-            <View style={styles.overline}>
-              {flag ? <FlagTag code={flag} /> : null}
-              <Text variant="Overline" color="fg/accent">{overline}</Text>
-            </View>
-            <Text variant="Display/M">{title}</Text>
-          </View>
-          <View style={[styles.band, { backgroundColor: color('bg/inverse') }]}>
-            <Text variant="Caption Strong" color="fg/inverse">{band}</Text>
-          </View>
-        </View>
+      <View style={styles.title}>
+        <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={titleLabel} numberOfLines={1} adjustsFontSizeToFit color={titleInk ?? 'fg/default'}>{title}</Text>
+      </View>
+      <View style={styles.heroGroup}>
+        <Text variant="Display/M" color={headInk ?? 'fg/default'} style={styles.px}>{headline}</Text>
+        {dishes == null ? (
+          <View style={styles.heroLoading}><ActivityIndicator color={color('fg/muted')} /></View>
+        ) : hero.length ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} snapToInterval={cardW + HERO_GAP} decelerationRate="fast" contentContainerStyle={styles.heroRow}>
+            {hero.map((d) => (
+              <PhotoCard key={d.id} photo={d.photo} width={cardW} height={HERO_H} label={d.name} onPress={() => onOpen(d)}>
+                <View />
+              </PhotoCard>
+            ))}
+          </ScrollView>
+        ) : null}
       </View>
     </View>
   );
@@ -151,16 +139,12 @@ export function MealSheet({ visible, onClose, meals, value, onChange }: { visibl
 }
 
 const styles = StyleSheet.create({
-  photos: { height: HERO_H, overflow: 'hidden' },
-  back: { position: 'absolute', left: space[12] },
-  dots: { position: 'absolute', left: 0, right: 0, bottom: OVERLAP + space[16], flexDirection: 'row', justifyContent: 'center', gap: space[6] },
-  dot: { width: space[6], height: space[6], borderRadius: radius.full },
-  dotOn: { width: space[16] },
-  cardWrap: { marginTop: -OVERLAP, paddingHorizontal: space[20] },
-  card: { borderRadius: radius.xl, overflow: 'hidden' },
-  cardBody: { padding: space[20], gap: space[8] },
-  overline: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
-  band: { paddingVertical: space[12], paddingHorizontal: space[20] },
+  bar: { height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[12] },
+  title: { paddingTop: space[42] - space[20], paddingHorizontal: space[20], paddingBottom: space[12] },
+  heroGroup: { paddingTop: space[42] - space[20], gap: space[6] },
+  px: { paddingHorizontal: space[20] },
+  heroRow: { paddingHorizontal: space[20], gap: HERO_GAP },
+  heroLoading: { height: HERO_H, alignItems: 'center', justifyContent: 'center' },
   infoRow: { flexDirection: 'row', alignItems: 'center', gap: space[8], paddingHorizontal: space[20] },
   pill: { flex: 1, height: 40, flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[16], borderRadius: radius.full, borderWidth: 1 },
   weather: { flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: space[6] },

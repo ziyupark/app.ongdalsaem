@@ -1,13 +1,12 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Linking from 'expo-linking';
-import { ChevronLeft, Share2, TrendingUp } from 'lucide-react-native';
+import { TrendingUp } from 'lucide-react-native';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Share, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CategoryRow, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
-import { EmptyState, FoodGrid, PhotoCard } from '../../src/components/community/Parts';
-import { IconButton } from '../../src/components/IconButton';
+import { CategoryRow, CollectionTop, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
+import { EmptyState, FoodGrid } from '../../src/components/community/Parts';
 import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
 import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
@@ -21,10 +20,6 @@ import { space, useTheme, WEATHER_ICON } from '../../src/theme';
 type Sort = 'latest' | 'popular' | 'weather';
 /** Expanded TabBar height (12:182) — same bottom room as 4.1. */
 const TAB_BAR_H = 110;
-/** Hero carousel — Story-of-the-day sized cards (400 high), gap 6, first few dishes of the tag. */
-const HERO_H = 400;
-const HERO_GAP = space[6];
-const HERO_COUNT = 3;
 
 /**
  * 4.2 Tag · #Comfort (v2 826:14271) — mood wash · TopBar Overlay (back · share) → #Tag (Display/XL, always English) →
@@ -79,45 +74,23 @@ export default function TagScreen() {
     const link = Linking.createURL(`/tag/${encodeURIComponent(key)}`);
     Share.share({ message: `#${label} — ${link}`, url: link }).catch(() => undefined);
   };
-  const cardW = width - space[20] * 2;
-  const hero = (all ?? []).slice(0, HERO_COUNT);
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
       <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={[{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }]}>
-        {/* TopBar · Overlay — back · share (Soft 40 buttons), px 12. */}
-        <View style={styles.bar}>
-          <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => router.back()} />
-          <IconButton icon={Share2} accessibilityLabel={t('home.share')} onPress={shareTag} />
-        </View>
-
-        {/* Header · Title — p22 20 12. */}
-        <View style={styles.title}>
-          <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`#${label}`} numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>{`#${enLabel}`}</Text>
-        </View>
-
-        {/* Group — p22 top · gap 6: headline (Display/M) → 350×400 photo cards, gap 6. */}
-        <View style={styles.heroGroup}>
-          <Text variant="Display/M" color={headInk?.strong ?? 'fg/default'} style={styles.px}>{headline}</Text>
-          {all == null ? (
-            <View style={[styles.heroLoading, { height: HERO_H }]}><ActivityIndicator color={color('fg/muted')} /></View>
-          ) : hero.length ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={cardW + HERO_GAP}
-              decelerationRate="fast"
-              contentContainerStyle={styles.heroRow}
-            >
-              {hero.map((d) => (
-                <PhotoCard key={d.id} photo={d.photo} width={cardW} height={HERO_H} label={d.name} onPress={() => router.push(`/dish/${d.id}`)}>
-                  <View />
-                </PhotoCard>
-              ))}
-            </ScrollView>
-          ) : null}
-        </View>
+        <CollectionTop
+          dishes={all}
+          width={width}
+          onOpen={(d) => router.push(`/dish/${d.id}`)}
+          onBack={() => router.back()}
+          onShare={shareTag}
+          title={`#${enLabel}`}
+          titleLabel={`#${label}`}
+          headline={headline}
+          titleInk={titleInk?.strong}
+          headInk={headInk?.strong}
+        />
 
         {/* Block · Tabs — p12 top. */}
         <View style={styles.tabs}>
@@ -154,11 +127,6 @@ export default function TagScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  bar: { height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[12] },
-  title: { paddingTop: space[42] - space[20], paddingHorizontal: space[20], paddingBottom: space[12] },
-  heroGroup: { paddingTop: space[42] - space[20], gap: space[6] },
-  heroRow: { paddingHorizontal: space[20], gap: HERO_GAP },
-  heroLoading: { alignItems: 'center', justifyContent: 'center' },
   tabs: { paddingTop: space[12] },
   filters: { paddingTop: space[16] + space[2], gap: space[16] + space[2] },
   px: { paddingHorizontal: space[20] },

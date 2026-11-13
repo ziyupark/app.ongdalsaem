@@ -1,14 +1,18 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { MapPin } from 'lucide-react-native';
 import { useEffect, useMemo, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import { CategoryRow, CollectionHero, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
+import { ActivityIndicator, ScrollView, Share, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { CategoryRow, CollectionTop, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
 import { countryName, EmptyState, FoodGrid } from '../../src/components/community/Parts';
+import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
 import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
 import { UnderlineTabs } from '../../src/components/UnderlineTabs';
 import { displayTemp } from '../../src/lib/prefs';
+import { useWashScroll } from '../../src/lib/useWashScroll';
 import { fetchByCountry, topTags, type CardDish } from '../../src/services/community';
 import { fetchCurrentWeather, type CurrentWeather } from '../../src/services/weather';
 import { space, useTheme, WEATHER_ICON } from '../../src/theme';
@@ -18,15 +22,20 @@ const TAB_BAR_H = 110;
 const ALL = '*';
 
 /**
- * 4.3 Country · Japan (v2 718:11248) — photo hero + title card (flag · country · headline · weather band) → All + top 3 cities
- * → info pill (city weather · count) + meal filter → round categories (signature tags) → grid, same-weather dishes first → TabBar.
+ * 4.3 Country · Japan (v2 826:15002) — mood wash · TopBar Overlay (back · share) → #Country (Display/XL, always English) →
+ * headline (Display/M) over a carousel of 400-high photo cards → All + top 3 cities → info pill (city weather · count) +
+ * meal filter → round categories (signature tags) → grid, same-weather dishes first → TabBar.
  */
 export default function CountryScreen() {
   const { code } = useLocalSearchParams<{ code: string }>();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const bar = useTabBarScroll();
+  const wash = useWashScroll();
+  const titleInk = useScreenInk(0.36);
+  const headInk = useScreenInk(0.5);
   const cc = String(code ?? '').toUpperCase();
   const name = countryName(cc, i18n.language);
   const [all, setAll] = useState<CardDish[] | null>(null);
@@ -69,26 +78,41 @@ export default function CountryScreen() {
   const sectionTitle = [city === ALL ? t('country.all') : city, category ? tagLabel(category) : null].filter(Boolean).join(' · ');
   const weatherText = now && place ? { city: place, weather: t(`weather.${now.mood}`), temp: displayTemp(now.tempC) } : null;
 
-  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => bar.onY(e.nativeEvent.contentOffset.y);
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    bar.onY(e.nativeEvent.contentOffset.y);
+    wash.onY(e.nativeEvent.contentOffset.y);
+  };
+  const shareCountry = () => {
+    const link = Linking.createURL(`/country/${cc}`);
+    Share.share({ message: `#${name} — ${link}`, url: link }).catch(() => undefined);
+  };
   const onTab = (k: TabKey) => router.replace(`/${k}`);
   const pickCity = (c: string) => { setCity(c); setCategory(null); setMeal(null); };
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={[styles.content, { paddingBottom: TAB_BAR_H + space[24] }]}>
-        <CollectionHero
-          dishes={all ?? []}
+      <ScreenWash scrollStyle={wash.style} />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }}>
+        <CollectionTop
+          dishes={all}
           width={width}
           onOpen={(d) => router.push(`/dish/${d.id}`)}
           onBack={() => router.back()}
-          flag={cc}
-          overline={name}
-          title={now ? t(`country.headline.${now.mood}`, { defaultValue: t('country.headlineFallback', { name }) }) : t('country.headlineFallback', { name })}
-          band={weatherText ? t('country.band', weatherText) : t('country.dishes', { count: all?.length ?? 0 })}
+          onShare={shareCountry}
+          title={`#${countryName(cc, 'en')}`}
+          titleLabel={`#${name}`}
+          headline={now ? t(`country.headline.${now.mood}`, { defaultValue: t('country.headlineFallback', { name }) }) : t('country.headlineFallback', { name })}
+          titleInk={titleInk?.strong}
+          headInk={headInk?.strong}
         />
 
-        <UnderlineTabs contentStyle={styles.tabRow} value={city} onChange={pickCity} items={tabs} />
+        {/* Block · Tabs — p12 top: All + top 3 cities. */}
+        <View style={styles.tabs}>
+          <UnderlineTabs contentStyle={styles.tabRow} value={city} onChange={pickCity} items={tabs} />
+        </View>
 
+        {/* Group — p18 top · gap 18: info row → categories. */}
+        <View style={styles.filters}>
         <InfoRow
           icon={now ? WEATHER_ICON[now.mood] : undefined}
           weather={weatherText ? t('country.cityWeather', weatherText) : null}
@@ -98,6 +122,7 @@ export default function CountryScreen() {
         />
 
         <CategoryRow items={categories} value={category} onChange={setCategory} />
+        </View>
 
         <View style={styles.section}>
           <Text variant="Overline" color="fg/muted" style={styles.px}>{sectionTitle}</Text>
@@ -116,9 +141,10 @@ export default function CountryScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { gap: space[20] },
+  tabs: { paddingTop: space[12] },
+  filters: { paddingTop: space[16] + space[2], gap: space[16] + space[2] },
   px: { paddingHorizontal: space[20] },
   tabRow: { gap: space[24], paddingHorizontal: space[20] },
-  section: { gap: space[12] },
+  section: { paddingTop: space[32], gap: space[12] },
   loading: { marginTop: space[40] },
 });
