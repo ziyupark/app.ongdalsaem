@@ -9,7 +9,7 @@ import { syncPush } from '../src/lib/push';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, ScreenWash } from '../src/components/ScreenHeader';
 import { TabBar, useTabBarScroll } from '../src/components/TabBar';
-import { LocationCard, NearbyCard, PickCard, StoryCard } from '../src/components/home/Cards';
+import { LocationCard, NearbyCard, PickCard } from '../src/components/home/Cards';
 import { FeedLoader } from '../src/components/home/FeedLoader';
 import { FeedPost, type FeedPostData } from '../src/components/home/FeedPost';
 import { HomeSkeleton } from '../src/components/home/HomeSkeleton';
@@ -194,7 +194,6 @@ export default function HomeScreen() {
     setAcorn(pick.id, on).catch(() => setPickAcorn((a) => ({ ...a, given: !on, delta: a.delta - step })));
   };
   const pickByline = pick ? [pick.creator.name, [pick.neighborhood, pick.city].filter(Boolean).join(', '), timeAgo(pick.createdAt, t)].filter(Boolean).join(' · ') : '';
-  const pickInitial = (pick?.creator.name ?? '?').slice(0, 1).toUpperCase();
 
   // Feed (Block · feed 123:3261 — no title / chips): posts from today's weather. Same weather family only
   // (rain · snow · clear · grey); closest first — same weather → nearer temperature → newer. Without weather: newest.
@@ -275,12 +274,13 @@ export default function HomeScreen() {
             <View style={styles.pickBlock}>
               {pick ? (
                 <>
-                  <StoryCard
-                    title={t('home.todaysPick')}
-                    statement={pick.name}
+                  <PickCard
+                    heading={t('home.todaysPick')}
                     photo={{ uri: pick.photo }}
-                    cookAvatar={pick.creator.avatarUrl ? { uri: pick.creator.avatarUrl } : undefined}
-                    cookInitial={pickInitial}
+                    title={pick.name}
+                    byline={pickByline}
+                    cookName={pick.creator.name}
+                    cookAvatar={pick.creator.avatarUrl}
                     mood={pick.mood ?? f?.mood ?? FALLBACK_MOOD}
                     tempC={pick.tempC ?? f?.tempC ?? 0}
                     acorns={pick.acorns + pickMark.delta}
