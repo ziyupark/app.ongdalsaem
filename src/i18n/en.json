@@ -1406,6 +1406,27 @@
       "heat": "☀️ Hot out — keep the walk short today",
       "clear": "🌤 A nice day for a little walk",
       "cloudy": "☁️ Grey skies — a good meal close by sounds right"
+    },
+    "title": "Nearby",
+    "forPrefix": "For",
+    "similarDishes": "Similar dishes",
+    "affordable": "Affordable",
+    "emptyBothTitle": "No {{dish}} or similar food nearby",
+    "emptyBothBody": "Search a wider area in a map app",
+    "searchInMapApp": "Search in a map app",
+    "similarKind": {
+      "burger": "Similar burgers",
+      "noodle": "Similar noodles",
+      "curry": "Similar curries",
+      "dumpling": "Similar dumplings",
+      "soup": "Similar soups",
+      "rice": "Similar rice dishes",
+      "seafood": "Similar seafood",
+      "meat": "Similar grilled meat",
+      "pizza": "Similar pizza",
+      "salad": "Similar salads",
+      "dessert": "Similar desserts",
+      "bread": "Similar breads"
     }
   },
   "mapApps": {

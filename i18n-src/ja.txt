@@ -1048,6 +1048,25 @@ tip.cold=🧣 肌寒い日、温かいごはんがすぐ近くに
 tip.heat=☀️ 暑い日は短い距離で
 tip.clear=🌤 少し歩くのにちょうどいい日です
 tip.cloudy=☁️ くもりの日は近くのお店がぴったり
+title=近くで
+forPrefix=探しているのは
+similarDishes=似た料理
+affordable=お手頃
+emptyBothTitle=近くに{{dish}}や似た料理のお店がありません
+emptyBothBody=地図アプリでもっと広く探せます
+searchInMapApp=地図アプリで探す
+similarKind.burger=似たバーガー
+similarKind.noodle=似た麺料理
+similarKind.curry=似たカレー
+similarKind.dumpling=似た餃子・点心
+similarKind.soup=似たスープ
+similarKind.rice=似たご飯もの
+similarKind.seafood=似た魚介料理
+similarKind.meat=似た肉料理
+similarKind.pizza=似たピザ
+similarKind.salad=似たサラダ
+similarKind.dessert=似たスイーツ
+similarKind.bread=似たパン
 [settings]
 searchLanguages=言語を検索
 [home]

@@ -1048,6 +1048,25 @@ tip.cold=🧣 天涼了，溫暖的一餐就在附近
 tip.heat=☀️ 天氣熱，走近一點就好
 tip.clear=🌤 適合散步一下的好天氣
 tip.cloudy=☁️ 陰天就吃附近的好店
+title=附近
+forPrefix=想吃
+similarDishes=類似料理
+affordable=平價
+emptyBothTitle=附近沒有{{dish}}或類似料理的店
+emptyBothBody=可以在地圖 App 搜尋更大範圍
+searchInMapApp=在地圖 App 搜尋
+similarKind.burger=類似漢堡
+similarKind.noodle=類似麵食
+similarKind.curry=類似咖哩
+similarKind.dumpling=類似餃子
+similarKind.soup=類似湯品
+similarKind.rice=類似飯類
+similarKind.seafood=類似海鮮
+similarKind.meat=類似燒肉
+similarKind.pizza=類似披薩
+similarKind.salad=類似沙拉
+similarKind.dessert=類似甜點
+similarKind.bread=類似麵包
 [settings]
 searchLanguages=搜尋語言
 [home]

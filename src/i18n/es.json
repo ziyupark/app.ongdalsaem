@@ -1406,6 +1406,27 @@
       "heat": "☀️ Hace calor: mejor un paseo corto",
       "clear": "🌤 Buen día para caminar un poco",
       "cloudy": "☁️ Día gris: un buen sitio cerca es justo lo que toca"
+    },
+    "title": "Cerca",
+    "forPrefix": "Para",
+    "similarDishes": "Platos parecidos",
+    "affordable": "Económico",
+    "emptyBothTitle": "No hay {{dish}} ni nada parecido cerca",
+    "emptyBothBody": "Busca en una zona más amplia en una app de mapas",
+    "searchInMapApp": "Buscar en una app de mapas",
+    "similarKind": {
+      "burger": "Hamburguesas parecidas",
+      "noodle": "Fideos parecidos",
+      "curry": "Currys parecidos",
+      "dumpling": "Empanadillas parecidas",
+      "soup": "Sopas parecidas",
+      "rice": "Platos de arroz parecidos",
+      "seafood": "Mariscos parecidos",
+      "meat": "Carnes a la parrilla parecidas",
+      "pizza": "Pizzas parecidas",
+      "salad": "Ensaladas parecidas",
+      "dessert": "Postres parecidos",
+      "bread": "Panes parecidos"
     }
   },
   "mapApps": {

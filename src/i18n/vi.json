@@ -1385,6 +1385,27 @@
       "heat": "☀️ Trời nóng — đi bộ ngắn thôi",
       "clear": "🌤 Ngày đẹp để đi bộ một chút",
       "cloudy": "☁️ Trời âm u — quán gần là hợp nhất"
+    },
+    "title": "Gần đây",
+    "forPrefix": "Cho món",
+    "similarDishes": "Món tương tự",
+    "affordable": "Giá phải chăng",
+    "emptyBothTitle": "Không có {{dish}} hay món tương tự gần đây",
+    "emptyBothBody": "Tìm rộng hơn trong ứng dụng bản đồ",
+    "searchInMapApp": "Tìm trong ứng dụng bản đồ",
+    "similarKind": {
+      "burger": "Burger tương tự",
+      "noodle": "Món mì tương tự",
+      "curry": "Cà ri tương tự",
+      "dumpling": "Há cảo tương tự",
+      "soup": "Món canh tương tự",
+      "rice": "Món cơm tương tự",
+      "seafood": "Hải sản tương tự",
+      "meat": "Món nướng tương tự",
+      "pizza": "Pizza tương tự",
+      "salad": "Salad tương tự",
+      "dessert": "Tráng miệng tương tự",
+      "bread": "Bánh mì tương tự"
     }
   },
   "mapApps": {

@@ -1406,6 +1406,27 @@
       "heat": "☀️ 더운 날엔 짧게 걸어가요",
       "clear": "🌤 조금 걷기 좋은 날이에요",
       "cloudy": "☁️ 흐린 날엔 가까운 맛집이 딱이에요"
+    },
+    "title": "내 주변",
+    "forPrefix": "찾는 음식",
+    "similarDishes": "비슷한 음식",
+    "affordable": "저렴한 곳",
+    "emptyBothTitle": "근처에 {{dishOr}} 비슷한 음식 가게가 없어요",
+    "emptyBothBody": "지도 앱에서 더 넓게 찾아볼 수 있어요",
+    "searchInMapApp": "지도 앱에서 찾아보기",
+    "similarKind": {
+      "burger": "비슷한 버거",
+      "noodle": "비슷한 면 요리",
+      "curry": "비슷한 카레",
+      "dumpling": "비슷한 만두",
+      "soup": "비슷한 국물 요리",
+      "rice": "비슷한 밥 요리",
+      "seafood": "비슷한 해산물",
+      "meat": "비슷한 고기 요리",
+      "pizza": "비슷한 피자",
+      "salad": "비슷한 샐러드",
+      "dessert": "비슷한 디저트",
+      "bread": "비슷한 빵"
     }
   },
   "mapApps": {

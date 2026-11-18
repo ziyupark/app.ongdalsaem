@@ -11,7 +11,7 @@ import { Icon } from '../src/components/Icon';
 import { IconButton } from '../src/components/IconButton';
 import { Text } from '../src/components/Text';
 import { Toggle } from '../src/components/Toggle';
-import { getSavedMapApp, installedMapApps, MAP_APP_LABEL, openMapApp, setSavedMapApp, type MapAction, type MapAppId } from '../src/lib/mapApps';
+import { chooseMapApp, MAP_APP_LABEL, openMapApp, setSavedMapApp, type MapAction, type MapAppId } from '../src/lib/mapApps';
 import { loadClipboard, loadMaps } from '../src/lib/optionalNative';
 import { resetShareDraft, updateShareDraft } from '../src/lib/shareDraft';
 import { useHere } from '../src/lib/useHere';
@@ -59,12 +59,10 @@ export default function PlaceScreen() {
   const fit = () => map.current?.fitToCoordinates(me ? [me, dest] : [dest], { edgePadding: { top: insets.top + 72, right: 72, bottom: 40, left: 72 }, animated: true });
 
   const handOff = async (action: MapAction) => {
-    const apps = await installedMapApps();
-    const saved = await getSavedMapApp();
-    if (saved && apps.includes(saved)) return openMapApp(saved, target, action);
-    if (apps.length === 1) return openMapApp(apps[0], target, action);
+    const c = await chooseMapApp();
+    if ('open' in c) return openMapApp(c.open, target, action);
     setRemember(false);
-    setPicker({ action, apps });
+    setPicker({ action, apps: c.pick });
   };
   const pick = async (id: MapAppId) => {
     const action = picker?.action ?? 'view';

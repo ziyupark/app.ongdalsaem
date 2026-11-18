@@ -1385,6 +1385,27 @@
       "heat": "☀️ 天氣熱，走近一點就好",
       "clear": "🌤 適合散步一下的好天氣",
       "cloudy": "☁️ 陰天就吃附近的好店"
+    },
+    "title": "附近",
+    "forPrefix": "想吃",
+    "similarDishes": "類似料理",
+    "affordable": "平價",
+    "emptyBothTitle": "附近沒有{{dish}}或類似料理的店",
+    "emptyBothBody": "可以在地圖 App 搜尋更大範圍",
+    "searchInMapApp": "在地圖 App 搜尋",
+    "similarKind": {
+      "burger": "類似漢堡",
+      "noodle": "類似麵食",
+      "curry": "類似咖哩",
+      "dumpling": "類似餃子",
+      "soup": "類似湯品",
+      "rice": "類似飯類",
+      "seafood": "類似海鮮",
+      "meat": "類似燒肉",
+      "pizza": "類似披薩",
+      "salad": "類似沙拉",
+      "dessert": "類似甜點",
+      "bread": "類似麵包"
     }
   },
   "mapApps": {

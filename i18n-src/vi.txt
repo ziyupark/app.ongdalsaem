@@ -1048,6 +1048,25 @@ tip.cold=🧣 Trời se lạnh — món ấm áp ở ngay gần
 tip.heat=☀️ Trời nóng — đi bộ ngắn thôi
 tip.clear=🌤 Ngày đẹp để đi bộ một chút
 tip.cloudy=☁️ Trời âm u — quán gần là hợp nhất
+title=Gần đây
+forPrefix=Cho món
+similarDishes=Món tương tự
+affordable=Giá phải chăng
+emptyBothTitle=Không có {{dish}} hay món tương tự gần đây
+emptyBothBody=Tìm rộng hơn trong ứng dụng bản đồ
+searchInMapApp=Tìm trong ứng dụng bản đồ
+similarKind.burger=Burger tương tự
+similarKind.noodle=Món mì tương tự
+similarKind.curry=Cà ri tương tự
+similarKind.dumpling=Há cảo tương tự
+similarKind.soup=Món canh tương tự
+similarKind.rice=Món cơm tương tự
+similarKind.seafood=Hải sản tương tự
+similarKind.meat=Món nướng tương tự
+similarKind.pizza=Pizza tương tự
+similarKind.salad=Salad tương tự
+similarKind.dessert=Tráng miệng tương tự
+similarKind.bread=Bánh mì tương tự
 [settings]
 searchLanguages=Tìm ngôn ngữ
 [home]

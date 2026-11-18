@@ -1385,6 +1385,27 @@
       "heat": "☀️ 暑い日は短い距離で",
       "clear": "🌤 少し歩くのにちょうどいい日です",
       "cloudy": "☁️ くもりの日は近くのお店がぴったり"
+    },
+    "title": "近くで",
+    "forPrefix": "探しているのは",
+    "similarDishes": "似た料理",
+    "affordable": "お手頃",
+    "emptyBothTitle": "近くに{{dish}}や似た料理のお店がありません",
+    "emptyBothBody": "地図アプリでもっと広く探せます",
+    "searchInMapApp": "地図アプリで探す",
+    "similarKind": {
+      "burger": "似たバーガー",
+      "noodle": "似た麺料理",
+      "curry": "似たカレー",
+      "dumpling": "似た餃子・点心",
+      "soup": "似たスープ",
+      "rice": "似たご飯もの",
+      "seafood": "似た魚介料理",
+      "meat": "似た肉料理",
+      "pizza": "似たピザ",
+      "salad": "似たサラダ",
+      "dessert": "似たスイーツ",
+      "bread": "似たパン"
     }
   },
   "mapApps": {

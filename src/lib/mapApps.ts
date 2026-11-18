@@ -1,5 +1,5 @@
-// 2.4b "Start walking" · "View in a map app": hand the place to a map app the phone has, by URL scheme only (no
-// map APIs, no keys, no cost). iOS checks need the schemes in LSApplicationQueriesSchemes (app.config.ts).
+// 2.4b "Start walking" · "View in a map app" · 2.4 "Search in a map app": hand the place (or a dish search near
+// me) to a map app the phone has, by URL scheme only (no map APIs, no keys, no cost). iOS checks need the schemes in LSApplicationQueriesSchemes (app.config.ts).
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getLocales } from 'expo-localization';
 import { Linking, Platform } from 'react-native';
@@ -7,6 +7,8 @@ import { Linking, Platform } from 'react-native';
 export type MapAppId = 'naver' | 'kakao' | 'google' | 'apple';
 export type MapTarget = { lat: number; lon: number; name: string; mapsUri?: string | null };
 export type MapAction = 'walk' | 'view';
+/** A search ("Bibimbap") around a point (my location) or wherever the map app is. */
+export type MapSearch = { query: string; near?: { lat: number; lon: number } | null };
 
 const APP = 'app.ongdalsaem';
 const KEY = 'ongdalsaem.mapApp';
@@ -50,6 +52,17 @@ export async function installedMapApps(): Promise<MapAppId[]> {
   return mapAppOrder().filter((_, i) => ok[i]);
 }
 
+const googleSearchWeb = (s: MapSearch) => `https://www.google.com/maps/search/?api=1&query=${e(s.query)}`;
+
+const SEARCH_URLS: Record<MapAppId, (s: MapSearch) => string> = {
+  naver: (s) => `nmap://search?query=${e(s.query)}&appname=${APP}`,
+  kakao: (s) => `kakaomap://search?q=${e(s.query)}${s.near ? `&p=${s.near.lat},${s.near.lon}` : ''}`,
+  google: (s) => (Platform.OS === 'ios'
+    ? `comgooglemaps://?q=${e(s.query)}${s.near ? `&center=${s.near.lat},${s.near.lon}` : ''}`
+    : googleSearchWeb(s)),
+  apple: (s) => `maps://?q=${e(s.query)}${s.near ? `&sll=${s.near.lat},${s.near.lon}` : ''}`,
+};
+
 /** Opens the place (or the walk there) in that app; Google without its iOS app, or any failure → Google's web link. */
 export async function openMapApp(id: MapAppId, t: MapTarget, a: MapAction) {
   const noGoogleApp = id === 'google' && Platform.OS === 'ios' && !(await Linking.canOpenURL(PROBE.google).catch(() => false));
@@ -58,6 +71,28 @@ export async function openMapApp(id: MapAppId, t: MapTarget, a: MapAction) {
   } catch {
     await Linking.openURL(googleWeb(t, a)).catch(() => undefined);
   }
+}
+
+/** Searches in that app; Google without its iOS app, or any failure → Google's web search. */
+export async function searchInMapApp(id: MapAppId, s: MapSearch) {
+  const noGoogleApp = id === 'google' && Platform.OS === 'ios' && !(await Linking.canOpenURL(PROBE.google).catch(() => false));
+  try {
+    await Linking.openURL(noGoogleApp ? googleSearchWeb(s) : SEARCH_URLS[id](s));
+  } catch {
+    await Linking.openURL(googleSearchWeb(s)).catch(() => undefined);
+  }
+}
+
+/**
+ * Which app to hand off to: the saved one (still installed) or the only installed one → open it straight away;
+ * otherwise the installed apps for the picker ("Use this app next time").
+ */
+export async function chooseMapApp(): Promise<{ open: MapAppId } | { pick: MapAppId[] }> {
+  const apps = await installedMapApps();
+  const saved = await getSavedMapApp();
+  if (saved && apps.includes(saved)) return { open: saved };
+  if (apps.length === 1) return { open: apps[0] };
+  return { pick: apps };
 }
 
 // "Open with this app next time" — saved on the device; changed or cleared in Settings.

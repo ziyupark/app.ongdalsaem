@@ -1066,6 +1066,25 @@ tip.cold=🧣 Hace fresco: algo calentito te espera cerca
 tip.heat=☀️ Hace calor: mejor un paseo corto
 tip.clear=🌤 Buen día para caminar un poco
 tip.cloudy=☁️ Día gris: un buen sitio cerca es justo lo que toca
+title=Cerca
+forPrefix=Para
+similarDishes=Platos parecidos
+affordable=Económico
+emptyBothTitle=No hay {{dish}} ni nada parecido cerca
+emptyBothBody=Busca en una zona más amplia en una app de mapas
+searchInMapApp=Buscar en una app de mapas
+similarKind.burger=Hamburguesas parecidas
+similarKind.noodle=Fideos parecidos
+similarKind.curry=Currys parecidos
+similarKind.dumpling=Empanadillas parecidas
+similarKind.soup=Sopas parecidas
+similarKind.rice=Platos de arroz parecidos
+similarKind.seafood=Mariscos parecidos
+similarKind.meat=Carnes a la parrilla parecidas
+similarKind.pizza=Pizzas parecidas
+similarKind.salad=Ensaladas parecidas
+similarKind.dessert=Postres parecidos
+similarKind.bread=Panes parecidos
 [settings]
 searchLanguages=Buscar idiomas
 [home]
