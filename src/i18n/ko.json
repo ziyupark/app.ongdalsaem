@@ -1413,21 +1413,7 @@
     "affordable": "저렴한 곳",
     "emptyBothTitle": "근처에 {{dishOr}} 비슷한 음식 가게가 없어요",
     "emptyBothBody": "지도 앱에서 더 넓게 찾아볼 수 있어요",
-    "searchInMapApp": "지도 앱에서 찾아보기",
-    "similarKind": {
-      "burger": "비슷한 버거",
-      "noodle": "비슷한 면 요리",
-      "curry": "비슷한 카레",
-      "dumpling": "비슷한 만두",
-      "soup": "비슷한 국물 요리",
-      "rice": "비슷한 밥 요리",
-      "seafood": "비슷한 해산물",
-      "meat": "비슷한 고기 요리",
-      "pizza": "비슷한 피자",
-      "salad": "비슷한 샐러드",
-      "dessert": "비슷한 디저트",
-      "bread": "비슷한 빵"
-    }
+    "searchInMapApp": "지도 앱에서 찾아보기"
   },
   "mapApps": {
     "title": "어떤 앱으로 열까요?",

@@ -30,9 +30,6 @@ const Maps = loadMaps();
 
 type Result = { places: NearbyPlace[]; similar: string | null; err: PlacesError['code'] | null };
 
-/** Families the server can answer `similar` with (nearbyPlaces.similarKind.*). */
-const FAMILIES = ['burger', 'noodle', 'curry', 'dumpling', 'soup', 'rice', 'seafood', 'meat', 'pizza', 'salad', 'dessert', 'bread'];
-
 // The place's kind (Google's primaryType display name, in the request language) → one of seven groups for the round
 // icon. Checked in this order, so "Korean barbecue" is meat and "面包" (bread) is dessert, not noodles.
 type KindGroup = 'cafe' | 'dessert' | 'fastfood' | 'noodle' | 'meat' | 'korean' | 'other';
@@ -64,9 +61,9 @@ const byDistance = (list: NearbyPlace[]) => [...list].sort((a, b) => (a.distance
 
 /**
  * 2.4 Nearby (v2, Figma 848:12957 Similar · 865:12501 Same dish · 865:12609 Empty both) — back + map → date · place →
- * "Nearby" + a grey word → small weather card → "For {dish}" → one tab → Open now / Walkable / Affordable → cards,
+ * "Nearby" + a grey word (English) → small weather card → "For {dish}" → one tab → Open now / Walkable / Affordable → cards,
  * always nearest first. ONE search per filter set: when the server had to fall back to similar food (`similar`), the
- * tab and the grey word say "Similar …"; otherwise they say the dish. Nothing at all → Empty (both) + a map-app search.
+ * tab and the grey word say "Similar dishes"; otherwise they say the dish. Nothing at all → Empty (both) + a map-app search.
  * The map button → every pin of the result, the tapped one's card at the bottom, "List" to go back.
  */
 export default function EatNearby() {
@@ -115,9 +112,13 @@ export default function EatNearby() {
   useEffect(() => { setSel(0); }, [key]);
   const pinned = useMemo(() => (places ?? []).filter((p) => p.lat != null && p.lon != null), [places]);
 
-  // The one tab (and the grey word after "Nearby"): the dish, or "Similar soups" / "Similar dishes" after a fallback.
-  const similar = places?.length ? current?.similar ?? null : null;
-  const label = !similar ? name : FAMILIES.includes(similar) ? t(`nearbyPlaces.similarKind.${similar}`) : t('nearbyPlaces.similarDishes');
+  // The one tab (and the grey word after "Nearby"): the dish, or "Similar dishes" after a fallback (any `similar`).
+  const similar = !!places?.length && !!current?.similar;
+  const label = similar ? t('nearbyPlaces.similarDishes') : name;
+  // The title row ("Nearby" + grey word, 848:13143) always shows the English copy, like the shared header's title;
+  // screen readers get the user's language.
+  const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
+  const titleWord = similar ? en('nearbyPlaces.similarDishes') : name;
 
   // Map-app hand-off (src/lib/mapApps): saved or only app → straight there; otherwise the picker.
   const search = async (s: MapSearch) => {
@@ -251,9 +252,9 @@ export default function EatNearby() {
 
         <View style={styles.titleBlock}>
           <Text variant="Overline" color="fg/secondary" numberOfLines={1}>{(where ? `${dateLabel} · ${where}` : dateLabel).toUpperCase()}</Text>
-          <View style={styles.title}>
-            <Text variant="Display/XL" accessibilityRole="header">{t('nearbyPlaces.title')}</Text>
-            <Text variant="Display/Quote" color="fg/secondary" numberOfLines={1} style={styles.shrink}>{label}</Text>
+          <View style={styles.title} accessible accessibilityRole="header" accessibilityLabel={`${t('nearbyPlaces.title')} ${label}`}>
+            <Text variant="Display/XL">{en('nearbyPlaces.title')}</Text>
+            <Text variant="Display/Quote" color="fg/secondary" numberOfLines={1} style={styles.shrink}>{titleWord}</Text>
           </View>
           {f ? (
             <View style={[styles.weather, elevation['Elevation/3 Float'], { borderColor: color('bg/subtle') }]}>

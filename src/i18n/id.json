@@ -1392,21 +1392,7 @@
     "affordable": "Terjangkau",
     "emptyBothTitle": "Tidak ada {{dish}} atau yang serupa di dekat sini",
     "emptyBothBody": "Cari di area yang lebih luas di aplikasi peta",
-    "searchInMapApp": "Cari di aplikasi peta",
-    "similarKind": {
-      "burger": "Burger serupa",
-      "noodle": "Mi serupa",
-      "curry": "Kari serupa",
-      "dumpling": "Pangsit serupa",
-      "soup": "Sup serupa",
-      "rice": "Nasi serupa",
-      "seafood": "Seafood serupa",
-      "meat": "Daging panggang serupa",
-      "pizza": "Pizza serupa",
-      "salad": "Salad serupa",
-      "dessert": "Dessert serupa",
-      "bread": "Roti serupa"
-    }
+    "searchInMapApp": "Cari di aplikasi peta"
   },
   "mapApps": {
     "title": "Buka dengan",

@@ -1055,18 +1055,6 @@ affordable=Giá phải chăng
 emptyBothTitle=Không có {{dish}} hay món tương tự gần đây
 emptyBothBody=Tìm rộng hơn trong ứng dụng bản đồ
 searchInMapApp=Tìm trong ứng dụng bản đồ
-similarKind.burger=Burger tương tự
-similarKind.noodle=Món mì tương tự
-similarKind.curry=Cà ri tương tự
-similarKind.dumpling=Há cảo tương tự
-similarKind.soup=Món canh tương tự
-similarKind.rice=Món cơm tương tự
-similarKind.seafood=Hải sản tương tự
-similarKind.meat=Món nướng tương tự
-similarKind.pizza=Pizza tương tự
-similarKind.salad=Salad tương tự
-similarKind.dessert=Tráng miệng tương tự
-similarKind.bread=Bánh mì tương tự
 [settings]
 searchLanguages=Tìm ngôn ngữ
 [home]

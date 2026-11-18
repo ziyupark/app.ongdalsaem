@@ -1055,18 +1055,6 @@ affordable=Terjangkau
 emptyBothTitle=Tidak ada {{dish}} atau yang serupa di dekat sini
 emptyBothBody=Cari di area yang lebih luas di aplikasi peta
 searchInMapApp=Cari di aplikasi peta
-similarKind.burger=Burger serupa
-similarKind.noodle=Mi serupa
-similarKind.curry=Kari serupa
-similarKind.dumpling=Pangsit serupa
-similarKind.soup=Sup serupa
-similarKind.rice=Nasi serupa
-similarKind.seafood=Seafood serupa
-similarKind.meat=Daging panggang serupa
-similarKind.pizza=Pizza serupa
-similarKind.salad=Salad serupa
-similarKind.dessert=Dessert serupa
-similarKind.bread=Roti serupa
 [settings]
 searchLanguages=Cari bahasa
 [home]
