@@ -187,7 +187,7 @@ function Global() {
   );
   const tags = useMemo(() => (dishes ? topTags(dishes, 'moods', 6) : []), [dishes]);
   useEffect(() => { if (tags.length && (!tag || !tags.includes(tag))) setTag(tags[0]); }, [tags, tag]);
-  const tagged = (dishes ?? []).filter((d) => tag && d.moods.includes(tag)).slice(0, 2);
+  const tagged = (dishes ?? []).filter((d) => tag && d.moods.includes(tag)).slice(0, 3);
   const tagLabel = (k: string) => (i18n.exists(`share.moods.${k}`) ? t(`share.moods.${k}`) : k);
   // The carousel shows the nearest few; the more button opens every holiday (app/holidays.tsx).
   const festive = useMemo(() => upcomingFestive().slice(0, FESTIVE_CAROUSEL), []);
@@ -209,7 +209,7 @@ function Global() {
     />
   );
 
-  // Explore: Story of the day → Our area → Trending Bites → Holidays around the world → Trending tags.
+  // Explore: Story of the day → Our area → Trending Bites → Trending tags → Holidays around the world.
   return (
     <View>
       {/* Group 88:3081 — p22 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
@@ -270,15 +270,7 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — p42 · gap 6: title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
-      <View style={styles.sectionS}>
-        <SectionHeader title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-          {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
-        </ScrollView>
-      </View>
-
-      {/* Trending tags 435:366 — p42 · gap 9: header → chips → 2 Food Cards (rows inset p4, gap 12). */}
+      {/* Trending tags 435:366 — p42 · gap 9: header → chips → up to 3 Food Cards (rows inset p4, gap 12). */}
       {tags.length ? (
         <View style={styles.sectionM}>
           <SectionHeader title={t('community.trendingTags')} onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
@@ -288,6 +280,14 @@ function Global() {
           <View style={styles.rows}>{tagged.map(row)}</View>
         </View>
       ) : null}
+
+      {/* Group · Festive 398:9710 — p42 · gap 6: title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
+      <View style={styles.sectionS}>
+        <SectionHeader title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
+          {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
+        </ScrollView>
+      </View>
 
     </View>
   );
