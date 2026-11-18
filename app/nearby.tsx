@@ -365,9 +365,9 @@ const styles = StyleSheet.create({
   // Small Weather Card (848:13120) — the Weather Card's Now row only: glass surface, radius xl, padding 12 16.
   weather: { borderRadius: radius.xl, borderWidth: 1, paddingHorizontal: space[16], paddingVertical: space[12], overflow: 'hidden', alignSelf: 'stretch' },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  // temp (padding x 8) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2) · gap 14 · mood orb 56.
+  // temp (padding 1 · 8 · 4 · 8, 883:13643) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2) · gap 14 · mood orb 56.
   nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  tempBox: { paddingHorizontal: space[8], alignItems: 'center', justifyContent: 'center' },
+  tempBox: { paddingHorizontal: space[8], paddingTop: 1, paddingBottom: space[4], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
   wOrb: { width: space[56], height: space[56], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },

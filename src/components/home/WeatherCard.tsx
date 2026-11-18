@@ -150,9 +150,9 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
 const styles = StyleSheet.create({
   card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden', alignSelf: 'stretch' },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  // Now 876:13581 — temp (padding x 8) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2).
+  // Now 876:13581 — temp (padding 1 · 8 · 4 · 8, 883:13643) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2).
   nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  tempBox: { paddingHorizontal: space[8], alignItems: 'center', justifyContent: 'center' },
+  tempBox: { paddingHorizontal: space[8], paddingTop: 1, paddingBottom: space[4], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
   orb: { width: 56, height: 56, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
