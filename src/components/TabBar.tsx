@@ -128,6 +128,8 @@ export function TabBar({ active, progress, onTab, onCreate }: Props) {
               tab={tab}
               label={t(`home.tabs.${tab.key}`)}
               active={tab.key === active}
+              i={i}
+              activeIndex={index}
               onPress={() => press(tab.key, i)}
             />
           ))}
@@ -159,7 +161,21 @@ function TabGlyph({ tab, active }: { tab: (typeof TABS)[number]; active: boolean
   );
 }
 
-function TabItem({ tab, label, active, onPress }: { tab: (typeof TABS)[number]; label: string; active: boolean; onPress: () => void }) {
+type ItemProps = { tab: (typeof TABS)[number]; label: string; active: boolean; i: number; activeIndex: number; onPress: () => void };
+
+/**
+ * Both looks are drawn on top of each other and cross-fade with the pill's position (UI thread), so the Dusk icon and
+ * fg/accent label arrive together with the pill instead of waiting for the next tab's screen to render.
+ */
+function TabItem({ tab, label, active, i, activeIndex, onPress }: ItemProps) {
+  const on = useAnimatedStyle(() => {
+    const x = pillX.value < 0 ? activeIndex : pillX.value;
+    return { opacity: interpolate(Math.abs(x - i), [0, 1], [1, 0], Extrapolation.CLAMP) };
+  });
+  const off = useAnimatedStyle(() => {
+    const x = pillX.value < 0 ? activeIndex : pillX.value;
+    return { opacity: interpolate(Math.abs(x - i), [0, 1], [0, 1], Extrapolation.CLAMP) };
+  });
   return (
     <Pressable
       accessibilityRole="tab"
@@ -168,8 +184,14 @@ function TabItem({ tab, label, active, onPress }: { tab: (typeof TABS)[number]; 
       onPress={onPress}
       style={styles.item}
     >
-      <TabGlyph tab={tab} active={active} />
-      <Text variant="Nav label" color={active ? 'fg/accent' : 'fg/default'} numberOfLines={1}>{label}</Text>
+      <Animated.View style={[styles.look, off]}>
+        <TabGlyph tab={tab} active={false} />
+        <Text variant="Nav label" color="fg/default" numberOfLines={1}>{label}</Text>
+      </Animated.View>
+      <Animated.View style={[StyleSheet.absoluteFill, styles.look, on]}>
+        <TabGlyph tab={tab} active />
+        <Text variant="Nav label" color="fg/accent" numberOfLines={1}>{label}</Text>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -268,7 +290,8 @@ const styles = StyleSheet.create({
   bar: { position: 'absolute', left: SIDE, top: BOTTOM - EXP.h, height: EXP.h, borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },
   items: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: ITEMS_PAD },
   pill: { position: 'absolute', left: ITEMS_PAD, top: '50%', marginTop: -27, height: 54, borderRadius: radius.full, borderWidth: 0.5 },
-  item: { flex: 1, height: 54, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center', gap: 2 },
+  item: { flex: 1, height: 54, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  look: { alignItems: 'center', justifyContent: 'center', gap: 2 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fab: { position: 'absolute', top: BOTTOM - EXP.fab, width: EXP.fab, height: EXP.fab, borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },
 });
