@@ -8,7 +8,7 @@ import { Button } from '../../src/components/Button';
 import { FlagTag, FoodGrid, ViralBadge } from '../../src/components/community/Parts';
 import { Icon } from '../../src/components/Icon';
 import { MessageCircle } from '../../src/components/icons/custom';
-import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
+import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
 import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
 import { fetchPostsByName, findViral, type CardDish, type ViralItem } from '../../src/services/community';
@@ -64,7 +64,7 @@ export default function ViralScreen() {
     bar.onY(contentOffset.y);
     if (contentOffset.y + layoutMeasurement.height > contentSize.height - 400) loadMore();
   };
-  const onTab = (k: TabKey) => router.replace(`/${k}`);
+  const onTab = (k: TabKey) => goTab(k);
   const share = () => {
     resetShareDraft();
     updateShareDraft({ name });

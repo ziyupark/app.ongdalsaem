@@ -1,33 +1,31 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { supabase } from '../src/lib/supabase';
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
+import { supabase } from '../../src/lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import Animated from 'react-native-reanimated';
-import { useWashScroll } from '../src/lib/useWashScroll';
-import { useTabEnter } from '../src/lib/tabMotion';
-import { syncPush } from '../src/lib/push';
+import { useWashScroll } from '../../src/lib/useWashScroll';
+import { syncPush } from '../../src/lib/push';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScreenHeader, ScreenWash } from '../src/components/ScreenHeader';
-import { TabBar, useTabBarScroll } from '../src/components/TabBar';
-import { LocationCard, NearbyCard, PickCard } from '../src/components/home/Cards';
-import { FeedLoader } from '../src/components/home/FeedLoader';
-import { FeedPost, type FeedPostData } from '../src/components/home/FeedPost';
-import { HomeSkeleton } from '../src/components/home/HomeSkeleton';
-import { WeatherCard, type SlotView } from '../src/components/home/WeatherCard';
-import { Toast } from '../src/components/Toast';
-import { mealAt, mealTimeline, type Meal } from '../src/lib/meals';
-import { resetShareDraft, updateShareDraft } from '../src/lib/shareDraft';
-import { useDietPrefs } from '../src/lib/dietPrefs';
-import { fetchPool, pickForSlot, pickToday, sameGroup, type Ctx, type PoolDish } from '../src/services/recommend';
-import { resetOnboardingForDev, signOut } from '../src/services/auth';
-import { fetchFeed, fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
-import { timeAgo } from '../src/lib/time';
-import { displayTemp, usePrefs } from '../src/lib/prefs';
-import { getHere, placeLabel, useHere } from '../src/lib/useHere';
-import { fetchMyFavoriteTags, saveLocationChoice } from '../src/services/profile';
-import { tempAt, type Forecast } from '../src/services/weather';
-import { space, useTheme, type WeatherMood } from '../src/theme';
+import { ScreenHeader, ScreenWash } from '../../src/components/ScreenHeader';
+import { goTab, TabBar, useTabBarScroll } from '../../src/components/TabBar';
+import { LocationCard, NearbyCard, PickCard } from '../../src/components/home/Cards';
+import { FeedLoader } from '../../src/components/home/FeedLoader';
+import { FeedPost, type FeedPostData } from '../../src/components/home/FeedPost';
+import { HomeSkeleton } from '../../src/components/home/HomeSkeleton';
+import { WeatherCard, type SlotView } from '../../src/components/home/WeatherCard';
+import { Toast } from '../../src/components/Toast';
+import { mealAt, mealTimeline, type Meal } from '../../src/lib/meals';
+import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
+import { useDietPrefs } from '../../src/lib/dietPrefs';
+import { fetchPool, pickForSlot, pickToday, sameGroup, type Ctx, type PoolDish } from '../../src/services/recommend';
+import { resetOnboardingForDev, signOut } from '../../src/services/auth';
+import { fetchFeed, fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
+import { timeAgo } from '../../src/lib/time';
+import { displayTemp, usePrefs } from '../../src/lib/prefs';
+import { getHere, placeLabel, useHere } from '../../src/lib/useHere';
+import { fetchMyFavoriteTags, saveLocationChoice } from '../../src/services/profile';
+import { tempAt, type Forecast } from '../../src/services/weather';
+import { space, useTheme, type WeatherMood } from '../../src/theme';
 
 type HomeState =
   | { kind: 'loading' }
@@ -122,7 +120,7 @@ export default function HomeScreen() {
 
   // Mood wash scrolls away with the content and fades out (gone after ~300 pt).
   const wash = useWashScroll();
-  const enter = useTabEnter();
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
   // 9.4 Today's pick push: the first Home visit is where we ask for notification permission (iOS asks only once).
   useEffect(() => { syncPush({ ask: true }); }, []);
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -225,6 +223,7 @@ export default function HomeScreen() {
       <ScreenWash scrollStyle={wash.style} />
 
       <ScrollView
+        ref={scroll}
         onScroll={onScroll}
         scrollEventThrottle={16}
         scrollEnabled={state.kind !== 'loading'}
@@ -232,11 +231,11 @@ export default function HomeScreen() {
       >
         <ScreenHeader right="notifications" onLogoLongPress={devMenu} />
         {state.kind === 'loading' ? (
-          <Animated.View entering={enter}>
+          <View>
             <HomeSkeleton />
-          </Animated.View>
+          </View>
         ) : state.kind === 'location-off' ? (
-          <Animated.View entering={enter}>
+          <View>
             <View style={styles.px}>
               <LocationCard onChooseCity={() => router.push('/settings/city')} onAllowLocation={allowLocation} busy={allowing} />
             </View>
@@ -259,9 +258,9 @@ export default function HomeScreen() {
               ) : null}
             </View>
             <View style={{ height: 110 }} />
-          </Animated.View>
+          </View>
         ) : (
-          <Animated.View entering={enter}>
+          <View>
             <View style={styles.px}>
               <WeatherCard
                 tempC={f?.tempC}
@@ -311,12 +310,12 @@ export default function HomeScreen() {
               {posts.length >= 20 ? <FeedLoader /> : null}
               <View style={{ height: 96 }} />
             </View>
-          </Animated.View>
+          </View>
         )}
       </ScrollView>
 
       <Toast visible={!!toast} message={toast ?? ''} onHide={() => setToast(null)} bottom={insets.bottom + 96} />
-      <TabBar active="home" progress={bar.progress} onTab={(k) => { if (k === 'profile') router.replace('/profile'); if (k === 'timer') router.replace('/timer'); if (k === 'community') router.replace('/community'); }} onCreate={() => router.push('/share/pick')} />
+      <TabBar active="home" progress={bar.progress} onTab={(k) => (k === 'home' ? scroll.current?.scrollTo({ y: 0, animated: true }) : goTab(k))} onCreate={() => router.push('/share/pick')} />
     </View>
   );
 }

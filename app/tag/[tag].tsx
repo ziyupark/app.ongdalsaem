@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoryRow, CollectionTop, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
 import { EmptyState, FoodGrid } from '../../src/components/community/Parts';
 import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
-import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
+import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
 import { UnderlineTabs } from '../../src/components/UnderlineTabs';
 import { displayTemp } from '../../src/lib/prefs';
@@ -69,7 +69,7 @@ export default function TagScreen() {
     bar.onY(e.nativeEvent.contentOffset.y);
     wash.onY(e.nativeEvent.contentOffset.y);
   };
-  const onTab = (k: TabKey) => router.replace(`/${k}`);
+  const onTab = (k: TabKey) => goTab(k);
   const shareTag = () => {
     const link = Linking.createURL(`/tag/${encodeURIComponent(key)}`);
     Share.share({ message: `#${label} — ${link}`, url: link }).catch(() => undefined);

@@ -4,9 +4,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { NotebookPen, Utensils, type LucideIcon } from 'lucide-react-native';
 import { Bookmark } from '../icons/custom';
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ComponentProps } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type FlatListProps, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { AcornIcon } from '../AcornIcon';
 import { BottomSheet } from '../BottomSheet';
 import { Button } from '../Button';
@@ -15,15 +15,13 @@ import { DiaryView } from './DiaryView';
 import { SavedView } from './SavedView';
 import { WifiOff } from 'lucide-react-native';
 import { Icon } from '../Icon';
-import { TabBar, useTabBarScroll, type TabKey } from '../TabBar';
+import { goTab, TabBar, useTabBarScroll, type TabKey } from '../TabBar';
 import { ScreenHeader, ScreenWash } from '../ScreenHeader';
 import { Text } from '../Text';
 import { UnderlineTabs } from '../UnderlineTabs';
 import { cached } from '../../lib/cache';
 import { useHere } from '../../lib/useHere';
-import Animated from 'react-native-reanimated';
 import { useWashScroll } from '../../lib/useWashScroll';
-import { useTabEnter } from '../../lib/tabMotion';
 import { displayTemp, usePrefs } from '../../lib/prefs';
 import { fetchAcornTotal, fetchMyMarks, fetchProfileDishes, setAcorn, type DishSummary, type ProfileTab } from '../../services/foods';
 import { getMyProfile, MAX_BIO, updateMyAvatar, updateMyBio, type MyProfile } from '../../services/profile';
@@ -40,13 +38,6 @@ const TABS: ProfileTab[] = ['dishes', 'diary', 'saved'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
 const TAB_ICON: Record<ProfileTab, LucideIcon> = { dishes: Utensils, saved: Bookmark, diary: NotebookPen };
 
-/** Tab-switch entrance for the grid rows too (they mount with the screen) — see useTabEnter. */
-const EnterCtx = createContext<ReturnType<typeof useTabEnter>>(undefined);
-type CellProps = ComponentProps<NonNullable<FlatListProps<DishSummary>['CellRendererComponent']>>;
-function EnterCell({ children, style, onLayout, onFocusCapture }: CellProps) {
-  const entering = useContext(EnterCtx);
-  return <Animated.View entering={entering} style={style} onLayout={onLayout} onFocusCapture={onFocusCapture}>{children}</Animated.View>;
-}
 type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: Date };
 
 /**
@@ -114,7 +105,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 
   // Mood wash scrolls away with the content and fades out (gone after ~300 pt).
   const wash = useWashScroll();
-  const enter = useTabEnter();
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     wash.onY(y);
@@ -122,16 +112,12 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     bar.onY(y, contentSize.height - layoutMeasurement.height);
   };
 
-  const onTab = (k: TabKey) => {
-    if (k === 'home') router.replace('/home');
-    if (k === 'timer') router.replace('/timer');
-    if (k === 'community') router.replace('/community');
-  };
+  const onTab = (k: TabKey) => (k === 'profile' ? listRef.current?.scrollToOffset({ offset: 0, animated: true }) : goTab(k));
 
   // Another cook: their public profile + whether I follow them. Opening yourself goes to the real Profile tab.
   const loadOther = async (id: string): Promise<MyProfile | null> => {
     const me = await myUserId();
-    if (me === id) { router.replace('/profile'); return null; }
+    if (me === id) { goTab('profile'); return null; }
     const { data } = await supabase.from('profiles').select('id, display_name, username, avatar_url, city, bio').eq('id', id).maybeSingle();
     if (!data) { setMissing(true); return null; }
     if (me) {
@@ -227,7 +213,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const header = (
     <>
     <ScreenHeader right={isMe ? 'settings' : 'none'} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
-    <Animated.View entering={enter} style={styles.header}>
+    <View style={styles.header}>
       {/* Frame 10 — card → 12 → tabs. */}
       <View style={styles.cardGroup}>
       <View style={[styles.card, { borderColor: color('bg/subtle') }]}>
@@ -300,17 +286,15 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           <Text variant="Body/S Strong" color="fg/inverse" style={styles.flex1}>{t('profile.offline')}</Text>
         </View>
       ) : null}
-    </Animated.View>
+    </View>
     </>
   );
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
-      <EnterCtx.Provider value={enter}>
       <FlatList
         ref={listRef}
-        CellRendererComponent={EnterCell}
         data={tab === 'dishes' ? data ?? [] : []}
         extraData={[given, acornDelta]} // re-render tiles when an acorn is given / taken back
         keyExtractor={(d) => d.id}
@@ -320,13 +304,13 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         contentContainerStyle={styles.grid}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        ListFooterComponent={tab === 'saved' ? <Animated.View entering={enter}><SavedView onOffline={onOffline} /></Animated.View> : tab === 'diary' ? <Animated.View entering={enter}><DiaryView onOffline={onOffline} focus={focus} /></Animated.View> : undefined}
+        ListFooterComponent={tab === 'saved' ? <SavedView onOffline={onOffline} /> : tab === 'diary' ? <DiaryView onOffline={onOffline} focus={focus} /> : undefined}
         ListEmptyComponent={tab !== 'dishes' ? undefined : 
           data == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : (
-            <Animated.View entering={enter} style={styles.empty}>
+            <View style={styles.empty}>
               <Text variant="Body/M" color="fg/secondary" style={styles.centerText}>{isMe ? t(`profile.empty.${tab}`) : missing ? t('cook.missing') : t('cook.noDishes')}</Text>
               {isMe ? <Button label={t('profile.shareFirst')} variant="Outline" size="M" onPress={() => router.push('/share/pick')} /> : null}
-            </Animated.View>
+            </View>
           )
         }
         renderItem={({ item }) => (
@@ -340,7 +324,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           />
         )}
       />
-      </EnterCtx.Provider>
       <BottomSheet visible={bioOpen} onClose={() => setBioOpen(false)} title={t('profile.statusTitle')}>
         <View style={[styles.bioField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
           <TextInput
@@ -357,7 +340,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         </View>
         <Button label={t('common.save')} size="L" onPress={saveBio} loading={bioSaving} />
       </BottomSheet>
-      <TabBar active={isMe ? 'profile' : 'community'} progress={bar.progress} onTab={(k) => (isMe ? onTab(k) : router.replace(k === 'home' ? '/home' : k === 'timer' ? '/timer' : k === 'profile' ? '/profile' : '/community'))} onCreate={() => router.push('/share/pick')} />
+      <TabBar active={isMe ? 'profile' : 'community'} progress={bar.progress} onTab={(k) => (isMe ? onTab(k) : goTab(k))} onCreate={() => router.push('/share/pick')} />
     </View>
   );
 }

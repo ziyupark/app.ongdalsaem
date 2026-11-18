@@ -2,37 +2,36 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Chip } from '../src/components/Chip';
+import { Chip } from '../../src/components/Chip';
 import {
   Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag, ViralBadge,
-} from '../src/components/community/Parts';
-import { ChallengesTab } from '../src/components/community/ChallengesTab';
-import { OurArea } from '../src/components/community/Nearby';
-import { upcomingFestive } from '../src/lib/holidays';
-import { FestiveCard } from '../src/components/community/FestiveCard';
-import { ScreenHeader, ScreenWash, useScreenInk } from '../src/components/ScreenHeader';
+} from '../../src/components/community/Parts';
+import { ChallengesTab } from '../../src/components/community/ChallengesTab';
+import { OurArea } from '../../src/components/community/Nearby';
+import { upcomingFestive } from '../../src/lib/holidays';
+import { FestiveCard } from '../../src/components/community/FestiveCard';
+import { ScreenHeader, ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
 import Animated, {
   scrollTo, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useReducedMotion, useSharedValue, type SharedValue,
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { useTabEnter } from '../src/lib/tabMotion';
-import { useWashScroll } from '../src/lib/useWashScroll';
-import { AcornTag, WeatherTag } from '../src/components/PhotoTags';
-import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
-import { UnderlineTabs } from '../src/components/UnderlineTabs';
-import { Text } from '../src/components/Text';
-import { CUSTOM_MOOD_ICON, MOOD_TAGS } from '../src/lib/tags';
-import { timeAgo } from '../src/lib/time';
-import { follow } from '../src/services/activity';
+import { useWashScroll } from '../../src/lib/useWashScroll';
+import { AcornTag, WeatherTag } from '../../src/components/PhotoTags';
+import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
+import { UnderlineTabs } from '../../src/components/UnderlineTabs';
+import { Text } from '../../src/components/Text';
+import { CUSTOM_MOOD_ICON, MOOD_TAGS } from '../../src/lib/tags';
+import { timeAgo } from '../../src/lib/time';
+import { follow } from '../../src/services/activity';
 import {
   fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay, fetchSuggestedPlates,
   fetchViralBites, localDate, localMidnight, topTags, type CardDish, type FollowingItem, type ViralItem,
-} from '../src/services/community';
-import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../src/components/community/PlateTable';
-import { fetchMyMarks, setAcorn, setSaved } from '../src/services/foods';
-import { cellsAround } from '../src/lib/geohash';
-import { useHere } from '../src/lib/useHere';
-import { space, useTheme } from '../src/theme';
+} from '../../src/services/community';
+import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
+import { fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
+import { cellsAround } from '../../src/lib/geohash';
+import { useHere } from '../../src/lib/useHere';
+import { space, useTheme } from '../../src/theme';
 
 /** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
 const FESTIVE_CAROUSEL = 8;
@@ -58,7 +57,6 @@ export default function Community() {
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const reduce = useReducedMotion();
-  const enter = useTabEnter();
   const first = SEGS.includes(params.tab as Seg) ? (params.tab as Seg) : 'global';
   const [seg, setSegState] = useState<Seg>(first);
   const segRef = useRef(seg);
@@ -197,11 +195,7 @@ export default function Community() {
     toJoin();
   }, [toJoin]);
 
-  const onTab = (k: TabKey) => {
-    if (k === 'home') router.replace('/home');
-    if (k === 'timer') router.replace('/timer');
-    if (k === 'profile') router.replace('/profile');
-  };
+  const onTab = (k: TabKey) => (k === 'community' ? outer.current?.scrollTo({ y: 0, animated: true }) : goTab(k));
 
   const idx = SEGS.indexOf(seg);
   // Pager height (0 = not measured yet → natural). Each page is clipped to it, so the pager never scrolls vertically.
@@ -223,7 +217,7 @@ export default function Community() {
         scrollEventThrottle={16}
       >
         <ScreenHeader right="notifications" />
-        <Animated.View entering={enter} onLayout={(e) => { wrapY.current = e.nativeEvent.layout.y; placeTop(); }}>
+        <Animated.View onLayout={(e) => { wrapY.current = e.nativeEvent.layout.y; placeTop(); }}>
         {/* Block · Tabs 330:7325 — no fill: the mood wash runs behind the title and the tabs. */}
         <View>
           <UnderlineTabs

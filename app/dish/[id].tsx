@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { goTab } from '../../src/components/TabBar';
 import { StatusBar } from 'expo-status-bar';
 import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils, WifiOff } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -167,14 +168,14 @@ export default function PostDetail() {
     await startTimer(st.text.length > 40 ? `${st.text.slice(0, 40)}…` : st.text, st.timerSec, {
       foodId: dish.id, dishName: dish.name, step: i + 1, stepCount: dish.steps.length, next: dish.steps[i + 1]?.text,
     });
-    router.push('/timer');
+    goTab('timer');
   };
 
   const cookAlong = () => {
     if (!dish) return;
     const first = dish.steps.findIndex((s) => !!s.timerSec);
     if (first >= 0) return startStep(first);
-    router.push('/timer');
+    goTab('timer');
   };
 
   const onMore = () => {
@@ -238,7 +239,7 @@ export default function PostDetail() {
   }
 
   const firstName = dish.creator.name.split(' ')[0];
-  const openAuthor = () => (mine ? router.push('/profile') : router.push(`/cook/${dish.creator.id}`));
+  const openAuthor = () => (mine ? goTab('profile') : router.push(`/cook/${dish.creator.id}`));
   const meal = dish.meals.find(isPresetMeal);
 
   const actionBar = (
@@ -358,7 +359,7 @@ export default function PostDetail() {
       <Toast visible={toast} message={t('dish.ateToast')} action={t('dish.undo')} onAction={undoAte} onHide={hideToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <Toast visible={savedToast} message={t('share.changesSaved')} onHide={hideSavedToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
 
-      <Toast visible={shopToast > 0} message={t('shopping.added', { n: shopToast })} onPress={() => { setShopToast(0); router.push({ pathname: '/profile', params: { tab: 'diary', focus: 'shopping', at: String(Date.now()) } }); }} onHide={hideShopToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
+      <Toast visible={shopToast > 0} message={t('shopping.added', { n: shopToast })} onPress={() => { setShopToast(0); goTab('profile', { tab: 'diary', focus: 'shopping', at: String(Date.now()) }); }} onHide={hideShopToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <Toast visible={planToast} message={t('mealPlan.added')} onHide={hidePlanToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <AddToPlanSheet visible={sheet === 'plan'} dish={{ id: dish.id, name: dish.name, photo: dish.photo }} onClose={() => setSheet(null)} onAdded={() => { setSheet(null); setPlanToast(true); }} />
       <SendToSheet visible={sheet === 'send'} dish={{ id: dish.id, name: dish.name }} onClose={() => setSheet(null)} />

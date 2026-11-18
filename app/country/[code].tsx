@@ -8,7 +8,7 @@ import { ActivityIndicator, ScrollView, Share, StyleSheet, useWindowDimensions, 
 import { CategoryRow, CollectionTop, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
 import { countryName, EmptyState, FoodGrid } from '../../src/components/community/Parts';
 import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
-import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
+import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
 import { UnderlineTabs } from '../../src/components/UnderlineTabs';
 import { displayTemp } from '../../src/lib/prefs';
@@ -86,7 +86,7 @@ export default function CountryScreen() {
     const link = Linking.createURL(`/country/${cc}`);
     Share.share({ message: `#${name} — ${link}`, url: link }).catch(() => undefined);
   };
-  const onTab = (k: TabKey) => router.replace(`/${k}`);
+  const onTab = (k: TabKey) => goTab(k);
   const pickCity = (c: string) => { setCity(c); setCategory(null); setMeal(null); };
 
   return (

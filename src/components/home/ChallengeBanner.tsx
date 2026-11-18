@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { goTab } from '../TabBar';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { startChallengeDraft } from '../../lib/shareDraft';
@@ -16,7 +17,7 @@ export function ChallengeBanner({ c }: { c: Challenge }) {
     router.push('/share/pick');
   };
   return (
-    <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/community', params: { tab: 'challenges' } })} style={[styles.card, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+    <Pressable accessibilityRole="button" onPress={() => goTab('community', { tab: 'challenges', at: String(Date.now()) })} style={[styles.card, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
       {c.country ? <FlagTag code={c.country} /> : null}
       <View style={styles.flex}>
         <Text variant="Body/S Strong" numberOfLines={1}>{c.title}</Text>

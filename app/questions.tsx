@@ -11,7 +11,7 @@ import { SearchField } from '../src/components/community/Parts';
 import { ReportSheet } from '../src/components/dish/ReportSheet';
 import { Icon } from '../src/components/Icon';
 import { MessageCircle } from '../src/components/icons/custom';
-import { FAB_SIZE, TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
+import { FAB_SIZE, goTab, TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
 import { useTemp } from '../src/lib/prefs';
 import { timeAgo } from '../src/lib/time';
@@ -100,12 +100,7 @@ export default function Questions() {
     }
   };
 
-  const onTab = (k: TabKey) => {
-    if (k === 'home') router.replace('/home');
-    if (k === 'community') router.replace('/community');
-    if (k === 'timer') router.replace('/timer');
-    if (k === 'profile') router.replace('/profile');
-  };
+  const onTab = (k: TabKey) => goTab(k);
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => bar.onY(e.nativeEvent.contentOffset.y);
 
   const menu = (q: Question) => {

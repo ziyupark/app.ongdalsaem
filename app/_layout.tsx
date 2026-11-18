@@ -33,7 +33,7 @@ function TimerDoneToast() {
       duration={3000}
       message={t('timer.labelDone', { label: timer.label })}
       onHide={hide}
-      onPress={() => { hide(); focusTimer(timer.id); router.navigate('/timer'); }}
+      onPress={() => { hide(); focusTimer(timer.id); router.dismissTo('/timer'); }}
       bottom={insets.bottom + 96}
     />
   );
@@ -49,13 +49,10 @@ function Root() {
         <Stack.Screen name="index" options={{ animation: 'fade' }} />
         <Stack.Screen name="welcome" options={{ animation: 'fade', gestureEnabled: false }} />
         <Stack.Screen name="sign-in" options={{ animation: 'fade', gestureEnabled: false }} />
-        {/* Tabs (Home · Community · Timer · Profile) swap instantly — docs/03-ia-and-flows.md "탭 전환 = 즉시". */}
-        <Stack.Screen name="home" options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="profile" options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="community" options={{ animation: 'none', gestureEnabled: false }} />
+        {/* Tabs (Home · Community · Timer · Profile) — one Tabs navigator, swaps instantly (docs/03-ia-and-flows.md "탭 전환 = 즉시"). */}
+        <Stack.Screen name="(tabs)" options={{ animation: 'none', gestureEnabled: false }} />
         {/* 7.1 has no back button in Figma — swipe anywhere to go back. */}
         <Stack.Screen name="dish/[id]" options={{ fullScreenGestureEnabled: true }} />
-        <Stack.Screen name="timer" options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="settings/document" options={{ presentation: 'transparentModal', animation: 'fade' }} />
         {/* 8.x share flow: no swipe-back mid-form (X asks before discarding). */}
         <Stack.Screen name="share/pick" options={{ animation: 'slide_from_bottom', gestureEnabled: false }} />

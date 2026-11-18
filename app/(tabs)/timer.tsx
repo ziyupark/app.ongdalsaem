@@ -1,24 +1,22 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { Check, Clock, Pause, Play, Plus, RotateCcw, Timer } from 'lucide-react-native';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';
 import { Alert, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import Animated from 'react-native-reanimated';
-import { Chip } from '../src/components/Chip';
-import { Icon } from '../src/components/Icon';
-import { ScreenHeader, ScreenWash } from '../src/components/ScreenHeader';
-import { TimerSheet } from '../src/components/share/TimerSheet';
-import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
-import { Text } from '../src/components/Text';
-import { TimerRing } from '../src/components/timer/TimerRing';
-import { useWashScroll } from '../src/lib/useWashScroll';
-import { useTabEnter } from '../src/lib/tabMotion';
+import { Chip } from '../../src/components/Chip';
+import { Icon } from '../../src/components/Icon';
+import { ScreenHeader, ScreenWash } from '../../src/components/ScreenHeader';
+import { TimerSheet } from '../../src/components/share/TimerSheet';
+import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
+import { Text } from '../../src/components/Text';
+import { TimerRing } from '../../src/components/timer/TimerRing';
+import { useWashScroll } from '../../src/lib/useWashScroll';
 import {
   addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useFocusRequest, useNow, useTimers, type KitchenTimer,
-} from '../src/lib/timers';
-import { elevation, iconRing, radius, space, useTheme } from '../src/theme';
+} from '../../src/lib/timers';
+import { elevation, iconRing, radius, space, useTheme } from '../../src/theme';
 
 /** A timer started this recently before the screen opened is treated as new and takes the big ring. */
 const JUST_STARTED_MS = 10_000;
@@ -91,14 +89,10 @@ export default function KitchenTimerScreen() {
   // Finished timers first, then the rest in their usual order.
   const others = timers.filter((x) => x.id !== featured?.id).sort((a, b) => Number(secondsLeft(b, now) === 0) - Number(secondsLeft(a, now) === 0));
 
-  const onTab = (k: TabKey) => {
-    if (k === 'home') router.replace('/home');
-    if (k === 'community') router.replace('/community');
-    if (k === 'profile') router.replace('/profile');
-  };
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
+  const onTab = (k: TabKey) => (k === 'timer' ? scroll.current?.scrollTo({ y: 0, animated: true }) : goTab(k));
   // Same scrolling as Home: header + wash travel up with the content, the wash fades out, the tab bar hides.
   const wash = useWashScroll();
-  const enter = useTabEnter();
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     wash.onY(y);
@@ -179,9 +173,9 @@ export default function KitchenTimerScreen() {
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <ScreenHeader right="none" />
-        <Animated.View entering={enter}>
+        <View>
         {/* Block · Active timer 88:3084 — p30 20 0: “Food Name” → 13 → ring → 24 → controls → Frame 11 (p20 0 12, Add Timer). */}
         <View style={[styles.active, { paddingTop: 30 }]}>
           {food ? <Text variant="Display/M" numberOfLines={1} style={styles.food}>{`“${food}”`}</Text> : null}
@@ -296,7 +290,7 @@ export default function KitchenTimerScreen() {
           )}
           {timers.length > 0 ? <Text variant="Caption" color="fg/muted">{t('timer.holdToRemove')}</Text> : null}
         </View>
-        </Animated.View>
+        </View>
       </ScrollView>
 
       <TabBar active="timer" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />

@@ -8,7 +8,7 @@ import { ChallengeHero, EntryGrid, Stat } from '../../src/components/community/C
 import { EmptyState, FlagTag } from '../../src/components/community/Parts';
 import { IconButton } from '../../src/components/IconButton';
 import { ScreenWash } from '../../src/components/ScreenHeader';
-import { TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
+import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
 import { useWashScroll } from '../../src/lib/useWashScroll';
 import { fetchChallenge, fetchChallengeEntries, fetchChallenges, type Challenge } from '../../src/services/community';
@@ -63,7 +63,7 @@ export default function ChallengeScreen() {
     bar.onY(e.nativeEvent.contentOffset.y);
     wash.onY(e.nativeEvent.contentOffset.y);
   };
-  const onTab = (k: TabKey) => router.replace(`/${k}`);
+  const onTab = (k: TabKey) => goTab(k);
   const tile = (width - space[20] * 2 - space[8] * (COLS - 1)) / COLS;
   const n = (v: number) => v.toLocaleString(i18n.language);
   const endedOn = useMemo(() => (c ? t('challenge.endedOn', { date: c.endsAt.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' }) }) : ''), [c, t, i18n.language]);

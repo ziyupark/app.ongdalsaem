@@ -7,7 +7,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState, ListCard, ListRow, SearchField } from '../src/components/community/Parts';
 import { Button } from '../src/components/Button';
-import { TabBar } from '../src/components/TabBar';
+import { goTab, TabBar } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { fetchMyTables, fetchTables, setTableJoined, type Table } from '../src/services/community';
@@ -98,7 +98,7 @@ export default function Tables() {
         )}
         </View>
       </ScrollView>
-      <TabBar active="community" onTab={(k) => router.replace(k === 'home' ? '/home' : k === 'timer' ? '/timer' : k === 'profile' ? '/profile' : '/community')} onCreate={() => router.push('/share/pick')} />
+      <TabBar active="community" onTab={goTab} onCreate={() => router.push('/share/pick')} />
     </View>
   );
 }
