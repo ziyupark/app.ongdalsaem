@@ -65,9 +65,9 @@ export function HomeSkeleton() {
         </View>
         <View style={{ gap: space[12] }}>
           <View style={styles.postHead}>
-            <Bone t={t} style={{ width: 32, height: 32, borderRadius: radius.full }} />
+            <Bone t={t} style={{ width: 40, height: 40, borderRadius: radius.full }} />
             <View style={{ gap: space[6] }}>
-              <Bone t={t} style={{ width: 90, height: 12, borderRadius: radius.full }} />
+              <Bone t={t} style={{ width: 90, height: 14, borderRadius: radius.full }} />
               <Bone t={t} style={{ width: 120, height: 10, borderRadius: radius.full }} />
             </View>
           </View>
