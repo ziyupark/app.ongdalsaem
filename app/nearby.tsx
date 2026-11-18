@@ -253,9 +253,9 @@ export default function EatNearby() {
   // Date · place and the weather — the same reading as the shared header (lib/useHere, my location).
   const dateLabel = new Date().toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric' });
   const where = placeLabel(here.place) || f?.city || '';
-  const detail = f
-    ? `${t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) })}${f.until ? t('home.until', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : ''}`
-    : '';
+  // "H 14° · L 8°" on one line, "until 9 PM" on the next (848:13120, same as Home's Weather Card).
+  const detail = f ? t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) }) : '';
+  const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : '';
 
   // ── 2.4 Nearby ──
   return (
@@ -277,10 +277,19 @@ export default function EatNearby() {
             <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
             <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
             <View style={styles.now}>
-              <Text variant="Numeric/XL" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
-              <View style={styles.nowText}>
-                <Text variant="Title/M" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : t('home.noWeather')}</Text>
-                {detail ? <Text variant="Body/S" color="fg/muted" numberOfLines={2}>{detail}</Text> : null}
+              <View style={styles.nowMain}>
+                <View style={styles.tempBox}>
+                  <Text variant="Numeric/XL" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
+                </View>
+                <View style={styles.nowText}>
+                  <Text variant="Title/M" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : t('home.noWeather')}</Text>
+                  {detail ? (
+                    <View style={styles.details}>
+                      <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{detail}</Text>
+                      {until ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{until}</Text> : null}
+                    </View>
+                  ) : null}
+                </View>
               </View>
               {/* Mood orb — the current mood's top colour at 35 %. */}
               <View style={[styles.wOrb, { backgroundColor: f ? withAlpha(moods[f.mood].top, 0.35) : color('bg/muted') }]}>
@@ -356,7 +365,11 @@ const styles = StyleSheet.create({
   // Small Weather Card (848:13120) — the Weather Card's Now row only: glass surface, radius xl, padding 12 16.
   weather: { borderRadius: radius.xl, borderWidth: 1, paddingHorizontal: space[16], paddingVertical: space[12], overflow: 'hidden', alignSelf: 'stretch' },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  nowText: { flex: 1, gap: space[2] },
+  // temp (padding x 8) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2) · gap 14 · mood orb 56.
+  nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
+  tempBox: { paddingHorizontal: space[8], alignItems: 'center', justifyContent: 'center' },
+  nowText: { flex: 1, gap: space[6] },
+  details: { gap: space[2] },
   wOrb: { width: space[56], height: space[56], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   places: { paddingHorizontal: space[20], paddingTop: space[24] + space[6], gap: space[12] },
   forRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
