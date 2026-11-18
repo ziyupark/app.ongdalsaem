@@ -20,7 +20,7 @@ import { Toggle } from '../src/components/Toggle';
 import { UnderlineTabs } from '../src/components/UnderlineTabs';
 import { chooseMapApp, MAP_APP_LABEL, searchInMapApp, setSavedMapApp, type MapAppId, type MapSearch } from '../src/lib/mapApps';
 import { loadMaps } from '../src/lib/optionalNative';
-import { displayTemp, useTemp } from '../src/lib/prefs';
+import { useTemp } from '../src/lib/prefs';
 import { placeLabel, useHere } from '../src/lib/useHere';
 import { foodFamily, formatDistance, PlacesError, searchNearbyPlaces, type NearbyPlace } from '../src/services/places';
 import { elevation, moods, radius, space, useTheme, WEATHER_ICON, withAlpha } from '../src/theme';
@@ -259,7 +259,7 @@ export default function EatNearby() {
   const dateLabel = new Date().toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric' });
   const where = placeLabel(here.place) || f?.city || '';
   const detail = f
-    ? `${t('home.hiLo', { hi: displayTemp(f.hi), lo: displayTemp(f.lo) })}${f.until ? t('home.until', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : ''}`
+    ? `${t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) })}${f.until ? t('home.until', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : ''}`
     : '';
 
   // ── 2.4 Nearby ──
@@ -277,24 +277,24 @@ export default function EatNearby() {
             <Text variant="Display/XL">{en('nearbyPlaces.title')}</Text>
             <Text variant="Display/Quote" color="fg/secondary" numberOfLines={1} style={styles.shrink}>{titleWord}</Text>
           </View>
-          {f ? (
-            <View style={[styles.weather, elevation['Elevation/3 Float'], { borderColor: color('bg/subtle') }]}>
-              <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
-              <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
-              <View style={styles.now}>
-                <View style={styles.temp}>
-                  <Text variant="Numeric/L" style={styles.tabular}>{`${temp(f.tempC)}°`}</Text>
-                </View>
-                <View style={styles.nowText}>
-                  <Text variant="Title/S" numberOfLines={1}>{t(`home.condition.${f.mood}`)}</Text>
-                  <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{detail}</Text>
-                </View>
-                <View style={[styles.wOrb, { backgroundColor: withAlpha(moods[f.mood].top, 0.35) }]}>
-                  <Icon icon={WEATHER_ICON[f.mood]} size={20} />
-                </View>
+          {/* Small Weather Card (848:13120) — Home's Weather Card Now row: same reading, same copy, same empty state. */}
+          <View style={[styles.weather, elevation['Elevation/3 Float'], { borderColor: color('bg/subtle') }]}>
+            <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
+            <View style={styles.now}>
+              <View style={styles.temp}>
+                <Text variant="Numeric/L" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
+              </View>
+              <View style={styles.nowText}>
+                <Text variant="Title/S" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : t('home.noWeather')}</Text>
+                {detail ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{detail}</Text> : null}
+              </View>
+              {/* Mood orb — the current mood's top colour at 35 %. */}
+              <View style={[styles.wOrb, { backgroundColor: f ? withAlpha(moods[f.mood].top, 0.35) : color('bg/muted') }]}>
+                <Icon icon={WEATHER_ICON[f?.mood ?? 'overcast']} size={20} color={f ? 'fg/default' : 'fg/muted'} />
               </View>
             </View>
-          ) : null}
+            </View>
         </View>
 
         <View style={styles.places}>
