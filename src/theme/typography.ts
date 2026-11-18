@@ -47,7 +47,7 @@ export const text = {
   Caption: t('Outfit-Regular', 12, 16, 0.1),
   'Caption Strong': t('Outfit-Medium', 12, 15, 0.1),
   Overline: t('Outfit-Medium', 13, 14, 1.3, true),
-  'Numeric/XL': t('Outfit-Light', 66, 66, -2.6),
+  'Numeric/XL': t('Outfit-Light', 72, 66, -2.6),
   'Numeric/L': t('Outfit-Medium', 28, 31, -0.7),
   'Numeric/M': t('Outfit-Medium', 17, 21, -0.25),
   'Numeric/S': t('Outfit-Medium', 12, 15, 0.3),
