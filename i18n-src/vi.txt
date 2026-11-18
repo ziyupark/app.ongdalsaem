@@ -1055,8 +1055,8 @@ affordable=Giá phải chăng
 emptyBothTitle=Không có {{dish}} hay món tương tự gần đây
 emptyBothBody=Tìm rộng hơn trong ứng dụng bản đồ
 searchInMapApp=Tìm trong ứng dụng bản đồ
-dishOrSimilar={{dish}} hoặc món tương tự
-dishes=món ăn
+tab=Gợi ý hôm nay & tương tự
+fellBack=Không có {{dish}} gần đây nên hiển thị món tương tự
 [settings]
 searchLanguages=Tìm ngôn ngữ
 [home]

@@ -1414,8 +1414,8 @@
     "emptyBothTitle": "No hay {{dish}} ni nada parecido cerca",
     "emptyBothBody": "Busca en una zona más amplia en una app de mapas",
     "searchInMapApp": "Buscar en una app de mapas",
-    "dishOrSimilar": "{{dish}} o platos parecidos",
-    "dishes": "platos"
+    "tab": "Selección de hoy y similares",
+    "fellBack": "No hay {{dish}} cerca, así que te mostramos comida parecida"
   },
   "mapApps": {
     "title": "Abrir con",

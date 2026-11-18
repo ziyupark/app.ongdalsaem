@@ -1414,8 +1414,8 @@
     "emptyBothTitle": "No {{dish}} or similar food nearby",
     "emptyBothBody": "Search a wider area in a map app",
     "searchInMapApp": "Search in a map app",
-    "dishOrSimilar": "{{dish}} or similar dishes",
-    "dishes": "dishes"
+    "tab": "Today's pick & similar",
+    "fellBack": "No {{dish}} nearby, so here’s similar food"
   },
   "mapApps": {
     "title": "Open with",

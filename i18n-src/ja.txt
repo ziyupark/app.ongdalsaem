@@ -1055,8 +1055,8 @@ affordable=お手頃
 emptyBothTitle=近くに{{dish}}や似た料理のお店がありません
 emptyBothBody=地図アプリでもっと広く探せます
 searchInMapApp=地図アプリで探す
-dishOrSimilar={{dish}}または似た料理
-dishes=の料理
+tab=今日のピック・似た料理
+fellBack=近くに{{dish}}がないので、似た料理を表示しています
 [settings]
 searchLanguages=言語を検索
 [home]

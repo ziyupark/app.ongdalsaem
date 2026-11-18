@@ -29,7 +29,7 @@ import { elevation, moods, radius, space, useTheme, WEATHER_ICON, withAlpha } fr
 const Maps = loadMaps();
 
 /** `places` = the dish's places (nearest first), then the similar-food places (nearest first); `same` = how many are the dish. */
-type Result = { places: NearbyPlace[]; same: number; err: PlacesError['code'] | null };
+type Result = { places: NearbyPlace[]; same: number; fellBack: boolean; err: PlacesError['code'] | null };
 
 // The place's kind (Google's primaryType display name, in the request language) → one of seven groups for the round
 // icon. Checked in this order, so "Korean barbecue" is meat and "面包" (bread) is dessert, not noodles.
@@ -58,13 +58,20 @@ function withOr(word: string) {
   return (c - 0xac00) % 28 ? `${word}이나` : `${word}나`;
 }
 
+/** Korean "A이 / A가" (subject) — same rule. */
+function withSubject(word: string) {
+  const c = word.trim().charCodeAt(word.trim().length - 1);
+  if (c < 0xac00 || c > 0xd7a3) return `${word}이(가)`;
+  return (c - 0xac00) % 28 ? `${word}이` : `${word}가`;
+}
+
 const byDistance = (list: NearbyPlace[]) => [...list].sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
 
 /**
  * 2.4 Nearby (v2, Figma 848:12957 Similar · 865:12501 Same dish · 865:12609 Empty both) — back + map → date · place →
- * "Nearby dishes" (English) → small weather card → "For {dish}" → one tab → Open now / Walkable / Affordable → cards,
+ * "Nearby" (English) + the dish → small weather card → "For {dish}" → one tab → Open now / Walkable / Affordable → cards,
  * the list per filter set: the dish's places (nearest first), then its food family's places (nearest
- * first, the dish's own left out) — one tab "{dish} or similar dishes". Nothing at all → Empty (both) + a map-app search.
+ * first, the dish's own left out) — one tab "Today's pick & similar"; a Caption note when the server fell back to similar food. Nothing at all → Empty (both) + a map-app search.
  * The map button → every pin of the result, the tapped one's card at the bottom, "List" to go back.
  */
 export default function EatNearby() {
@@ -118,9 +125,9 @@ export default function EatNearby() {
         const sameIds = new Set(same.map((p) => p.id));
         const sameList = tidy(same);
         const alikeList = tidy(alike.filter((p) => !sameIds.has(p.id)));
-        setResults((r) => ({ ...r, [key]: { places: [...sameList, ...alikeList], same: sameList.length, err: null } }));
+        setResults((r) => ({ ...r, [key]: { places: [...sameList, ...alikeList], same: sameList.length, fellBack: !!first.similar, err: null } }));
       } catch (e) {
-        setResults((r) => ({ ...r, [key]: { places: [], same: 0, err: e instanceof PlacesError ? e.code : 'failed' } }));
+        setResults((r) => ({ ...r, [key]: { places: [], same: 0, fellBack: false, err: e instanceof PlacesError ? e.code : 'failed' } }));
       } finally {
         loading.current.delete(key);
       }
@@ -131,15 +138,12 @@ export default function EatNearby() {
   useEffect(() => { setSel(0); }, [key]);
   const pinned = useMemo(() => (places ?? []).filter((p) => p.lat != null && p.lon != null), [places]);
 
-  // The one tab (865:12469): "{dish} or similar dishes" when similar places are in the list, else the dish; only
-  // similar places → "Similar dishes".
+  // The one tab (865:12469) has a fixed label; the grey word after "Nearby" is always the dish.
   const sameN = current?.same ?? 0;
-  const hasAlike = (places?.length ?? 0) > sameN;
-  const label = !hasAlike ? name : sameN ? t('nearbyPlaces.dishOrSimilar', { dish: name }) : t('nearbyPlaces.similarDishes');
-  // The title row ("Nearby dishes", 848:13143) always shows the English copy, like the shared header's title;
-  // screen readers get the user's language.
+  const label = t('nearbyPlaces.tab');
+  // "Nearby" (848:13143) always shows the English copy, like the shared header's title; screen readers get the
+  // user's language.
   const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
-  const titleWord = en('nearbyPlaces.dishes'); // always "Nearby dishes" — the dish itself is on the For line and the tab
 
   // Map-app hand-off (src/lib/mapApps): saved or only app → straight there; otherwise the picker.
   const search = async (s: MapSearch) => {
@@ -273,9 +277,9 @@ export default function EatNearby() {
 
         <View style={styles.titleBlock}>
           <Text variant="Overline" color="fg/secondary" numberOfLines={1}>{(where ? `${dateLabel} · ${where}` : dateLabel).toUpperCase()}</Text>
-          <View style={styles.title} accessible accessibilityRole="header" accessibilityLabel={`${t('nearbyPlaces.title')} ${t('nearbyPlaces.dishes')}`}>
+          <View style={styles.title} accessible accessibilityRole="header" accessibilityLabel={`${t('nearbyPlaces.title')} ${name}`}>
             <Text variant="Display/XL">{en('nearbyPlaces.title')}</Text>
-            <Text variant="Display/Quote" color="fg/secondary" numberOfLines={1} style={styles.shrink}>{titleWord}</Text>
+            <Text variant="Display/Quote" color="fg/secondary" numberOfLines={1} style={styles.shrink}>{name}</Text>
           </View>
           {/* Small Weather Card (848:13120) — Home's Weather Card Now row: same reading, same copy, same empty state. */}
           <View style={[styles.weather, elevation['Elevation/3 Float'], { borderColor: color('bg/subtle') }]}>
@@ -325,6 +329,10 @@ export default function EatNearby() {
             </EmptyState>
           ) : places.length ? (
             <>
+              {/* The dish found nothing and the server answered with similar food — say so above the cards. */}
+              {current?.fellBack ? (
+                <Text variant="Caption" color="fg/muted">{t('nearbyPlaces.fellBack', { dish: name, dishSubj: withSubject(name) })}</Text>
+              ) : null}
               {places.map((p, i) => card(p, i))}
               <Text variant="Caption" color="fg/muted" style={styles.center}>{t('nearbyPlaces.attribution')}</Text>
             </>

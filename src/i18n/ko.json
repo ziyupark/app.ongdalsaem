@@ -1414,8 +1414,8 @@
     "emptyBothTitle": "근처에 {{dishOr}} 비슷한 음식 가게가 없어요",
     "emptyBothBody": "지도 앱에서 더 넓게 찾아볼 수 있어요",
     "searchInMapApp": "지도 앱에서 찾아보기",
-    "dishOrSimilar": "{{dish}} 또는 비슷한 음식",
-    "dishes": "음식"
+    "tab": "오늘의 픽 · 비슷한 음식",
+    "fellBack": "근처에 {{dishSubj}} 없어 비슷한 음식을 보여드려요"
   },
   "mapApps": {
     "title": "어떤 앱으로 열까요?",

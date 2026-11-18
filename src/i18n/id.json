@@ -1393,8 +1393,8 @@
     "emptyBothTitle": "Tidak ada {{dish}} atau yang serupa di dekat sini",
     "emptyBothBody": "Cari di area yang lebih luas di aplikasi peta",
     "searchInMapApp": "Cari di aplikasi peta",
-    "dishOrSimilar": "{{dish}} atau hidangan serupa",
-    "dishes": "hidangan"
+    "tab": "Pilihan hari ini & serupa",
+    "fellBack": "Tidak ada {{dish}} di dekat sini, jadi kami tampilkan makanan serupa"
   },
   "mapApps": {
     "title": "Buka dengan",

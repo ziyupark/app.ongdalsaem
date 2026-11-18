@@ -1055,8 +1055,8 @@ affordable=平價
 emptyBothTitle=附近沒有{{dish}}或類似料理的店
 emptyBothBody=可以在地圖 App 搜尋更大範圍
 searchInMapApp=在地圖 App 搜尋
-dishOrSimilar={{dish}}或類似料理
-dishes=美食
+tab=今日推薦・類似料理
+fellBack=附近沒有{{dish}}，為你顯示類似料理
 [settings]
 searchLanguages=搜尋語言
 [home]
