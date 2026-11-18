@@ -4,9 +4,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { NotebookPen, Utensils, type LucideIcon } from 'lucide-react-native';
 import { Bookmark } from '../icons/custom';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type FlatListProps, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { AcornIcon } from '../AcornIcon';
 import { BottomSheet } from '../BottomSheet';
 import { Button } from '../Button';
@@ -21,8 +21,9 @@ import { Text } from '../Text';
 import { UnderlineTabs } from '../UnderlineTabs';
 import { cached } from '../../lib/cache';
 import { useHere } from '../../lib/useHere';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { useWashScroll } from '../../lib/useWashScroll';
+import { useTabEnter } from '../../lib/tabMotion';
 import { displayTemp, usePrefs } from '../../lib/prefs';
 import { fetchAcornTotal, fetchMyMarks, fetchProfileDishes, setAcorn, type DishSummary, type ProfileTab } from '../../services/foods';
 import { getMyProfile, MAX_BIO, updateMyAvatar, updateMyBio, type MyProfile } from '../../services/profile';
@@ -38,6 +39,14 @@ const { lineHeight: _lh, ...bioField } = text['Body/M'];
 const TABS: ProfileTab[] = ['dishes', 'diary', 'saved'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
 const TAB_ICON: Record<ProfileTab, LucideIcon> = { dishes: Utensils, saved: Bookmark, diary: NotebookPen };
+
+/** Tab-switch entrance for the grid rows too (they mount with the screen) — see useTabEnter. */
+const EnterCtx = createContext<ReturnType<typeof useTabEnter>>(undefined);
+type CellProps = ComponentProps<NonNullable<FlatListProps<DishSummary>['CellRendererComponent']>>;
+function EnterCell({ children, style, onLayout, onFocusCapture }: CellProps) {
+  const entering = useContext(EnterCtx);
+  return <Animated.View entering={entering} style={style} onLayout={onLayout} onFocusCapture={onFocusCapture}>{children}</Animated.View>;
+}
 type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: Date };
 
 /**
@@ -105,6 +114,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 
   // Mood wash scrolls away with the content and fades out (gone after ~300 pt).
   const wash = useWashScroll();
+  const enter = useTabEnter();
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     wash.onY(y);
@@ -216,7 +226,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const header = (
     <>
     <ScreenHeader right={isMe ? 'settings' : 'none'} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
-    <Animated.View entering={FadeIn.duration(150)} style={styles.header}>
+    <Animated.View entering={enter} style={styles.header}>
       {/* Frame 10 — card → 12 → tabs. */}
       <View style={styles.cardGroup}>
       <View style={[styles.card, { borderColor: color('bg/subtle') }]}>
@@ -296,8 +306,10 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
+      <EnterCtx.Provider value={enter}>
       <FlatList
         ref={listRef}
+        CellRendererComponent={EnterCell}
         data={tab === 'dishes' ? data ?? [] : []}
         extraData={[given, acornDelta]} // re-render tiles when an acorn is given / taken back
         keyExtractor={(d) => d.id}
@@ -307,13 +319,13 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         contentContainerStyle={styles.grid}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        ListFooterComponent={tab === 'saved' ? <SavedView onOffline={onOffline} /> : tab === 'diary' ? <DiaryView onOffline={onOffline} focus={focus} /> : undefined}
+        ListFooterComponent={tab === 'saved' ? <Animated.View entering={enter}><SavedView onOffline={onOffline} /></Animated.View> : tab === 'diary' ? <Animated.View entering={enter}><DiaryView onOffline={onOffline} focus={focus} /></Animated.View> : undefined}
         ListEmptyComponent={tab !== 'dishes' ? undefined : 
           data == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : (
-            <View style={styles.empty}>
+            <Animated.View entering={enter} style={styles.empty}>
               <Text variant="Body/M" color="fg/secondary" style={styles.centerText}>{isMe ? t(`profile.empty.${tab}`) : missing ? t('cook.missing') : t('cook.noDishes')}</Text>
               {isMe ? <Button label={t('profile.shareFirst')} variant="Outline" size="M" onPress={() => router.push('/share/pick')} /> : null}
-            </View>
+            </Animated.View>
           )
         }
         renderItem={({ item }) => (
@@ -327,6 +339,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           />
         )}
       />
+      </EnterCtx.Provider>
       <BottomSheet visible={bioOpen} onClose={() => setBioOpen(false)} title={t('profile.statusTitle')}>
         <View style={[styles.bioField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
           <TextInput

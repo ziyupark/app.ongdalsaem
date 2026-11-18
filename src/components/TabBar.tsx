@@ -9,6 +9,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
 import { scheduleOnRN } from 'react-native-worklets';
+import { armTabEnter } from '../lib/tabMotion';
 import { elevation, gradients, iconStroke, radius, useTheme } from '../theme';
 import { Text } from './Text';
 
@@ -82,7 +83,7 @@ export function TabBar({ active, progress, onTab, onCreate }: Props) {
         {/* Expanded: the 4 tabs (they fade out as the capsule shrinks; the capsule clips them). */}
         <Animated.View pointerEvents={mini ? 'none' : 'box-none'} style={[styles.items, { width: barW }, row]}>
           {TABS.map((tab) => (
-            <TabItem key={tab.key} tab={tab} label={t(`home.tabs.${tab.key}`)} active={tab.key === active} onPress={() => onTab(tab.key)} />
+            <TabItem key={tab.key} tab={tab} label={t(`home.tabs.${tab.key}`)} active={tab.key === active} onPress={() => { if (tab.key !== active) armTabEnter(); onTab(tab.key); }} />
           ))}
         </Animated.View>
         {/* Minimized: only the current tab's icon; tap to open the bar again. */}
@@ -180,7 +181,9 @@ export function useTabBarScroll() {
       }
     }, 140);
   }, [progress]);
-  return { progress, onY };
+  /** A programmatic jump (e.g. Community tab pager restoring a page's scroll) — move the baseline without resizing the bar. */
+  const sync = useCallback((y: number) => { last.current = y; }, []);
+  return { progress, onY, sync };
 }
 
 const styles = StyleSheet.create({

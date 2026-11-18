@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';
 import { Alert, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Chip } from '../src/components/Chip';
 import { Icon } from '../src/components/Icon';
 import { ScreenHeader, ScreenWash } from '../src/components/ScreenHeader';
@@ -14,6 +14,7 @@ import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
 import { TimerRing } from '../src/components/timer/TimerRing';
 import { useWashScroll } from '../src/lib/useWashScroll';
+import { useTabEnter } from '../src/lib/tabMotion';
 import {
   addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useFocusRequest, useNow, useTimers, type KitchenTimer,
 } from '../src/lib/timers';
@@ -97,6 +98,7 @@ export default function KitchenTimerScreen() {
   };
   // Same scrolling as Home: header + wash travel up with the content, the wash fades out, the tab bar hides.
   const wash = useWashScroll();
+  const enter = useTabEnter();
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     wash.onY(y);
@@ -178,7 +180,7 @@ export default function KitchenTimerScreen() {
       <ScreenWash scrollStyle={wash.style} />
       <ScrollView onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <ScreenHeader right="none" />
-        <Animated.View entering={FadeIn.duration(150)}>
+        <Animated.View entering={enter}>
         {/* Block · Active timer 88:3084 — p30 20 0: “Food Name” → 13 → ring → 24 → controls → Frame 11 (p20 0 12, Add Timer). */}
         <View style={[styles.active, { paddingTop: 30 }]}>
           {food ? <Text variant="Display/M" numberOfLines={1} style={styles.food}>{`“${food}”`}</Text> : null}

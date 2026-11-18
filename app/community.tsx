@@ -1,7 +1,7 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Chip } from '../src/components/Chip';
 import {
   Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag, ViralBadge,
@@ -11,7 +11,11 @@ import { OurArea } from '../src/components/community/Nearby';
 import { upcomingFestive } from '../src/lib/holidays';
 import { FestiveCard } from '../src/components/community/FestiveCard';
 import { ScreenHeader, ScreenWash, useScreenInk } from '../src/components/ScreenHeader';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated, {
+  scrollTo, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useReducedMotion, useSharedValue, type SharedValue,
+} from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
+import { useTabEnter } from '../src/lib/tabMotion';
 import { useWashScroll } from '../src/lib/useWashScroll';
 import { AcornTag, WeatherTag } from '../src/components/PhotoTags';
 import { TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
@@ -35,43 +39,155 @@ const FESTIVE_CAROUSEL = 8;
 
 type Seg = 'global' | 'following' | 'challenges';
 
+const SEGS: Seg[] = ['global', 'following', 'challenges'];
+
 /**
  * Community (Figma 3.1 Nearby 19:663 · 3.2 empty · 3.3 no results · 3.4 typing · 3.5 results · 3.6 area · 4.1 Global 19:818 ·
  * 4.4 Following 183:5713 · 4.4b empty). ScreenHeader (bell) → Tabs → content.
+ *
+ * Tabs = a horizontal pager under the (fixed) header + tab row: swipe or tap to slide between pages, the underline follows
+ * the swipe. One vertical scroll for everything (the header scrolls away as before); each page still keeps its own
+ * scroll position — once the tab row has scrolled off, a page comes back where it was left (X / YouTube). Pages that are
+ * off to the side are shifted so they already sit at that position while they slide in, and on landing the outer scroll
+ * jumps to it in the same frame. With the header in view, all pages share the scroll (they show their top).
  */
 export default function Community() {
   // tab=challenges from the share flow / 4.10c (at = a fresh value each time); focus=join scrolls to the Join button.
   const params = useLocalSearchParams<{ tab?: Seg; at?: string; focus?: string }>();
   const { color } = useTheme();
   const { t } = useTranslation();
-  const [seg, setSegState] = useState<Seg>(params.tab ?? 'global');
-  const [visited, setVisited] = useState<Set<Seg>>(() => new Set([params.tab ?? 'global']));
-  const setSeg = (k: Seg) => {
-    setVisited((v) => (v.has(k) ? v : new Set(v).add(k)));
-    setSegState(k);
-  };
+  const { width } = useWindowDimensions();
+  const reduce = useReducedMotion();
+  const enter = useTabEnter();
+  const first = SEGS.includes(params.tab as Seg) ? (params.tab as Seg) : 'global';
+  const [seg, setSegState] = useState<Seg>(first);
+  const segRef = useRef(seg);
+  const [visited, setVisited] = useState<Set<Seg>>(() => new Set([first]));
+  const visit = useCallback((ks: Seg[]) => setVisited((v) => (ks.every((k) => v.has(k)) ? v : new Set([...v, ...ks]))), []);
   const bar = useTabBarScroll();
   // Header + mood wash = the shared ScreenHeader / ScreenWash (same as Home · Timer · Profile); it scrolls away with
   // the content and fades out (~300 pt). Tabs sit ≈ 55 % down the 420 wash, under the header.
   const wash = useWashScroll();
   const tabInk = useScreenInk(0.55);
 
+  // ---- pager state (UI thread)
+  const outer = useAnimatedRef<Animated.ScrollView>();
+  const pager = useAnimatedRef<Animated.ScrollView>();
+  const sy = useSharedValue(0); // outer scroll y
+  const top = useSharedValue(0); // where the pages start in the outer scroll content
+  const active = useSharedValue(SEGS.indexOf(first)); // settled page
+  const pos = useSharedValue(SEGS.indexOf(first)); // pager position in pages (fractional mid-swipe) — drives the underline
+  const saved = useSharedValue<number[]>([0, 0, 0]); // each page's own scroll below the pages' top
+  const dragging = useSharedValue(false);
+  const pageW = useSharedValue(width);
+  useEffect(() => { pageW.value = width; }, [width, pageW]);
+  // Pages' top in the outer content = wrapper's y (after the header) + the pager's y in it (after the tab row).
+  const wrapY = useRef(0);
+  const pagerY = useRef(0);
+  const topY = useRef(0);
+  const placeTop = () => {
+    topY.current = wrapY.current + pagerY.current;
+    top.value = topY.current;
+  };
+  const opened = useRef(false);
+  // Idle: the pager is as tall as the current page. Sliding: as tall as the tallest (room for every page's position).
+  const [heights, setHeights] = useState<number[]>([0, 0, 0]);
+  const [moving, setMoving] = useState(false);
+  const onHeight = useCallback((i: number, h: number) => setHeights((hs) => (hs[i] === h ? hs : hs.map((v, k) => (k === i ? h : v)))), []);
+
   // Re-open a tab when navigated back here with ?tab=…; ?focus=join brings the Challenges Join button into view.
-  const scroll = useRef<ScrollViewInstance>(null);
-  const tabsY = useRef(0);
-  const challengesY = useRef(0);
   const joinY = useRef<number | null>(null);
   const wantJoin = useRef(false);
   const toJoin = useCallback(() => {
-    if (!wantJoin.current || joinY.current == null) return;
+    if (!wantJoin.current || joinY.current == null || segRef.current !== 'challenges') return;
     wantJoin.current = false;
-    scroll.current?.scrollTo({ y: Math.max(0, tabsY.current + challengesY.current + joinY.current - space[42] * 3), animated: true });
-  }, []);
+    outer.current?.scrollTo({ y: Math.max(0, topY.current + joinY.current - space[42] * 3), animated: true });
+  }, [outer]);
+
+  // JS side of a page landing (called from the UI thread).
+  const settled = useRef<(j: number, y: number) => void>(() => undefined);
+  settled.current = (j: number, y: number) => {
+    segRef.current = SEGS[j];
+    setSegState(SEGS[j]);
+    setMoving(false);
+    bar.sync(y);
+    toJoin();
+  };
+  const onSettled = useCallback((j: number, y: number) => settled.current(j, y), []);
+  const onDragStart = useCallback(() => {
+    setMoving(true);
+    const i = SEGS.indexOf(segRef.current);
+    visit(SEGS.filter((_, k) => Math.abs(k - i) === 1)); // mount the neighbours a swipe can reveal
+  }, [visit]);
+  const onY = useRef<(y: number) => void>(() => undefined);
+  onY.current = (y: number) => { wash.onY(y); bar.onY(y); };
+  const onOuterY = useCallback((y: number) => onY.current(y), []);
+
+  /** Page j has landed: remember the old page's scroll, jump the outer scroll to the new page's (same frame as the shift reset). */
+  const settle = (j: number) => {
+    'worklet';
+    const i = active.value;
+    if (j === i || j < 0 || j >= SEGS.length) return;
+    const P = top.value;
+    const y = sy.value;
+    let ny = y;
+    let s = saved.value.slice();
+    if (y > P) {
+      s[i] = y - P;
+      ny = P + s[j];
+    } else {
+      s = s.map(() => 0); // header in view → every page shows its top
+    }
+    saved.value = s;
+    active.value = j;
+    if (ny !== y) {
+      sy.value = ny;
+      scrollTo(outer, 0, ny, false);
+    }
+    scheduleOnRN(onSettled, j, ny);
+  };
+
+  const onOuterScroll = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      sy.value = e.contentOffset.y;
+      scheduleOnRN(onOuterY, e.contentOffset.y);
+    },
+  });
+  const onPagerScroll = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      const w = pageW.value;
+      if (!w) return;
+      const p = e.contentOffset.x / w;
+      pos.value = p;
+      const j = Math.round(p);
+      // Programmatic slides (tab tap) and drags that end without momentum land here.
+      if (!dragging.value && Math.abs(p - j) < 0.002) settle(j);
+    },
+    onBeginDrag: () => {
+      dragging.value = true;
+      scheduleOnRN(onDragStart);
+    },
+    onEndDrag: () => { dragging.value = false; },
+    onMomentumEnd: (e) => {
+      const w = pageW.value;
+      if (w) settle(Math.round(e.contentOffset.x / w));
+    },
+  });
+
+  /** Tab tap / ?tab= — slide to the page (Reduce Motion or `instant`: jump). */
+  const goTo = useCallback((k: Seg, instant = false) => {
+    if (k === segRef.current) return;
+    visit([k]);
+    setMoving(true);
+    // Next frame: the pager has grown to its sliding height before the landing moves the outer scroll.
+    requestAnimationFrame(() => pager.current?.scrollTo({ x: SEGS.indexOf(k) * width, animated: !(instant || reduce) }));
+  }, [visit, pager, width, reduce]);
+
   useEffect(() => {
-    if (params.tab) setSeg(params.tab);
+    if (params.tab && SEGS.includes(params.tab)) goTo(params.tab, true);
     if (params.focus === 'join') {
       wantJoin.current = true;
-      // Already laid out (tab kept mounted) → scroll once this frame settles; otherwise onJoinY does it.
+      // Already on Challenges (laid out) → scroll once this frame settles; otherwise the landing / onJoinY does it.
       requestAnimationFrame(toJoin);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,36 +197,41 @@ export default function Community() {
     toJoin();
   }, [toJoin]);
 
-  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const y = e.nativeEvent.contentOffset.y;
-    wash.onY(y);
-    bar.onY(y);
-  };
-
   const onTab = (k: TabKey) => {
     if (k === 'home') router.replace('/home');
     if (k === 'timer') router.replace('/timer');
     if (k === 'profile') router.replace('/profile');
   };
 
+  const idx = SEGS.indexOf(seg);
+  // Pager height (0 = not measured yet → natural). Each page is clipped to it, so the pager never scrolls vertically.
+  const pagerH = (moving ? Math.max(...heights) : heights[idx]) || undefined;
+  const page = (k: Seg) => {
+    if (!visited.has(k)) return null;
+    if (k === 'global') return <Global />;
+    if (k === 'following') return <Following />;
+    return <ChallengesTab onJoinY={onJoinY} />;
+  };
+
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash scrollStyle={wash.style} />
-      <ScrollView
-        ref={scroll}
+      <Animated.ScrollView
+        ref={outer}
         contentContainerStyle={{ paddingBottom: 110 + space[24] }}
-        onScroll={onScroll}
+        onScroll={onOuterScroll}
         scrollEventThrottle={16}
       >
         <ScreenHeader right="notifications" />
-        <Animated.View entering={FadeIn.duration(150)} onLayout={(e) => { tabsY.current = e.nativeEvent.layout.y; }}>
+        <Animated.View entering={enter} onLayout={(e) => { wrapY.current = e.nativeEvent.layout.y; placeTop(); }}>
         {/* Block · Tabs 330:7325 — no fill: the mood wash runs behind the title and the tabs. */}
         <View>
           <UnderlineTabs
             ink={tabInk}
             contentStyle={styles.tabRow}
             value={seg}
-            onChange={setSeg}
+            onChange={(k) => goTo(k)}
+            progress={pos}
             items={[
               { key: 'global', label: t('community.explore') },
               { key: 'following', label: t('community.following') },
@@ -118,17 +239,65 @@ export default function Community() {
             ]}
           />
         </View>
-        {/* Tabs stay mounted once opened — switching only swaps what's under the tabs (no reload, data and images kept). */}
-        {visited.has('global') ? <View style={seg === 'global' ? null : styles.gone}><Global /></View> : null}
-        {visited.has('following') ? <View style={seg === 'following' ? null : styles.gone}><Following /></View> : null}
-        {visited.has('challenges') ? (
-          <View style={seg === 'challenges' ? null : styles.gone} onLayout={(e) => { challengesY.current = e.nativeEvent.layout.y; }}>
-            <ChallengesTab onJoinY={onJoinY} />
-          </View>
-        ) : null}
+        {/* Pages stay mounted once opened — switching keeps their data, images and scroll position. */}
+        <Animated.ScrollView
+          ref={pager}
+          horizontal
+          pagingEnabled
+          disableIntervalMomentum
+          decelerationRate="fast"
+          bounces={false}
+          overScrollMode="never"
+          showsHorizontalScrollIndicator={false}
+          contentOffset={{ x: SEGS.indexOf(first) * width, y: 0 }}
+          onLayout={(e) => {
+            pagerY.current = e.nativeEvent.layout.y;
+            placeTop();
+            // Opened on ?tab=… — contentOffset isn't applied everywhere (Android); put the pager on that page once.
+            if (!opened.current) {
+              opened.current = true;
+              const i = SEGS.indexOf(first);
+              if (i > 0) pager.current?.scrollTo({ x: i * width, animated: false });
+            }
+          }}
+          onScroll={onPagerScroll}
+          scrollEventThrottle={16}
+          alwaysBounceVertical={false}
+          directionalLockEnabled
+          style={{ height: pagerH }}
+          contentContainerStyle={styles.pagerRow}
+        >
+          {SEGS.map((k, i) => (
+            <Page key={k} index={i} width={width} height={pagerH} sy={sy} top={top} active={active} saved={saved} onHeight={onHeight}>
+              {page(k)}
+            </Page>
+          ))}
+        </Animated.ScrollView>
         </Animated.View>
-      </ScrollView>
+      </Animated.ScrollView>
       <TabBar active="community" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
+    </View>
+  );
+}
+
+/**
+ * One pager page. The current page is laid out as is; the others are shifted so that, when the tab row has scrolled
+ * off, they show their own remembered scroll (they slide in already in place).
+ */
+function Page({ index, width, height, sy, top, active, saved, onHeight, children }: {
+  index: number; width: number; height: number | undefined; sy: SharedValue<number>; top: SharedValue<number>; active: SharedValue<number>;
+  saved: SharedValue<number[]>; onHeight: (i: number, h: number) => void; children: ReactNode;
+}) {
+  const shift = useAnimatedStyle(() => {
+    const inner = Math.max(0, sy.value - top.value);
+    const want = index === active.value ? inner : sy.value > top.value ? saved.value[index] : 0;
+    return { transform: [{ translateY: inner - want }] };
+  });
+  return (
+    <View style={[styles.page, { width, height }]}>
+      <Animated.View style={shift} onLayout={(e) => onHeight(index, e.nativeEvent.layout.height)}>
+        {children}
+      </Animated.View>
     </View>
   );
 }
@@ -448,7 +617,9 @@ function Following() {
 }
 
 const styles = StyleSheet.create({
-  gone: { display: 'none' },
+  // Pages side by side, each as tall as its own content (the pager's height is set from the current page).
+  pagerRow: { alignItems: 'flex-start' },
+  page: { overflow: 'hidden' },
   // Following · Tables 730:11394 — p6 20 24 under the title (title → first table = Story's title → card gap 6) · gap 24.
   tables: { paddingHorizontal: space[20], paddingTop: space[6], paddingBottom: space[24], gap: space[24] },
   suggestHead: { gap: space[4] },

@@ -3,8 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../src/lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { useWashScroll } from '../src/lib/useWashScroll';
+import { useTabEnter } from '../src/lib/tabMotion';
 import { syncPush } from '../src/lib/push';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, ScreenWash } from '../src/components/ScreenHeader';
@@ -121,6 +122,7 @@ export default function HomeScreen() {
 
   // Mood wash scrolls away with the content and fades out (gone after ~300 pt).
   const wash = useWashScroll();
+  const enter = useTabEnter();
   // 9.4 Today's pick push: the first Home visit is where we ask for notification permission (iOS asks only once).
   useEffect(() => { syncPush({ ask: true }); }, []);
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -229,11 +231,11 @@ export default function HomeScreen() {
       >
         <ScreenHeader right="notifications" onLogoLongPress={devMenu} />
         {state.kind === 'loading' ? (
-          <Animated.View entering={FadeIn.duration(150)}>
+          <Animated.View entering={enter}>
             <HomeSkeleton />
           </Animated.View>
         ) : state.kind === 'location-off' ? (
-          <Animated.View entering={FadeIn.duration(150)}>
+          <Animated.View entering={enter}>
             <View style={styles.px}>
               <LocationCard onChooseCity={() => router.push('/settings/city')} onAllowLocation={allowLocation} busy={allowing} />
             </View>
@@ -258,7 +260,7 @@ export default function HomeScreen() {
             <View style={{ height: 110 }} />
           </Animated.View>
         ) : (
-          <Animated.View entering={FadeIn.duration(150)}>
+          <Animated.View entering={enter}>
             <View style={styles.px}>
               <WeatherCard
                 tempC={f?.tempC}

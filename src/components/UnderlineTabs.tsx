@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react-native';
 import { useCallback, useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { radius, space, useTheme } from '../theme';
 import type { WashInk } from '../theme/washInk';
 import { Icon } from './Icon';
@@ -16,14 +16,17 @@ type Box = { x: number; w: number };
  * selected tab — as wide as its label (or icon), sitting on the same baseline — that slides to the new tab (200 ms).
  * `style` = outer (full-width) box; `contentStyle` = the row of tabs (padding / gap).
  * `ink` = colours over a mood wash (strong / muted instead of fg/default / fg/muted).
+ * `progress` = a pager's position in tabs (0 … items.length − 1, fractional mid-swipe): the bar follows it — position and
+ * width blend between the two tabs — instead of sliding on `value` changes.
  */
-export function UnderlineTabs<K extends string>({ items, value, onChange, style, contentStyle, ink }: {
+export function UnderlineTabs<K extends string>({ items, value, onChange, style, contentStyle, ink, progress }: {
   items: UnderlineTabItem<K>[];
   value: K;
   onChange: (k: K) => void;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   ink?: WashInk | null;
+  progress?: SharedValue<number>;
 }) {
   const { color } = useTheme();
   const tabs = useRef<Partial<Record<K, Box>>>({});
@@ -31,6 +34,20 @@ export function UnderlineTabs<K extends string>({ items, value, onChange, style,
   const placed = useRef(false);
   const x = useSharedValue(0);
   const w = useSharedValue(0);
+  // Pager mode: every tab's bar box (x, w) in item order.
+  const boxes = useSharedValue<Box[]>([]);
+  const keys = items.map((it) => it.key).join('|');
+
+  const placeAll = useCallback(() => {
+    const all: Box[] = [];
+    for (const k of keys.split('|') as K[]) {
+      const tab = tabs.current[k];
+      const label = labels.current[k];
+      if (!tab || !label) return;
+      all.push({ x: tab.x + label.x, w: label.w });
+    }
+    boxes.value = all;
+  }, [keys, boxes]);
 
   const place = useCallback(() => {
     const tab = tabs.current[value];
@@ -47,14 +64,25 @@ export function UnderlineTabs<K extends string>({ items, value, onChange, style,
     }
   }, [value, x, w]);
 
-  useEffect(place, [place]);
+  useEffect(() => { if (!progress) place(); }, [place, progress]);
 
-  const bar = useAnimatedStyle(() => ({ width: w.value, transform: [{ translateX: x.value }] }));
+  const bar = useAnimatedStyle(() => {
+    const b = boxes.value;
+    if (progress && b.length > 1) {
+      const idx = b.map((_, i) => i);
+      return {
+        width: interpolate(progress.value, idx, b.map((v) => v.w), Extrapolation.CLAMP),
+        transform: [{ translateX: interpolate(progress.value, idx, b.map((v) => v.x), Extrapolation.CLAMP) }],
+      };
+    }
+    return { width: w.value, transform: [{ translateX: x.value }] };
+  });
 
   const measure = (store: typeof tabs, k: K) => (e: LayoutChangeEvent) => {
     const { x: lx, width } = e.nativeEvent.layout;
     store.current[k] = { x: lx, w: width };
-    if (k === value) place();
+    if (progress) placeAll();
+    else if (k === value) place();
   };
 
   const strong = ink?.strong ?? 'fg/default';
