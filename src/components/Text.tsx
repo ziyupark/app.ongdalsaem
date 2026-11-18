@@ -28,7 +28,7 @@ export function localeFont(fontFamily: unknown, lang: string): TextStyle | null 
 }
 
 /**
- * Big numerals whose token line height is smaller than the font's own height (Numeric/XL 64/64 — Outfit needs ~81).
+ * Big numerals whose token line height is smaller than the font's own height (Numeric/XL 72/66 — Outfit needs ~91).
  * iOS then cuts the top of the glyphs. Render them with the font's natural line height and pull the box back in with
  * negative margins: same layout height as the token, glyphs placed exactly as in Figma (half-leading split evenly).
  */
