@@ -705,7 +705,8 @@
       "id": "Tiếng Indonesia",
       "th": "Tiếng Thái",
       "vi": "Tiếng Việt"
-    }
+    },
+    "mapApp": "Ứng dụng chỉ đường"
   },
   "support": {
     "about": "Về vấn đề gì?",
@@ -749,7 +750,12 @@
     "copied": "Đã sao chép",
     "startWalking": "Đi bộ",
     "info": "Giờ mở cửa, thực đơn và số điện thoại trên Bản đồ",
-    "note": "Chỉ đường chi tiết sẽ mở trong ứng dụng Bản đồ."
+    "note": "Chỉ đường chi tiết sẽ mở trong ứng dụng Bản đồ.",
+    "directions": "Bắt đầu chỉ đường",
+    "viewInApp": "Xem trong ứng dụng bản đồ",
+    "ateHere": "Mình đã ăn ở đây",
+    "source": "Thông tin địa điểm từ Google",
+    "walkLine": "{{n}} phút đi bộ · {{distance}}"
   },
   "saved": {
     "collections": "Bộ sưu tập",
@@ -1361,7 +1367,34 @@
       "salad": "salad",
       "dessert": "tráng miệng",
       "bread": "bánh mì & brunch"
+    },
+    "eyebrow": "Ăn gần đây",
+    "summaryWalk_other": "{{count}} quán trong 15 phút đi bộ",
+    "summaryNear_other": "{{count}} quán gần đây",
+    "summaryOpen_other": "{{count}} quán đang mở",
+    "sortedCount_other": "{{count}} quán · gần nhất trước",
+    "nearest": "📍 Gần nhất",
+    "similarTab": "{{kind}} tương tự",
+    "seeSimilar": "Xem {{kind}} tương tự",
+    "map": "Bản đồ",
+    "list": "Danh sách",
+    "tip": {
+      "rain": "☔ Trời mưa — càng gần càng tốt",
+      "snow": "❄️ Có tuyết — bắt đầu từ quán gần nhất",
+      "cold": "🧣 Trời se lạnh — món ấm áp ở ngay gần",
+      "heat": "☀️ Trời nóng — đi bộ ngắn thôi",
+      "clear": "🌤 Ngày đẹp để đi bộ một chút",
+      "cloudy": "☁️ Trời âm u — quán gần là hợp nhất"
     }
+  },
+  "mapApps": {
+    "title": "Mở bằng",
+    "remember": "Lần sau dùng ứng dụng này",
+    "ask": "Luôn hỏi",
+    "naver": "Naver Map",
+    "kakao": "KakaoMap",
+    "google": "Google Maps",
+    "apple": "Apple Maps"
   },
   "post": {
     "edit": "Chỉnh sửa"

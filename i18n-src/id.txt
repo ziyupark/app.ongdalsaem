@@ -576,6 +576,7 @@ deleteConfirmTitle=Hapus selamanya?
 deleteConfirmBody=Akunmu dan semua isinya akan dihapus. Tindakan ini tidak bisa dibatalkan.
 deleteFailed=Gagal menghapus akunmu. Coba lagi atau hubungi dukungan.
 nNightAds=Iklan malam hari (21.00–08.00)
+mapApp=Aplikasi petunjuk arah
 [support]
 about=Tentang apa?
 topics.bug=Bug
@@ -613,6 +614,11 @@ results=Hasil
 note=Hanya lingkunganmu yang ditampilkan di masakan — tidak pernah alamat persismu.
 use=Gunakan {{place}}
 pick=Pilih tempat
+directions=Mulai petunjuk arah
+viewInApp=Lihat di aplikasi peta
+ateHere=Aku makan di sini
+source=Info tempat dari Google
+walkLine={{n}} mnt jalan kaki · {{distance}}
 [saved]
 collections=Koleksi
 new=+ Baru
@@ -1026,6 +1032,22 @@ emptyBody=Coba matikan filter, atau cari area yang lebih luas di Peta.
 attribution=Data tempat © Google
 cardMeta=Tempat di dekatmu yang menyajikannya
 openMaps=Cari di Peta
+eyebrow=Makan di dekat sini
+summaryWalk_other={{count}} dalam 15 mnt jalan kaki
+summaryNear_other={{count}} tempat di dekat sini
+summaryOpen_other={{count}} buka sekarang
+sortedCount_other={{count}} tempat · terdekat dulu
+nearest=📍 Terdekat
+similarTab={{kind}} serupa
+seeSimilar=Lihat {{kind}} serupa
+map=Peta
+list=Daftar
+tip.rain=☔ Lagi hujan — makin dekat makin baik
+tip.snow=❄️ Bersalju — mulai dari yang terdekat
+tip.cold=🧣 Lagi dingin — makanan hangat ada di dekat sini
+tip.heat=☀️ Lagi panas — jalan sebentar saja
+tip.clear=🌤 Cuaca pas untuk jalan sebentar
+tip.cloudy=☁️ Mendung — tempat makan dekat paling pas
 [settings]
 searchLanguages=Cari bahasa
 [home]
@@ -1155,3 +1177,11 @@ emptyTitle=Belum ada unggahan
 emptyBody=Coba masak sendiri dan bagikan unggahan pertama.
 firstPost=Bagikan yang pertama
 shareThis=Bagikan hidangan ini
+[mapApps]
+title=Buka dengan
+remember=Pakai aplikasi ini lain kali
+ask=Selalu tanya
+naver=Naver Map
+kakao=KakaoMap
+google=Google Maps
+apple=Apple Maps

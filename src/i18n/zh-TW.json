@@ -705,7 +705,8 @@
       "id": "印尼文",
       "th": "泰文",
       "vi": "越南文"
-    }
+    },
+    "mapApp": "導航 App"
   },
   "support": {
     "about": "是關於什麼？",
@@ -749,7 +750,12 @@
     "copied": "已複製",
     "startWalking": "步行前往",
     "info": "在地圖查看營業時間、菜單與電話",
-    "note": "詳細路線會在地圖 App 中開啟。"
+    "note": "詳細路線會在地圖 App 中開啟。",
+    "directions": "開始導航",
+    "viewInApp": "在地圖 App 中查看",
+    "ateHere": "我在這裡吃過",
+    "source": "地點資訊：Google",
+    "walkLine": "步行 {{n}} 分鐘 · {{distance}}"
   },
   "saved": {
     "collections": "收藏集",
@@ -1361,7 +1367,34 @@
       "salad": "沙拉",
       "dessert": "甜點",
       "bread": "麵包・早午餐"
+    },
+    "eyebrow": "在附近吃",
+    "summaryWalk_other": "步行 15 分鐘內有 {{count}} 家",
+    "summaryNear_other": "附近 {{count}} 家",
+    "summaryOpen_other": "現在 {{count}} 家營業中",
+    "sortedCount_other": "{{count}} 家 · 由近到遠",
+    "nearest": "📍 最近",
+    "similarTab": "相似的{{kind}}",
+    "seeSimilar": "看看相似的{{kind}}",
+    "map": "地圖",
+    "list": "列表",
+    "tip": {
+      "rain": "☔ 下雨天，越近越好",
+      "snow": "❄️ 下雪路滑，先從最近的開始",
+      "cold": "🧣 天涼了，溫暖的一餐就在附近",
+      "heat": "☀️ 天氣熱，走近一點就好",
+      "clear": "🌤 適合散步一下的好天氣",
+      "cloudy": "☁️ 陰天就吃附近的好店"
     }
+  },
+  "mapApps": {
+    "title": "要用哪個 App 開啟？",
+    "remember": "下次也用這個 App",
+    "ask": "每次都詢問",
+    "naver": "NAVER 地圖",
+    "kakao": "KakaoMap",
+    "google": "Google 地圖",
+    "apple": "Apple 地圖"
   },
   "post": {
     "edit": "編輯"

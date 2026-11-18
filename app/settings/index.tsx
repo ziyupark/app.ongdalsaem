@@ -1,7 +1,7 @@
 import * as Application from 'expo-application';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Moon, Salad, Thermometer } from 'lucide-react-native';
+import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Map as MapIcon, Moon, Salad, Thermometer } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
@@ -9,6 +9,7 @@ import { Icon } from '../../src/components/Icon';
 import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components/settings/Settings';
 import { Text } from '../../src/components/Text';
 import { useDietPrefs } from '../../src/lib/dietPrefs';
+import { getSavedMapApp, installedMapApps, MAP_APP_LABEL, setSavedMapApp, type MapAppId } from '../../src/lib/mapApps';
 import { setPrefs, usePrefs, type Appearance } from '../../src/lib/prefs';
 import { signOut } from '../../src/services/auth';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
@@ -21,7 +22,8 @@ export default function Settings() {
   const diet = useDietPrefs();
   const prefs = usePrefs();
   const [me, setMe] = useState<MyProfile | null>(null);
-  useFocusEffect(useCallback(() => { getMyProfile().then(setMe).catch(() => undefined); }, []));
+  const [mapApp, setMapApp] = useState<MapAppId | null>(null);
+  useFocusEffect(useCallback(() => { getMyProfile().then(setMe).catch(() => undefined); getSavedMapApp().then(setMapApp); }, []));
 
   const pickAppearance = () =>
     Alert.alert(t('settings.appearance'), undefined, [
@@ -34,6 +36,16 @@ export default function Settings() {
       { text: '°F', onPress: () => setPrefs({ tempUnit: 'F' }) },
       { text: t('common.cancel'), style: 'cancel' },
     ]);
+  // 2.4b map-app hand-off: "Ask every time" or one of the installed map apps.
+  const pickMapApp = async () => {
+    const apps = await installedMapApps();
+    const choose = (id: MapAppId | null) => { setSavedMapApp(id); setMapApp(id); };
+    Alert.alert(t('settings.mapApp'), undefined, [
+      { text: t('mapApps.ask'), onPress: () => choose(null) },
+      ...apps.map((id) => ({ text: t(MAP_APP_LABEL[id]), onPress: () => choose(id) })),
+      { text: t('common.cancel'), style: 'cancel' as const },
+    ]);
+  };
   const askSignOut = () =>
     Alert.alert(t('settings.signOutTitle'), undefined, [
       { text: t('common.cancel'), style: 'cancel' },
@@ -71,6 +83,7 @@ export default function Settings() {
           value={[diet.diet ? t(`diet.diets.${diet.diet}`) : null, diet.allergies.length ? t('diet.allergyCount', { n: diet.allergies.length }) : null].filter(Boolean).join(' · ') || t('diet.none')}
           onPress={() => router.push('/settings/diet')}
         />
+        <SettingsRow icon={MapIcon} label={t('settings.mapApp')} value={mapApp ? t(MAP_APP_LABEL[mapApp]) : t('mapApps.ask')} onPress={pickMapApp} />
       </SettingsGroup>
       <SettingsGroup label={t('settings.privacySafety')}>
         <SettingsRow icon={Eye} label={t('settings.privacyLocation')} onPress={() => router.push('/settings/privacy')} />

@@ -711,7 +711,8 @@
     "deleteConfirmTitle": "Delete for good?",
     "deleteConfirmBody": "Your account and everything in it will be removed. This can’t be undone.",
     "deleteFailed": "Couldn’t delete your account. Try again or contact support.",
-    "nNightAds": "Night-time ads (9 PM–8 AM)"
+    "nNightAds": "Night-time ads (9 PM–8 AM)",
+    "mapApp": "Directions app"
   },
   "support": {
     "about": "What’s it about?",
@@ -755,7 +756,12 @@
     "copied": "Copied",
     "startWalking": "Start walking",
     "info": "Hours, menu and phone in Maps",
-    "note": "Step-by-step directions open in Maps."
+    "note": "Step-by-step directions open in Maps.",
+    "directions": "Start directions",
+    "viewInApp": "View in a map app",
+    "ateHere": "I ate here",
+    "source": "Place info from Google",
+    "walkLine": "{{n}}-min walk · {{distance}}"
   },
   "saved": {
     "collections": "Collections",
@@ -1378,7 +1384,38 @@
       "salad": "salads",
       "dessert": "desserts",
       "bread": "bread & brunch"
+    },
+    "eyebrow": "Eat this nearby",
+    "summaryWalk_one": "{{count}} within a 15-min walk",
+    "summaryWalk_other": "{{count}} within a 15-min walk",
+    "summaryNear_one": "{{count}} place nearby",
+    "summaryNear_other": "{{count}} places nearby",
+    "summaryOpen_one": "{{count}} open now",
+    "summaryOpen_other": "{{count}} open now",
+    "sortedCount_one": "{{count}} place · nearest first",
+    "sortedCount_other": "{{count}} places · nearest first",
+    "nearest": "📍 Nearest",
+    "similarTab": "Similar {{kind}}",
+    "seeSimilar": "See similar {{kind}}",
+    "map": "Map",
+    "list": "List",
+    "tip": {
+      "rain": "☔ Rainy out — the closer, the better today",
+      "snow": "❄️ Snowy out — start with the closest one",
+      "cold": "🧣 Chilly out — something warm is close by",
+      "heat": "☀️ Hot out — keep the walk short today",
+      "clear": "🌤 A nice day for a little walk",
+      "cloudy": "☁️ Grey skies — a good meal close by sounds right"
     }
+  },
+  "mapApps": {
+    "title": "Open with",
+    "remember": "Use this app next time",
+    "ask": "Ask every time",
+    "naver": "Naver Map",
+    "kakao": "KakaoMap",
+    "google": "Google Maps",
+    "apple": "Apple Maps"
   },
   "post": {
     "edit": "Edit"

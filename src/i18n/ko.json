@@ -711,7 +711,8 @@
     "deleteConfirmTitle": "정말 삭제할까요?",
     "deleteConfirmBody": "계정과 모든 내용이 삭제되고 되돌릴 수 없어요.",
     "deleteFailed": "계정을 삭제하지 못했어요. 다시 시도하거나 문의해주세요.",
-    "nNightAds": "야간 광고 (오후 9시–오전 8시)"
+    "nNightAds": "야간 광고 (오후 9시–오전 8시)",
+    "mapApp": "길 안내 앱"
   },
   "support": {
     "about": "어떤 내용인가요?",
@@ -755,7 +756,12 @@
     "copied": "복사됨",
     "startWalking": "걸어서 가기",
     "info": "지도에서 영업시간·메뉴·전화 보기",
-    "note": "자세한 길 안내는 지도 앱에서 열려요."
+    "note": "자세한 길 안내는 지도 앱에서 열려요.",
+    "directions": "길 안내 시작",
+    "viewInApp": "지도 앱에서 보기",
+    "ateHere": "여기서 먹었어요",
+    "source": "장소 정보: Google",
+    "walkLine": "걸어서 {{n}}분 · {{distance}}"
   },
   "saved": {
     "collections": "컬렉션",
@@ -1378,7 +1384,38 @@
       "salad": "샐러드",
       "dessert": "디저트",
       "bread": "빵·브런치"
+    },
+    "eyebrow": "근처에서 먹기",
+    "summaryWalk_one": "걸어서 15분 안에 {{count}}곳",
+    "summaryWalk_other": "걸어서 15분 안에 {{count}}곳",
+    "summaryNear_one": "근처 {{count}}곳",
+    "summaryNear_other": "근처 {{count}}곳",
+    "summaryOpen_one": "지금 {{count}}곳 영업 중",
+    "summaryOpen_other": "지금 {{count}}곳 영업 중",
+    "sortedCount_one": "{{count}}곳 · 가까운 순",
+    "sortedCount_other": "{{count}}곳 · 가까운 순",
+    "nearest": "📍 가장 가까움",
+    "similarTab": "비슷한 {{kind}}",
+    "seeSimilar": "비슷한 {{kind}} 보기",
+    "map": "지도",
+    "list": "목록",
+    "tip": {
+      "rain": "☔ 비 오는 날엔 가까운 곳이 최고예요",
+      "snow": "❄️ 눈길이에요, 가까운 곳부터 가 봐요",
+      "cold": "🧣 쌀쌀한 날, 따뜻한 한 끼가 가까이 있어요",
+      "heat": "☀️ 더운 날엔 짧게 걸어가요",
+      "clear": "🌤 조금 걷기 좋은 날이에요",
+      "cloudy": "☁️ 흐린 날엔 가까운 맛집이 딱이에요"
     }
+  },
+  "mapApps": {
+    "title": "어떤 앱으로 열까요?",
+    "remember": "다음에도 이 앱으로",
+    "ask": "매번 묻기",
+    "naver": "네이버 지도",
+    "kakao": "카카오맵",
+    "google": "Google 지도",
+    "apple": "Apple 지도"
   },
   "post": {
     "edit": "수정"

@@ -576,6 +576,7 @@ deleteConfirmTitle=Xóa vĩnh viễn?
 deleteConfirmBody=Tài khoản và mọi thứ trong đó sẽ bị xóa. Không thể hoàn tác.
 deleteFailed=Không xóa được tài khoản. Hãy thử lại hoặc liên hệ hỗ trợ.
 nNightAds=Quảng cáo ban đêm (21:00–8:00)
+mapApp=Ứng dụng chỉ đường
 [support]
 about=Về vấn đề gì?
 topics.bug=Lỗi
@@ -613,6 +614,11 @@ results=Kết quả
 note=Món ăn chỉ hiển thị khu phố của bạn — không bao giờ hiển thị địa chỉ chính xác.
 use=Dùng {{place}}
 pick=Chọn địa điểm
+directions=Bắt đầu chỉ đường
+viewInApp=Xem trong ứng dụng bản đồ
+ateHere=Mình đã ăn ở đây
+source=Thông tin địa điểm từ Google
+walkLine={{n}} phút đi bộ · {{distance}}
 [saved]
 collections=Bộ sưu tập
 new=+ Mới
@@ -1026,6 +1032,22 @@ emptyBody=Thử tắt bộ lọc, hoặc tìm khu vực rộng hơn trong Bản 
 attribution=Dữ liệu địa điểm © Google
 cardMeta=Quán gần bạn có món này
 openMaps=Tìm trong Bản đồ
+eyebrow=Ăn gần đây
+summaryWalk_other={{count}} quán trong 15 phút đi bộ
+summaryNear_other={{count}} quán gần đây
+summaryOpen_other={{count}} quán đang mở
+sortedCount_other={{count}} quán · gần nhất trước
+nearest=📍 Gần nhất
+similarTab={{kind}} tương tự
+seeSimilar=Xem {{kind}} tương tự
+map=Bản đồ
+list=Danh sách
+tip.rain=☔ Trời mưa — càng gần càng tốt
+tip.snow=❄️ Có tuyết — bắt đầu từ quán gần nhất
+tip.cold=🧣 Trời se lạnh — món ấm áp ở ngay gần
+tip.heat=☀️ Trời nóng — đi bộ ngắn thôi
+tip.clear=🌤 Ngày đẹp để đi bộ một chút
+tip.cloudy=☁️ Trời âm u — quán gần là hợp nhất
 [settings]
 searchLanguages=Tìm ngôn ngữ
 [home]
@@ -1155,3 +1177,11 @@ emptyTitle=Chưa có bài đăng nào
 emptyBody=Tự nấu thử và chia sẻ bài đăng đầu tiên nhé.
 firstPost=Đăng bài đầu tiên
 shareThis=Chia sẻ món này
+[mapApps]
+title=Mở bằng
+remember=Lần sau dùng ứng dụng này
+ask=Luôn hỏi
+naver=Naver Map
+kakao=KakaoMap
+google=Google Maps
+apple=Apple Maps

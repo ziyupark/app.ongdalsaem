@@ -576,6 +576,7 @@ deleteConfirmTitle=ลบถาวรเลยไหม?
 deleteConfirmBody=บัญชีของคุณและทุกอย่างในนั้นจะถูกลบ ย้อนกลับไม่ได้
 deleteFailed=ลบบัญชีไม่สำเร็จ ลองอีกครั้งหรือติดต่อฝ่ายช่วยเหลือ
 nNightAds=โฆษณาช่วงกลางคืน (21:00–08:00)
+mapApp=แอปนำทาง
 [support]
 about=เกี่ยวกับเรื่องอะไร?
 topics.bug=ข้อผิดพลาด
@@ -613,6 +614,11 @@ results=ผลลัพธ์
 note=บนเมนูจะแสดงแค่ย่านของคุณ — ไม่แสดงที่อยู่ที่แน่นอน
 use=ใช้ {{place}}
 pick=เลือกสถานที่
+directions=เริ่มนำทาง
+viewInApp=ดูในแอปแผนที่
+ateHere=ฉันกินที่นี่
+source=ข้อมูลสถานที่จาก Google
+walkLine=เดิน {{n}} นาที · {{distance}}
 [saved]
 collections=คอลเลกชัน
 new=+ ใหม่
@@ -1026,6 +1032,22 @@ emptyBody=ลองปิดตัวกรอง หรือค้นหาพ
 attribution=ข้อมูลสถานที่ © Google
 cardMeta=ร้านใกล้คุณที่มีเมนูนี้
 openMaps=ค้นหาในแผนที่
+eyebrow=กินใกล้ ๆ
+summaryWalk_other={{count}} ร้านในระยะเดิน 15 นาที
+summaryNear_other={{count}} ร้านใกล้ ๆ
+summaryOpen_other=เปิดอยู่ตอนนี้ {{count}} ร้าน
+sortedCount_other={{count}} ร้าน · ใกล้สุดก่อน
+nearest=📍 ใกล้ที่สุด
+similarTab={{kind}}ที่คล้ายกัน
+seeSimilar=ดู{{kind}}ที่คล้ายกัน
+map=แผนที่
+list=รายการ
+tip.rain=☔ ฝนตกแบบนี้ ยิ่งใกล้ยิ่งดี
+tip.snow=❄️ หิมะตก เริ่มจากร้านที่ใกล้ที่สุด
+tip.cold=🧣 อากาศเย็น ของอุ่น ๆ อยู่ใกล้นิดเดียว
+tip.heat=☀️ อากาศร้อน เดินใกล้ ๆ พอ
+tip.clear=🌤 อากาศดี เหมาะกับการเดินเล่นนิดหน่อย
+tip.cloudy=☁️ ฟ้าครึ้ม ร้านใกล้ ๆ เหมาะที่สุด
 [settings]
 searchLanguages=ค้นหาภาษา
 [home]
@@ -1155,3 +1177,11 @@ emptyTitle=ยังไม่มีโพสต์
 emptyBody=ลองทำเองแล้วแชร์โพสต์แรกเลย
 firstPost=แชร์โพสต์แรก
 shareThis=แชร์เมนูนี้
+[mapApps]
+title=เปิดด้วย
+remember=ใช้แอปนี้ครั้งต่อไป
+ask=ถามทุกครั้ง
+naver=Naver Map
+kakao=KakaoMap
+google=Google Maps
+apple=Apple Maps

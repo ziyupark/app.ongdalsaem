@@ -705,7 +705,8 @@
       "id": "インドネシア語",
       "th": "タイ語",
       "vi": "ベトナム語"
-    }
+    },
+    "mapApp": "道案内アプリ"
   },
   "support": {
     "about": "どんな内容ですか？",
@@ -749,7 +750,12 @@
     "copied": "コピーしました",
     "startWalking": "歩いて行く",
     "info": "営業時間・メニュー・電話はマップで",
-    "note": "詳しい道案内はマップアプリで開きます。"
+    "note": "詳しい道案内はマップアプリで開きます。",
+    "directions": "道案内を開始",
+    "viewInApp": "マップアプリで見る",
+    "ateHere": "ここで食べました",
+    "source": "場所の情報: Google",
+    "walkLine": "徒歩{{n}}分 · {{distance}}"
   },
   "saved": {
     "collections": "コレクション",
@@ -1361,7 +1367,34 @@
       "salad": "サラダ",
       "dessert": "デザート",
       "bread": "パン・ブランチ"
+    },
+    "eyebrow": "近くで食べる",
+    "summaryWalk_other": "徒歩15分以内に{{count}}軒",
+    "summaryNear_other": "近くに{{count}}軒",
+    "summaryOpen_other": "いま{{count}}軒営業中",
+    "sortedCount_other": "{{count}}軒 · 近い順",
+    "nearest": "📍 いちばん近い",
+    "similarTab": "似た{{kind}}",
+    "seeSimilar": "似た{{kind}}を見る",
+    "map": "地図",
+    "list": "リスト",
+    "tip": {
+      "rain": "☔ 雨の日は近いお店がいちばん",
+      "snow": "❄️ 雪道です、近いお店から行きましょう",
+      "cold": "🧣 肌寒い日、温かいごはんがすぐ近くに",
+      "heat": "☀️ 暑い日は短い距離で",
+      "clear": "🌤 少し歩くのにちょうどいい日です",
+      "cloudy": "☁️ くもりの日は近くのお店がぴったり"
     }
+  },
+  "mapApps": {
+    "title": "どのアプリで開きますか？",
+    "remember": "次回もこのアプリで",
+    "ask": "毎回確認する",
+    "naver": "NAVER Map",
+    "kakao": "KakaoMap",
+    "google": "Google マップ",
+    "apple": "Apple マップ"
   },
   "post": {
     "edit": "編集"

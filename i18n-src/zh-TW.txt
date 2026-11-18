@@ -576,6 +576,7 @@ deleteConfirmTitle=確定永久刪除？
 deleteConfirmBody=你的帳號及其中所有內容都將被移除，且無法復原。
 deleteFailed=無法刪除你的帳號。請再試一次或聯絡客服。
 nNightAds=夜間廣告（晚上 9 點–早上 8 點）
+mapApp=導航 App
 [support]
 about=是關於什麼？
 topics.bug=錯誤
@@ -613,6 +614,11 @@ results=結果
 note=料理上只會顯示你的社區——絕不顯示精確地址。
 use=使用 {{place}}
 pick=選擇地點
+directions=開始導航
+viewInApp=在地圖 App 中查看
+ateHere=我在這裡吃過
+source=地點資訊：Google
+walkLine=步行 {{n}} 分鐘 · {{distance}}
 [saved]
 collections=收藏集
 new=+ 新增
@@ -1026,6 +1032,22 @@ emptyBody=試著關閉篩選條件，或在地圖中搜尋更大範圍。
 attribution=Places data © Google
 cardMeta=你附近有供應的店
 openMaps=在地圖中搜尋
+eyebrow=在附近吃
+summaryWalk_other=步行 15 分鐘內有 {{count}} 家
+summaryNear_other=附近 {{count}} 家
+summaryOpen_other=現在 {{count}} 家營業中
+sortedCount_other={{count}} 家 · 由近到遠
+nearest=📍 最近
+similarTab=相似的{{kind}}
+seeSimilar=看看相似的{{kind}}
+map=地圖
+list=列表
+tip.rain=☔ 下雨天，越近越好
+tip.snow=❄️ 下雪路滑，先從最近的開始
+tip.cold=🧣 天涼了，溫暖的一餐就在附近
+tip.heat=☀️ 天氣熱，走近一點就好
+tip.clear=🌤 適合散步一下的好天氣
+tip.cloudy=☁️ 陰天就吃附近的好店
 [settings]
 searchLanguages=搜尋語言
 [home]
@@ -1155,3 +1177,11 @@ emptyTitle=還沒有貼文
 emptyBody=自己動手做做看，分享第一則貼文吧。
 firstPost=分享第一則貼文
 shareThis=分享這道料理
+[mapApps]
+title=要用哪個 App 開啟？
+remember=下次也用這個 App
+ask=每次都詢問
+naver=NAVER 地圖
+kakao=KakaoMap
+google=Google 地圖
+apple=Apple 地圖

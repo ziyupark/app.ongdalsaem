@@ -158,8 +158,9 @@ export default function PickPhotos() {
           }
         }),
       );
-      // Edit mode keeps the post's own weather and place; a new post re-detects them from the photos.
-      updateShareDraft(draft.editId ? { photos: resolved } : { photos: resolved, context: null, contextState: 'idle' });
+      // Edit mode keeps the post's own weather and place, and so does a place picked before (2.4b "I ate here");
+      // otherwise a new post re-detects them from the photos.
+      updateShareDraft(draft.editId || (draft.placeEdited && draft.context) ? { photos: resolved } : { photos: resolved, context: null, contextState: 'idle' });
       router.push('/share/details');
     } finally {
       setBusy(false);

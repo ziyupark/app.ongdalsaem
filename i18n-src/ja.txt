@@ -576,6 +576,7 @@ deleteConfirmTitle=完全に削除しますか？
 deleteConfirmBody=アカウントとその中のすべてが削除されます。元に戻せません。
 deleteFailed=アカウントを削除できませんでした。もう一度お試しいただくか、サポートにお問い合わせください。
 nNightAds=夜間の広告（21時〜8時）
+mapApp=道案内アプリ
 [support]
 about=どんな内容ですか？
 topics.bug=不具合
@@ -613,6 +614,11 @@ results=結果
 note=料理に表示されるのは地域名だけ — 正確な住所は表示されません。
 use={{place}}を使う
 pick=場所を選ぶ
+directions=道案内を開始
+viewInApp=マップアプリで見る
+ateHere=ここで食べました
+source=場所の情報: Google
+walkLine=徒歩{{n}}分 · {{distance}}
 [saved]
 collections=コレクション
 new=+ 新規
@@ -1026,6 +1032,22 @@ emptyBody=フィルターをオフにするか、マップで広い範囲を検�
 attribution=Places data © Google
 cardMeta=近くでこの料理を出しているお店
 openMaps=マップで検索
+eyebrow=近くで食べる
+summaryWalk_other=徒歩15分以内に{{count}}軒
+summaryNear_other=近くに{{count}}軒
+summaryOpen_other=いま{{count}}軒営業中
+sortedCount_other={{count}}軒 · 近い順
+nearest=📍 いちばん近い
+similarTab=似た{{kind}}
+seeSimilar=似た{{kind}}を見る
+map=地図
+list=リスト
+tip.rain=☔ 雨の日は近いお店がいちばん
+tip.snow=❄️ 雪道です、近いお店から行きましょう
+tip.cold=🧣 肌寒い日、温かいごはんがすぐ近くに
+tip.heat=☀️ 暑い日は短い距離で
+tip.clear=🌤 少し歩くのにちょうどいい日です
+tip.cloudy=☁️ くもりの日は近くのお店がぴったり
 [settings]
 searchLanguages=言語を検索
 [home]
@@ -1155,3 +1177,11 @@ emptyTitle=まだ投稿がありません
 emptyBody=作ってみて、最初の投稿をしてみましょう。
 firstPost=最初の投稿をする
 shareThis=この料理を投稿
+[mapApps]
+title=どのアプリで開きますか？
+remember=次回もこのアプリで
+ask=毎回確認する
+naver=NAVER Map
+kakao=KakaoMap
+google=Google マップ
+apple=Apple マップ

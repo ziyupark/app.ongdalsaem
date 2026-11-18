@@ -705,7 +705,8 @@
       "id": "Bahasa Indonesia",
       "th": "Thai",
       "vi": "Vietnam"
-    }
+    },
+    "mapApp": "Aplikasi petunjuk arah"
   },
   "support": {
     "about": "Tentang apa?",
@@ -749,7 +750,12 @@
     "copied": "Tersalin",
     "startWalking": "Jalan kaki",
     "info": "Jam buka, menu & telepon di Maps",
-    "note": "Petunjuk arah langkah demi langkah dibuka di Maps."
+    "note": "Petunjuk arah langkah demi langkah dibuka di Maps.",
+    "directions": "Mulai petunjuk arah",
+    "viewInApp": "Lihat di aplikasi peta",
+    "ateHere": "Aku makan di sini",
+    "source": "Info tempat dari Google",
+    "walkLine": "{{n}} mnt jalan kaki · {{distance}}"
   },
   "saved": {
     "collections": "Koleksi",
@@ -1361,7 +1367,34 @@
       "salad": "salad",
       "dessert": "hidangan penutup",
       "bread": "roti & brunch"
+    },
+    "eyebrow": "Makan di dekat sini",
+    "summaryWalk_other": "{{count}} dalam 15 mnt jalan kaki",
+    "summaryNear_other": "{{count}} tempat di dekat sini",
+    "summaryOpen_other": "{{count}} buka sekarang",
+    "sortedCount_other": "{{count}} tempat · terdekat dulu",
+    "nearest": "📍 Terdekat",
+    "similarTab": "{{kind}} serupa",
+    "seeSimilar": "Lihat {{kind}} serupa",
+    "map": "Peta",
+    "list": "Daftar",
+    "tip": {
+      "rain": "☔ Lagi hujan — makin dekat makin baik",
+      "snow": "❄️ Bersalju — mulai dari yang terdekat",
+      "cold": "🧣 Lagi dingin — makanan hangat ada di dekat sini",
+      "heat": "☀️ Lagi panas — jalan sebentar saja",
+      "clear": "🌤 Cuaca pas untuk jalan sebentar",
+      "cloudy": "☁️ Mendung — tempat makan dekat paling pas"
     }
+  },
+  "mapApps": {
+    "title": "Buka dengan",
+    "remember": "Pakai aplikasi ini lain kali",
+    "ask": "Selalu tanya",
+    "naver": "Naver Map",
+    "kakao": "KakaoMap",
+    "google": "Google Maps",
+    "apple": "Apple Maps"
   },
   "post": {
     "edit": "Edit"
