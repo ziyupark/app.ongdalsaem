@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
-import { elevation, gradients, iconStroke, radius, useTheme } from '../theme';
+import { elevation, gradients, iconStroke, radius, useTheme, withAlpha } from '../theme';
 import { Text } from './Text';
 
 export type TabKey = 'home' | 'community' | 'timer' | 'profile';
@@ -25,7 +25,8 @@ const TABS: { key: TabKey; icon: LucideIcon }[] = [
  * Glass capsule 62 high with 4 tabs (icon 22 + Nav label) + a separate 62 "Share a dish" circle, gap 10.
  * Scrolling down slides the whole bar (capsule + FAB) down off screen with the finger, scrolling up brings it back
  * (see useTabBarScroll). Active tab = Gradient/Dusk icon, fg/accent label on a bg/accent-subtle pill; on a tab switch
- * the pill slides over to the new tab (250 ms ease-out; Reduce Motion: jumps). The screens themselves swap instantly.
+ * the pill slides over to the new tab (250 ms ease-out; Reduce Motion: jumps). The pill is slightly see-through
+ * (82 %) with a glass highlight edge and Elevation/1 so it reads as a raised glass chip. The screens themselves swap instantly.
  */
 const EXP = { h: 62, fab: 62 };
 /** Create FAB size in the bar — also the Questions list photo. */
@@ -41,12 +42,21 @@ const HREF: Record<TabKey, '/home' | '/community' | '/timer' | '/profile'> = {
   home: '/home', community: '/community', timer: '/timer', profile: '/profile',
 };
 
+/** Whether the tabs are the top screen of the root stack — set by app/(tabs)/_layout.tsx. */
+let tabsOnTop = false;
+export function setTabsOnTop(on: boolean) {
+  tabsOnTop = on;
+}
+
 /**
- * Go to a tab. The four tabs live in one Tabs navigator that keeps each tab's state (scroll, loaded data); from a
- * screen pushed on top of it this pops back to the tabs first, so no second copy of the tabs is stacked.
+ * Go to a tab. The four tabs live in one Tabs navigator that keeps each tab's state (scroll, loaded data).
+ * Tabs on top: switch tab (navigate). A screen pushed on top of them: pop back to the tabs on that tab (dismissTo), so
+ * no second copy of the tabs is stacked. (dismissTo alone does nothing inside the tabs — the tab router has no POP_TO.)
  */
 export function goTab(k: TabKey, params?: Record<string, string>) {
-  router.dismissTo((params ? { pathname: HREF[k], params } : HREF[k]) as Href);
+  const href = (params ? { pathname: HREF[k], params } : HREF[k]) as Href;
+  if (tabsOnTop) router.navigate(href);
+  else router.dismissTo(href);
 }
 
 /** Pill position, shared by every TabBar (each screen draws its own) so it can slide on from the screen being left. */
@@ -108,7 +118,10 @@ export function TabBar({ active, progress, onTab, onCreate }: Props) {
         <BlurView intensity={60} tint="light" style={StyleSheet.absoluteFill} />
         <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
         <View style={styles.items}>
-          <Animated.View pointerEvents="none" style={[styles.pill, { width: itemW, backgroundColor: color('bg/accent-subtle') }, pill]} />
+          <Animated.View
+            pointerEvents="none"
+            style={[styles.pill, elevation['Elevation/1 Low'], { width: itemW, backgroundColor: withAlpha(color('bg/accent-subtle'), 0.82), borderColor: color('glass/stroke-strong') }, pill]}
+          />
           {TABS.map((tab, i) => (
             <TabItem
               key={tab.key}
@@ -248,7 +261,7 @@ const styles = StyleSheet.create({
   area: { position: 'absolute', left: 0, right: 0, height: AREA_H },
   bar: { position: 'absolute', left: SIDE, top: BOTTOM - EXP.h, height: EXP.h, borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },
   items: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: ITEMS_PAD },
-  pill: { position: 'absolute', left: ITEMS_PAD, top: '50%', marginTop: -27, height: 54, borderRadius: radius.full },
+  pill: { position: 'absolute', left: ITEMS_PAD, top: '50%', marginTop: -27, height: 54, borderRadius: radius.full, borderWidth: 0.5 },
   item: { flex: 1, height: 54, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center', gap: 2 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   fab: { position: 'absolute', top: BOTTOM - EXP.fab, width: EXP.fab, height: EXP.fab, borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },

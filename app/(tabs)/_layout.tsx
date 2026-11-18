@@ -1,4 +1,6 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
+import { setTabsOnTop } from '../../src/components/TabBar';
 import { useTheme } from '../../src/theme';
 
 /**
@@ -8,6 +10,11 @@ import { useTheme } from '../../src/theme';
  */
 export default function TabsLayout() {
   const { color } = useTheme();
+  // goTab() switches tabs directly while they are on top, and pops back to them otherwise.
+  useFocusEffect(useCallback(() => {
+    setTabsOnTop(true);
+    return () => setTabsOnTop(false);
+  }, []));
   return (
     <Tabs tabBar={() => null} screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: color('bg/default') } }}>
       <Tabs.Screen name="home" />
