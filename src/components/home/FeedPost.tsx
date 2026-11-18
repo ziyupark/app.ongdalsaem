@@ -21,7 +21,7 @@ export type FeedPostData = {
 };
 
 /**
- * Feed Post 119:601 (390 wide, padding-bottom 24): Header (avatar 32 · name/meta · more) → Media 370×417 radius 32
+ * Feed Post 119:601 (390 wide, padding-bottom 24): Header (avatar 40 · name/meta · more) → Media 370×417 radius 32
  * (Weather Tag XL with condition top-left 16 · Photo Counter bottom-right 16) → Actions (acorn · comment · share ··· save) → Caption.
  */
 export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComments, onShare, onMore, onAcorn, onSave }: {
@@ -56,7 +56,7 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
             )}
           </View>
           <View style={styles.who}>
-            <Text variant="Body/S Strong" numberOfLines={1}>{post.name}</Text>
+            <Text variant="Body/M Strong" numberOfLines={1}>{post.name}</Text>
             <Text variant="Caption" color="fg/muted" numberOfLines={1}>{post.meta}</Text>
           </View>
         </Pressable>
@@ -102,9 +102,9 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
 const styles = StyleSheet.create({
   post: { paddingBottom: space[24] },
   header: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingLeft: space[20], paddingRight: space[16], paddingVertical: space[12] },
-  avatar: { width: 32, height: 32, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   author: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[10] },
-  who: { flex: 1, gap: space[2] }, // Figma gap 1 → nearest token
+  who: { flex: 1, justifyContent: 'center', gap: space[2] }, // Figma gap 1 → nearest token
   media: { height: 417, marginHorizontal: space[10], borderRadius: radius['2xl'], overflow: 'hidden' }, // Media 119:620 — 370×417, radius 32
   tagTL: { position: 'absolute', left: space[16], top: space[16] },
   counterBR: { position: 'absolute', right: space[16], bottom: space[16] },
