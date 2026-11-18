@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
+import { useTabFocusEffect } from '../TabBar';
 import { Flag, Soup } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +44,7 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
   const featured = useMemo(() => (list ? pickFeatured(list) : null), [list]);
 
   // Refetch on every focus — after posting an entry the button, count and Latest entries are fresh at once.
-  useFocusEffect(
+  useTabFocusEffect(
     useCallback(() => {
       let alive = true;
       const just = takeChallengeEntered();

@@ -1,7 +1,7 @@
 import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { NotebookPen, Utensils, type LucideIcon } from 'lucide-react-native';
 import { Bookmark } from '../icons/custom';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ import { DiaryView } from './DiaryView';
 import { SavedView } from './SavedView';
 import { WifiOff } from 'lucide-react-native';
 import { Icon } from '../Icon';
-import { goTab, TabBar, useTabBarScroll, type TabKey } from '../TabBar';
+import { goTab, TabBar, useTabBarScroll, useTabFocusEffect, type TabKey } from '../TabBar';
 import { ScreenHeader, ScreenWash } from '../ScreenHeader';
 import { Text } from '../Text';
 import { UnderlineTabs } from '../UnderlineTabs';
@@ -89,7 +89,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     }
   }, []);
 
-  useFocusEffect(
+  useTabFocusEffect(
     useCallback(() => {
       let alive = true;
       (async () => {

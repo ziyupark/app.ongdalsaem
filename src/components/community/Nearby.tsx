@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
+import { useTabFocusEffect } from '../TabBar';
 import { Clock, CloudRain, MapPin, Search, SlidersHorizontal, X } from 'lucide-react-native';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,7 +64,7 @@ export function useNearbyDishes(here: Here, area: Area, query: string, filters: 
       setDishes([]);
     }
   }, [here.status, here.coords, city, district, area, f?.mood, query, filters, diet]);
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useTabFocusEffect(useCallback(() => { load(); }, [load]));
   return dishes;
 }
 
@@ -71,7 +72,7 @@ export function useNearbyDishes(here: Here, area: Area, query: string, filters: 
 export function useNearbyQuestions(here: Here, n: number, fill?: boolean) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const { city, district } = placeOf(here);
-  useFocusEffect(
+  useTabFocusEffect(
     useCallback(() => {
       if (!here.cell) return;
       const load = fill ? fetchAreaQuestions(here.cell, { district, city }, AREA_MIN, n) : fetchNearbyQuestions(here.cell, n);
@@ -238,7 +239,7 @@ function TopToday({ here, excludeId }: { here: Here; excludeId: string | null | 
   const { city, district } = placeOf(here);
   const mood = here.forecast?.mood ?? null;
   const [top, setTop] = useState<{ items: TopDish[]; scope: TopScope } | null>(null);
-  useFocusEffect(
+  useTabFocusEffect(
     useCallback(() => {
       // Wait for Story of the day (undefined = still loading) so its post is never in this list.
       if (excludeId === undefined) return;

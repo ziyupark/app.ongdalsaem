@@ -1,4 +1,4 @@
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -17,7 +17,7 @@ import Animated, {
 import { scheduleOnRN } from 'react-native-worklets';
 import { useWashScroll } from '../../src/lib/useWashScroll';
 import { AcornTag, WeatherTag } from '../../src/components/PhotoTags';
-import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
+import { goTab, TabBar, useTabBarScroll, useTabFocusEffect, type TabKey } from '../../src/components/TabBar';
 import { UnderlineTabs } from '../../src/components/UnderlineTabs';
 import { Text } from '../../src/components/Text';
 import { CUSTOM_MOOD_ICON, MOOD_TAGS } from '../../src/lib/tags';
@@ -330,7 +330,7 @@ function Global() {
     setAcorn(id, on).catch(() => setStoryAcorn((a) => (a.id === id ? { ...a, given: !on, delta: a.delta - step } : a)));
   };
 
-  useFocusEffect(
+  useTabFocusEffect(
     useCallback(() => {
       fetchViralBites().then(setViral).catch(() => undefined);
       fetchStoryOfTheDay().then(async (d) => {
@@ -511,7 +511,7 @@ function Following() {
       setFollowees((n) => n ?? 0);
     }
   }, [here.status, here.coords, here.cell, district, city]);
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useTabFocusEffect(useCallback(() => { load(); }, [load]));
 
   const day = (d: Date) => d.toLocaleDateString(i18n.language, { weekday: 'long', month: 'short', day: 'numeric' });
 

@@ -1,5 +1,5 @@
 import { BlurView } from 'expo-blur';
-import { router, useFocusEffect, type Href } from 'expo-router';
+import { router, useFocusEffect, type EffectCallback, type Href } from 'expo-router';
 import { Home, Plus, Timer, User, Users, type LucideIcon } from 'lucide-react-native';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,8 +55,31 @@ export function setTabsOnTop(on: boolean) {
  */
 export function goTab(k: TabKey, params?: Record<string, string>) {
   const href = (params ? { pathname: HREF[k], params } : HREF[k]) as Href;
-  if (tabsOnTop) router.navigate(href);
-  else router.dismissTo(href);
+  if (tabsOnTop) {
+    tabSwitchAt = Date.now();
+    router.navigate(href);
+  } else router.dismissTo(href);
+}
+
+/** When the last switch between tabs (tab bar tap) happened. */
+let tabSwitchAt = 0;
+/** A tab's data loaded this recently isn't loaded again when you merely switch back to that tab. */
+const TAB_STALE_MS = 3 * 60_000;
+
+/**
+ * useFocusEffect for loading a tab's data, minus the reload on a plain tab switch within TAB_STALE_MS of the last load.
+ * Still runs on first show, when its inputs change, and on coming back from a pushed screen (where acorns, comments or
+ * a new post may have changed things).
+ */
+export function useTabFocusEffect(effect: EffectCallback) {
+  const last = useRef<{ fn: EffectCallback; at: number } | null>(null);
+  useFocusEffect(useCallback(() => {
+    const now = Date.now();
+    const l = last.current;
+    if (l && l.fn === effect && now - tabSwitchAt < 1000 && now - l.at < TAB_STALE_MS) return;
+    last.current = { fn: effect, at: now };
+    return effect();
+  }, [effect]));
 }
 
 /** Pill position, shared by every TabBar (each screen draws its own) so it can slide on from the screen being left. */

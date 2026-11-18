@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import { supabase } from '../../src/lib/supabase';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { useWashScroll } from '../../src/lib/useWashScroll';
 import { syncPush } from '../../src/lib/push';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, ScreenWash } from '../../src/components/ScreenHeader';
-import { goTab, TabBar, useTabBarScroll } from '../../src/components/TabBar';
+import { goTab, TabBar, useTabBarScroll, useTabFocusEffect } from '../../src/components/TabBar';
 import { LocationCard, NearbyCard, PickCard } from '../../src/components/home/Cards';
 import { FeedLoader } from '../../src/components/home/FeedLoader';
 import { FeedPost, type FeedPostData } from '../../src/components/home/FeedPost';
@@ -54,8 +54,8 @@ export default function HomeScreen() {
   const [favoriteTags, setFavoriteTags] = useState<string[]>([]);
   const diet = useDietPrefs();
   useEffect(() => { fetchMyFavoriteTags().then(setFavoriteTags).catch(() => undefined); }, []);
-  useFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, []));
-  useFocusEffect(
+  useTabFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, []));
+  useTabFocusEffect(
     useCallback(() => {
       let alive = true;
       (async () => {
