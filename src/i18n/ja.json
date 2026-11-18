@@ -1392,7 +1392,8 @@
     "affordable": "お手頃",
     "emptyBothTitle": "近くに{{dish}}や似た料理のお店がありません",
     "emptyBothBody": "地図アプリでもっと広く探せます",
-    "searchInMapApp": "地図アプリで探す"
+    "searchInMapApp": "地図アプリで探す",
+    "dishOrSimilar": "{{dish}}または似た料理"
   },
   "mapApps": {
     "title": "どのアプリで開きますか？",

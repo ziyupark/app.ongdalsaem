@@ -1392,7 +1392,8 @@
     "affordable": "Terjangkau",
     "emptyBothTitle": "Tidak ada {{dish}} atau yang serupa di dekat sini",
     "emptyBothBody": "Cari di area yang lebih luas di aplikasi peta",
-    "searchInMapApp": "Cari di aplikasi peta"
+    "searchInMapApp": "Cari di aplikasi peta",
+    "dishOrSimilar": "{{dish}} atau hidangan serupa"
   },
   "mapApps": {
     "title": "Buka dengan",

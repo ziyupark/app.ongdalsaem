@@ -1392,7 +1392,8 @@
     "affordable": "ราคาย่อมเยา",
     "emptyBothTitle": "ไม่มีร้าน{{dish}}หรืออาหารคล้ายกันแถวนี้",
     "emptyBothBody": "ค้นหาในพื้นที่กว้างขึ้นได้ในแอปแผนที่",
-    "searchInMapApp": "ค้นหาในแอปแผนที่"
+    "searchInMapApp": "ค้นหาในแอปแผนที่",
+    "dishOrSimilar": "{{dish}} หรืออาหารคล้ายกัน"
   },
   "mapApps": {
     "title": "เปิดด้วย",

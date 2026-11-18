@@ -1413,7 +1413,8 @@
     "affordable": "Em conta",
     "emptyBothTitle": "Nada de {{dish}} ou parecido por perto",
     "emptyBothBody": "Procure numa área maior em um app de mapas",
-    "searchInMapApp": "Buscar em um app de mapas"
+    "searchInMapApp": "Buscar em um app de mapas",
+    "dishOrSimilar": "{{dish}} ou pratos parecidos"
   },
   "mapApps": {
     "title": "Abrir com",

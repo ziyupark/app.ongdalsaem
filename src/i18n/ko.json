@@ -1413,7 +1413,8 @@
     "affordable": "저렴한 곳",
     "emptyBothTitle": "근처에 {{dishOr}} 비슷한 음식 가게가 없어요",
     "emptyBothBody": "지도 앱에서 더 넓게 찾아볼 수 있어요",
-    "searchInMapApp": "지도 앱에서 찾아보기"
+    "searchInMapApp": "지도 앱에서 찾아보기",
+    "dishOrSimilar": "{{dish}} 또는 비슷한 음식"
   },
   "mapApps": {
     "title": "어떤 앱으로 열까요?",
