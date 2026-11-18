@@ -27,8 +27,16 @@ const withoutPaidEntitlements: ConfigPlugin = (config) =>
     return c;
   });
 
+/** 2.4b map-app picker (src/lib/mapApps.ts): iOS only answers canOpenURL for schemes listed here. */
+const MAP_SCHEMES = ['nmap', 'kakaomap', 'comgooglemaps'];
+
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const base = config as ExpoConfig;
+  const app = config as ExpoConfig;
+  const queried = (app.ios?.infoPlist?.LSApplicationQueriesSchemes as string[] | undefined) ?? [];
+  const base: ExpoConfig = {
+    ...app,
+    ios: { ...app.ios, infoPlist: { ...app.ios?.infoPlist, LSApplicationQueriesSchemes: [...new Set([...queried, ...MAP_SCHEMES])] } },
+  };
   if (!FREE_TEAM) return withTimeSensitive(base);
   const withFlag: ExpoConfig = {
     ...base,
