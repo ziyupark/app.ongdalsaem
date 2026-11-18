@@ -1,8 +1,8 @@
 // Account settings on `profiles` (9.2 · 9.4 · 9.5 · 9.6 · 9.7 · 9.9) + support tickets (9.8a).
 import * as Application from 'expo-application';
-import * as ImageManipulator from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 import { supabase } from '../lib/supabase';
+import { uploadAvatar } from './profile';
 
 export type AccountSettings = {
   id: string;
@@ -77,12 +77,7 @@ export async function saveProfile(a: AccountSettings, input: { displayName: stri
   const user = await uid();
   const patch: Row = { display_name: input.displayName.trim(), bio: input.bio.trim() || null };
   if (input.avatarUri) {
-    const resized = await ImageManipulator.manipulateAsync(input.avatarUri, [{ resize: { width: 512 } }], { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG });
-    const body = await (await fetch(resized.uri)).arrayBuffer();
-    const path = `${user.id}/avatar-${Date.now()}.jpg`;
-    const { error } = await supabase.storage.from('avatars').upload(path, body, { contentType: 'image/jpeg', upsert: false });
-    if (error) throw error;
-    patch.avatar_url = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    patch.avatar_url = await uploadAvatar(user.id, input.avatarUri);
   }
   const handle = input.username.trim().toLowerCase().replace(/^@/, '');
   if (handle !== a.username) {

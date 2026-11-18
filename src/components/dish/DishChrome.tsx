@@ -1,14 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { space, useTheme, withAlpha } from '../../theme';
-
-/** Top bar over the hero (Figma "Top bar"): row of 40 glass buttons at y 56, px 20. */
-export function DishTopBar({ children }: { children: ReactNode }) {
-  const insets = useSafeAreaInsets();
-  return <View style={[styles.top, { top: insets.top + 2 }]} pointerEvents="box-none">{children}</View>;
-}
 
 /** Action bar — bg/default 0 → 100 % at 35 %, padding 28 20 34, gap 10. */
 export function DishActionBar({ children }: { children: ReactNode }) {
@@ -33,6 +27,5 @@ export function useActionBarInset() {
 }
 
 const styles = StyleSheet.create({
-  top: { position: 'absolute', left: space[20], right: space[20], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   bar: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingTop: 28, paddingHorizontal: space[20] },
 });

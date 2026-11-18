@@ -33,13 +33,6 @@ export async function searchNearbyPlaces(q: PlacesQuery): Promise<NearbyResult> 
   return { places: d?.places ?? [], similar: d?.similar ?? null };
 }
 
-/** "₩9,000" / "₩8,000–12,000" from Google's price range. */
-export function formatPrice(p: NearbyPlace, lang: string) {
-  if (!p.priceFrom) return null;
-  const f = (m: Money) => new Intl.NumberFormat(lang, { style: 'currency', currency: m.currency, maximumFractionDigits: 0 }).format(m.units);
-  return p.priceTo && p.priceTo.units !== p.priceFrom.units ? `${f(p.priceFrom)}–${f(p.priceTo).replace(/^[^\d]+/, '')}` : f(p.priceFrom);
-}
-
 export function formatDistance(m: number | null) {
   if (m == null) return null;
   return m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1)} km`;

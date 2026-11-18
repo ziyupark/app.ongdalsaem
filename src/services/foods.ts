@@ -294,20 +294,6 @@ export async function ateToday(foodId: string) {
 }
 
 export type DiaryEntry = { id: string; foodId: string | null; name: string; photo: string | null; eatenAt: string; review: string | null };
-/** 6.3 Diary — what I ate, newest day first. */
-export async function fetchDiary(): Promise<DiaryEntry[]> {
-  const uid = await myId();
-  if (!uid) return [];
-  const { data, error } = await supabase
-    .from('food_eaten_logs')
-    .select('id, food_id, food_name_snapshot, food_image_snapshot, eaten_at, review')
-    .eq('user_id', uid)
-    .order('eaten_at', { ascending: false })
-    .order('created_at', { ascending: false })
-    .limit(300);
-  if (error) throw error;
-  return (data as Row[]).map((r) => ({ id: r.id, foodId: r.food_id, name: r.food_name_snapshot, photo: r.food_image_snapshot, eatenAt: r.eaten_at, review: r.review }));
-}
 
 // --------------------------------------------------------------------------------------------- writes
 
@@ -349,16 +335,6 @@ export async function deleteComment(commentId: string) {
   if (error) throw error;
 }
 
-export async function setCommentLike(commentId: string, on: boolean) {
-  const uid = await myId();
-  if (!uid) throw new Error('Not signed in');
-  const q = on
-    ? supabase.from('comment_likes').insert({ comment_id: commentId, user_id: uid })
-    : supabase.from('comment_likes').delete().eq('comment_id', commentId).eq('user_id', uid);
-  const { error } = await q;
-  if (error && error.code !== UNIQUE_VIOLATION) throw error;
-}
-
 /** Undo today's "I ate this". */
 export async function unlogEaten(foodId: string) {
   const uid = await myId();
@@ -392,6 +368,28 @@ export async function deleteDish(foodId: string) {
   await supabase.storage.from(BUCKET).remove([...new Set([...Array.from({ length: 10 }, (_, i) => `${uid}/${foodId}-${i}.jpg`), ...extra])]);
 }
 
+/**
+ * Resize one picked photo to MAX_EDGE (JPEG 0.82) and upload it to `path`, trying twice. false = both attempts failed.
+ * upsert: false — every path is new, and upsert would also need a SELECT policy on storage.objects, which
+ * food-illustrations doesn't have (→ "new row violates row-level security policy").
+ */
+async function uploadPhoto(p: ShareDraft['photos'][number], path: string): Promise<boolean> {
+  const long = Math.max(p.width, p.height) || MAX_EDGE;
+  const resize = long > MAX_EDGE ? [{ resize: p.width >= p.height ? { width: MAX_EDGE } : { height: MAX_EDGE } }] : [];
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const out = await ImageManipulator.manipulateAsync(p.fileUri ?? p.uri, resize, { compress: 0.82, format: ImageManipulator.SaveFormat.JPEG });
+      const body = await (await fetch(out.uri)).arrayBuffer();
+      const { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: 'image/jpeg', upsert: false });
+      if (error) throw error;
+      return true;
+    } catch {
+      // retry once
+    }
+  }
+  return false;
+}
+
 /** 8.3 "Share to ongdalsaem": upload photos → foods row → food_images rows. Returns the new dish id. */
 export async function createDish(draft: ShareDraft): Promise<string> {
   const uid = await myId();
@@ -403,24 +401,8 @@ export async function createDish(draft: ShareDraft): Promise<string> {
 
   try {
     for (const [i, p] of draft.photos.entries()) {
-      const long = Math.max(p.width, p.height) || MAX_EDGE;
-      const resize = long > MAX_EDGE ? [{ resize: p.width >= p.height ? { width: MAX_EDGE } : { height: MAX_EDGE } }] : [];
       const path = `${uid}/${foodId}-${i}.jpg`;
-      let uploaded = false;
-      for (let attempt = 0; attempt < 2 && !uploaded; attempt++) {
-        try {
-          const out = await ImageManipulator.manipulateAsync(p.fileUri ?? p.uri, resize, { compress: 0.82, format: ImageManipulator.SaveFormat.JPEG });
-          const body = await (await fetch(out.uri)).arrayBuffer();
-      // upsert: false — every path is new (fresh foodId), and upsert would also need a SELECT policy on storage.objects,
-      // which food-illustrations doesn't have (→ "new row violates row-level security policy").
-          const { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: 'image/jpeg', upsert: false });
-          if (error) throw error;
-          uploaded = true;
-        } catch {
-          // retry once
-        }
-      }
-      if (!uploaded) throw new UploadError(i);
+      if (!(await uploadPhoto(p, path))) throw new UploadError(i);
       paths.push(path);
       urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
     }
@@ -539,23 +521,9 @@ export async function updateDish(foodId: string, draft: ShareDraft): Promise<voi
   try {
     for (const [i, p] of draft.photos.entries()) {
       if (p.remoteUrl) { urls.push(p.remoteUrl); continue; }
-      const long = Math.max(p.width, p.height) || MAX_EDGE;
-      const resize = long > MAX_EDGE ? [{ resize: p.width >= p.height ? { width: MAX_EDGE } : { height: MAX_EDGE } }] : [];
       // A new name per edit: the old `<foodId>-<n>.jpg` files may still be in use, and upsert needs a storage SELECT policy.
       const path = `${uid}/${foodId}-e${stamp}-${i}.jpg`;
-      let uploaded = false;
-      for (let attempt = 0; attempt < 2 && !uploaded; attempt++) {
-        try {
-          const out = await ImageManipulator.manipulateAsync(p.fileUri ?? p.uri, resize, { compress: 0.82, format: ImageManipulator.SaveFormat.JPEG });
-          const body = await (await fetch(out.uri)).arrayBuffer();
-          const { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: 'image/jpeg', upsert: false });
-          if (error) throw error;
-          uploaded = true;
-        } catch {
-          // retry once
-        }
-      }
-      if (!uploaded) throw new UploadError(i);
+      if (!(await uploadPhoto(p, path))) throw new UploadError(i);
       added.push(path);
       urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
     }

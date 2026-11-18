@@ -3,14 +3,6 @@ import { getLocales } from 'expo-localization';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import en from './en.json';
-import es from './es.json';
-import id from './id.json';
-import ja from './ja.json';
-import ko from './ko.json';
-import ptBR from './pt-BR.json';
-import th from './th.json';
-import vi from './vi.json';
-import zhTW from './zh-TW.json';
 
 /** 9.6 order: English, Korean, then the big social-media markets. */
 export const SUPPORTED_LANGUAGES = ['en', 'ko', 'ja', 'zh-TW', 'es', 'pt-BR', 'id', 'th', 'vi'] as const;
@@ -41,19 +33,31 @@ export function deviceLanguage(): AppLanguage {
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(code) ? (code as AppLanguage) : 'en';
 }
 
+/**
+ * Strings per language, read only when that language is needed (each file is ~50–90 KB): English (the fallback) is
+ * always there, the others are added by ensureLanguage() — at start for the device language, then on a language change.
+ */
+const LOAD: Record<AppLanguage, () => object> = {
+  en: () => en,
+  ko: () => require('./ko.json'),
+  ja: () => require('./ja.json'),
+  'zh-TW': () => require('./zh-TW.json'),
+  es: () => require('./es.json'),
+  'pt-BR': () => require('./pt-BR.json'),
+  id: () => require('./id.json'),
+  th: () => require('./th.json'),
+  vi: () => require('./vi.json'),
+};
+
+/** Make sure a language's strings are loaded — call before i18n.changeLanguage(lng). */
+export function ensureLanguage(lng: AppLanguage) {
+  if (!i18n.hasResourceBundle(lng, 'translation')) i18n.addResourceBundle(lng, 'translation', LOAD[lng]());
+}
+
+const startLng = deviceLanguage();
 i18n.use(initReactI18next).init({
-  resources: {
-    en: { translation: en },
-    ko: { translation: ko },
-    ja: { translation: ja },
-    'zh-TW': { translation: zhTW },
-    es: { translation: es },
-    'pt-BR': { translation: ptBR },
-    id: { translation: id },
-    th: { translation: th },
-    vi: { translation: vi },
-  },
-  lng: deviceLanguage(),
+  resources: { en: { translation: en }, ...(startLng !== 'en' ? { [startLng]: { translation: LOAD[startLng]() } } : {}) },
+  lng: startLng,
   fallbackLng: 'en',
   // Keep region codes (zh-TW, pt-BR) as resource keys instead of falling back to zh / pt.
   load: 'currentOnly',

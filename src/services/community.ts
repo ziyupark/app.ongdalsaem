@@ -806,16 +806,6 @@ export async function fetchChallenge(slug: string): Promise<Challenge | null> {
   return data ? (await decorateChallenges([data as Row]))[0] : null;
 }
 
-/** 2.1c — the running challenge you joined that ends soonest. */
-export async function fetchMyActiveChallenge(): Promise<Challenge | null> {
-  const me = await uid();
-  if (!me) return null;
-  const { data, error } = await supabase.from('challenge_participants').select('challenge:challenges(*)').eq('user_id', me);
-  if (error) return null;
-  const list = await decorateChallenges(((data ?? []) as Row[]).map((r) => r.challenge).filter(Boolean));
-  return list.filter((c) => c.phase === 'running').sort((a, b) => a.endsAt.getTime() - b.endsAt.getTime())[0] ?? null;
-}
-
 export async function setChallengeJoined(challengeId: string, on: boolean) {
   const me = await needUid();
   const { error } = on

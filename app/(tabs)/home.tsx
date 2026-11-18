@@ -1,5 +1,5 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import { supabase } from '../../src/lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -297,15 +297,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.feed}>
               {posts.map((p) => (
-                <FeedPost
-                  key={p.id}
-                  post={p}
-                  onOpen={() => router.push(`/dish/${p.id}`)}
-                  onAuthor={p.authorId ? () => router.push(`/cook/${p.authorId}`) : undefined}
-                  onComments={() => router.push(`/dish/${p.id}?comments=1`)}
-                  onAcorn={(on) => setAcorn(p.id, on)}
-                  onSave={(on) => setSaved(p.id, on)}
-                />
+                <HomePost key={p.id} post={p} />
               ))}
               {posts.length >= 20 ? <FeedLoader /> : null}
               <View style={{ height: 96 }} />
@@ -319,6 +311,20 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+/** A feed post with its handlers built from the post itself, so Home re-renders (toast, pick, weather…) skip unchanged posts. */
+const HomePost = memo(function HomePost({ post: p }: { post: FeedPostData }) {
+  return (
+    <FeedPost
+      post={p}
+      onOpen={() => router.push(`/dish/${p.id}`)}
+      onAuthor={p.authorId ? () => router.push(`/cook/${p.authorId}`) : undefined}
+      onComments={() => router.push(`/dish/${p.id}?comments=1`)}
+      onAcorn={(on) => setAcorn(p.id, on)}
+      onSave={(on) => setSaved(p.id, on)}
+    />
+  );
+});
 
 const styles = StyleSheet.create({
   root: { flex: 1 },

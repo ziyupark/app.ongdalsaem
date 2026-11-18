@@ -9,12 +9,11 @@ import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle 
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
 import type { CardDish, CookCard, Question, ViralItem } from '../../services/community';
-import { iconRing, moods, radius, space, text, useTheme, withAlpha, type WeatherMood } from '../../theme';
+import { iconRing, radius, space, text, useTheme, withAlpha } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
 import { Icon } from '../Icon';
-import { AcornTag, WeatherTag } from '../PhotoTags';
 import { Text } from '../Text';
 
 const FLAGS: Record<string, number> = {
@@ -26,7 +25,6 @@ const FLAGS: Record<string, number> = {
   AU: require('../../../assets/flags/AU.png'), BR: require('../../../assets/flags/BR.png'), CL: require('../../../assets/flags/CL.png'),
   IR: require('../../../assets/flags/IR.png'), NZ: require('../../../assets/flags/NZ.png'), SE: require('../../../assets/flags/SE.png'),
 };
-export const hasFlag = (code: string | null | undefined) => !!code && code.toUpperCase() in FLAGS;
 /** Flag image for an ISO country code (20×14 assets), or undefined. */
 export const flagSource = (code: string) => FLAGS[code.toUpperCase()];
 
@@ -140,25 +138,6 @@ export function useByline() {
   };
 }
 
-/** Food Card · Grid — media 208 (r24) with Weather + Acorn tags, Title/S + Caption byline. */
-export function FoodCardGrid({ dish, width, byline, onPress }: { dish: CardDish; width: number; byline: string; onPress: () => void }) {
-  const { color } = useTheme();
-  const h = Math.round((width * 208) / 167);
-  return (
-    <Pressable accessibilityRole="button" accessibilityLabel={dish.name} onPress={onPress} style={[styles.card, { width }]}>
-      <View style={[styles.media, { height: h, backgroundColor: color('bg/muted') }]}>
-        <Image source={{ uri: dish.photo }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} recyclingKey={dish.id} />
-        {dish.mood && dish.tempC != null ? <View style={styles.bl}><WeatherTag mood={dish.mood} tempC={dish.tempC} /></View> : null}
-        <View style={styles.br}><AcornTag count={dish.acorns} /></View>
-      </View>
-      <View style={styles.cardText}>
-        <Text variant="Title/S" numberOfLines={1}>{dish.name}</Text>
-        <Text variant="Caption" color="fg/muted" numberOfLines={1}>{byline}</Text>
-      </View>
-    </Pressable>
-  );
-}
-
 /** Two-column grid of Food Cards (gap 16, px 20). */
 /** 2-column Dish Tile grid (670:20058) — 4.2 Tag, 4.3 Country, 3.x Nearby: x20 · gap 16 · rows 20. Byline = the tile's own "Comfort · Dinner". */
 export function FoodGrid({ dishes, width, onOpen }: { dishes: CardDish[]; width: number; byline?: (d: CardDish) => string; onOpen: (d: CardDish) => void }) {
@@ -208,12 +187,6 @@ export function PhotoCard({ photo, width, height, children, onPress, label, styl
       {children}
     </Pressable>
   );
-}
-
-/** Mood-tinted card background (Challenge / Festive cards): the weather's top colour → bg/subtle. */
-export function MoodCardBg({ mood }: { mood: WeatherMood }) {
-  const { color } = useTheme();
-  return <LinearGradient colors={[moods[mood].top, moods[mood].mid, color('bg/subtle')]} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />;
 }
 
 /** Avatar circle with initial fallback. */
@@ -377,11 +350,6 @@ const styles = StyleSheet.create({
   tab: { height: 43, paddingTop: space[10], paddingHorizontal: space[2], gap: space[8], alignItems: 'center', justifyContent: 'center' },
   indicator: { width: 24, height: 3, borderRadius: 2 },
   search: { height: 48, borderRadius: radius.full, borderWidth: 1.5, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16] },
-  card: { gap: space[6] },
-  media: { borderRadius: radius.xl, overflow: 'hidden' },
-  bl: { position: 'absolute', left: space[8], bottom: space[8] },
-  br: { position: 'absolute', right: space[8], bottom: space[8] },
-  cardText: { paddingHorizontal: space[20] }, // Food Card · Grid text inset 0 20
   grid: { flexDirection: 'row', flexWrap: 'wrap', columnGap: space[16], rowGap: space[20], paddingHorizontal: space[20] },
   row: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   rowThumb: { width: 80, height: 80, borderRadius: radius.lg },

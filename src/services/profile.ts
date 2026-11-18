@@ -26,7 +26,7 @@ export function needsProfileSetup(p: MyProfile | null) {
 const UNIQUE_VIOLATION = '23505';
 
 /** Avatar → 512 px JPEG in bucket `avatars/<uid>/avatar-<ts>.jpg`, returns its public URL. */
-async function uploadAvatar(userId: string, localUri: string) {
+export async function uploadAvatar(userId: string, localUri: string) {
   const resized = await ImageManipulator.manipulateAsync(localUri, [{ resize: { width: 512 } }], { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG });
   const body = await (await fetch(resized.uri)).arrayBuffer();
   const path = `${userId}/avatar-${Date.now()}.jpg`;

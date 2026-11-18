@@ -166,7 +166,6 @@ function replace(id: string, next: KitchenTimer | null) {
 export function secondsLeft(t: KitchenTimer, now = Date.now()) {
   return t.endAt == null ? t.leftSec : Math.max(0, Math.ceil((t.endAt - now) / 1000));
 }
-export const isRunning = (t: KitchenTimer, now = Date.now()) => t.endAt != null && t.endAt > now;
 export const isFinished = (t: KitchenTimer, now = Date.now()) => secondsLeft(t, now) === 0;
 
 export async function startTimer(label: string, seconds: number, source?: TimerSource, foodName?: string) {
