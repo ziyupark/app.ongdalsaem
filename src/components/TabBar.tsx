@@ -25,7 +25,7 @@ const TABS: { key: TabKey; icon: LucideIcon }[] = [
  * Glass capsule 62 high with 4 tabs (icon 22 + Nav label) + a separate 62 "Share a dish" circle, gap 10.
  * Scrolling down slides the whole bar (capsule + FAB) down off screen with the finger, scrolling up brings it back
  * (see useTabBarScroll). Active tab = Gradient/Dusk icon, fg/accent label on a bg/accent-subtle pill; on a tab switch
- * the pill slides over to the new tab (250 ms ease-out; Reduce Motion: jumps). The pill is slightly see-through
+ * the pill slides over to the new tab (220 ms ease-out expo, mostly there in ~70 ms; Reduce Motion: jumps). The pill is slightly see-through
  * (82 %) with a glass highlight edge and Elevation/1 so it reads as a raised glass chip. The screens themselves swap instantly.
  */
 const EXP = { h: 62, fab: 62 };
@@ -63,7 +63,8 @@ export function goTab(k: TabKey, params?: Record<string, string>) {
 const pillX = makeMutable(-1);
 /** The tab the pill is heading to — a TabBar that gains focus with a different active tab just snaps the pill. */
 let pillGoal = -1;
-const PILL = { duration: 250, easing: Easing.out(Easing.cubic) };
+/** Front-loaded so the pill lands with the (instant) screen swap: ~90 % of the way in the first ~70 ms. */
+const PILL = { duration: 220, easing: Easing.out(Easing.exp) };
 const ITEMS_PAD = 4;
 
 type Props = {
