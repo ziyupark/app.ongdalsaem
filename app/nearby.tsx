@@ -286,16 +286,14 @@ export default function EatNearby() {
             <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
             <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
             <View style={styles.now}>
-              <View style={styles.temp}>
-                <Text variant="Numeric/L" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
-              </View>
+              <Text variant="Numeric/XL" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
               <View style={styles.nowText}>
-                <Text variant="Title/S" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : t('home.noWeather')}</Text>
-                {detail ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{detail}</Text> : null}
+                <Text variant="Title/M" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : t('home.noWeather')}</Text>
+                {detail ? <Text variant="Body/S" color="fg/muted" numberOfLines={2}>{detail}</Text> : null}
               </View>
               {/* Mood orb — the current mood's top colour at 35 %. */}
               <View style={[styles.wOrb, { backgroundColor: f ? withAlpha(moods[f.mood].top, 0.35) : color('bg/muted') }]}>
-                <Icon icon={WEATHER_ICON[f?.mood ?? 'overcast']} size={20} color={f ? 'fg/default' : 'fg/muted'} />
+                <Icon icon={WEATHER_ICON[f?.mood ?? 'overcast']} size={28} color={f ? 'fg/default' : 'fg/muted'} />
               </View>
             </View>
           </View>
@@ -361,12 +359,11 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[20] },
   titleBlock: { paddingHorizontal: space[20], paddingTop: space[20], gap: space[12] },
   title: { flexDirection: 'row', alignItems: 'flex-end', gap: space[12] },
-  // Small weather card — the Weather Card's Now row only: glass surface, radius xl, padding 12 16.
+  // Small Weather Card (848:13120) — the Weather Card's Now row only: glass surface, radius xl, padding 12 16.
   weather: { borderRadius: radius.xl, borderWidth: 1, paddingHorizontal: space[16], paddingVertical: space[12], overflow: 'hidden', alignSelf: 'stretch' },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  temp: { width: 77, height: space[56], justifyContent: 'center' },
   nowText: { flex: 1, gap: space[2] },
-  wOrb: { width: space[40], height: space[40], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  wOrb: { width: space[56], height: space[56], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   places: { paddingHorizontal: space[20], paddingTop: space[24] + space[6], gap: space[12] },
   forRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[8] },
   forBar: { width: 5, height: 15, marginTop: 3 },
