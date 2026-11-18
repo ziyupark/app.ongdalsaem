@@ -128,7 +128,8 @@ export default function HomeScreen() {
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     wash.onY(y);
-    bar.onY(y);
+    const { contentSize, layoutMeasurement } = e.nativeEvent;
+    bar.onY(y, contentSize.height - layoutMeasurement.height);
   };
 
   const now = useMemo(() => new Date(), [state]);

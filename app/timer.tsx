@@ -102,7 +102,8 @@ export default function KitchenTimerScreen() {
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     wash.onY(y);
-    bar.onY(y);
+    const { contentSize, layoutMeasurement } = e.nativeEvent;
+    bar.onY(y, contentSize.height - layoutMeasurement.height);
   };
 
   // Hold the big ring, then drag around it: the arc's end follows the finger (counter-clockwise = more time, since the

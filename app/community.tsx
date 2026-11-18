@@ -119,9 +119,9 @@ export default function Community() {
     const i = SEGS.indexOf(segRef.current);
     visit(SEGS.filter((_, k) => Math.abs(k - i) === 1)); // mount the neighbours a swipe can reveal
   }, [visit]);
-  const onY = useRef<(y: number) => void>(() => undefined);
-  onY.current = (y: number) => { wash.onY(y); bar.onY(y); };
-  const onOuterY = useCallback((y: number) => onY.current(y), []);
+  const onY = useRef<(y: number, maxY: number) => void>(() => undefined);
+  onY.current = (y: number, maxY: number) => { wash.onY(y); bar.onY(y, maxY); };
+  const onOuterY = useCallback((y: number, maxY: number) => onY.current(y, maxY), []);
 
   /** Page j has landed: remember the old page's scroll, jump the outer scroll to the new page's (same frame as the shift reset). */
   const settle = (j: number) => {
@@ -150,7 +150,7 @@ export default function Community() {
   const onOuterScroll = useAnimatedScrollHandler({
     onScroll: (e) => {
       sy.value = e.contentOffset.y;
-      scheduleOnRN(onOuterY, e.contentOffset.y);
+      scheduleOnRN(onOuterY, e.contentOffset.y, e.contentSize.height - e.layoutMeasurement.height);
     },
   });
   const onPagerScroll = useAnimatedScrollHandler({

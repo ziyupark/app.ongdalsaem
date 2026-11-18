@@ -1,14 +1,14 @@
 import { BlurView } from 'expo-blur';
+import { useFocusEffect } from 'expo-router';
 import { Home, Plus, Timer, User, Users, type LucideIcon } from 'lucide-react-native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, {
-  Easing, Extrapolation, interpolate, useAnimatedReaction, useAnimatedStyle, useSharedValue, withTiming, type SharedValue,
+  Easing, Extrapolation, interpolate, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming, type SharedValue,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
-import { scheduleOnRN } from 'react-native-worklets';
 import { armTabEnter } from '../lib/tabMotion';
 import { elevation, gradients, iconStroke, radius, useTheme } from '../theme';
 import { Text } from './Text';
@@ -23,23 +23,23 @@ const TABS: { key: TabKey; icon: LucideIcon }[] = [
 
 /**
  * Liquid Glass tab bar (Figma "ongdalsaem · Liquid Glass Tab Bar", after Apple's Tab Bar · Prominent Tab).
- * Expanded: glass capsule 62 high with 4 tabs (icon 22 + Nav label) + a separate 62 "Share a dish" circle, gap 10.
- * Minimized (scrolling down, Apple-style): the capsule shrinks to a 48 glass circle holding only the current tab's
- * icon, the + shrinks to 48 — tap the small circle to open the bar again. Active tab = Gradient/Dusk icon,
- * fg/accent label on a bg/accent-subtle pill.
+ * Glass capsule 62 high with 4 tabs (icon 22 + Nav label) + a separate 62 "Share a dish" circle, gap 10.
+ * Scrolling down slides the whole bar (capsule + FAB) down off screen with the finger, scrolling up brings it back
+ * (see useTabBarScroll). Active tab = Gradient/Dusk icon, fg/accent label on a bg/accent-subtle pill.
  */
 const EXP = { h: 62, fab: 62 };
-/** Create FAB size in the expanded bar — also the Questions list photo. */
+/** Create FAB size in the bar — also the Questions list photo. */
 export const FAB_SIZE = EXP.fab;
-const MIN = { h: 48, fab: 48 };
 const GAP = 10;
 const SIDE = 16;
 const BOTTOM = 84; // bottom edge of the bar inside the 110-tall area (the 34 home-indicator band sits under it)
 const AREA_H = 110;
+/** How far the bar slides down when fully hidden: bar height + bottom safe area. */
+const hideDistance = (bottomInset: number) => EXP.h + bottomInset;
 
 type Props = {
   active: TabKey;
-  /** 0 = expanded … 1 = minimized — from useTabBarScroll (follows the scroll, settles to the nearer end). */
+  /** 0 = shown … 1 = hidden — from useTabBarScroll (follows the scroll, snaps to the nearer end). */
   progress?: SharedValue<number>;
   onTab: (k: TabKey) => void;
   onCreate: () => void;
@@ -52,55 +52,38 @@ export function TabBar({ active, progress, onTab, onCreate }: Props) {
   const { t } = useTranslation();
   const still = useSharedValue(0);
   const p = progress ?? still;
-  const [mini, setMini] = useState(false);
-  useAnimatedReaction(() => p.value > 0.5, (now, prev) => { if (now !== prev) scheduleOnRN(setMini, now); });
+  const max = hideDistance(insets.bottom);
 
   const barW = width - SIDE * 2 - EXP.fab - GAP;
-  const bar = useAnimatedStyle(() => {
-    const h = interpolate(p.value, [0, 1], [EXP.h, MIN.h], Extrapolation.CLAMP);
-    return { width: interpolate(p.value, [0, 1], [barW, MIN.h], Extrapolation.CLAMP), height: h, top: BOTTOM - h };
-  });
-  const fab = useAnimatedStyle(() => {
-    const s = interpolate(p.value, [0, 1], [EXP.fab, MIN.fab], Extrapolation.CLAMP);
-    return { width: s, height: s, top: BOTTOM - s, left: width - SIDE - s };
-  });
-  const row = useAnimatedStyle(() => ({ opacity: interpolate(p.value, [0, 0.55], [1, 0], Extrapolation.CLAMP) }));
-  const dot = useAnimatedStyle(() => ({ opacity: interpolate(p.value, [0.45, 1], [0, 1], Extrapolation.CLAMP) }));
-  const plus = useAnimatedStyle(() => ({ transform: [{ scale: interpolate(p.value, [0, 1], [1, 0.84], Extrapolation.CLAMP) }] }));
-
-  const expand = () => {
-    const goal = GOALS.get(p);
-    if (goal) goal.current = 0;
-    p.value = withTiming(0, { duration: 260, easing: Easing.out(Easing.cubic) });
-  };
-  const Active = TABS.find((x) => x.key === active)!;
+  // The bar slides as one piece; once mostly hidden it lets touches through to the content behind it.
+  const slide = useAnimatedStyle(() => ({
+    transform: [{ translateY: interpolate(p.value, [0, 1], [0, max], Extrapolation.CLAMP) }],
+    pointerEvents: p.value > 0.5 ? 'none' : 'box-none',
+  }));
 
   return (
-    <View pointerEvents="box-none" style={[styles.area, { bottom: insets.bottom - 34 }]}>
-      <Animated.View style={[styles.bar, elevation['Elevation/3 Float'], { borderColor: color('border/default') }, bar]}>
+    <Animated.View pointerEvents="box-none" style={[styles.area, { bottom: insets.bottom - 34 }, slide]}>
+      <View style={[styles.bar, elevation['Elevation/3 Float'], { borderColor: color('border/default'), width: barW }]}>
         <BlurView intensity={60} tint="light" style={StyleSheet.absoluteFill} />
         <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
-        {/* Expanded: the 4 tabs (they fade out as the capsule shrinks; the capsule clips them). */}
-        <Animated.View pointerEvents={mini ? 'none' : 'box-none'} style={[styles.items, { width: barW }, row]}>
+        <View style={styles.items}>
           {TABS.map((tab) => (
-            <TabItem key={tab.key} tab={tab} label={t(`home.tabs.${tab.key}`)} active={tab.key === active} onPress={() => { if (tab.key !== active) armTabEnter(); onTab(tab.key); }} />
+            <TabItem
+              key={tab.key}
+              tab={tab}
+              label={t(`home.tabs.${tab.key}`)}
+              active={tab.key === active}
+              onPress={() => { if (tab.key !== active) armTabEnter(); REVEAL.get(p)?.(); onTab(tab.key); }}
+            />
           ))}
-        </Animated.View>
-        {/* Minimized: only the current tab's icon; tap to open the bar again. */}
-        <Animated.View pointerEvents={mini ? 'auto' : 'none'} style={[StyleSheet.absoluteFill, styles.center, dot]}>
-          <Pressable accessibilityRole="button" accessibilityLabel={t(`home.tabs.${active}`)} onPress={expand} style={[StyleSheet.absoluteFill, styles.center]}>
-            <TabGlyph tab={Active} active />
-          </Pressable>
-        </Animated.View>
-      </Animated.View>
-      <Animated.View style={[styles.fab, elevation['Elevation/3 Float'], { backgroundColor: color('bg/kick'), borderColor: color('border/default') }, fab]}>
+        </View>
+      </View>
+      <View style={[styles.fab, elevation['Elevation/3 Float'], { backgroundColor: color('bg/kick'), borderColor: color('border/default'), left: width - SIDE - EXP.fab }]}>
         <Pressable accessibilityRole="button" accessibilityLabel={t('home.tabs.share')} onPress={onCreate} style={styles.center}>
-          <Animated.View style={plus}>
-            <Plus size={24} strokeWidth={2} absoluteStrokeWidth color={color('static/white')} />
-          </Animated.View>
+          <Plus size={24} strokeWidth={2} absoluteStrokeWidth color={color('static/white')} />
         </Pressable>
-      </Animated.View>
-    </View>
+      </View>
+    </Animated.View>
   );
 }
 
@@ -137,60 +120,94 @@ function TabItem({ tab, label, active, onPress }: { tab: (typeof TABS)[number]; 
   );
 }
 
-/** Scroll distance from expanded to minimized. */
-const TRAVEL = 120;
-/**
- * The bar trails the scroll instead of tracking it 1:1 — each scroll step eases toward the new target, so the shrink
- * lags a beat behind the finger like an afterimage (docs/05-behavior.md: 250 ms ease-out).
- */
-const FOLLOW = { duration: 250, easing: Easing.out(Easing.cubic) };
-const SETTLE = { duration: 320, easing: Easing.out(Easing.cubic) };
-/** Where each bar is heading (the value it eases toward), so tapping the minimized bar open resets it too. */
-const GOALS = new WeakMap<SharedValue<number>, { current: number }>();
+/** Pause after the last scroll event before the bar snaps to the nearer end. */
+const IDLE_MS = 140;
+const SNAP = { damping: 20, stiffness: 220 };
+/** Reduce Motion: no finger-following, just a short timed snap. */
+const SNAP_REDUCED = { duration: 200, easing: Easing.out(Easing.cubic) };
+/** Each bar's "show now" (resets the hook's own bookkeeping too) — the TabBar calls it on a tab tap. */
+const REVEAL = new WeakMap<SharedValue<number>, () => void>();
 
 /**
- * Apple-style tab bar: scrolling down minimizes it (following the scroll), scrolling up opens it again; if the scroll
- * stops half-way it settles to the nearer state. Always expanded at the top. Call `onY(contentOffset.y)`.
+ * YouTube-style tab bar: scrolling down slides it down by the finger's travel (fully hidden after bar height +
+ * bottom safe area), scrolling up slides it back at the same rate; when the scroll stops for 140 ms it springs to the
+ * nearer end. Always shown at the top, at the bottom, on a tab tap and when the screen gains focus.
+ * Call `onY(contentOffset.y, contentSize.height - layoutMeasurement.height)`.
  */
 export function useTabBarScroll() {
+  const insets = useSafeAreaInsets();
+  const reduce = useReducedMotion();
   const progress = useSharedValue(0);
-  const target = useRef(0);
-  GOALS.set(progress, target);
+  const max = hideDistance(insets.bottom);
+  /** Hidden amount 0…1 the finger has driven the bar to (in Reduce Motion: virtual, only used to pick the end). */
+  const hidden = useRef(0);
+  /** A snap animation may be running — resume following from where it is, not from its target. */
+  const snapping = useRef(false);
   const last = useRef(0);
-  const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (settle.current) clearTimeout(settle.current); }, []);
-  const onY = useCallback((y: number) => {
+  const idle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearIdle = () => { if (idle.current) { clearTimeout(idle.current); idle.current = null; } };
+  useEffect(() => clearIdle, []);
+
+  const snapTo = useCallback((to: 0 | 1) => {
+    hidden.current = to;
+    snapping.current = true;
+    progress.value = reduce ? withTiming(to, SNAP_REDUCED) : withSpring(to, SNAP);
+  }, [progress, reduce]);
+
+  const show = useCallback(() => {
+    clearIdle();
+    if (hidden.current !== 0 || snapping.current) snapTo(0);
+  }, [snapTo]);
+  REVEAL.set(progress, show);
+
+  // Entering (or coming back to) the screen: bar visible, no animation.
+  useFocusEffect(useCallback(() => {
+    clearIdle();
+    hidden.current = 0;
+    snapping.current = false;
+    progress.value = 0;
+  }, [progress]));
+
+  const onY = useCallback((y: number, maxY?: number) => {
     const dy = y - last.current;
     last.current = y;
-    if (settle.current) clearTimeout(settle.current);
-    if (y <= 0) {
-      target.current = 0;
-      progress.value = withTiming(0, SETTLE);
+    clearIdle();
+    if (y <= 0 || (maxY != null && maxY > 0 && y >= maxY - 1)) { show(); return; }
+    if (reduce) {
+      const was = hidden.current >= 0.5 ? 1 : 0;
+      hidden.current = Math.min(1, Math.max(0, hidden.current + dy / max));
+      const now = hidden.current >= 0.5 ? 1 : 0;
+      if (now !== was) {
+        progress.value = withTiming(now, SNAP_REDUCED);
+      }
       return;
     }
-    const next = Math.min(1, Math.max(0, target.current + dy / TRAVEL));
-    if (next !== target.current) {
-      target.current = next;
-      progress.value = withTiming(next, FOLLOW);
+    if (snapping.current) {
+      snapping.current = false;
+      hidden.current = Math.min(1, Math.max(0, progress.value));
     }
-    settle.current = setTimeout(() => {
-      const v = target.current;
-      if (v > 0 && v < 1) {
-        target.current = v > 0.5 ? 1 : 0;
-        progress.value = withTiming(target.current, SETTLE);
-      }
-    }, 140);
-  }, [progress]);
-  /** A programmatic jump (e.g. Community tab pager restoring a page's scroll) — move the baseline without resizing the bar. */
-  const sync = useCallback((y: number) => { last.current = y; }, []);
+    const next = Math.min(1, Math.max(0, hidden.current + dy / max));
+    if (next !== hidden.current) {
+      hidden.current = next;
+      progress.value = next;
+    }
+    idle.current = setTimeout(() => {
+      idle.current = null;
+      const v = hidden.current;
+      if (v > 0 && v < 1) snapTo(v >= 0.5 ? 1 : 0);
+    }, IDLE_MS);
+  }, [max, progress, reduce, show, snapTo]);
+
+  /** A programmatic jump (e.g. Community pager landing on another page) — move the baseline and show the bar. */
+  const sync = useCallback((y: number) => { last.current = y; show(); }, [show]);
   return { progress, onY, sync };
 }
 
 const styles = StyleSheet.create({
   area: { position: 'absolute', left: 0, right: 0, height: AREA_H },
-  bar: { position: 'absolute', left: SIDE, borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },
-  items: { position: 'absolute', left: 0, top: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4 },
+  bar: { position: 'absolute', left: SIDE, top: BOTTOM - EXP.h, height: EXP.h, borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },
+  items: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4 },
   item: { flex: 1, height: 54, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center', gap: 2 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  fab: { position: 'absolute', borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },
+  fab: { position: 'absolute', top: BOTTOM - EXP.fab, width: EXP.fab, height: EXP.fab, borderRadius: radius.full, borderWidth: 0.5, overflow: 'hidden' },
 });
