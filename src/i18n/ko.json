@@ -184,7 +184,7 @@
     "notifications": "알림",
     "hiLo": "최고 {{hi}}° · 최저 {{lo}}°",
     "until": " · {{time}}까지",
-    "picksHead": "이 날씨의 추천",
+    "picksHead": "오늘 날씨가 추천하는 음식",
     "newPicks": "새 추천",
     "picksExhausted": "이 날씨의 추천을 다 봤어요 — 처음부터 다시 보여 드릴게요",
     "feedTitle": "{{dish}}와 친구들",
@@ -221,7 +221,8 @@
     "findNearby": "근처에서 {{dish}} 찾기",
     "opensInMaps": "지도 앱에서 열기",
     "similarBites": "비슷한 한 입",
-    "similarBitesMeta": "좋아할 만한 근처 맛집"
+    "similarBitesMeta": "좋아할 만한 근처 맛집",
+    "untilLine": "{{time}}까지"
   },
   "time": {
     "justNow": "방금",
@@ -1408,14 +1409,15 @@
       "cloudy": "☁️ 흐린 날엔 가까운 맛집이 딱이에요"
     },
     "title": "내 주변",
-    "forPrefix": "찾는 음식",
     "similarDishes": "비슷한 음식",
     "affordable": "저렴한 곳",
     "emptyBothTitle": "근처에 {{dishOr}} 비슷한 음식 가게가 없어요",
     "emptyBothBody": "지도 앱에서 더 넓게 찾아볼 수 있어요",
     "searchInMapApp": "지도 앱에서 찾아보기",
-    "tab": "오늘의 픽 · 비슷한 음식",
-    "fellBack": "근처에 {{dishSubj}} 없어 비슷한 음식을 보여드려요"
+    "tabPick": "오늘의 픽",
+    "tabOr": "또는",
+    "tabSimilar": "비슷한 음식",
+    "dishes": "음식"
   },
   "mapApps": {
     "title": "어떤 앱으로 열까요?",

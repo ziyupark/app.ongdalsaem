@@ -17,7 +17,6 @@ import { Icon } from '../src/components/Icon';
 import { IconButton } from '../src/components/IconButton';
 import { Text } from '../src/components/Text';
 import { Toggle } from '../src/components/Toggle';
-import { UnderlineTabs } from '../src/components/UnderlineTabs';
 import { chooseMapApp, MAP_APP_LABEL, searchInMapApp, setSavedMapApp, type MapAppId, type MapSearch } from '../src/lib/mapApps';
 import { loadMaps } from '../src/lib/optionalNative';
 import { useTemp } from '../src/lib/prefs';
@@ -29,7 +28,7 @@ import { elevation, moods, radius, space, useTheme, WEATHER_ICON, withAlpha } fr
 const Maps = loadMaps();
 
 /** `places` = the dish's places (nearest first), then the similar-food places (nearest first); `same` = how many are the dish. */
-type Result = { places: NearbyPlace[]; same: number; fellBack: boolean; err: PlacesError['code'] | null };
+type Result = { places: NearbyPlace[]; same: number; err: PlacesError['code'] | null };
 
 // The place's kind (Google's primaryType display name, in the request language) → one of seven groups for the round
 // icon. Checked in this order, so "Korean barbecue" is meat and "面包" (bread) is dessert, not noodles.
@@ -58,20 +57,13 @@ function withOr(word: string) {
   return (c - 0xac00) % 28 ? `${word}이나` : `${word}나`;
 }
 
-/** Korean "A이 / A가" (subject) — same rule. */
-function withSubject(word: string) {
-  const c = word.trim().charCodeAt(word.trim().length - 1);
-  if (c < 0xac00 || c > 0xd7a3) return `${word}이(가)`;
-  return (c - 0xac00) % 28 ? `${word}이` : `${word}가`;
-}
-
 const byDistance = (list: NearbyPlace[]) => [...list].sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
 
 /**
- * 2.4 Nearby (v2, Figma 848:12957 Similar · 865:12501 Same dish · 865:12609 Empty both) — back + map → date · place →
- * "Nearby" (English) + the dish → small weather card → "For {dish}" → one tab → Open now / Walkable / Affordable → cards,
+ * 2.4 Nearby (v2, Figma 848:12957 Similar · 876:13351 Empty) — back + map → date · place →
+ * "Nearby dishes" (English) → small weather card → the post title → one tab → Open now / Walkable / Affordable → cards,
  * the list per filter set: the dish's places (nearest first), then its food family's places (nearest
- * first, the dish's own left out) — one tab "Today's pick & similar"; a Caption note when the server fell back to similar food. Nothing at all → Empty (both) + a map-app search.
+ * first, the dish's own left out) — one tab "Today's pick or Similar dishes". Nothing at all → Empty (both) + a map-app search.
  * The map button → every pin of the result, the tapped one's card at the bottom, "List" to go back.
  */
 export default function EatNearby() {
@@ -125,9 +117,9 @@ export default function EatNearby() {
         const sameIds = new Set(same.map((p) => p.id));
         const sameList = tidy(same);
         const alikeList = tidy(alike.filter((p) => !sameIds.has(p.id)));
-        setResults((r) => ({ ...r, [key]: { places: [...sameList, ...alikeList], same: sameList.length, fellBack: !!first.similar, err: null } }));
+        setResults((r) => ({ ...r, [key]: { places: [...sameList, ...alikeList], same: sameList.length, err: null } }));
       } catch (e) {
-        setResults((r) => ({ ...r, [key]: { places: [], same: 0, fellBack: false, err: e instanceof PlacesError ? e.code : 'failed' } }));
+        setResults((r) => ({ ...r, [key]: { places: [], same: 0, err: e instanceof PlacesError ? e.code : 'failed' } }));
       } finally {
         loading.current.delete(key);
       }
@@ -138,9 +130,8 @@ export default function EatNearby() {
   useEffect(() => { setSel(0); }, [key]);
   const pinned = useMemo(() => (places ?? []).filter((p) => p.lat != null && p.lon != null), [places]);
 
-  // The one tab (865:12469) has a fixed label; the grey word after "Nearby" is always the dish.
+  // The one tab (865:12469) and the grey word after "Nearby" ("dishes") have fixed copy.
   const sameN = current?.same ?? 0;
-  const label = t('nearbyPlaces.tab');
   // "Nearby" (848:13143) always shows the English copy, like the shared header's title; screen readers get the
   // user's language.
   const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
@@ -277,9 +268,9 @@ export default function EatNearby() {
 
         <View style={styles.titleBlock}>
           <Text variant="Overline" color="fg/secondary" numberOfLines={1}>{(where ? `${dateLabel} · ${where}` : dateLabel).toUpperCase()}</Text>
-          <View style={styles.title} accessible accessibilityRole="header" accessibilityLabel={`${t('nearbyPlaces.title')} ${name}`}>
+          <View style={styles.title} accessible accessibilityRole="header" accessibilityLabel={`${t('nearbyPlaces.title')} ${t('nearbyPlaces.dishes')}`}>
             <Text variant="Display/XL">{en('nearbyPlaces.title')}</Text>
-            <Text variant="Display/Quote" color="fg/secondary" numberOfLines={1} style={styles.shrink}>{name}</Text>
+            <Text variant="Display/Quote" color="fg/disabled" numberOfLines={1} style={styles.shrink}>{en('nearbyPlaces.dishes')}</Text>
           </View>
           {/* Small Weather Card (848:13120) — Home's Weather Card Now row: same reading, same copy, same empty state. */}
           <View style={[styles.weather, elevation['Elevation/3 Float'], { borderColor: color('bg/subtle') }]}>
@@ -302,13 +293,20 @@ export default function EatNearby() {
         <View style={styles.places}>
           <View style={styles.forRow}>
             <View style={[styles.forBar, { backgroundColor: color('fg/success') }]} />
-            <Text variant="Title/S" numberOfLines={2} style={styles.flex}>
-              <Text variant="Title/S" color="fg/muted">{t('nearbyPlaces.forPrefix')}</Text>
-              {` ${name}`}
-            </Text>
+            <Text variant="Display/Quote" numberOfLines={1} style={styles.flex}>{name}</Text>
           </View>
 
-          <UnderlineTabs items={[{ key: 'one', label }]} value="one" onChange={() => undefined} />
+          {/* Tabs 865:12469 — one tab, always selected: "Today's pick or Similar dishes" ("or" in fg/disabled). */}
+          <View style={[styles.tabs, { borderColor: color('border/default') }]}>
+            <View style={styles.tab} accessibilityRole="tab" accessibilityState={{ selected: true }}>
+              <Text variant="Body/M Strong" numberOfLines={1}>
+                {`${t('nearbyPlaces.tabPick')} `}
+                <Text variant="Body/M Strong" color="fg/disabled">{t('nearbyPlaces.tabOr')}</Text>
+                {` ${t('nearbyPlaces.tabSimilar')}`}
+              </Text>
+              <View style={[styles.tabBar, { backgroundColor: color('fg/default') }]} />
+            </View>
+          </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll} contentContainerStyle={styles.chips}>
             <Chip label={t('nearbyPlaces.openNow')} selected={openNow} onPress={() => setOpenNow((v) => !v)} />
@@ -327,10 +325,6 @@ export default function EatNearby() {
             </EmptyState>
           ) : places.length ? (
             <>
-              {/* The dish found nothing and the server answered with similar food — say so above the cards. */}
-              {current?.fellBack ? (
-                <Text variant="Caption" color="fg/muted">{t('nearbyPlaces.fellBack', { dish: name, dishSubj: withSubject(name) })}</Text>
-              ) : null}
               {places.map((p, i) => card(p, i))}
               <Text variant="Caption" color="fg/muted" style={styles.center}>{t('nearbyPlaces.attribution')}</Text>
             </>
@@ -358,15 +352,18 @@ const styles = StyleSheet.create({
   tabular: { fontVariant: ['tabular-nums'] },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[20] },
   titleBlock: { paddingHorizontal: space[20], paddingTop: space[20], gap: space[12] },
-  title: { flexDirection: 'row', alignItems: 'flex-end', gap: space[12] },
+  title: { flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
   // Small Weather Card (848:13120) — the Weather Card's Now row only: glass surface, radius xl, padding 12 16.
   weather: { borderRadius: radius.xl, borderWidth: 1, paddingHorizontal: space[16], paddingVertical: space[12], overflow: 'hidden', alignSelf: 'stretch' },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   nowText: { flex: 1, gap: space[2] },
   wOrb: { width: space[56], height: space[56], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   places: { paddingHorizontal: space[20], paddingTop: space[24] + space[6], gap: space[12] },
-  forRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[8] },
-  forBar: { width: 5, height: 15, marginTop: 3 },
+  forRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  forBar: { width: 5, height: 23 },
+  tabs: { flexDirection: 'row', borderBottomWidth: 1 },
+  tab: { alignItems: 'stretch', gap: space[8], paddingTop: space[4], flexShrink: 1 },
+  tabBar: { height: 3, borderRadius: radius.full },
   chipScroll: { marginHorizontal: -space[20] },
   chips: { gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },

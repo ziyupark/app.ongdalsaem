@@ -184,7 +184,7 @@
     "notifications": "Thông báo",
     "hiLo": "Cao {{hi}}° · Thấp {{lo}}°",
     "until": " · đến {{time}}",
-    "picksHead": "Gợi ý cho thời tiết này",
+    "picksHead": "Gợi ý theo thời tiết hôm nay",
     "newPicks": "Gợi ý mới",
     "picksExhausted": "Đã hết gợi ý cho thời tiết này — bắt đầu lại từ đầu",
     "feedTitle": "{{dish}} & những người bạn",
@@ -221,7 +221,8 @@
     "findNearby": "Tìm {{dish}} gần đây",
     "opensInMaps": "Mở trong Bản đồ",
     "similarBites": "Món tương tự",
-    "similarBitesMeta": "Có thể bạn sẽ thích"
+    "similarBitesMeta": "Có thể bạn sẽ thích",
+    "untilLine": "đến {{time}}"
   },
   "time": {
     "justNow": "Vừa xong",
@@ -1387,14 +1388,15 @@
       "cloudy": "☁️ Trời âm u — quán gần là hợp nhất"
     },
     "title": "Gần đây",
-    "forPrefix": "Cho món",
     "similarDishes": "Món tương tự",
     "affordable": "Giá phải chăng",
     "emptyBothTitle": "Không có {{dish}} hay món tương tự gần đây",
     "emptyBothBody": "Tìm rộng hơn trong ứng dụng bản đồ",
     "searchInMapApp": "Tìm trong ứng dụng bản đồ",
-    "tab": "Gợi ý hôm nay & tương tự",
-    "fellBack": "Không có {{dish}} gần đây nên hiển thị món tương tự"
+    "tabPick": "Gợi ý hôm nay",
+    "tabOr": "hoặc",
+    "tabSimilar": "Món tương tự",
+    "dishes": "món ăn"
   },
   "mapApps": {
     "title": "Mở bằng",

@@ -184,7 +184,7 @@
     "notifications": "通知",
     "hiLo": "高 {{hi}}° · 低 {{lo}}°",
     "until": " · 到 {{time}}",
-    "picksHead": "適合這種天氣的推薦",
+    "picksHead": "今天天氣推薦的料理",
     "newPicks": "換一批",
     "picksExhausted": "這種天氣的推薦都看完了——重新開始",
     "feedTitle": "{{dish}}和它的朋友們",
@@ -221,7 +221,8 @@
     "findNearby": "在附近找{{dish}}",
     "opensInMaps": "在地圖中開啟",
     "similarBites": "相似美味",
-    "similarBitesMeta": "你可能會喜歡"
+    "similarBitesMeta": "你可能會喜歡",
+    "untilLine": "到 {{time}}"
   },
   "time": {
     "justNow": "剛剛",
@@ -1387,14 +1388,15 @@
       "cloudy": "☁️ 陰天就吃附近的好店"
     },
     "title": "附近",
-    "forPrefix": "想吃",
     "similarDishes": "類似料理",
     "affordable": "平價",
     "emptyBothTitle": "附近沒有{{dish}}或類似料理的店",
     "emptyBothBody": "可以在地圖 App 搜尋更大範圍",
     "searchInMapApp": "在地圖 App 搜尋",
-    "tab": "今日推薦・類似料理",
-    "fellBack": "附近沒有{{dish}}，為你顯示類似料理"
+    "tabPick": "今日推薦",
+    "tabOr": "或",
+    "tabSimilar": "類似料理",
+    "dishes": "美食"
   },
   "mapApps": {
     "title": "要用哪個 App 開啟？",

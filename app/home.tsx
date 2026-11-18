@@ -215,9 +215,9 @@ export default function HomeScreen() {
     ]);
   };
 
-  const detail = f
-    ? `${t('home.hiLo', { hi: displayTemp(f.hi), lo: displayTemp(f.lo) })}${f.until ? t('home.until', { time: f.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : ''}`
-    : t('home.retry');
+  // Weather Card 136:4716: "H 14° · L 8°" on one line, "until 9 PM" on the next.
+  const detail = f ? t('home.hiLo', { hi: displayTemp(f.hi), lo: displayTemp(f.lo) }) : t('home.retry');
+  const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
@@ -267,6 +267,7 @@ export default function HomeScreen() {
                 mood={f?.mood}
                 condition={f ? t(`home.condition.${f.mood}`) : t('home.noWeather')}
                 detail={detail}
+                until={until}
                 slots={slots}
                 picksHead={t('home.picksHead')}
                 onRefresh={refreshPicks}

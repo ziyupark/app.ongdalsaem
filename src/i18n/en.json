@@ -184,7 +184,7 @@
     "notifications": "Notifications",
     "hiLo": "H {{hi}}° · L {{lo}}°",
     "until": " · until {{time}}",
-    "picksHead": "Picks for this weather",
+    "picksHead": "Today’s weather picks",
     "newPicks": "New picks",
     "picksExhausted": "That’s every pick for this weather — starting over",
     "feedTitle": "{{dish}} & friends",
@@ -221,7 +221,8 @@
     "findNearby": "Find {{dish}} nearby",
     "opensInMaps": "Opens in Maps",
     "similarBites": "Similar Bites",
-    "similarBitesMeta": "You Might Like"
+    "similarBitesMeta": "You Might Like",
+    "untilLine": "until {{time}}"
   },
   "time": {
     "justNow": "Just now",
@@ -1408,14 +1409,15 @@
       "cloudy": "☁️ Grey skies — a good meal close by sounds right"
     },
     "title": "Nearby",
-    "forPrefix": "For",
     "similarDishes": "Similar dishes",
     "affordable": "Affordable",
     "emptyBothTitle": "No {{dish}} or similar food nearby",
     "emptyBothBody": "Search a wider area in a map app",
     "searchInMapApp": "Search in a map app",
-    "tab": "Today's pick & similar",
-    "fellBack": "No {{dish}} nearby, so here’s similar food"
+    "tabPick": "Today’s pick",
+    "tabOr": "or",
+    "tabSimilar": "Similar dishes",
+    "dishes": "dishes"
   },
   "mapApps": {
     "title": "Open with",

@@ -20,6 +20,8 @@ type Props = {
   mood?: WeatherMood;
   condition: string;
   detail: string;
+  /** Second detail line ("until 9 PM") — optional. */
+  until?: string;
   slots: SlotView[];
   picksHead: string;
   onRefresh: () => void;
@@ -28,9 +30,9 @@ type Props = {
 
 /**
  * Weather Card 136:4716 — glass surface (glass/surface + blur, 1px bg/subtle edge, Elevation/3), radius 2xl, padding 18 20, gap 14.
- * Now row → divider → Picks head (Refresh 32) → Meal timeline (4 equal slots, gap 4).
+ * Now row (temp · condition / H·L / until · mood orb) → divider → Picks head (Refresh 32) → Meal timeline (4 equal slots, gap 4).
  */
-export function WeatherCard({ tempC, mood, condition, detail, slots, picksHead, onRefresh, onSlotPress }: Props) {
+export function WeatherCard({ tempC, mood, condition, detail, until, slots, picksHead, onRefresh, onSlotPress }: Props) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const temp = useTemp();
@@ -77,10 +79,17 @@ export function WeatherCard({ tempC, mood, condition, detail, slots, picksHead, 
       <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
       <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
       <View style={styles.now}>
-        <Text variant="Numeric/XL" style={styles.tabular}>{tempC === undefined ? '--°' : `${temp(tempC)}°`}</Text>
-        <View style={styles.nowText}>
-          <Text variant="Title/M" numberOfLines={1}>{condition}</Text>
-          <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{detail}</Text>
+        <View style={styles.nowMain}>
+          <View style={styles.tempBox}>
+            <Text variant="Numeric/XL" style={styles.tabular}>{tempC === undefined ? '--°' : `${temp(tempC)}°`}</Text>
+          </View>
+          <View style={styles.nowText}>
+            <Text variant="Title/M" numberOfLines={1}>{condition}</Text>
+            <View style={styles.details}>
+              <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{detail}</Text>
+              {until ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{until}</Text> : null}
+            </View>
+          </View>
         </View>
         {/* Mood orb — the current mood's top colour at 35 %. */}
         <View style={[styles.orb, { backgroundColor: withAlpha(mood ? moods[mood].top : color('bg/muted'), 0.35) }]}>
@@ -141,7 +150,11 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
 const styles = StyleSheet.create({
   card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden', alignSelf: 'stretch' },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  nowText: { flex: 1, gap: space[2] },
+  // Now 876:13581 — temp (padding x 8) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2).
+  nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
+  tempBox: { paddingHorizontal: space[8], alignItems: 'center', justifyContent: 'center' },
+  nowText: { flex: 1, gap: space[6] },
+  details: { gap: space[2] },
   orb: { width: 56, height: 56, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   divider: { height: 1, alignSelf: 'stretch' },
   head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },

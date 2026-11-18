@@ -184,7 +184,7 @@
     "notifications": "お知らせ",
     "hiLo": "最高 {{hi}}° · 最低 {{lo}}°",
     "until": " · {{time}}まで",
-    "picksHead": "この天気のおすすめ",
+    "picksHead": "今日の天気のおすすめ",
     "newPicks": "別のおすすめ",
     "picksExhausted": "この天気のおすすめはこれで全部です — 最初から表示します",
     "feedTitle": "{{dish}}となかまたち",
@@ -221,7 +221,8 @@
     "findNearby": "近くの{{dish}}を探す",
     "opensInMaps": "マップで開きます",
     "similarBites": "似たひと皿",
-    "similarBitesMeta": "気に入りそうな近くのお店"
+    "similarBitesMeta": "気に入りそうな近くのお店",
+    "untilLine": "{{time}}まで"
   },
   "time": {
     "justNow": "たった今",
@@ -1387,14 +1388,15 @@
       "cloudy": "☁️ くもりの日は近くのお店がぴったり"
     },
     "title": "近くで",
-    "forPrefix": "探しているのは",
     "similarDishes": "似た料理",
     "affordable": "お手頃",
     "emptyBothTitle": "近くに{{dish}}や似た料理のお店がありません",
     "emptyBothBody": "地図アプリでもっと広く探せます",
     "searchInMapApp": "地図アプリで探す",
-    "tab": "今日のピック・似た料理",
-    "fellBack": "近くに{{dish}}がないので、似た料理を表示しています"
+    "tabPick": "今日のピック",
+    "tabOr": "または",
+    "tabSimilar": "似た料理",
+    "dishes": "の料理"
   },
   "mapApps": {
     "title": "どのアプリで開きますか？",
