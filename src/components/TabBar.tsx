@@ -68,7 +68,7 @@ const ITEMS_PAD = 4;
 
 type Props = {
   active: TabKey;
-  /** 0 = shown … 1 = hidden — from useTabBarScroll (follows the scroll, snaps to the nearer end). */
+  /** 0 = shown … 1 = hidden — from useTabBarScroll (follows the scroll, snaps by the last scroll direction). */
   progress?: SharedValue<number>;
   /** Also called for the tab that is already active (re-tap: the screen scrolls back to the top). */
   onTab: (k: TabKey) => void;
@@ -174,7 +174,7 @@ function TabItem({ tab, label, active, onPress }: { tab: (typeof TABS)[number]; 
   );
 }
 
-/** Pause after the last scroll event before the bar snaps to the nearer end. */
+/** Pause after the last scroll event before the bar snaps (in the last scroll direction). */
 const IDLE_MS = 140;
 const SNAP = { damping: 20, stiffness: 220 };
 /** Reduce Motion: no finger-following, just a short timed snap. */
@@ -185,7 +185,7 @@ const REVEAL = new WeakMap<SharedValue<number>, () => void>();
 /**
  * YouTube-style tab bar: scrolling down slides it down by the finger's travel (fully hidden after bar height +
  * bottom safe area), scrolling up slides it back at the same rate; when the scroll stops for 140 ms it springs to the
- * nearer end. Always shown at the top, at the bottom, on a tab tap and when the screen gains focus.
+ * end the last scroll was heading to (up, even a little → shown; down → hidden), like YouTube / Chrome. Always shown at the top, at the bottom, on a tab tap and when the screen gains focus.
  * Call `onY(contentOffset.y, contentSize.height - layoutMeasurement.height)`.
  */
 export function useTabBarScroll() {
@@ -198,6 +198,8 @@ export function useTabBarScroll() {
   /** A snap animation may be running — resume following from where it is, not from its target. */
   const snapping = useRef(false);
   const last = useRef(0);
+  /** Direction of the latest scroll step: 1 = down (hide), 0 = up (show). */
+  const dir = useRef<0 | 1>(0);
   const idle = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearIdle = () => { if (idle.current) { clearTimeout(idle.current); idle.current = null; } };
   useEffect(() => clearIdle, []);
@@ -227,6 +229,13 @@ export function useTabBarScroll() {
     last.current = y;
     clearIdle();
     if (y <= 0 || (maxY != null && maxY > 0 && y >= maxY - 1)) { show(); return; }
+    if (dy !== 0) dir.current = dy > 0 ? 1 : 0;
+    const settle = () => {
+      idle.current = setTimeout(() => {
+        idle.current = null;
+        if (hidden.current !== dir.current) snapTo(dir.current);
+      }, IDLE_MS);
+    };
     if (reduce) {
       const was = hidden.current >= 0.5 ? 1 : 0;
       hidden.current = Math.min(1, Math.max(0, hidden.current + dy / max));
@@ -234,6 +243,7 @@ export function useTabBarScroll() {
       if (now !== was) {
         progress.value = withTiming(now, SNAP_REDUCED);
       }
+      settle();
       return;
     }
     if (snapping.current) {
@@ -245,11 +255,7 @@ export function useTabBarScroll() {
       hidden.current = next;
       progress.value = next;
     }
-    idle.current = setTimeout(() => {
-      idle.current = null;
-      const v = hidden.current;
-      if (v > 0 && v < 1) snapTo(v >= 0.5 ? 1 : 0);
-    }, IDLE_MS);
+    settle();
   }, [max, progress, reduce, show, snapTo]);
 
   /** A programmatic jump (e.g. Community pager landing on another page) — move the baseline and show the bar. */
