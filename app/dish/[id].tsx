@@ -14,7 +14,6 @@ import { DishTile } from '../../src/components/dish/DishTile';
 import { type DishViewData } from '../../src/components/dish/DishView';
 import { PostView } from '../../src/components/dish/PostView';
 import { ReportSheet } from '../../src/components/dish/ReportSheet';
-import { SendToSheet } from '../../src/components/dish/SendToSheet';
 import { ShareSheet } from '../../src/components/dish/ShareSheet';
 import { Icon } from '../../src/components/Icon';
 import { Text } from '../../src/components/Text';
@@ -61,7 +60,7 @@ export default function PostDetail() {
     if (id && takeEditSaved(String(id))) { setReloadKey((k) => k + 1); setSavedToast(true); }
   }, [id]));
   const [offline, setOffline] = useState(false);
-  const [sheet, setSheet] = useState<'report' | 'share' | 'send' | 'plan' | null>(null);
+  const [sheet, setSheet] = useState<'report' | 'share' | 'plan' | null>(null);
   const [planToast, setPlanToast] = useState(false);
   // Picked ingredients → shopping memo: "Added n" toast; tap → Profile · Diary's shopping memo.
   const [shopToast, setShopToast] = useState(0);
@@ -337,7 +336,6 @@ export default function PostDetail() {
         onAcorn={toggleAcorn}
         onComments={() => undefined}
         onShare={() => setSheet('share')}
-        onDirect={() => setSheet('send')}
         onSave={toggleSave}
         onMore={onMore}
         onAuthor={openAuthor}
@@ -362,7 +360,6 @@ export default function PostDetail() {
       <Toast visible={shopToast > 0} message={t('shopping.added', { n: shopToast })} onPress={() => { setShopToast(0); goTab('profile', { tab: 'diary', focus: 'shopping', at: String(Date.now()) }); }} onHide={hideShopToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <Toast visible={planToast} message={t('mealPlan.added')} onHide={hidePlanToast} bottom={Math.max(insets.bottom, space[20]) + space[12]} />
       <AddToPlanSheet visible={sheet === 'plan'} dish={{ id: dish.id, name: dish.name, photo: dish.photo }} onClose={() => setSheet(null)} onAdded={() => { setSheet(null); setPlanToast(true); }} />
-      <SendToSheet visible={sheet === 'send'} dish={{ id: dish.id, name: dish.name }} onClose={() => setSheet(null)} />
       <ShareSheet
         visible={sheet === 'share'}
         dish={{ id: dish.id, name: dish.name, photo: dish.photo, author: dish.creator.handle ?? dish.creator.name, mood: dish.mood, tempC: dish.tempC, meal: meal ? t(`share.meals.${meal}`) : undefined }}

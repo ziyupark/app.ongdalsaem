@@ -21,7 +21,6 @@ type Props = {
   onAcorn: () => void;
   onComments: () => void;
   onShare: () => void;
-  onDirect: () => void;
   onSave: () => void;
   onMore: () => void;
   onAuthor?: () => void;
@@ -50,7 +49,7 @@ const MEDIA_INSET = space[10];
  * 7.1 Post detail (Figma 601:12935) — Cook row → photos 370×417 r32 (Weather Tag + counter) → actions → title (Display/L) · caption
  * → tags → recipe → action bar → comments → More from.
  */
-export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onDirect, onSave, onMore, onAuthor, onBack, onStartTimer, onAddedToShopping, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
+export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onSave, onMore, onAuthor, onBack, onStartTimer, onAddedToShopping, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
   const { width: screenW } = useWindowDimensions();
   const width = screenW - MEDIA_INSET * 2;
   const insets = useSafeAreaInsets();
