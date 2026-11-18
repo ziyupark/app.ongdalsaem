@@ -293,8 +293,8 @@ export default function EatNearby() {
               <View style={[styles.wOrb, { backgroundColor: f ? withAlpha(moods[f.mood].top, 0.35) : color('bg/muted') }]}>
                 <Icon icon={WEATHER_ICON[f?.mood ?? 'overcast']} size={20} color={f ? 'fg/default' : 'fg/muted'} />
               </View>
-          </View>
             </View>
+          </View>
         </View>
 
         <View style={styles.places}>
