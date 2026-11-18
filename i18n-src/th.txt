@@ -1056,6 +1056,7 @@ emptyBothTitle=ไม่มีร้าน{{dish}}หรืออาหารค
 emptyBothBody=ค้นหาในพื้นที่กว้างขึ้นได้ในแอปแผนที่
 searchInMapApp=ค้นหาในแอปแผนที่
 dishOrSimilar={{dish}} หรืออาหารคล้ายกัน
+dishes=อาหาร
 [settings]
 searchLanguages=ค้นหาภาษา
 [home]

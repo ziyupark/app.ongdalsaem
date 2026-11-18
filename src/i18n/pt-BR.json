@@ -1414,7 +1414,8 @@
     "emptyBothTitle": "Nada de {{dish}} ou parecido por perto",
     "emptyBothBody": "Procure numa área maior em um app de mapas",
     "searchInMapApp": "Buscar em um app de mapas",
-    "dishOrSimilar": "{{dish}} ou pratos parecidos"
+    "dishOrSimilar": "{{dish}} ou pratos parecidos",
+    "dishes": "pratos"
   },
   "mapApps": {
     "title": "Abrir com",

@@ -1393,7 +1393,8 @@
     "emptyBothTitle": "Không có {{dish}} hay món tương tự gần đây",
     "emptyBothBody": "Tìm rộng hơn trong ứng dụng bản đồ",
     "searchInMapApp": "Tìm trong ứng dụng bản đồ",
-    "dishOrSimilar": "{{dish}} hoặc món tương tự"
+    "dishOrSimilar": "{{dish}} hoặc món tương tự",
+    "dishes": "món ăn"
   },
   "mapApps": {
     "title": "Mở bằng",

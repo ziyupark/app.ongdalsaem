@@ -1074,6 +1074,7 @@ emptyBothTitle=No hay {{dish}} ni nada parecido cerca
 emptyBothBody=Busca en una zona más amplia en una app de mapas
 searchInMapApp=Buscar en una app de mapas
 dishOrSimilar={{dish}} o platos parecidos
+dishes=platos
 [settings]
 searchLanguages=Buscar idiomas
 [home]
