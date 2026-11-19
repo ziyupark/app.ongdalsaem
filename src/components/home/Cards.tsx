@@ -1,6 +1,8 @@
 import { Image, type ImageSource } from 'expo-image';
 
 type Pic = number | ImageSource;
+
+const SIMILAR_BITES = require('../../../assets/icons/similar-bites@3x.png');
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronRight, MapPin } from '../icons/ongdal';
 import { useMemo } from 'react';
@@ -39,12 +41,12 @@ function AcornToggle({ count, given, onPress }: { count: number; given?: boolean
 }
 
 /** Nearby Card 131:4542 — row, padding 14, gap 14, radius 2xl, bg/subtle + 1px border/default. */
-export function NearbyCard({ photo, title, meta, onPress }: { photo: Pic; title: string; meta: string; onPress?: () => void }) {
+export function NearbyCard({ title, meta, onPress }: { title: string; meta: string; onPress?: () => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={[styles.nearby, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-      <Image source={photo} style={styles.nearbyPhoto} contentFit="cover" />
+      <Image source={SIMILAR_BITES} style={styles.nearbyPhoto} contentFit="contain" />
       <View style={styles.nearbyText}>
         <Text variant="Overline" color="fg/muted" numberOfLines={1}>{t('home.eatNearby')}</Text>
         <Text variant="Title/M" numberOfLines={1}>{title}</Text>

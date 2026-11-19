@@ -291,7 +291,7 @@ export default function HomeScreen() {
                     onAcorn={togglePickAcorn}
                     onPress={() => router.push(`/dish/${pick.id}`)}
                   />
-                  <NearbyCard photo={{ uri: pick.photo }} title={t('home.similarBites')} meta={t('home.similarBitesMeta')} onPress={() => router.push({ pathname: '/nearby', params: { dish: pick.name, photo: pick.photo } })} />
+                  <NearbyCard title={t('home.similarBites')} meta={t('home.similarBitesMeta')} onPress={() => router.push({ pathname: '/nearby', params: { dish: pick.name, photo: pick.photo } })} />
                 </>
               ) : null}
             </View>
