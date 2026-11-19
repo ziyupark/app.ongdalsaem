@@ -27,7 +27,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 |---|---|---|---|
 | **Button** | 6:192 | Label T · Show icon B · Icon I · Variant V[Primary/Secondary/Outline/Ghost/Kick/Destructive/Glass/White] · Size V[L/M/S] · State V[Default/Disabled] | 높이 L 56 / M 46 / S 36, radius full. Primary = bg/primary + fg/on-primary. Glass = 반투명 흰색 + blur(사진 위). **Label 텍스트는 모든 Variant(Glass · White 포함)에서 `Label` prop에 연결** — 인스턴스에서 Label만 바꾸면 된다 |
 | **IconButton** | 6:217 | Icon I · Style V[Solid/Soft/Glass/Ghost] · Size V[L/M] · **State V[Default/Pressed]** | L 48, M 40 원형. Soft = bg/subtle + 테두리. **Pressed** = 누른 상태(하트 variant — v1에서는 쓰지 않음, 반응은 도토리 하나). Pressed variant에는 Icon 교체 속성이 없다 |
-| **CreateFAB** | 12:193 | State V[Default/Collapsed] · Label T(숨김) | **앱 = §3.1 Liquid Glass(62 원, bg/kick, 흰 `+`, 스크롤하면 바와 함께 아래로 숨음)**. 아래는 Figma 값: **TabBar 안에 포함**(화면에 따로 놓지 않음). Default **56px 원**, Collapsed **42px 원**(`+` 20, 선 1.5), `+` 아이콘만. 배경 bg/accent-subtle `#FFF3E6`, 그림자 = **TabBar와 동일** drop-shadow x0 y10 blur 30 spread 0 `#1A1A21` α0.08, `+` 28px 선 2px border/focus `#EE8B3D`. Label "Share a dish"는 숨김 레이어(접근성 라벨로 사용). 탭 → 8.1 |
+| **CreateFAB** | 12:193 | State V[Default] · Label T(숨김) | **TabBar 안에 포함**(화면에 따로 놓지 않음). **62 원**, bg/kick + 0.5 border/default, 흰 `+` 24(선 2), Elevation/3 Float. Label "Share a dish"는 숨김 레이어(접근성 라벨). 축소(Collapsed) 상태 없음 — 스크롤하면 바와 함께 아래로 숨는다([§3.1](#31-tabbar-동작-중요--코드-기준liquid-glass)). 탭 → 8.1 |
 | Acorn Button(이름 유지, 역할 = **I ate this 버튼**) | 12:309 | State V[Default/Eaten] · Size V[Bar/Compact] | **기록 버튼**: `utensils` + "I ate this · 12" 토글 → Eaten = "You ate this · 13"(bg/accent-subtle, `utensils` fg/accent). 7.1 Action bar에만 쓴다. 도토리(반응)와 다른 값 — 내 다이어리에 "만들었어요/먹었어요" 기록 + 후기. Compact(도토리+숫자)는 v1 미사용 |
 | **Action Count** | [288:7682](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=288-7682) | Type V[**Acorn/Acorn given**/Comment · Like/Liked(v1 미사용)] · Count T | 아이콘 24 + 숫자(Body/S Strong), gap 6. **Acorn = `acorn`(라인) fg/default · Acorn given = `acorn-color`(컬러)** · Comment = `message-circle`. Feed Post Actions에 사용 |
 | **Auth Button** | [201:801](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=201-801) | Provider V[Apple/Google] | 소셜 로그인 버튼, 350×46(FILL), radius full, padding 0 16, 가운데 정렬 [로고 20 + 제목 Outfit Medium 20/24], 로고–제목 간격 Apple 6 · Google 10. 아래 **브랜드 규정**을 지킨다 |
@@ -70,7 +70,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 |---|---|---|---|
 | StatusBar | 6:286 | Tone V[Dark/Light] | 시스템 영역(44). 구현 시 SafeArea |
 | **TopBar** | 12:224 | Title T · Type V[Large/Inline/Overlay] · Show action B(기본 On) | Large = 좌측 대형 타이틀(탭 루트), Inline = 뒤로가기+가운데 타이틀, Overlay = 사진 위 Glass 버튼. **Show action Off** = 오른쪽 버튼만 숨기고 자리(Inline 40×40)는 유지해 제목이 가운데에 머문다. 기능 없는 `more`는 두지 않는다: 1.3 · 1.4 · 8.2a · 8.2d · 9.x는 Off |
-| **TabBar** | 12:182 | Active V[Home/Community/Timer/Profile] · State V[Expanded/Collapsed] | 앱은 §3.1(Liquid Glass) 기준. **CreateFAB 포함**(Glass 바 + FAB 한 묶음). Glass bar 그림자 drop-shadow x0 y10 blur 30 `#1A1A21` α0.08 (CreateFAB과 동일) |
+| **TabBar** | 12:182 | Active V[Home/Community/Timer/Profile] · State V[Expanded] | §3.1(Liquid Glass)과 같음. 유리 캡슐 286×62(glass/surface · 0.5 border/default · Surface/Glass bar) + **CreateFAB** 62, 간격 10. 활성 알약 54(bg/accent-subtle 82 % · 0.5 glass/stroke-strong · Elevation/1 Low), 라벨 활성 fg/accent · 비활성 fg/default |
 | Home Indicator | 6:291 | Tone V[Dark/Light] | 시스템 영역(34) |
 | Flow Top Bar | 132:4918 | 단계 텍스트 T | 공유 플로우 상단(닫기/뒤로 + "Step n of 3" + Next) |
 | Step Progress | 132:4957 | — (3칸 fill override) | 공유 플로우 3단 진행바 350×4 |
@@ -145,7 +145,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 
 ### 3.1 TabBar 동작 (중요) — 코드 기준(Liquid Glass)
 
-**TabBar와 CreateFAB은 항상 한 묶음**이다. TabBar가 있는 모든 화면(2.x · 4.1 · 4.2 · 4.3 · 4.5 · 5.x · 6.x)에서 FAB도 함께 보인다. Figma TabBar 12:182(Expanded/Collapsed pill)는 이전 모양이다. 축소(Minimized · 48 원) 상태는 없다.
+**TabBar와 CreateFAB은 항상 한 묶음**이다. TabBar가 있는 모든 화면(2.x · 4.1 · 4.2 · 4.3 · 4.5 · 5.x · 6.x)에서 FAB도 함께 보인다. Figma TabBar 12:182 · CreateFAB 12:193은 이 모양과 같다(정지 화면). 축소(Minimized · 48 원) 상태는 없다.
 
 - **Expanded**(기본, 스크롤 최상단): 하단(홈 인디케이터 위, 바닥 84 기준) 한 줄에 **유리 캡슐(왼쪽, 좌우 16) + FAB(오른쪽 끝)**, 간격 10.
   - 유리 캡슐: 높이 62, radius full, 블러 + glass/surface, 1px border/default, Elevation/3 Float. 4개 아이템 = 아이콘 22 + Nav label(`Home · Community · Timer · Profile`). **활성** = 아이콘 Gradient/Dusk + 라벨 fg/accent, 뒤에 **활성 알약**(높이 54, radius full, bg/accent-subtle 82 % + glass/stroke-strong 0.5 테두리 + Elevation/1 Low — 살짝 비치는 유리 칩). 비활성 = 아이콘 · 라벨 fg/default.

@@ -9,6 +9,7 @@
 - **탭 상태 유지**: 네 탭이 한 Tabs 안에서 살아 있음(스크롤 · 데이터 유지). 지금 탭 다시 누르면 맨 위로. 푸시 화면의 TabBar를 누르면 그 화면을 닫고 탭으로. 탭 전환만으로는 3분 안에 다시 불러오지 않음
 - 2.1 Weather Card Now: 기온 padding **위 1 · 좌우 8 · 아래 4**(Figma 883:13643), 상태 아래 H/L · until 두 줄
 - 7.5 Send to: 7.1에서 시트를 여는 연결 삭제(파일만 남음)
+- Figma: **TabBar 12:182 · CreateFAB 12:193을 앱 모양으로** — 캡슐 286×62 + 0.5 테두리, 탭 균등 폭 · 높이 54, 활성 알약 bg/accent-subtle 82 % + glass 테두리 + Elevation/1, 라벨 투명도 60 % → 100 %(활성 fg/accent · 비활성 fg/default), FAB 56 → 62 + 0.5 테두리. CreateFAB `State=Collapsed` 삭제(쓰는 곳 0)
 
 ## v1.8.2 — 2026-11-12 (Diary 재구성 · 이번 주 한 줄 · 식단 계획)
 
