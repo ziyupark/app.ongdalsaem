@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goTab } from '../../src/components/TabBar';
 import { StatusBar } from 'expo-status-bar';
-import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils, WifiOff } from 'lucide-react-native';
+import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils, WifiOff } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';

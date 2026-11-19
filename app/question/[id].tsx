@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ArrowRight, Check, MoreHorizontal, ThumbsUp } from 'lucide-react-native';
-import { MessageCircle } from '../../src/components/icons/custom';
+import { ArrowRight, Check, MoreHorizontal, ThumbsUp } from '../../src/components/icons/ongdal';
+import { MessageCircle } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';

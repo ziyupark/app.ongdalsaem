@@ -1,5 +1,5 @@
 import { router, useFocusEffect } from 'expo-router';
-import { Trophy } from 'lucide-react-native';
+import { Trophy } from '../src/components/icons/ongdal';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';

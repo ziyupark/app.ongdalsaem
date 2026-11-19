@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { MoreHorizontal } from 'lucide-react-native';
-import { Bookmark, MessageCircle, Share } from '../icons/custom';
+import { MoreHorizontal } from '../icons/ongdal';
+import { Bookmark, MessageCircle, Share } from '../icons/ongdal';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';

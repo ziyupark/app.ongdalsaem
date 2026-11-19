@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { ChevronLeft, Plus } from 'lucide-react-native';
+import { ChevronLeft, Plus } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/Button';
 import { FlagTag, FoodGrid, ViralBadge } from '../../src/components/community/Parts';
 import { Icon } from '../../src/components/Icon';
-import { MessageCircle } from '../../src/components/icons/custom';
+import { MessageCircle } from '../../src/components/icons/ongdal';
 import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
 import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';

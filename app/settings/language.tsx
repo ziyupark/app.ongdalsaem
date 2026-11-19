@@ -1,4 +1,4 @@
-import { Check, Search } from 'lucide-react-native';
+import { Check, Search } from '../../src/components/icons/ongdal';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';

@@ -2,7 +2,7 @@ import { Image, type ImageSource } from 'expo-image';
 
 type Pic = number | ImageSource;
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronRight, MapPin } from 'lucide-react-native';
+import { ChevronRight, MapPin } from '../icons/ongdal';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';

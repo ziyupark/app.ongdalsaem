@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
-import { Plus, RotateCcw } from 'lucide-react-native';
+import { Plus, RotateCcw } from '../icons/ongdal';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

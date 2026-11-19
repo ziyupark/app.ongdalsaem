@@ -1,7 +1,7 @@
 import type React from 'react';
 import { Image } from 'expo-image';
-import { ChevronLeft, MoreHorizontal } from 'lucide-react-native';
-import { Bookmark, MessageCircle, Share } from '../icons/custom';
+import { ChevronLeft, MoreHorizontal } from '../icons/ongdal';
+import { Bookmark, MessageCircle, Share } from '../icons/ongdal';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';

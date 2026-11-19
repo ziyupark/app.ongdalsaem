@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react-native';
+import { Sparkles } from '../icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';

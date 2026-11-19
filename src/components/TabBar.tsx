@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { router, useFocusEffect, type EffectCallback, type Href } from 'expo-router';
-import { Home, Plus, Timer, User, Users, type LucideIcon } from 'lucide-react-native';
+import { Home, Plus, Timer, User, Users, type LucideIcon } from './icons/ongdal';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';

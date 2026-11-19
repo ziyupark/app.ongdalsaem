@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { BookOpen, ChevronLeft, ChevronRight, Plus, Users } from 'lucide-react-native';
+import { BookOpen, ChevronLeft, ChevronRight, Plus, Users } from '../../src/components/icons/ongdal';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';

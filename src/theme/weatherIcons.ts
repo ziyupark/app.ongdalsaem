@@ -1,8 +1,8 @@
-// Lucide icon per Weather Mood — docs/01-foundations.md §2.4.
+// Ongdal icon per Weather Mood — docs/01-foundations.md §2.4.
 import {
   Cloud, CloudDrizzle, CloudFog, CloudHail, CloudLightning, CloudRain, CloudRainWind, CloudSnow, CloudSun, CloudSunRain,
   Haze, Moon, Snowflake, Sun, ThermometerSnowflake, ThermometerSun, Wind, type LucideIcon,
-} from 'lucide-react-native';
+} from '../components/icons/ongdal';
 import type { WeatherMood } from './mood';
 
 export const WEATHER_ICON: Record<WeatherMood, LucideIcon> = {

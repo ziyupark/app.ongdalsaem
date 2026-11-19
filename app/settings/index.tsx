@@ -1,7 +1,7 @@
 import * as Application from 'expo-application';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Map as MapIcon, Moon, Salad, Thermometer } from 'lucide-react-native';
+import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Map as MapIcon, Moon, Salad, Thermometer } from '../../src/components/icons/ongdal';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';

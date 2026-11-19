@@ -1,4 +1,4 @@
-import { ChevronLeft } from 'lucide-react-native';
+import { ChevronLeft } from './icons/ongdal';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { radius, space } from '../theme';
 import { Icon } from './Icon';

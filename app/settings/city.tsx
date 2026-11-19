@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Check, CloudSun, Navigation, Search } from 'lucide-react-native';
+import { Check, CloudSun, Navigation, Search } from '../../src/components/icons/ongdal';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';

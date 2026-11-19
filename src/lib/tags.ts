@@ -3,7 +3,7 @@ import {
   Clock, Coffee, Cookie, CookingPot, Fish, Home, Leaf, Moon, Soup, Sparkles, Star, ThermometerSnowflake, ThermometerSun,
   Users, Utensils, Zap, type LucideIcon,
   Building2, Mountain, TreePine, Waves, Wheat, Droplets,
-} from 'lucide-react-native';
+} from '../components/icons/ongdal';
 import { mealAt } from './meals';
 
 export const MEAL_TAGS = [

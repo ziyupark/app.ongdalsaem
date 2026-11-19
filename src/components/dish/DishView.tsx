@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { AlertTriangle, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from 'lucide-react-native';
-import { Bookmark, MessageCircle, Share } from '../icons/custom';
+import { AlertTriangle, Minus, MoreHorizontal, Plus, ShoppingCart, Timer } from '../icons/ongdal';
+import { Bookmark, MessageCircle, Share } from '../icons/ongdal';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Check, Flame, GripVertical, Minus, Plus, Timer, X } from 'lucide-react-native';
+import { Check, Flame, GripVertical, Minus, Plus, Timer, X } from '../../src/components/icons/ongdal';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';

@@ -1,4 +1,4 @@
-import { Ban } from 'lucide-react-native';
+import { Ban } from '../icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';

@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import {
   Beef, CakeSlice, ChevronLeft, ChevronRight, Coffee, CookingPot, Hamburger, List, Map as MapIcon, MapPin, Soup, Utensils,
   type LucideIcon,
-} from 'lucide-react-native';
+} from '../src/components/icons/ongdal';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';

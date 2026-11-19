@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library/legacy';
 import { router } from 'expo-router';
-import { Camera, Check, ChevronDown, Flag } from 'lucide-react-native';
+import { Camera, Check, ChevronDown, Flag } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, FlatList, Linking, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';

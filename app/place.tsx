@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Camera, ChevronLeft, Copy, Footprints, Map as MapIcon, MapPin, Navigation, Utensils } from 'lucide-react-native';
+import { Camera, ChevronLeft, Copy, Footprints, Map as MapIcon, MapPin, Navigation, Utensils } from '../src/components/icons/ongdal';
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';

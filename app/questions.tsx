@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { ChevronLeft, EllipsisVertical, Plus } from 'lucide-react-native';
+import { ChevronLeft, EllipsisVertical, Plus } from '../src/components/icons/ongdal';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -10,7 +10,7 @@ import { Chip } from '../src/components/Chip';
 import { SearchField } from '../src/components/community/Parts';
 import { ReportSheet } from '../src/components/dish/ReportSheet';
 import { Icon } from '../src/components/Icon';
-import { MessageCircle } from '../src/components/icons/custom';
+import { MessageCircle } from '../src/components/icons/ongdal';
 import { FAB_SIZE, goTab, TabBar, useTabBarScroll, type TabKey } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
 import { useTemp } from '../src/lib/prefs';

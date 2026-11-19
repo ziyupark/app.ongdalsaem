@@ -1,4 +1,4 @@
-import { X } from 'lucide-react-native';
+import { X } from '../icons/ongdal';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { radius, space, useTheme } from '../../theme';

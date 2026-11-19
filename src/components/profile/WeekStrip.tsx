@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react-native';
+import { CalendarDays, ChevronLeft, ChevronRight, Plus } from '../icons/ongdal';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';

@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
-import { Image as ImageIcon, User } from 'lucide-react-native';
-import { Bookmark, MessageCircle } from '../../src/components/icons/custom';
+import { Image as ImageIcon, User } from '../../src/components/icons/ongdal';
+import { Bookmark, MessageCircle } from '../../src/components/icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, StyleSheet, View } from 'react-native';

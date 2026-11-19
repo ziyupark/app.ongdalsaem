@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { ChevronLeft, List, Share2, type LucideIcon } from 'lucide-react-native';
+import { ChevronLeft, List, Share2, type LucideIcon } from '../icons/ongdal';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import type { CardDish } from '../../services/community';

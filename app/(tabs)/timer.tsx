@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
-import { Check, Clock, Pause, Play, Plus, RotateCcw, Timer } from 'lucide-react-native';
+import { Check, Clock, Pause, Play, Plus, RotateCcw, Timer } from '../../src/components/icons/ongdal';
 import { useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';

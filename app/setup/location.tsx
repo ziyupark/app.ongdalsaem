@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { MapPin, Navigation, ShieldCheck } from 'lucide-react-native';
+import { MapPin, Navigation, ShieldCheck } from '../../src/components/icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';

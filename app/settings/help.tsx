@@ -1,6 +1,6 @@
 import * as Application from 'expo-application';
 import { router } from 'expo-router';
-import { BookOpen, Compass, List, Lock, Mail, MapPin, Sparkles, Users } from 'lucide-react-native';
+import { BookOpen, Compass, List, Lock, Mail, MapPin, Sparkles, Users } from '../../src/components/icons/ongdal';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { AcornIcon } from '../../src/components/AcornIcon';

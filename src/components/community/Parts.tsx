@@ -1,8 +1,8 @@
 import { Image } from 'expo-image';
 import type { WashInk } from '../../theme/washInk';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronRight, MapPin, Search, Users, X, type LucideIcon } from 'lucide-react-native';
-import { Bookmark, MessageCircle } from '../icons/custom';
+import { ChevronRight, MapPin, Search, Users, X, type LucideIcon } from '../icons/ongdal';
+import { Bookmark, MessageCircle } from '../icons/ongdal';
 import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';

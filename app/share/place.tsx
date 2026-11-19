@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Check, ChevronRight, Navigation, Search, X } from 'lucide-react-native';
+import { Check, ChevronRight, Navigation, Search, X } from '../../src/components/icons/ongdal';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';

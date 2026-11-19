@@ -1,5 +1,5 @@
 // Holidays around the world (4.1 Festive tables) + food-challenge themes (4.10 Challenges) — one illustration per theme.
-import { Cookie, Heart, Moon, Sparkles, Star, Sun, TreePine, type LucideIcon } from 'lucide-react-native';
+import { Cookie, Heart, Moon, Sparkles, Star, Sun, TreePine, type LucideIcon } from '../components/icons/ongdal';
 import { HOLIDAY_DATES } from './holidayDates';
 import type { WeatherMood } from '../theme';
 

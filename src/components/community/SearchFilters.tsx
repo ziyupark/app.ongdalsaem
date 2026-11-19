@@ -1,4 +1,4 @@
-import { X } from 'lucide-react-native';
+import { X } from '../icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';

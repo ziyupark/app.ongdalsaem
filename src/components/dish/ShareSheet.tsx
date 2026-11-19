@@ -1,7 +1,7 @@
 import type React from 'react';
 import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
-import { Copy, Image as ImageIcon, MoreHorizontal } from 'lucide-react-native';
+import { Copy, Image as ImageIcon, MoreHorizontal } from '../icons/ongdal';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Share, StyleSheet, View } from 'react-native';

@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Globe } from 'lucide-react-native';
+import { Globe } from '../icons/ongdal';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { UpcomingFestive } from '../../lib/holidays';

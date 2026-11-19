@@ -1,6 +1,6 @@
 import * as Application from 'expo-application';
 import { router } from 'expo-router';
-import { AlertCircle, Mail } from 'lucide-react-native';
+import { AlertCircle, Mail } from '../../src/components/icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';

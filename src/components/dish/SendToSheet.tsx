@@ -1,4 +1,4 @@
-import { Check, Image as ImageIcon } from 'lucide-react-native';
+import { Check, Image as ImageIcon } from '../icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';

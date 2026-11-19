@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Plus } from 'lucide-react-native';
+import { Plus } from '../icons/ongdal';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { elevation, radius, space, useTheme } from '../../theme';

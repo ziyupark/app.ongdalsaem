@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Camera } from 'lucide-react-native';
+import { Camera } from './icons/ongdal';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { radius, useTheme } from '../theme';
 import { Icon } from './Icon';

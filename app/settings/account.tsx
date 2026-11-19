@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Mail, Trash2 } from 'lucide-react-native';
+import { Mail, Trash2 } from '../../src/components/icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components/settings/Settings';

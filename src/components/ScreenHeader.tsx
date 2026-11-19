@@ -1,6 +1,6 @@
 import { router, useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Bell, ChevronLeft, Settings } from 'lucide-react-native';
+import { Bell, ChevronLeft, Settings } from './icons/ongdal';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';

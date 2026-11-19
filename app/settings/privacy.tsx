@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { Folder, MapPin, Navigation } from 'lucide-react-native';
-import { MessageCircle } from '../../src/components/icons/custom';
+import { Folder, MapPin, Navigation } from '../../src/components/icons/ongdal';
+import { MessageCircle } from '../../src/components/icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Share, StyleSheet, View } from 'react-native';
