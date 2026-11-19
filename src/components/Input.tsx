@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
-import { radius, space, text, useTheme } from '../theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../theme';
 import { Text } from './Text';
 
 type Props = Omit<TextInputProps, 'style'> & { label?: string; helper?: string; error?: string; /** Field height (default 56). */ height?: number };
@@ -17,7 +17,7 @@ export function Input({ label, helper, error, height, onFocus, onBlur, ...rest }
     <View style={styles.root}>
       {label ? <Text variant="Body/S Strong">{label}</Text> : null}
       <View style={[styles.field, height ? { height } : null, { backgroundColor: color('bg/subtle'), borderColor, borderWidth: focused && !error ? 2 : 1 }]}>
-        <TextInput
+        <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
           {...rest}
           accessibilityLabel={label ?? rest.placeholder}
           placeholderTextColor={color('fg/muted')}

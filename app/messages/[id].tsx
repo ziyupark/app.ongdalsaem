@@ -13,7 +13,7 @@ import { fetchDish } from '../../src/services/foods';
 import { DISH_LINK, fetchMessages, fetchThread, markSeen, sendMessage, subscribeThread, type Message, type Thread } from '../../src/services/messages';
 import { blockUser } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
-import { radius, space, text, useTheme } from '../../src/theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const { lineHeight: _lh, ...field } = text['Body/M'];
 const MAX = 1000;
@@ -114,7 +114,7 @@ export default function ThreadScreen() {
       <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom, space[10]), borderTopColor: color('border/default') }]}>
         <Avatar url={me?.avatarUrl ?? null} name={me?.displayName ?? ''} size={32} />
         <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-          <TextInput
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             value={draft}
             onChangeText={(v) => setDraft(v.slice(0, MAX))}
             placeholder={t('messages.placeholder', { name })}

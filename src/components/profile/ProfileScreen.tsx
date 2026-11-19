@@ -28,7 +28,7 @@ import { getMyProfile, MAX_BIO, updateMyAvatar, updateMyBio, type MyProfile } fr
 import { myUserId, supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
 import { startThread } from '../../services/messages';
-import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
+import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
 
 /** Grid 670:20275 — x20 · 2 columns · gap 16 · rows 20 apart. */
 const GAP = 16;
@@ -323,7 +323,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       />
       <BottomSheet visible={bioOpen} onClose={() => setBioOpen(false)} title={t('profile.statusTitle')}>
         <View style={[styles.bioField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-          <TextInput
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             value={bioDraft}
             onChangeText={(v) => setBioDraft(v.slice(0, MAX_BIO))}
             placeholder={t('profile.statusPlaceholder')}

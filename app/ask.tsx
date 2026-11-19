@@ -13,7 +13,7 @@ import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { useHere } from '../src/lib/useHere';
 import { askQuestion, fetchQuestion, QUESTION_CATEGORIES, updateQuestion, type QuestionCategory } from '../src/services/community';
-import { radius, space, text, useTheme } from '../src/theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../src/theme';
 
 const MIN = 5;
 const MAX = 200;
@@ -111,7 +111,7 @@ export default function Ask() {
         </View>
 
         <View style={[styles.box, { backgroundColor: color('bg/subtle'), borderColor: color('border/focus') }]}>
-          <TextInput
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             value={body}
             onChangeText={(v) => setBody(v.slice(0, MAX))}
             placeholder={t('ask.placeholder')}

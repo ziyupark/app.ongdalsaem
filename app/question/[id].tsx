@@ -16,7 +16,7 @@ import {
 } from '../../src/services/community';
 import { reportAnswer } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
-import { radius, space, text, useTheme } from '../../src/theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const MAX = 500;
 const { lineHeight: _lh, ...field } = text['Body/M'];
@@ -131,7 +131,7 @@ export default function QuestionScreen() {
           <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom + space[6], 40), borderTopColor: color('border/default') }]}>
             <Avatar url={me?.avatarUrl ?? null} name={me?.displayName ?? ''} size={32} />
             <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-              <TextInput
+              <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
                 value={draft}
                 onChangeText={(v) => setDraft(v.slice(0, MAX))}
                 placeholder={t('ask.answerPlaceholder')}

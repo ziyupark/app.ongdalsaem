@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { radius, space, text, useTheme } from '../../theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Icon } from '../Icon';
@@ -148,7 +148,7 @@ export function FilterSheet({ visible, initial, onClose, onApply }: { visible: b
                   <View style={styles.group}>
                     <Text variant="Overline" color="fg/muted">{t('community.filterIngredients')}</Text>
                     <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color(focused ? 'border/focus' : 'border/default'), borderWidth: focused ? 1.5 : 1 }]}>
-                      <TextInput
+                      <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
                         accessibilityLabel={t('community.filterIngredients')}
                         value={typed}
                         onChangeText={setTyped}

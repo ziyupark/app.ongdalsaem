@@ -12,7 +12,7 @@ import { formatTimer, TimerSheet } from '../../src/components/share/TimerSheet';
 import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
 import { updateShareDraft, useShareDraft, type Difficulty, type DraftIngredient, type DraftStep } from '../../src/lib/shareDraft';
-import { radius, space, text, useTheme } from '../../src/theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const MAX_INGREDIENTS = 30;
 const MAX_STEPS = 20;
@@ -134,7 +134,7 @@ export default function RecipeEditor() {
   const ingredientInputs = (
     <>
       <View style={[styles.nameField, field(nameFocused)]}>
-        <TextInput
+        <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
           accessibilityLabel={t('share.ingredientName')}
           value={ingName}
           onChangeText={setIngName}
@@ -149,7 +149,7 @@ export default function RecipeEditor() {
         />
       </View>
       <View style={[styles.amountField, field(amountFocused)]}>
-        <TextInput
+        <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
           accessibilityLabel={t('share.ingredientAmount')}
           value={ingAmount}
           onChangeText={setIngAmount}
@@ -182,7 +182,7 @@ export default function RecipeEditor() {
       </View>
       <View style={styles.inputCell}>
         <View style={[styles.stepField, field(stepFocused)]}>
-          <TextInput
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             accessibilityLabel={t('share.stepLabel', { n: no })}
             value={stepText}
             onChangeText={setStepText}
@@ -352,7 +352,7 @@ export default function RecipeEditor() {
           </View>
           <View style={[styles.calField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
             <Icon icon={Flame} size={18} />
-            <TextInput
+            <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
               accessibilityLabel={t('share.caloriesLabel')}
               value={d.calories}
               onChangeText={(v) => updateShareDraft({ calories: v.replace(/\D/g, '').slice(0, MAX_KCAL) })}

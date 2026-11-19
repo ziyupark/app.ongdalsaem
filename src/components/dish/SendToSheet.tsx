@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { fetchSendTargets, sendDish, type Target } from '../../services/messages';
-import { radius, space, text, useTheme } from '../../theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../theme';
 import { BottomSheet } from '../BottomSheet';
 import { Button } from '../Button';
 import { Avatar, SearchField } from '../community/Parts';
@@ -72,7 +72,7 @@ export function SendToSheet({ visible, onClose, dish, onSent }: { visible: boole
         <Text variant="Caption" color="fg/secondary" numberOfLines={1} style={styles.flex}>{t('sendTo.attached', { name: dish.name })}</Text>
       </View>
       <View style={[styles.noteField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
-        <TextInput value={note} onChangeText={(v) => setNote(v.slice(0, 500))} placeholder={t('sendTo.note')} placeholderTextColor={color('fg/muted')} style={[field, { color: color('fg/default') }]} />
+        <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX} value={note} onChangeText={(v) => setNote(v.slice(0, 500))} placeholder={t('sendTo.note')} placeholderTextColor={color('fg/muted')} style={[field, { color: color('fg/default') }]} />
       </View>
       <Button label={picked.size ? t('sendTo.send', { n: picked.size }) : t('sendTo.pick')} size="L" disabled={!picked.size} loading={sending} onPress={send} />
     </BottomSheet>

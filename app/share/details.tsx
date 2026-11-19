@@ -23,7 +23,7 @@ import { photoMoment } from '../../src/lib/time';
 import { displayTemp } from '../../src/lib/prefs';
 import { hasLocationPermission, reverseGeocodeCity, type Coordinates } from '../../src/services/location';
 import { fetchCurrentWeather } from '../../src/services/weather';
-import { elevation, radius, space, text, useTheme, WEATHER_ICON } from '../../src/theme';
+import { elevation, radius, space, text, useTheme, WEATHER_ICON, FONT_SCALE_MAX } from '../../src/theme';
 import * as Location from 'expo-location';
 
 const MAX_DESCRIPTION = 150;
@@ -211,7 +211,7 @@ export default function ShareDetails() {
           <View style={styles.special}>
             <Text variant="Body/S Strong">{t(d.type === 'travel' ? 'share.whereAte' : 'share.special')}</Text>
             <View style={[styles.area, { backgroundColor: color('bg/subtle'), borderColor: color(descFocused ? 'border/focus' : 'border/default'), borderWidth: descFocused ? 2 : 1 }]}>
-              <TextInput
+              <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
                 accessibilityLabel={t(d.type === 'travel' ? 'share.whereAte' : 'share.special')}
                 value={d.description}
                 onChangeText={(description) => updateShareDraft({ description })}

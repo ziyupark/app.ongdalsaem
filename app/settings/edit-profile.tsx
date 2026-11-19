@@ -9,7 +9,7 @@ import { Input } from '../../src/components/Input';
 import { SettingsScreen } from '../../src/components/settings/Settings';
 import { Text } from '../../src/components/Text';
 import { canChangeHandle, fetchAccount, HANDLE_RE, saveProfile, type AccountSettings } from '../../src/services/settings';
-import { radius, space, text, useTheme } from '../../src/theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const MAX_BIO = 80;
 const MAX_NAME = 30;
@@ -78,7 +78,7 @@ export default function EditProfile() {
       <View style={styles.bio}>
         <Text variant="Body/S Strong">{t('settings.bio')}</Text>
         <View style={[styles.area, { backgroundColor: color('bg/default'), borderColor: color(bioFocus ? 'border/focus' : 'border/default'), borderWidth: bioFocus ? 2 : 1 }]}>
-          <TextInput
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             accessibilityLabel={t('settings.bio')}
             value={bio}
             onChangeText={setBio}

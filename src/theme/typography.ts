@@ -70,3 +70,10 @@ export const text = {
 } as const;
 
 export type TextVariant = keyof typeof text;
+
+/**
+ * Dynamic Type cap. Buttons, chips, inputs and the tab bar have fixed heights (Figma variant sizes), so text may grow
+ * only this far before it would clip. Text at 28 and up (Display · Numeric) is already large and does not grow.
+ */
+export const FONT_SCALE_MAX = 1.3;
+export const fontScaleMax = (fontSize: number | undefined) => ((fontSize ?? 0) >= 28 ? 1 : FONT_SCALE_MAX);

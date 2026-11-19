@@ -9,7 +9,7 @@ import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle 
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
 import type { CardDish, CookCard, Question, ViralItem } from '../../services/community';
-import { iconRing, radius, space, text, useTheme, withAlpha } from '../../theme';
+import { iconRing, radius, space, text, useTheme, withAlpha, FONT_SCALE_MAX } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
@@ -105,7 +105,7 @@ export function SearchField({ value, onChangeText, placeholder, onFocus, onBlur,
   return (
     <View style={[styles.search, { backgroundColor: color('bg/muted'), borderColor: focused ? color('border/focus') : 'transparent' }]}>
       <Icon icon={Search} size={18} color="fg/secondary" />
-      <TextInput
+      <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}

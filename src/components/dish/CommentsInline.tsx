@@ -6,7 +6,7 @@ import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { timeAgo } from '../../lib/time';
 import { addComment, deleteComment, fetchComments, type Comment } from '../../services/foods';
 import { reportComment } from '../../services/moderation';
-import { radius, space, text, useTheme } from '../../theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../theme';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { ReportSheet } from './ReportSheet';
@@ -104,7 +104,7 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
         <View style={[styles.composer, { backgroundColor: color('bg/default') }]}>
           <Avatar url={me?.avatarUrl ?? null} name={me?.name ?? ''} />
           <View style={[styles.field, { backgroundColor: color('bg/subtle') }]}>
-            <TextInput
+            <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
               value={draft}
               onChangeText={setDraft}
               maxLength={MAX_COMMENT}

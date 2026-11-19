@@ -13,7 +13,7 @@ import { refreshHere } from '../../src/lib/useHere';
 import { getMyProfile, saveLocationChoice } from '../../src/services/profile';
 import { searchCities, type CityHit } from '../../src/services/settings';
 import { fetchCurrentWeather } from '../../src/services/weather';
-import { radius, space, text, useTheme, WEATHER_ICON, type WeatherMood } from '../../src/theme';
+import { radius, space, text, useTheme, WEATHER_ICON, type WeatherMood, FONT_SCALE_MAX } from '../../src/theme';
 
 type Hit = CityHit & { tempC?: number; mood?: WeatherMood };
 const { lineHeight: _lh, ...fieldText } = text['Body/M'];
@@ -78,7 +78,7 @@ export default function ChooseCity() {
       <View style={styles.searchWrap}>
         <View style={[styles.search, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
           <Icon icon={Search} size={18} color="fg/muted" />
-          <TextInput value={q} onChangeText={setQ} autoFocus placeholder={t('settings.searchCity')} placeholderTextColor={color('fg/muted')} selectionColor={color('border/focus')} style={[fieldText, styles.input, { color: color('fg/default') }]} returnKeyType="search" />
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX} value={q} onChangeText={setQ} autoFocus placeholder={t('settings.searchCity')} placeholderTextColor={color('fg/muted')} selectionColor={color('border/focus')} style={[fieldText, styles.input, { color: color('fg/default') }]} returnKeyType="search" />
           {busy ? <ActivityIndicator color={color('fg/muted')} /> : null}
         </View>
       </View>

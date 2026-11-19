@@ -9,7 +9,7 @@ import { Toggle } from '../../src/components/Toggle';
 import type { AppLanguage } from '../../src/i18n';
 import { deviceLanguage, NATIVE_NAMES, setPrefs, SUPPORTED_LANGUAGES, usePrefs } from '../../src/lib/prefs';
 import { updateAccount } from '../../src/services/settings';
-import { radius, space, text, useTheme } from '../../src/theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const { lineHeight: _lh, ...fieldText } = text['Body/M'];
 
@@ -33,7 +33,7 @@ export default function Language() {
     <SettingsScreen title={t('settings.language')}>
       <View style={[styles.search, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
         <Icon icon={Search} size={18} color="fg/muted" />
-        <TextInput
+        <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
           value={q}
           onChangeText={setQ}
           placeholder={t('settings.searchLanguages')}

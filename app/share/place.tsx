@@ -13,7 +13,7 @@ import { getShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
 import { requestDeviceLocation, reverseGeocodeCity, type Place } from '../../src/services/location';
 import { searchCities, type CityHit } from '../../src/services/settings';
 import { fetchCurrentWeather } from '../../src/services/weather';
-import { radius, space, text, useTheme, WEATHER_ICON, type WeatherMood } from '../../src/theme';
+import { radius, space, text, useTheme, WEATHER_ICON, type WeatherMood, FONT_SCALE_MAX } from '../../src/theme';
 
 type Option = { key: string; place: Place; lat: number; lon: number; mood?: WeatherMood; tempC?: number };
 const { lineHeight: _lh, ...fieldText } = text['Body/M'];
@@ -97,7 +97,7 @@ export default function EditPlace() {
       <View style={styles.searchWrap}>
         <View style={[styles.search, { backgroundColor: color('bg/default'), borderColor: color('border/focus') }]}>
           <Icon icon={Search} size={18} color="fg/muted" />
-          <TextInput value={q} onChangeText={setQ} autoFocus placeholder={t('place.search')} placeholderTextColor={color('fg/muted')} selectionColor={color('border/focus')} style={[fieldText, styles.input, { color: color('fg/default') }]} />
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX} value={q} onChangeText={setQ} autoFocus placeholder={t('place.search')} placeholderTextColor={color('fg/muted')} selectionColor={color('border/focus')} style={[fieldText, styles.input, { color: color('fg/default') }]} />
           {busy ? <ActivityIndicator color={color('fg/muted')} /> : q ? <Pressable onPress={() => setQ('')} hitSlop={space[8]}><Icon icon={X} size={18} color="fg/muted" /></Pressable> : null}
         </View>
       </View>

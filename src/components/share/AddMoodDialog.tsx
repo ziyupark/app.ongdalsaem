@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { CUSTOM_MOOD_ICON, MAX_CUSTOM_MOOD_LENGTH } from '../../lib/tags';
-import { elevation, radius, space, text, useTheme } from '../../theme';
+import { elevation, radius, space, text, useTheme, FONT_SCALE_MAX } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Icon } from '../Icon';
@@ -38,7 +38,7 @@ export function AddMoodDialog({ visible, existing, onCancel, onAdd }: { visible:
             </View>
           </View>
           <View style={[styles.field, { backgroundColor: color('bg/default'), borderColor: color(duplicate ? 'fg/destructive' : 'border/focus') }]}>
-            <TextInput
+            <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
               accessibilityLabel={t('share.addMoodLabel')}
               value={value}
               onChangeText={setValue}

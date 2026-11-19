@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Platform, Text as RNText, type TextProps, type TextStyle } from 'react-native';
-import { FONT_METRICS, text, useTheme, type ColorToken, type TextVariant } from '../theme';
+import { FONT_METRICS, fontScaleMax, text, useTheme, type ColorToken, type TextVariant } from '../theme';
 
 type Props = TextProps & { variant?: TextVariant; color?: ColorToken };
 
@@ -50,5 +50,5 @@ export function Text({ variant = 'Body/M', color = 'fg/default', style, ...rest 
   const base = text[variant];
   const locale = localeFont(base.fontFamily, i18n.language);
   const fit = UNCLIP.has(variant) && base.fontSize && base.lineHeight ? unclip(locale?.fontFamily ?? base.fontFamily, base.fontSize, base.lineHeight) : null;
-  return <RNText {...rest} style={[base, locale, fit, { color: c(color) }, style]} />;
+  return <RNText maxFontSizeMultiplier={fontScaleMax(base.fontSize)} {...rest} style={[base, locale, fit, { color: c(color) }, style]} />;
 }

@@ -8,7 +8,7 @@ import { cached } from '../../lib/cache';
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
 import { createCollection, deleteCollection, fetchCollections, fetchSavedDishes, setInCollection, setSaved, type Collection, type SavedDish } from '../../services/foods';
-import { elevation, radius, space, text, useTheme, WEATHER_ICON, type WeatherMood } from '../../theme';
+import { elevation, radius, space, text, useTheme, WEATHER_ICON, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Text } from '../Text';
@@ -141,7 +141,7 @@ export function SavedView({ onOffline }: { onOffline?: (off: boolean) => void })
           <View style={[styles.dialog, elevation['Elevation/3 Float'], { backgroundColor: color('bg/subtle') }]}>
             <Text variant="Title/M">{t('saved.newTitle')}</Text>
             <View style={[styles.nameField, { backgroundColor: color('bg/default'), borderColor: color('border/default') }]}>
-              <TextInput value={newName} onChangeText={(v) => setNewName(v.slice(0, 30))} autoFocus placeholder={t('saved.namePlaceholder')} placeholderTextColor={color('fg/muted')} returnKeyType="done" onSubmitEditing={createNamed} style={[nameText, { color: color('fg/default') }]} />
+              <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX} value={newName} onChangeText={(v) => setNewName(v.slice(0, 30))} autoFocus placeholder={t('saved.namePlaceholder')} placeholderTextColor={color('fg/muted')} returnKeyType="done" onSubmitEditing={createNamed} style={[nameText, { color: color('fg/default') }]} />
             </View>
             <View style={styles.dialogActions}>
               <Button label={t('common.cancel')} variant="Outline" size="M" onPress={() => setNaming(false)} style={styles.flex} />

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { radius, space, text, useTheme } from '../../theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Input } from '../Input';
@@ -77,7 +77,7 @@ export function TimerSheet({ visible, stepNo, stepText, overline, hideNoTimer, f
   const box = (which: 'min' | 'sec', value: string, set: (v: string) => void) => (
     <View style={styles.unit}>
       <View style={[styles.field, { backgroundColor: color('bg/default'), borderColor: color(focus === which ? 'border/focus' : 'border/default'), borderWidth: focus === which ? 1.5 : 1 }]}>
-        <TextInput
+        <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
           accessibilityLabel={t(which === 'min' ? 'share.timerMin' : 'share.timerSec')}
           value={value}
           onChangeText={(v) => set(digits(v))}

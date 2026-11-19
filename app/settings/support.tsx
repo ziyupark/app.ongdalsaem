@@ -12,7 +12,7 @@ import { Text } from '../../src/components/Text';
 import { NATIVE_NAMES, type AppLanguage } from '../../src/i18n';
 import { mailSupport, SUPPORT_EMAIL } from '../../src/lib/support';
 import { fetchAccount, sendSupportTicket } from '../../src/services/settings';
-import { radius, space, text, useTheme } from '../../src/theme';
+import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const TOPICS = ['bug', 'account', 'report_content', 'other'] as const;
 const MAX = 1000;
@@ -60,7 +60,7 @@ export default function Support() {
       </View>
       <View style={styles.group}>
         <View style={[styles.area, { backgroundColor: color('bg/default'), borderColor: color('border/focus') }]}>
-          <TextInput
+          <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             accessibilityLabel={t('support.message')}
             value={msg}
             onChangeText={setMsg}
