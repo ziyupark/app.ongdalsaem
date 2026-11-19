@@ -1,103 +1,68 @@
 import { Image } from 'expo-image';
-import { useId, useState } from 'react';
-import { StyleSheet, Text as RNText, View } from 'react-native';
-import Svg, { Defs, LinearGradient, Stop, Text as SvgText } from 'react-native-svg';
-import { gradients, space, text } from '../theme';
+import { StyleSheet, View } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
+import { space, text, useTheme } from '../theme';
 import { Text } from './Text';
 
-/** tone 'light' = solid white wordmark for dark backgrounds (dark weather washes). */
+/** tone 'light' = white wordmark for dark backgrounds (dark weather washes). */
 type Props = { lockup: 'Acorn' | 'Compact'; tagline?: string; tone?: 'ink' | 'light' };
 
 const ACORN_SYMBOL = require('../../assets/brand/acorn-symbol.svg');
 
 /**
- * Logo 4:18 — "ongdalsaem" wordmark filled with Gradient/Ink metal (top → bottom).
- * Acorn = Acorn Symbol 36×46 → Wordmark 34/36 → Tagline, centred, gap 10 (1.1 Splash).
- * Compact = 24/26 header wordmark, left aligned (1.2).
- * The invisible Text sizes the box; the SVG paints the gradient fill on top of it. The RN measure and the SVG text
- * width don't always agree on device, so the Acorn lockup anchors the SVG text on the box centre (it stays centred
- * under the acorn whatever the measure) and Compact anchors it on the left edge.
- * The wordmark is always Outfit (never the locale font), and the SVG overhangs the box by PAD on every side so the
- * "g" descender, the ascenders and the last letter are never clipped — the box keeps the token's size for layout.
+ * Ongdal wordmark — Figma "Logo · Ongdal" 969:834 (Tone=Default, Lockup=Compact): one outlined path on a 137.43 × 26 box.
+ * The box runs from the ascender top (d, l) to the g's bowl bottom; the x-height band is y 6.19–18.57.
  */
-const PAD = 0.35;
+const WORDMARK = {
+  w: 137.42788696289062,
+  h: 26,
+  xMid: 12.381, // x-height centre (o / n / a bowls)
+  d: 'M39 12.381C39 11.3959 38.6084 10.4514 37.9118 9.75484C37.2153 9.05827 36.2708 8.66667 35.2857 8.66667C34.3006 8.66667 33.3562 9.05827 32.6596 9.75484C31.963 10.4514 31.5714 11.3959 31.5714 12.381C31.5714 13.366 31.963 14.3105 32.6596 15.0071C33.3562 15.7036 34.3006 16.0952 35.2857 16.0952C36.2708 16.0952 37.2153 15.7036 37.9118 15.0071C38.6084 14.3105 39 13.366 39 12.381ZM9.90476 12.381C9.90476 11.3959 9.51315 10.4514 8.81659 9.75484C8.12003 9.05827 7.17557 8.66667 6.19048 8.66667C5.20539 8.66667 4.26092 9.05827 3.56436 9.75484C2.8678 10.4514 2.47619 11.3959 2.47619 12.381C2.47619 13.366 2.8678 14.3105 3.56436 15.0071C4.26092 15.7036 5.20539 16.0952 6.19048 16.0952C7.17557 16.0952 8.12003 15.7036 8.81659 15.0071C9.51316 14.3105 9.90476 13.366 9.90476 12.381ZM24.4524 12.381C24.4524 11.3959 24.0608 10.4514 23.3642 9.75484C22.6676 9.05827 21.7232 8.66667 20.7381 8.66667C19.753 8.66667 18.8085 9.05827 18.112 9.75484C17.4154 10.4514 17.0238 11.3959 17.0238 12.381V18.5714H14.5476V12.381C14.5476 10.7391 15.1997 9.16443 16.3606 8.00349C17.5216 6.84255 19.0963 6.19048 20.7381 6.19048C22.3799 6.19048 23.9546 6.84255 25.1156 8.00349C26.2765 9.16443 26.9286 10.7391 26.9286 12.381V18.5714H24.4524V12.381ZM53.5476 12.381C53.5476 11.3959 53.156 10.4514 52.4594 9.75484C51.7629 9.05827 50.8184 8.66667 49.8333 8.66667C48.8482 8.66667 47.9038 9.05827 47.2072 9.75484C46.5107 10.4514 46.119 11.3959 46.119 12.381C46.119 13.366 46.5107 14.3105 47.2072 15.0071C47.9038 15.7036 48.8482 16.0952 49.8333 16.0952C50.8184 16.0952 51.7629 15.7036 52.4594 15.0071C53.156 14.3105 53.5476 13.366 53.5476 12.381ZM68.0952 12.381C68.0952 11.3959 67.7036 10.4514 67.0071 9.75484C66.3105 9.05827 65.366 8.66667 64.381 8.66667C63.3959 8.66667 62.4514 9.05827 61.7548 9.75484C61.0583 10.4514 60.6667 11.3959 60.6667 12.381C60.6667 13.366 61.0583 14.3105 61.7548 15.0071C62.4514 15.7036 63.3959 16.0952 64.381 16.0952C65.366 16.0952 66.3105 15.7036 67.0071 15.0071C67.7036 14.3105 68.0952 13.366 68.0952 12.381ZM74.2143 14.2381V0H76.6905V14.2381C76.6905 14.7306 76.8863 15.2029 77.2346 15.5512C77.5828 15.8994 78.0551 16.0952 78.5476 16.0952H79.1667V18.5714H78.5476C77.3984 18.5714 76.2959 18.1152 75.4832 17.3025C74.6706 16.4898 74.2143 15.3874 74.2143 14.2381ZM87.5224 14.8289C87.5224 14.6463 87.4805 14.5536 87.4426 14.4946C87.397 14.4238 87.3065 14.3265 87.1179 14.2135C86.6971 13.9613 86.0808 13.7874 85.2306 13.5666C84.4808 13.372 83.4911 13.1291 82.7121 12.6822C82.3004 12.446 81.8837 12.1198 81.5713 11.6551C81.2494 11.1761 81.084 10.6172 81.084 10.0005C81.084 7.74713 83.1046 6.28628 85.4174 6.28617C87.0945 6.28617 88.4169 7.06719 89.4116 8.29143L87.4903 9.85235C86.8755 9.09564 86.2164 8.76236 85.4174 8.76236C84.0161 8.76245 83.5602 9.53008 83.5602 10.0005C83.5602 10.1574 83.5967 10.229 83.6267 10.2737C83.6664 10.3328 83.7528 10.4241 83.9447 10.5343C84.3728 10.7798 84.993 10.9471 85.8526 11.1702C86.6116 11.3673 87.6049 11.6185 88.3911 12.0897C88.806 12.3384 89.2181 12.6782 89.5246 13.1543C89.8387 13.6423 89.9985 14.207 89.9986 14.8289C89.9986 15.9805 89.5014 16.9829 88.6486 17.6721C87.8169 18.3442 86.7178 18.6671 85.5413 18.6671C83.6519 18.6671 82.1394 17.8556 81 16.4884L82.9019 14.9033C83.6195 15.7644 84.4595 16.1909 85.5413 16.1909C86.2838 16.1909 86.7945 15.9875 87.0925 15.7466C87.3695 15.5227 87.5224 15.2249 87.5224 14.8289ZM101.214 12.4766C101.214 11.4916 100.822 10.5471 100.125 9.85053C99.4289 9.15397 98.4844 8.76236 97.4993 8.76236C96.5142 8.76236 95.5698 9.15397 94.8732 9.85053C94.1766 10.5471 93.785 11.4916 93.785 12.4766C93.785 13.4617 94.1766 14.4062 94.8732 15.1028C95.5698 15.7993 96.5142 16.1909 97.4993 16.1909C98.4844 16.1909 99.4289 15.7993 100.125 15.1028C100.822 14.4062 101.214 13.4617 101.214 12.4766ZM134.952 11.2386C134.952 10.5818 134.691 9.95218 134.226 9.48781C133.762 9.02343 133.132 8.76236 132.475 8.76236C131.819 8.76236 131.189 9.02343 130.725 9.48781C130.26 9.95218 129.999 10.5818 129.999 11.2386V18.0481H127.523V11.2386C127.523 10.5818 127.262 9.95218 126.798 9.48781C126.333 9.02343 125.704 8.76236 125.047 8.76236C124.39 8.76236 123.761 9.02343 123.296 9.48781C122.832 9.95218 122.571 10.5818 122.571 11.2386V18.0481H120.095V11.2386C120.095 9.9251 120.616 8.66521 121.545 7.73646C122.474 6.80771 123.733 6.28617 125.047 6.28617C126.36 6.28617 127.62 6.80771 128.549 7.73646C128.623 7.8101 128.693 7.88671 128.761 7.96437C128.83 7.88671 128.9 7.8101 128.973 7.73646C129.902 6.80771 131.162 6.28617 132.475 6.28617C133.789 6.28617 135.049 6.80771 135.978 7.73646C136.906 8.66521 137.428 9.9251 137.428 11.2386V18.0481H134.952V11.2386ZM111.08 6.25153C112.519 5.99533 114.001 6.25625 115.266 6.98786C116.531 7.71944 117.495 8.87487 117.99 10.2493C118.239 10.9405 118.362 11.6653 118.356 12.3894C118.351 13.1046 118.222 13.819 117.97 14.4993C117.462 15.869 116.486 17.0148 115.214 17.7341C113.942 18.4535 112.457 18.7 111.022 18.43C109.586 18.1599 108.292 17.3907 107.368 16.2585L109.287 14.6939C109.841 15.3732 110.618 15.8347 111.479 15.9967C112.341 16.1587 113.232 16.0106 113.995 15.579C114.758 15.1473 115.343 14.4596 115.648 13.6378C115.65 13.6316 115.653 13.6253 115.655 13.619H107.214C106.533 13.619 105.98 13.0698 105.976 12.3894C105.965 10.9285 106.472 9.51119 107.406 8.38797C108.341 7.26471 109.642 6.50774 111.08 6.25153ZM114.026 9.13156C113.267 8.69259 112.377 8.53592 111.514 8.68964C110.651 8.8434 109.871 9.29736 109.31 9.97126C109.019 10.3212 108.798 10.7188 108.652 11.1429H115.679C115.673 11.1248 115.667 11.1064 115.661 11.0884C115.364 10.2638 114.785 9.57053 114.026 9.13156ZM12.381 12.381C12.381 14.0228 11.7289 15.5975 10.5679 16.7584C9.407 17.9194 7.83229 18.5714 6.19048 18.5714C4.54866 18.5714 2.97395 17.9194 1.81301 16.7584C0.652072 15.5975 0 14.0228 0 12.381C0 10.7391 0.652072 9.16443 1.81301 8.00349C2.97395 6.84255 4.54866 6.19048 6.19048 6.19048C7.83229 6.19048 9.407 6.84255 10.5679 8.00349C11.7289 9.16443 12.381 10.7391 12.381 12.381ZM41.4762 19.8095C41.4762 21.4513 40.8241 23.0261 39.6632 24.187C38.5022 25.3479 36.9275 26 35.2857 26C33.6439 26 32.0692 25.3479 30.9083 24.187C29.7473 23.0261 29.0952 21.4513 29.0952 19.8095H31.5714C31.5714 20.7946 31.963 21.7391 32.6596 22.4356C33.3562 23.1322 34.3006 23.5238 35.2857 23.5238C36.2708 23.5238 37.2153 23.1322 37.9118 22.4356C38.6084 21.7391 39 20.7946 39 19.8095V17.3321C37.9346 18.1314 36.6331 18.5714 35.2857 18.5714C33.6439 18.5714 32.0692 17.9194 30.9083 16.7584C29.7473 15.5975 29.0952 14.0228 29.0952 12.381C29.0952 10.7391 29.7473 9.16443 30.9083 8.00349C32.0692 6.84255 33.6439 6.19048 35.2857 6.19048C36.633 6.19048 37.9347 6.63008 39 7.42918V6.19048H41.4762V19.8095ZM56.0238 18.5714H53.5476V17.3321C52.4823 18.1314 51.1807 18.5714 49.8333 18.5714C48.1915 18.5714 46.6168 17.9194 45.4559 16.7584C44.2949 15.5975 43.6429 14.0228 43.6429 12.381C43.6429 10.7391 44.2949 9.16443 45.4559 8.00349C46.6168 6.84255 48.1915 6.19048 49.8333 6.19048C51.1806 6.19048 52.4823 6.63008 53.5476 7.42918V0H56.0238V18.5714ZM70.5714 14.8571C70.5714 15.1855 70.702 15.5003 70.9342 15.7325C71.1663 15.9647 71.4812 16.0952 71.8095 16.0952V18.5714C70.8244 18.5714 69.88 18.1798 69.1834 17.4833C68.9876 17.2874 68.8164 17.0717 68.6708 16.8412C67.5187 17.9493 65.9825 18.5714 64.381 18.5714C62.7391 18.5714 61.1644 17.9194 60.0035 16.7584C58.8426 15.5975 58.1905 14.0228 58.1905 12.381C58.1905 10.7391 58.8426 9.16443 60.0035 8.00349C61.1644 6.84255 62.7391 6.19048 64.381 6.19048C65.7282 6.19048 67.0299 6.63008 68.0952 7.42918V6.19048H70.5714V14.8571ZM103.69 14.9528C103.69 15.2812 103.82 15.596 104.053 15.8282C104.285 16.0604 104.6 16.1909 104.928 16.1909V18.6671C103.943 18.6671 102.998 18.2755 102.302 17.579C102.106 17.3831 101.935 17.1674 101.789 16.9369C100.637 18.045 99.1009 18.6671 97.4993 18.6671C95.8575 18.6671 94.2828 18.0151 93.1218 16.8541C91.9609 15.6932 91.3088 14.1185 91.3088 12.4766C91.3088 10.8348 91.9609 9.26012 93.1218 8.09918C94.2828 6.93824 95.8575 6.28617 97.4993 6.28617C98.8466 6.28617 100.148 6.72577 101.214 7.52487V6.28617H103.69V14.9528Z',
+};
 
-/** Outfit Medium metrics (per em) the optical corrections are derived from. */
-const OUTFIT = { baseline: 0.35, xHeight: 0.49, ascender: 0.71 }; // baseline = below the line box centre (see SvgText y)
 /** Acorn Symbol 36×46: the cap + nut ("body") run y 4–46; only the stem sits above (0–8). */
 const ACORN = { w: 36, h: 46, bodyTop: 4 };
 
 /**
  * Optical spacing — position corrections only (sizes stay the Figma tokens), each a fraction of the logo's own size:
  * - iconOffsetY (× acorn height): centre the acorn on its body, not its bounding box — the stem side gives up its room.
- * - wordmarkOffsetY (× font size): centre the wordmark on its x-height; the "g" descender doesn't count.
- * - gap (× font size): ascender ink above the baseline — the Acorn lockup's space[10] runs from the acorn body to that
- *   ink, not to the line box top.
+ * - wordmarkOffsetY (× wordmark height): centre the wordmark on its x-height; the "g" bowl below doesn't count.
+ * - gap (× wordmark height): ink above the wordmark box top — 0, the outlined wordmark's box starts at its ascender ink,
+ *   so the Acorn lockup's space[10] already runs from the acorn body to the letters.
  * - overshoot: round forms read smaller than letters; the acorn is drawn 2 % larger (layout box unchanged).
  * - splashLift (× screen height): 1.1 Splash places the lockup on the visual centre, 2.5 % above the middle.
  */
 export const LOGO_OPTICAL = {
   iconOffsetY: -ACORN.bodyTop / ACORN.h / 2,
-  wordmarkOffsetY: -(OUTFIT.baseline - OUTFIT.xHeight / 2),
-  gap: OUTFIT.ascender - OUTFIT.baseline,
+  wordmarkOffsetY: 0.5 - WORDMARK.xMid / WORDMARK.h,
+  gap: 0,
   overshoot: 1.02,
-  /** Splash: the lockup sits this share of the screen height above the mathematical centre (visual centre). */
   splashLift: 0.025,
 };
 
+/**
+ * Logo — Figma "Logo · Ongdal": Compact = header wordmark 26 high, left aligned (1.2 · tab headers).
+ * Acorn = Acorn Symbol 36×46 → 10 → wordmark 36 high → Tagline, centred (1.1 Splash).
+ * Fill fg/default (Tone=Default); tone 'light' = static/white on dark washes.
+ */
 export function Logo({ lockup, tagline, tone = 'ink' }: Props) {
-  const variant = lockup === 'Acorn' ? 'Wordmark' : 'Wordmark/Compact';
-  const style = text[variant];
-  const id = useId().replace(/:/g, '');
-  const [box, setBox] = useState<{ w: number; h: number } | null>(null);
-  const word = 'ongdalsaem';
-  const pad = Math.ceil((style.fontSize as number) * PAD);
+  const { color } = useTheme();
   const centred = lockup === 'Acorn';
-  // Horizontal room on each side for SVG text that runs wider than the RN measure (kerning / tracking).
-  const side = pad + (style.fontSize as number) * 2;
-  const fs = style.fontSize as number;
-  const lh = style.lineHeight as number;
+  const h = text[centred ? 'Wordmark' : 'Wordmark/Compact'].lineHeight as number; // 36 / 26 — the Figma wordmark heights
+  const w = (h * WORDMARK.w) / WORDMARK.h;
   const iconY = LOGO_OPTICAL.iconOffsetY * ACORN.h;
   const acornShift = { transform: [{ translateY: iconY }, { scale: LOGO_OPTICAL.overshoot }] };
-  // Acorn lockup: the wordmark (and the tagline under it) moves up by the empty line-box room above the ascender ink,
-  // plus what the acorn body moved up / grew, so acorn body → letters reads as exactly space[10].
-  const inkTop = lh / 2 - fs * LOGO_OPTICAL.gap;
-  const lift = centred ? -(inkTop - iconY - (LOGO_OPTICAL.overshoot - 1) * ACORN.h / 2) : 0;
+  // Acorn lockup: keep acorn body → letters at space[10] after the acorn moved up and grew.
+  const lift = centred ? iconY + ((LOGO_OPTICAL.overshoot - 1) * ACORN.h) / 2 - LOGO_OPTICAL.gap * h : 0;
   // Compact: the wordmark sits on its x-height centre, so the header row and its icon buttons line up on it.
-  const wordShift = { transform: [{ translateY: fs * LOGO_OPTICAL.wordmarkOffsetY }] };
+  const wordShift = { transform: [{ translateY: LOGO_OPTICAL.wordmarkOffsetY * h }] };
   return (
-    <View style={lockup === 'Acorn' ? styles.stack : styles.compact} accessible accessibilityRole="header" accessibilityLabel={word}>
-      {lockup === 'Acorn' ? <Image source={ACORN_SYMBOL} style={[styles.acorn, acornShift]} contentFit="contain" /> : null}
+    <View style={centred ? styles.stack : styles.compact} accessible accessibilityRole="header" accessibilityLabel="ongdalsaem">
+      {centred ? <Image source={ACORN_SYMBOL} style={[styles.acorn, acornShift]} contentFit="contain" /> : null}
       <View style={centred ? { marginTop: lift } : wordShift}>
-        <RNText style={[style, styles.hidden]} onLayout={(e) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
-          {word}
-        </RNText>
-        {box ? (
-          <Svg
-            width={box.w + side * 2}
-            height={box.h + pad * 2}
-            style={{ position: 'absolute', left: -side, top: -pad }}
-            pointerEvents="none"
-          >
-            <Defs>
-              <LinearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-                {gradients['Gradient/Ink metal'].map((s) => <Stop key={s.offset} offset={s.offset} stopColor={s.color} />)}
-              </LinearGradient>
-            </Defs>
-            <SvgText
-              x={centred ? side + box.w / 2 : side}
-              textAnchor={centred ? 'middle' : 'start'}
-              // Baseline ≈ line box centre + 0.35 em (Outfit metrics).
-              y={pad + box.h / 2 + (style.fontSize as number) * 0.35}
-              fill={tone === 'light' ? '#FFFFFF' : `url(#${id})`}
-              fontFamily={style.fontFamily as string}
-              fontSize={style.fontSize as number}
-              letterSpacing={style.letterSpacing as number}
-            >
-              {word}
-            </SvgText>
-          </Svg>
-        ) : null}
+        <Svg width={w} height={h} viewBox={`0 0 ${WORDMARK.w} ${WORDMARK.h}`} pointerEvents="none">
+          <Path d={WORDMARK.d} fill={color(tone === 'light' ? 'static/white' : 'fg/default')} />
+        </Svg>
       </View>
       {/* Letter spacing also lands after the last letter; pull that trailing gap back so the tagline centres on its glyphs. */}
       {tagline ? <Text variant="Tagline" color="fg/muted" style={{ marginRight: -Number(text.Tagline.letterSpacing) }}>{tagline}</Text> : null}
@@ -109,5 +74,4 @@ const styles = StyleSheet.create({
   compact: { alignItems: 'flex-start' },
   stack: { alignItems: 'center', gap: space[10] },
   acorn: { width: ACORN.w, height: ACORN.h },
-  hidden: { opacity: 0 },
 });
