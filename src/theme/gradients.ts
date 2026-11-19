@@ -2,7 +2,7 @@
 // Screens never type these HEX values; they import the named gradient.
 
 /** sunset primitives (Signature gradients only). */
-export const sunset = {
+const sunset = {
   100: '#FFDB29', 200: '#FFC450', 300: '#F9C152', 400: '#FEA344', 500: '#FFA528',
   600: '#F2A04A', 700: '#FE923F', 800: '#FF773A', 900: '#DD7350',
 } as const;
@@ -46,10 +46,8 @@ export const gradients = {
   ],
 } as const satisfies Record<string, readonly GradientStop[]>;
 
-export type GradientName = keyof typeof gradients;
-
 /** welcome primitives (Figma Primitives › welcome/*) — used only by Gradient/Welcome. */
-export const welcome = {
+const welcome = {
   base: '#FFEDD5', blue: '#3F8FFF', pink: '#F472B6', green: '#34D399', amber: '#FBBF24',
 } as const;
 

@@ -293,8 +293,6 @@ export async function ateToday(foodId: string) {
   return (count ?? 0) > 0;
 }
 
-export type DiaryEntry = { id: string; foodId: string | null; name: string; photo: string | null; eatenAt: string; review: string | null };
-
 // --------------------------------------------------------------------------------------------- writes
 
 export async function setAcorn(foodId: string, on: boolean) {

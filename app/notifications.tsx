@@ -3,7 +3,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { Bell } from '../src/components/icons/ongdal';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AcornIcon } from '../src/components/AcornIcon';
 import { Button } from '../src/components/Button';
@@ -61,66 +61,78 @@ export default function Notifications() {
       ? a.others > 0 ? t('notifications.acornsMany', { name: a.who.name, count: a.others, dish: a.foodName }) : t('notifications.acornsOne', { name: a.who.name, dish: a.foodName })
       : a.kind === 'comment' ? t('notifications.comment', { name: a.who.name, body: a.body }) : t('notifications.follow', { name: a.who.name });
 
+  const renderRow = (a: Activity) => {
+    const isNew = a.at > seen;
+    return (
+      <Pressable
+        key={a.id}
+        accessibilityRole="button"
+        onPress={() => (a.kind === 'follow' ? router.push(`/cook/${a.who.id}`) : router.push(a.kind === 'comment' ? `/dish/${a.foodId}?comments=1` : `/dish/${a.foodId}`))}
+        style={[styles.row, isNew && { backgroundColor: color('bg/accent-subtle') }]}
+      >
+        <View style={styles.lead}>
+          <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle') }]}>
+            {a.who.avatarUrl ? <Image source={{ uri: a.who.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" /> : (
+              <Text variant="Caption Strong" color="fg/accent">{a.who.name.slice(0, 1).toUpperCase()}</Text>
+            )}
+          </View>
+          {a.kind === 'acorns' ? (
+            <View style={[styles.badge, { backgroundColor: color('bg/subtle') }]}><AcornIcon size={16} filled /></View>
+          ) : null}
+        </View>
+        <View style={styles.body}>
+          <Text variant="Body/S" numberOfLines={3}>{text(a)}</Text>
+          <View style={styles.meta}>
+            {isNew ? <View style={[styles.dot, { backgroundColor: color('fg/accent') }]} /> : null}
+            <Text variant="Caption" color="fg/muted">{timeAgo(a.at, t)}</Text>
+          </View>
+        </View>
+        {a.kind === 'follow' ? (
+          <Button label={t(a.followingBack ? 'notifications.following' : 'notifications.followBack')} size="S" variant={a.followingBack ? 'Outline' : 'Primary'} onPress={() => toggleFollow(a)} />
+        ) : (
+          <Image source={{ uri: a.photo }} style={styles.thumb} contentFit="cover" />
+        )}
+      </Pressable>
+    );
+  };
+
+  const listItems: ({ type: 'head'; key: string; section: string } | { type: 'row'; key: string; a: Activity })[] = sections.flatMap((sec) => [
+    { type: 'head' as const, key: `head:${sec.key}`, section: sec.key },
+    ...sec.rows.map((a) => ({ type: 'row' as const, key: a.id, a })),
+  ]);
+
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
       <TopBar title={t('notifications.title')} onBack={() => router.back()} backLabel={t('common.back')} />
       {items == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
       ) : (
-        <ScrollView contentContainerStyle={{ paddingTop: space[12], paddingBottom: insets.bottom + space[24], gap: space[8] }}>
-          <View style={styles.filters}>
-            {(['all', 'activity', 'forYou'] as Filter[]).map((f) => <Chip key={f} label={t(`notifications.filters.${f}`)} selected={filter === f} onPress={() => setFilter(f)} />)}
-          </View>
-          {sections.length === 0 ? (
-            <View style={styles.empty}>
+        // Virtualized (up to ~400 rows): section heads and rows in one list. Spacing as before — space[8] between the
+        // filters, each section and the footer; none inside a section.
+        <FlatList
+          data={listItems}
+          keyExtractor={(it) => it.key}
+          renderItem={({ item }) => (item.type === 'head' ? (
+            <View style={[styles.head, styles.sectionGap]}><Text variant="Overline" color="fg/muted">{t(`notifications.sections.${item.section}`)}</Text></View>
+          ) : renderRow(item.a))}
+          contentContainerStyle={{ paddingTop: space[12], paddingBottom: insets.bottom + space[24] }}
+          initialNumToRender={12}
+          windowSize={7}
+          ListHeaderComponent={
+            <View style={styles.filters}>
+              {(['all', 'activity', 'forYou'] as Filter[]).map((f) => <Chip key={f} label={t(`notifications.filters.${f}`)} selected={filter === f} onPress={() => setFilter(f)} />)}
+            </View>
+          }
+          ListEmptyComponent={
+            <View style={[styles.empty, styles.sectionGap]}>
               <View style={[styles.emptyIcon, { backgroundColor: color('bg/muted') }]}><Icon icon={Bell} size={30} /></View>
               <Text variant="Title/L" style={styles.center}>{t('notifications.emptyTitle')}</Text>
               <Text variant="Body/S" color="fg/secondary" style={styles.center}>{t('notifications.emptyBody')}</Text>
               <Button label={t('notifications.settings')} variant="Outline" size="M" onPress={() => Linking.openSettings()} />
             </View>
-          ) : (
-            sections.map((s) => (
-              <View key={s.key} style={styles.section}>
-                <View style={styles.head}><Text variant="Overline" color="fg/muted">{t(`notifications.sections.${s.key}`)}</Text></View>
-                {s.rows.map((a) => {
-                  const isNew = a.at > seen;
-                  return (
-                    <Pressable
-                      key={a.id}
-                      accessibilityRole="button"
-                      onPress={() => (a.kind === 'follow' ? router.push(`/cook/${a.who.id}`) : router.push(a.kind === 'comment' ? `/dish/${a.foodId}?comments=1` : `/dish/${a.foodId}`))}
-                      style={[styles.row, isNew && { backgroundColor: color('bg/accent-subtle') }]}
-                    >
-                      <View style={styles.lead}>
-                        <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle') }]}>
-                          {a.who.avatarUrl ? <Image source={{ uri: a.who.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" /> : (
-                            <Text variant="Caption Strong" color="fg/accent">{a.who.name.slice(0, 1).toUpperCase()}</Text>
-                          )}
-                        </View>
-                        {a.kind === 'acorns' ? (
-                          <View style={[styles.badge, { backgroundColor: color('bg/subtle') }]}><AcornIcon size={16} filled /></View>
-                        ) : null}
-                      </View>
-                      <View style={styles.body}>
-                        <Text variant="Body/S" numberOfLines={3}>{text(a)}</Text>
-                        <View style={styles.meta}>
-                          {isNew ? <View style={[styles.dot, { backgroundColor: color('fg/accent') }]} /> : null}
-                          <Text variant="Caption" color="fg/muted">{timeAgo(a.at, t)}</Text>
-                        </View>
-                      </View>
-                      {a.kind === 'follow' ? (
-                        <Button label={t(a.followingBack ? 'notifications.following' : 'notifications.followBack')} size="S" variant={a.followingBack ? 'Outline' : 'Primary'} onPress={() => toggleFollow(a)} />
-                      ) : (
-                        <Image source={{ uri: a.photo }} style={styles.thumb} contentFit="cover" />
-                      )}
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ))
-          )}
-          {sections.length ? <View style={styles.foot}><Text variant="Caption" color="fg/muted">{t('notifications.foot')}</Text></View> : null}
-        </ScrollView>
+          }
+          ListFooterComponent={sections.length ? <View style={[styles.foot, styles.sectionGap]}><Text variant="Caption" color="fg/muted">{t('notifications.foot')}</Text></View> : undefined}
+        />
       )}
     </View>
   );
@@ -130,7 +142,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   loading: { marginTop: space[40] },
   filters: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
-  section: { gap: space[0] },
+  sectionGap: { marginTop: space[8] },
   head: { paddingTop: space[8], paddingHorizontal: space[20], paddingBottom: space[8] },
   row: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingHorizontal: space[20], paddingVertical: space[12] },
   lead: { width: 44, height: 44 },

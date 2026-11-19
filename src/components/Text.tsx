@@ -20,7 +20,7 @@ const SYSTEM_FONT = Platform.OS === 'ios' ? 'System' : 'sans-serif';
 const SYSTEM_WEIGHT: Record<string, TextStyle['fontWeight']> = { 'Outfit-Light': '300', 'Outfit-Regular': '400', 'Outfit-Medium': '500' };
 
 /** Font override for the current UI language (null = keep the token's family). */
-export function localeFont(fontFamily: unknown, lang: string): TextStyle | null {
+function localeFont(fontFamily: unknown, lang: string): TextStyle | null {
   const f = String(fontFamily);
   if (lang === 'ko' && KOREAN_FAMILY[f]) return { fontFamily: KOREAN_FAMILY[f] };
   if (SYSTEM_LANGS.has(lang) && SYSTEM_WEIGHT[f]) return { fontFamily: SYSTEM_FONT, fontWeight: SYSTEM_WEIGHT[f] };

@@ -249,7 +249,7 @@ export function EntryGrid({ entries, size }: { entries: DishSummary[]; size: num
 }
 
 /** Theme illustration, or its mood wash when there's no picture (Diwali). */
-export function ThemeArt({ theme }: { theme: string }) {
+function ThemeArt({ theme }: { theme: string }) {
   const src = themeImage(theme);
   return theme === 'diwali' || !src
     ? <MoodGradient mood={THEME_MOOD[theme as ThemeKey] ?? 'clear'} style={StyleSheet.absoluteFill} />

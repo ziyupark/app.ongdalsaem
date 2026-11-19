@@ -14,10 +14,17 @@ const APP = 'app.ongdalsaem';
 const KEY = 'ongdalsaem.mapApp';
 const e = encodeURIComponent;
 
+/**
+ * The place's Google Maps link (from places-nearby) — only an https Google Maps address. The screen can be opened
+ * by a deep link (ongdalsaem://place?mapsUri=…), so anything else is ignored and the coordinates are used.
+ */
+const GOOGLE_MAPS = /^https:\/\/(maps\.google\.com|www\.google\.com\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)(\/|\?|$)/;
+const safeMapsUri = (u?: string | null) => (u && GOOGLE_MAPS.test(u) ? u : null);
+
 /** Google's web links open the Google Maps app when it is installed (Android always has a browser for them). */
 const googleWeb = (t: MapTarget, a: MapAction) => (a === 'walk'
   ? `https://www.google.com/maps/dir/?api=1&destination=${t.lat},${t.lon}&travelmode=walking`
-  : t.mapsUri || `https://www.google.com/maps/search/?api=1&query=${t.lat},${t.lon}`);
+  : safeMapsUri(t.mapsUri) || `https://www.google.com/maps/search/?api=1&query=${t.lat},${t.lon}`);
 
 const URLS: Record<MapAppId, (t: MapTarget, a: MapAction) => string> = {
   naver: (t, a) => (a === 'walk'
@@ -36,7 +43,7 @@ const URLS: Record<MapAppId, (t: MapTarget, a: MapAction) => string> = {
 const PROBE: Record<MapAppId, string> = { naver: 'nmap://', kakao: 'kakaomap://', google: 'comgooglemaps://', apple: 'maps://' };
 
 /** Korea → Naver · Kakao first; elsewhere → Google · Apple first. */
-export function mapAppOrder(): MapAppId[] {
+function mapAppOrder(): MapAppId[] {
   const kr = getLocales()[0]?.regionCode === 'KR';
   return kr ? ['naver', 'kakao', 'google', 'apple'] : ['google', 'apple', 'naver', 'kakao'];
 }

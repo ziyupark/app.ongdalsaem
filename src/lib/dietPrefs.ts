@@ -1,7 +1,7 @@
 // My diet & allergies (profiles.diet · profiles.allergies), loaded once and kept in memory for picks, search and 7.1.
 import { useSyncExternalStore } from 'react';
 import { ALLERGENS, DIETS, type Allergen, type Diet, type DietPrefs } from './allergens';
-import { myUserId, supabase } from './supabase';
+import { fetchMyProfileRow, myUserId, supabase } from './supabase';
 
 const NONE: DietPrefs = { diet: null, allergies: [] };
 let prefs: DietPrefs = NONE;
@@ -14,15 +14,14 @@ const parse = (r: { diet?: unknown; allergies?: unknown } | null): DietPrefs => 
   allergies: Array.isArray(r?.allergies) ? ALLERGENS.filter((a) => (r!.allergies as unknown[]).includes(a)) : [],
 });
 
-/** Loads once per session (signing in again reloads through `reloadDietPrefs`). Never throws — no prefs on failure. */
-export function loadDietPrefs(): Promise<DietPrefs> {
+/** Loads once per session (the auth listener below reloads on sign-in / sign-out). Never throws — no prefs on failure. */
+function loadDietPrefs(): Promise<DietPrefs> {
   if (!loading) {
     loading = (async () => {
       try {
         const uid = await myUserId();
         if (!uid) return NONE;
-        const { data, error } = await supabase.from('profiles').select('diet, allergies').eq('id', uid).maybeSingle();
-        if (error) throw error;
+        const data = await fetchMyProfileRow('diet, allergies');
         prefs = parse(data);
         emit();
       } catch {
@@ -33,11 +32,6 @@ export function loadDietPrefs(): Promise<DietPrefs> {
   }
   return loading;
 }
-export function reloadDietPrefs() {
-  loading = null;
-  return loadDietPrefs();
-}
-
 // Another account signs in (or this one signs out) → forget the cached prefs.
 supabase.auth.onAuthStateChange((event) => {
   if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
@@ -47,7 +41,7 @@ supabase.auth.onAuthStateChange((event) => {
   }
 });
 
-export function getDietPrefs() {
+function getDietPrefs() {
   return prefs;
 }
 
@@ -69,4 +63,4 @@ export function useDietPrefs(): DietPrefs {
   }, getDietPrefs);
 }
 
-export type { Allergen, Diet, DietPrefs };
+export type { DietPrefs };

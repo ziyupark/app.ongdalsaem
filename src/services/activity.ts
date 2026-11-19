@@ -7,7 +7,7 @@ export type Activity =
   | { kind: 'acorns'; id: string; at: Date; foodId: string; foodName: string; photo: string; who: Who; others: number }
   | { kind: 'comment'; id: string; at: Date; foodId: string; foodName: string; photo: string; who: Who; body: string }
   | { kind: 'follow'; id: string; at: Date; who: Who; followingBack: boolean };
-export type Who = { id: string; name: string; avatarUrl: string | null };
+type Who = { id: string; name: string; avatarUrl: string | null };
 
 const SEEN_KEY = 'ongdalsaem.activitySeenAt';
 const DAYS = 30;

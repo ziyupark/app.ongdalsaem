@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
 import { Copy, Image as ImageIcon, MoreHorizontal } from '../icons/ongdal';
 import { useRef, useState } from 'react';
+import { useLater } from '../../hooks/useLater';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Share, StyleSheet, View } from 'react-native';
 import { loadClipboard, loadSharing, loadViewShot } from '../../lib/optionalNative';
@@ -16,7 +17,7 @@ import { Text } from '../Text';
 export type ShareTarget = { id: string; name: string; photo: string; author: string; mood: WeatherMood | null; tempC: number | null; meal?: string };
 
 /** Deep link to a dish. There is no web domain yet, so links open the app (ongdalsaem://dish/<id>). */
-export const dishLink = (id: string) => Linking.createURL(`/dish/${id}`);
+const dishLink = (id: string) => Linking.createURL(`/dish/${id}`);
 
 /** 7.4 Share sheet (Figma 367:8515): dish preview + link · Copy link / Share card / More · note · Cancel. */
 export function ShareSheet({ visible, dish, onClose }: { visible: boolean; dish: ShareTarget | null; onClose: () => void }) {
@@ -24,6 +25,7 @@ export function ShareSheet({ visible, dish, onClose }: { visible: boolean; dish:
   const { t } = useTranslation();
   const shot = useRef<React.ComponentRef<typeof View>>(null);
   const [copied, setCopied] = useState(false);
+  const later = useLater();
   if (!dish) return null;
   const link = dishLink(dish.id);
   const sub = [t('dish.byAuthor', { name: dish.author }), dish.mood && dish.tempC != null ? `${t(`home.titleMood.${dish.mood}`)} ${dish.tempC}°` : null, dish.meal].filter(Boolean).join(' · ');
@@ -33,7 +35,7 @@ export function ShareSheet({ visible, dish, onClose }: { visible: boolean; dish:
     if (!Clipboard) return Alert.alert(t('shareSheet.needsRebuild'));
     await Clipboard.setStringAsync(link);
     setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    later(() => setCopied(false), 1500);
   };
   const card = async () => {
     try {

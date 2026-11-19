@@ -1,11 +1,24 @@
 import { roundCoord } from './location';
-// Current weather → Weather Mood (docs/01-foundations.md §2.4 판정 기준 · 우선순위). Provider = OpenWeather.
+// Current weather → Weather Mood (docs/01-foundations.md §2.4 판정 기준 · 우선순위). Provider = OpenWeather,
+// called through the `weather` Edge Function so the API key stays on the server.
+import { supabase } from '../lib/supabase';
 import type { WeatherMood } from '../theme';
 import type { Coordinates } from './location';
 
-const OPENWEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather';
-const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
-const API_KEY = process.env.EXPO_PUBLIC_OPENWEATHER_API_KEY;
+type Where = Coordinates | { city: string };
+
+/** OpenWeather JSON through the proxy (current · forecast · city search), or null when it can't be reached. */
+export async function owm<T>(body: Record<string, unknown>): Promise<T | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke('weather', { body });
+    return error || data == null ? null : (data as T);
+  } catch {
+    return null;
+  }
+}
+
+const at = (where: Where) =>
+  'city' in where ? { city: where.city } : { lat: roundCoord(where.latitude), lon: roundCoord(where.longitude) };
 
 export type CurrentWeather = { city: string; countryCode: string; tempC: number; mood: WeatherMood; /** seconds from UTC at that place */ timezoneOffset?: number };
 
@@ -21,7 +34,7 @@ type OwmResponse = {
 };
 
 /** OpenWeather condition code → mood, then temperature / wind overrides in the documented priority order. */
-export function moodFromOwm(r: OwmResponse): WeatherMood {
+function moodFromOwm(r: OwmResponse): WeatherMood {
   const id = r.weather[0]?.id ?? 800;
   const night = r.weather[0]?.icon?.endsWith('n') ?? false;
   const rainMm = r.rain?.['1h'] ?? 0;
@@ -51,18 +64,10 @@ export function moodFromOwm(r: OwmResponse): WeatherMood {
   return sky;
 }
 
-export async function fetchCurrentWeather(where: Coordinates | { city: string }): Promise<CurrentWeather | null> {
-  if (!API_KEY) return null;
-  const params = new URLSearchParams({ units: 'metric', appid: API_KEY });
-  if ('city' in where) params.set('q', where.city);
-  else {
-    params.set('lat', String(roundCoord(where.latitude)));
-    params.set('lon', String(roundCoord(where.longitude)));
-  }
+export async function fetchCurrentWeather(where: Where): Promise<CurrentWeather | null> {
+  const json = await owm<OwmResponse>({ kind: 'current', ...at(where) });
+  if (!json?.main || !json.weather) return null;
   try {
-    const res = await fetch(`${OPENWEATHER_URL}?${params.toString()}`);
-    if (!res.ok) return null;
-    const json = (await res.json()) as OwmResponse;
     return { city: json.name, countryCode: json.sys.country, tempC: Math.round(json.main.temp), mood: moodFromOwm(json), timezoneOffset: json.timezone };
   } catch {
     return null;
@@ -71,7 +76,7 @@ export async function fetchCurrentWeather(where: Coordinates | { city: string })
 
 type OwmForecast = { list: (Omit<OwmResponse, 'name' | 'sys'> & { dt: number })[] };
 
-export type ForecastPoint = { at: Date; tempC: number; mood: WeatherMood };
+type ForecastPoint = { at: Date; tempC: number; mood: WeatherMood };
 export type Forecast = CurrentWeather & {
   hi: number;
   lo: number;
@@ -81,19 +86,12 @@ export type Forecast = CurrentWeather & {
 };
 
 /** Current weather + 5-day/3-hour forecast (free tier) → H/L for the rest of today, "until", per-time temps. */
-export async function fetchForecast(where: Coordinates | { city: string }): Promise<Forecast | null> {
+export async function fetchForecast(where: Where): Promise<Forecast | null> {
   const now = await fetchCurrentWeather(where);
-  if (!now || !API_KEY) return now ? { ...now, hi: now.tempC, lo: now.tempC, points: [] } : null;
-  const params = new URLSearchParams({ units: 'metric', appid: API_KEY, cnt: '16' });
-  if ('city' in where) params.set('q', where.city);
-  else {
-    params.set('lat', String(roundCoord(where.latitude)));
-    params.set('lon', String(roundCoord(where.longitude)));
-  }
+  if (!now) return null;
   try {
-    const res = await fetch(`${FORECAST_URL}?${params.toString()}`);
-    if (!res.ok) throw new Error(String(res.status));
-    const json = (await res.json()) as OwmForecast;
+    const json = await owm<OwmForecast>({ kind: 'forecast', cnt: 16, ...at(where) });
+    if (!json?.list) throw new Error('forecast');
     const points: ForecastPoint[] = json.list.map((p) => ({
       at: new Date(p.dt * 1000),
       tempC: Math.round(p.main.temp),
@@ -121,17 +119,9 @@ export type DailyForecast = { /** Local date YYYY-MM-DD. */ date: string; mood: 
  * Day-by-day forecast from the same 5-day / 3-hour feed (free tier) — about 5 days ahead.
  * A day's weather = the most common mood between 9:00 and 21:00 (all of its steps when none fall there).
  */
-export async function fetchDailyForecast(where: Coordinates | { city: string }): Promise<DailyForecast[]> {
-  if (!API_KEY) return [];
-  const params = new URLSearchParams({ units: 'metric', appid: API_KEY });
-  if ('city' in where) params.set('q', where.city);
-  else {
-    params.set('lat', String(roundCoord(where.latitude)));
-    params.set('lon', String(roundCoord(where.longitude)));
-  }
-  const res = await fetch(`${FORECAST_URL}?${params.toString()}`);
-  if (!res.ok) throw new Error(String(res.status));
-  const json = (await res.json()) as OwmForecast;
+export async function fetchDailyForecast(where: Where): Promise<DailyForecast[]> {
+  const json = await owm<OwmForecast>({ kind: 'forecast', ...at(where) });
+  if (!json?.list) throw new Error('forecast');
   const pad = (n: number) => String(n).padStart(2, '0');
   const days = new Map<string, ForecastPoint[]>();
   for (const p of json.list) {

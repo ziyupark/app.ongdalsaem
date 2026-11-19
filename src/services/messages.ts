@@ -5,8 +5,6 @@ import { toPerson, type Person, type Row } from './foods';
 
 export type Thread = { id: string; other: Person; lastBody: string | null; lastAt: Date; unread: number; isRequest: boolean; iAsked: boolean };
 export type Message = { id: string; body: string; mine: boolean; createdAt: Date; seenAt: Date | null };
-export type Relation = 'mutual' | 'following' | 'follower';
-export type Target = Person & { relation: Relation };
 
 /** A shared dish travels as a line `ongdalsaem://dish/<id>` inside the body. */
 export const DISH_LINK = /ongdalsaem:\/\/dish\/([0-9a-f-]{36})/i;
@@ -29,14 +27,24 @@ export async function fetchInbox(): Promise<Thread[]> {
   const rows = data as Row[];
   if (!rows.length) return [];
   const ids = rows.map((r) => r.id);
-  const [last, unread] = await Promise.all([
-    supabase.from('messages').select('thread_id, body, created_at').in('thread_id', ids).order('created_at', { ascending: false }).limit(400),
-    supabase.from('messages').select('thread_id').in('thread_id', ids).neq('sender_id', me).is('seen_at', null),
-  ]);
   const lastBy = new Map<string, Row>();
-  for (const m of (last.data ?? []) as Row[]) if (!lastBy.has(m.thread_id)) lastBy.set(m.thread_id, m);
   const unreadBy = new Map<string, number>();
-  for (const m of (unread.data ?? []) as Row[]) unreadBy.set(m.thread_id, (unreadBy.get(m.thread_id) ?? 0) + 1);
+  // One row per thread (last message + my unread count) from thread_previews(); RLS applies (security invoker).
+  const previews = await supabase.rpc('thread_previews', { p_ids: ids });
+  if (!previews.error) {
+    for (const m of (previews.data ?? []) as Row[]) {
+      lastBy.set(m.thread_id, m);
+      unreadBy.set(m.thread_id, m.unread ?? 0);
+    }
+  } else {
+    // PGRST202: migration 20261120010000 not applied yet — the earlier two queries.
+    const [last, unread] = await Promise.all([
+      supabase.from('messages').select('thread_id, body, created_at').in('thread_id', ids).order('created_at', { ascending: false }).limit(400),
+      supabase.from('messages').select('thread_id').in('thread_id', ids).neq('sender_id', me).is('seen_at', null),
+    ]);
+    for (const m of (last.data ?? []) as Row[]) if (!lastBy.has(m.thread_id)) lastBy.set(m.thread_id, m);
+    for (const m of (unread.data ?? []) as Row[]) unreadBy.set(m.thread_id, (unreadBy.get(m.thread_id) ?? 0) + 1);
+  }
   return rows
     .filter((r) => lastBy.has(r.id) || r.request_for !== me) // empty threads someone opened at me stay hidden
     .map((r) => ({
@@ -98,35 +106,4 @@ export function subscribeThread(threadId: string, onChange: () => void) {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `thread_id=eq.${threadId}` }, onChange)
     .subscribe();
   return () => { supabase.removeChannel(ch); };
-}
-
-/** 7.5 Send to — people you follow or who follow you, mutuals first. */
-export async function fetchSendTargets(): Promise<Target[]> {
-  const me = await needUid();
-  const [out, inc] = await Promise.all([
-    supabase.from('follows').select('p:profiles!followee_id(id, display_name, username, avatar_url)').eq('follower_id', me).limit(200),
-    supabase.from('follows').select('p:profiles!follower_id(id, display_name, username, avatar_url)').eq('followee_id', me).limit(200),
-  ]);
-  const following = new Map(((out.data ?? []) as Row[]).filter((r) => r.p).map((r) => [r.p.id, toPerson(r.p)]));
-  const followers = new Map(((inc.data ?? []) as Row[]).filter((r) => r.p).map((r) => [r.p.id, toPerson(r.p)]));
-  const all = new Map<string, Target>();
-  for (const [id, p] of following) all.set(id, { ...p, relation: followers.has(id) ? 'mutual' : 'following' });
-  for (const [id, p] of followers) if (!all.has(id)) all.set(id, { ...p, relation: 'follower' });
-  const rank: Record<Relation, number> = { mutual: 0, following: 1, follower: 2 };
-  return [...all.values()].sort((a, b) => rank[a.relation] - rank[b.relation] || a.name.localeCompare(b.name));
-}
-
-/** Sends the dish (as a link line) + optional note to each person. Returns how many failed. */
-export async function sendDish(to: string[], foodId: string, dishName: string, note: string) {
-  let failed = 0;
-  for (const id of to) {
-    try {
-      const thread = await startThread(id);
-      const body = [note.trim(), `${dishName}\nongdalsaem://dish/${foodId}`].filter(Boolean).join('\n\n');
-      await sendMessage(thread, body);
-    } catch {
-      failed += 1;
-    }
-  }
-  return failed;
 }

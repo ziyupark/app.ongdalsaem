@@ -119,7 +119,7 @@ export function allergensIn(texts: string[], mine: readonly Allergen[]): Allerge
 }
 
 /** The diet rules this dish breaks: vegan = no meat · fish · shellfish · egg · milk · honey; vegetarian = no meat · fish · shellfish; pescatarian = no meat. */
-export function breaksDiet(texts: string[], diet: Diet | null): boolean {
+function breaksDiet(texts: string[], diet: Diet | null): boolean {
   if (!diet) return false;
   const groups: Group[] = diet === 'pescatarian' ? ['meat'] : diet === 'vegetarian' ? ['meat', 'fish', 'shellfish'] : ['meat', 'fish', 'shellfish', 'egg', 'milk', 'honey'];
   return groups.some((g) => has(texts, g));

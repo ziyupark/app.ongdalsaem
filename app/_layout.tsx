@@ -2,13 +2,13 @@ import { useFonts } from 'expo-font';
 import { router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toast } from '../src/components/Toast';
-import '../src/i18n';
-import { fontFiles, ThemeProvider, useTheme } from '../src/theme';
+import { deviceLanguage } from '../src/i18n';
+import { coreFontFiles, koreanFontFiles, ThemeProvider, useTheme } from '../src/theme';
 import { loadPrefs, usePrefs } from '../src/lib/prefs';
 import { usePushSync } from '../src/lib/push';
 import { dismissDone, focusTimer, useDoneQueue, useTimers } from '../src/lib/timers';
@@ -64,9 +64,14 @@ function Root() {
 }
 
 export default function RootLayout() {
-  const [loaded] = useFonts(fontFiles);
-  const { appearance } = usePrefs();
-  useEffect(() => { loadPrefs(); }, []);
+  // Both sets start loading now. The splash waits for Noto Sans KR (~12 MB) only when the UI is Korean — the only
+  // language that draws it (components/Text); for everyone else it finishes in the background.
+  const [coreLoaded] = useFonts(coreFontFiles);
+  const [koreanLoaded] = useFonts(koreanFontFiles);
+  const [prefsReady, setPrefsReady] = useState(false);
+  const { appearance, language } = usePrefs();
+  useEffect(() => { loadPrefs().finally(() => setPrefsReady(true)); }, []);
+  const loaded = coreLoaded && prefsReady && (koreanLoaded || (language ?? deviceLanguage()) !== 'ko');
   usePushSync();
   useEffect(() => {
     if (loaded) SplashScreen.hideAsync();

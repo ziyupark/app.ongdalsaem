@@ -9,12 +9,16 @@
 //   1. run supabase/migrations/20261108020000_places_cache.sql
 //   2. supabase functions deploy places-nearby
 //   3. supabase secrets set GOOGLE_PLACES_API_KEY=<key with "Places API (New)" enabled>
-// The app calls it with the signed-in user's JWT (verify_jwt stays on).
+// The app calls it with the signed-in user's JWT; the function checks it with Supabase Auth itself, so it stays
+// closed even if it is deployed with --no-verify-jwt.
+//
+// Limits (Google calls only — cached answers are free): the daily cap below for everyone, and USER_DAILY_CAP
+// per user so one account can't use up everyone's day. Counted in public.api_quota (migration 20261120000000).
 //
 // Request  { query: string, lat: number, lon: number, openNow?: boolean, radius?: number, maxPrice?: 1|2|3|4, language?: string }
 // Response { places: Place[], similar?: category id | "words" }  — sorted by distance, at most 10.
 //          `similar` is set when the exact dish found nothing and these are places for similar food.
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { admin as db, callerId, cors, inRange, json, takeQuotas } from "../_shared/common.ts";
 
 const KEY = Deno.env.get("GOOGLE_PLACES_API_KEY");
 // Pro-tier fields only — adding rating / hours / photos / summary would bill the Enterprise SKUs.
@@ -23,9 +27,9 @@ const DAY = 24 * 3600_000;
 // Hard daily cap on real Google calls (Google won't let this project lower SearchTextRequest per day).
 // 150 a day ≈ 4,500 a month — inside the 5,000 free Text Search Pro calls. Change with: supabase secrets set PLACES_DAILY_CAP=...
 const DAILY_CAP = Number(Deno.env.get("PLACES_DAILY_CAP") ?? 150);
-const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+const USER_DAILY_CAP = 20;
 const PRICE = ["PRICE_LEVEL_FREE", "PRICE_LEVEL_INEXPENSIVE", "PRICE_LEVEL_MODERATE", "PRICE_LEVEL_EXPENSIVE", "PRICE_LEVEL_VERY_EXPENSIVE"];
-const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+const LANG = /^[a-z]{2,3}(-[A-Za-z0-9]{2,4})?$/;
 
 type GPlace = Record<string, any>;
 
@@ -78,14 +82,20 @@ function rectangle(lat: number, lon: number, radius: number) {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
-  if (!KEY) return Response.json({ error: "missing_key" }, { status: 500, headers: cors });
-  let body: { query?: string; lat?: number; lon?: number; openNow?: boolean; radius?: number; maxPrice?: number; language?: string };
-  try { body = await req.json(); } catch { return Response.json({ error: "bad_json" }, { status: 400, headers: cors }); }
-  const { query, lat, lon } = body;
-  if (!query || typeof lat !== "number" || typeof lon !== "number") return Response.json({ error: "bad_request" }, { status: 400, headers: cors });
+  if (!KEY) return json({ error: "missing_key" }, 500);
+  const uid = await callerId(req);
+  if (!uid) return json({ error: "unauthorized" }, 401);
+  let raw: Record<string, unknown>;
+  try { raw = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
+  // Input checks: a short text query, real coordinates, known filters only.
+  const query = typeof raw.query === "string" ? raw.query.trim().slice(0, 100) : "";
+  const lat = inRange(raw.lat, -90, 90), lon = inRange(raw.lon, -180, 180);
+  if (query.length < 1 || lat == null || lon == null) return json({ error: "bad_request" }, 400);
+  const maxPrice = [1, 2, 3, 4].includes(raw.maxPrice as number) ? (raw.maxPrice as number) : undefined;
+  const body = { openNow: raw.openNow === true, maxPrice };
 
-  const radius = Math.min(Math.max(body.radius ?? 1500, 200), 5000);
-  const lang = body.language ?? "en";
+  const radius = Math.round(Math.min(Math.max(inRange(raw.radius, 0, 1e6) ?? 1500, 200), 5000));
+  const lang = typeof raw.language === "string" && LANG.test(raw.language) ? raw.language : "en";
   const ttl = body.openNow ? 30 * 60_000 : DAY;
   const since = new Date(); since.setUTCHours(0, 0, 0, 0);
 
@@ -113,12 +123,20 @@ Deno.serve(async (req) => {
     const { data: hit } = await db.from("places_cache").select("places, created_at").eq("key", key).maybeSingle();
     if (hit && Date.now() - new Date(hit.created_at).getTime() < ttl) {
       const near = withDistance(hit.places as any[]);
-      if (near.length) return Response.json({ places: near, cached: true, ...note(q) }, { headers: cors });
+      if (near.length) return json({ places: near, cached: true, ...note(q) });
       continue;
     }
-    // Every cache miss writes (or refreshes) one row, so rows touched since 00:00 UTC = Google calls today.
-    const { count } = await db.from("places_cache").select("key", { count: "exact", head: true }).gte("created_at", since.toISOString());
-    if ((count ?? 0) >= DAILY_CAP) return Response.json({ error: "daily_limit" }, { status: 429, headers: cors });
+    // One unit per real Google call: the shared daily cap, then this user's own.
+    const ok = await takeQuotas([
+      { bucket: "places:all", window: "day", cap: DAILY_CAP },
+      { bucket: `places:u:${uid}`, window: "day", cap: USER_DAILY_CAP },
+    ]);
+    if (ok === false) return json({ error: "daily_limit" }, 429);
+    if (ok === null) {
+      // Quota table missing (migration not applied yet): the old count — cache rows touched since 00:00 UTC.
+      const { count } = await db.from("places_cache").select("key", { count: "exact", head: true }).gte("created_at", since.toISOString());
+      if ((count ?? 0) >= DAILY_CAP) return json({ error: "daily_limit" }, 429);
+    }
 
     const search: Record<string, unknown> = {
       textQuery: q.slice(0, 80),
@@ -138,7 +156,11 @@ Deno.serve(async (req) => {
       headers: { "Content-Type": "application/json", "X-Goog-Api-Key": KEY, "X-Goog-FieldMask": FIELDS },
       body: JSON.stringify(search),
     });
-    if (!r.ok) return Response.json({ error: "places_failed", status: r.status, detail: (await r.text()).slice(0, 300) }, { status: 502, headers: cors });
+    if (!r.ok) {
+      // Details go to the function log only, never to the app.
+      console.error("[places] upstream", r.status, (await r.text()).slice(0, 300));
+      return json({ error: "places_failed" }, 502);
+    }
     const list = ((await r.json()) as { places?: GPlace[] }).places ?? [];
 
     const places = list.map((p) => ({
@@ -154,7 +176,7 @@ Deno.serve(async (req) => {
     }));
     await db.from("places_cache").upsert({ key, places, created_at: new Date().toISOString() });
     const near = withDistance(places);
-    if (near.length) return Response.json({ places: near, ...note(q) }, { headers: cors });
+    if (near.length) return json({ places: near, ...note(q) });
   }
-  return Response.json({ places: [] }, { headers: cors });
+  return json({ places: [] });
 });

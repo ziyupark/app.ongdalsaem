@@ -2,7 +2,7 @@
 import { supabase } from '../lib/supabase';
 import { roundCoord } from './location';
 
-export type Money = { units: number; currency: string };
+type Money = { units: number; currency: string };
 export type NearbyPlace = {
   id: string; name: string; address: string | null; kind: string | null; lat?: number | null; lon?: number | null;
   distance: number | null; walkMin: number | null; openNow: boolean | null; closesAt: string | null;

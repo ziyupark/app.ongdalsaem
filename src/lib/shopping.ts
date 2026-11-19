@@ -32,7 +32,7 @@ function save(next: ShoppingItem[]) {
 const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
-export function getShopping() {
+function getShopping() {
   return items;
 }
 /** Add ingredients — one already on the list from the same dish is updated (amount) instead of added twice. */

@@ -13,8 +13,12 @@ import { radius, space, useTheme } from '../../src/theme';
  * The documents are written by the team and hosted on the web before launch (docs/04-screens/09-settings.md 9.8c);
  * until they are published the sheet says so instead of showing placeholder legal text.
  */
+const DOCS = ['help', 'guidelines', 'terms', 'privacy', 'location'];
+
 export default function Document() {
-  const { doc = 'privacy' } = useLocalSearchParams<{ doc?: string }>();
+  const { doc: asked } = useLocalSearchParams<{ doc?: string }>();
+  // Deep-linkable: only the documents that exist, anything else shows the privacy policy.
+  const doc = DOCS.includes(asked ?? '') ? asked! : 'privacy';
   const { color } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();

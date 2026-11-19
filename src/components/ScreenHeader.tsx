@@ -19,7 +19,7 @@ import { WeatherFx } from './WeatherFx';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 /** Wash height — the same on Home · Community · Timer · Profile. */
-export const WASH_HEIGHT = 420;
+const WASH_HEIGHT = 420;
 const WASH_OPACITY = 0.85;
 /** Mood until the weather is known. */
 const FALLBACK_MOOD: WeatherMood = 'overcast';
@@ -28,7 +28,7 @@ const FALLBACK_MOOD: WeatherMood = 'overcast';
  * The shared weather reading behind the header and the wash (lib/useHere — my location, cached between screens and
  * launches). `on` = false only when location is off and no city was chosen (no wash, plain inks).
  */
-export function useScreenWeather() {
+function useScreenWeather() {
   const { here } = useHere();
   const f = here.forecast;
   const off = here.status === 'off' && !here.place?.city;

@@ -1,9 +1,8 @@
 import { Image } from 'expo-image';
-import type { WashInk } from '../../theme/washInk';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronRight, MapPin, Search, Users, X, type LucideIcon } from '../icons/ongdal';
 import { Bookmark, MessageCircle } from '../icons/ongdal';
-import { type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import { displayTemp } from '../../lib/prefs';
@@ -77,24 +76,6 @@ export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge }: { ti
   );
 }
 
-/** Tab row (Global · Nearby · Following / Popular · Latest …) — gap 24, indicator 24×3 bg/primary. */
-export function Tabs<K extends string>({ items, value, onChange, style, ink }: { items: { key: K; label: string }[]; value: K; onChange: (k: K) => void; style?: StyleProp<ViewStyle>; ink?: WashInk | null }) {
-  const { color } = useTheme();
-  return (
-    <View style={[styles.tabs, style]}>
-      {items.map((it) => {
-        const on = it.key === value;
-        return (
-          <Pressable key={it.key} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => onChange(it.key)} style={styles.tab}>
-            <Text variant={on ? 'Title/S' : 'Body/M'} color={on ? ink?.strong ?? 'fg/default' : ink?.muted ?? 'fg/muted'}>{it.label}</Text>
-            <View style={[styles.indicator, on && { backgroundColor: ink?.line ?? color('bg/primary') }]} />
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
 /** Search Field 48 — bg/muted pill, search 18, clear X; focus ring border/focus. */
 export function SearchField({ value, onChangeText, placeholder, onFocus, onBlur, onSubmit, focused, autoFocus }: {
   value: string; onChangeText: (v: string) => void; placeholder: string; onFocus?: () => void; onBlur?: () => void; onSubmit?: () => void; focused?: boolean; autoFocus?: boolean;
@@ -142,9 +123,22 @@ export function useByline() {
 /** 2-column Dish Tile grid (670:20058) — 4.2 Tag, 4.3 Country, 3.x Nearby: x20 · gap 16 · rows 20. Byline = the tile's own "Comfort · Dinner". */
 export function FoodGrid({ dishes, width, onOpen }: { dishes: CardDish[]; width: number; byline?: (d: CardDish) => string; onOpen: (d: CardDish) => void }) {
   const w = (width - space[20] * 2 - space[16]) / 2;
+  // One handler per dish id that lives across renders and always calls the latest onOpen with the latest dish,
+  // so the memoized tiles don't re-render just because the parent passed a new arrow function.
+  const latest = useRef({ onOpen, dishes });
+  latest.current = { onOpen, dishes };
+  const handlers = useRef(new Map<string, () => void>()).current;
+  const pressOf = (id: string) => {
+    let f = handlers.get(id);
+    if (!f) {
+      f = () => { const d = latest.current.dishes.find((x) => x.id === id); if (d) latest.current.onOpen(d); };
+      handlers.set(id, f);
+    }
+    return f;
+  };
   return (
     <View style={styles.grid}>
-      {dishes.map((d) => <DishTile key={d.id} dish={d} width={w} onPress={() => onOpen(d)} />)}
+      {dishes.map((d) => <DishTile key={d.id} dish={d} width={w} onPress={pressOf(d.id)} />)}
     </View>
   );
 }
@@ -346,9 +340,6 @@ const styles = StyleSheet.create({
   shTitleRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flexShrink: { flexShrink: 1 },
   shBadge: { flexShrink: 1, paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
-  tabs: { flexDirection: 'row', gap: space[24], paddingLeft: space[20] },
-  tab: { height: 43, paddingTop: space[10], paddingHorizontal: space[2], gap: space[8], alignItems: 'center', justifyContent: 'center' },
-  indicator: { width: 24, height: 3, borderRadius: 2 },
   search: { height: 48, borderRadius: radius.full, borderWidth: 1.5, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', columnGap: space[16], rowGap: space[20], paddingHorizontal: space[20] },
   row: { flexDirection: 'row', alignItems: 'center', gap: space[14] },

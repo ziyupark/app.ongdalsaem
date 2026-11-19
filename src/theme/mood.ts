@@ -9,7 +9,7 @@ export const WEATHER_MOODS = [
 ] as const;
 export type WeatherMood = (typeof WEATHER_MOODS)[number];
 
-export type Blob = { color: string; cx: number; cy: number; rx: number; ry: number; a: number };
+type Blob = { color: string; cx: number; cy: number; rx: number; ry: number; a: number };
 export type MoodSpec = { top: string; mid: string; blobs: Blob[] };
 
 const b = (color: string, cx: number, cy: number, rx: number, ry: number, a: number): Blob => ({ color, cx, cy, rx, ry, a });

@@ -1,6 +1,6 @@
 // profiles row for onboarding (docs/06-data-model.md User · Settings, DB = supabase/migrations).
 import * as ImageManipulator from 'expo-image-manipulator';
-import { myUserId, supabase } from '../lib/supabase';
+import { fetchMyProfileRow, myUserId, supabase } from '../lib/supabase';
 import { makeHandle, randomHandleDigits } from './username';
 
 export type MyProfile = { id: string; displayName: string | null; username: string | null; avatarUrl: string | null; city: string | null; bio: string | null; locationEnabled: boolean };
@@ -8,12 +8,7 @@ export type MyProfile = { id: string; displayName: string | null; username: stri
 export async function getMyProfile(): Promise<MyProfile | null> {
   const uid = await myUserId();
   if (!uid) return null;
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, display_name, username, avatar_url, city, bio, location_enabled')
-    .eq('id', uid)
-    .maybeSingle();
-  if (error) throw error;
+  const data = await fetchMyProfileRow('id, display_name, username, avatar_url, city, bio, location_enabled');
   if (!data) return { id: uid, displayName: null, username: null, avatarUrl: null, city: null, bio: null, locationEnabled: true };
   return { id: data.id, displayName: data.display_name, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: data.location_enabled ?? true };
 }
@@ -47,15 +42,16 @@ export async function saveProfileSetup(input: { displayName: string; digits: str
   let digits = input.digits;
   for (let attempt = 0; attempt < 6; attempt++) {
     const username = makeHandle(input.displayName, digits);
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        id: uid,
-        display_name: input.displayName.trim(),
-        username,
-        handle_auto_generated: true,
-        ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
-      });
+    const fields = {
+      display_name: input.displayName.trim(),
+      username,
+      handle_auto_generated: true,
+      ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
+    };
+    // The sign-up trigger already made the row, so this is an update; insert only if it's missing.
+    // (Not upsert: ON CONFLICT DO UPDATE needs read access to columns others can't read — see my_profile().)
+    let { error, count } = await supabase.from('profiles').update(fields, { count: 'exact' }).eq('id', uid);
+    if (!error && count === 0) ({ error } = await supabase.from('profiles').insert({ id: uid, ...fields }));
     if (!error) return username;
     if (error.code !== UNIQUE_VIOLATION) throw error;
     digits = randomHandleDigits();
@@ -85,7 +81,7 @@ export async function saveFavoriteTags(tags: string[]) {
 export async function fetchMyFavoriteTags(): Promise<string[]> {
   const uid = await myUserId();
   if (!uid) return [];
-  const { data } = await supabase.from('profiles').select('favorite_tags').eq('id', uid).maybeSingle();
+  const data = await fetchMyProfileRow('favorite_tags').catch(() => null);
   return (data?.favorite_tags as string[] | null) ?? [];
 }
 

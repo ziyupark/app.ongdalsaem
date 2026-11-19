@@ -6,7 +6,7 @@ const VOWELS = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'yeo', 'ye', 'o', 'wa', 'wae'
 const FINALS = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'l', 'l', 'l', 'p', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't'];
 
 /** Revised Romanization of Korean, syllable by syllable (simplified: no sound-change rules). */
-export function romanizeHangul(input: string) {
+function romanizeHangul(input: string) {
   let out = '';
   for (const ch of input) {
     const code = ch.charCodeAt(0) - 0xac00;
@@ -21,7 +21,7 @@ export function romanizeHangul(input: string) {
 
 const MAX_BASE = 15; // 20 − "_1234"
 
-export function handleBase(displayName: string) {
+function handleBase(displayName: string) {
   const base = romanizeHangul(displayName)
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')

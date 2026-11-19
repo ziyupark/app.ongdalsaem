@@ -28,7 +28,6 @@ export const MOOD_TAGS = [
   { key: 'together', icon: Users },
   { key: 'hearty', icon: Soup },
 ] as const satisfies readonly { key: string; icon: LucideIcon }[];
-export type MoodTag = (typeof MOOD_TAGS)[number]['key'];
 
 /** Where the dish was eaten / cooked (4.1 Global landscape chips) — stored in foods.landscape. */
 export const LANDSCAPES = [
@@ -39,7 +38,6 @@ export const LANDSCAPES = [
   { key: 'countryside', icon: Wheat },
   { key: 'city', icon: Building2 },
 ] as const satisfies readonly { key: string; icon: LucideIcon }[];
-export type Landscape = (typeof LANDSCAPES)[number]['key'];
 
 /** Onboarding taste step — preset tags people can like (same keys as dishes' mood_tags / meal_type). */
 export const TASTE_TAGS = [
@@ -49,7 +47,6 @@ export const TASTE_TAGS = [
 
 /** Custom moods ("Add your own") use the sparkles icon (Chip · Custom). */
 export const CUSTOM_MOOD_ICON = Sparkles;
-export const MAX_MOODS = 3;
 export const MAX_CUSTOM_MOOD_LENGTH = 20;
 
 const MEAL_ICON = Object.fromEntries(MEAL_TAGS.map((m) => [m.key, m.icon])) as Record<string, LucideIcon>;

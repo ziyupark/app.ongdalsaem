@@ -39,7 +39,7 @@ function clean(name: string) {
     .trim();
 }
 /** "대파 1/2대 (흰 부분)" → "대파" · "2 eggs" → "eggs". */
-export function normalize(name: string) {
+function normalize(name: string) {
   return clean(name).replace(/ /g, '');
 }
 

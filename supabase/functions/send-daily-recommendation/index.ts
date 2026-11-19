@@ -9,7 +9,7 @@
 // Tapping it opens the dish (data.foodId → /dish/[id]).
 //
 // Deploy:  supabase functions deploy send-daily-recommendation
-// Secret:  supabase secrets set OPENWEATHER_API_KEY=<same key as EXPO_PUBLIC_OPENWEATHER_API_KEY>
+// Secret:  supabase secrets set OPENWEATHER_API_KEY=<your OpenWeather key> (the `weather` function uses the same one)
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import STRINGS from "./strings.json" with { type: "json" };
 
@@ -98,9 +98,9 @@ function mealAt(hour: number) {
 
 type PoolDish = { id: string; name: string; mood: Mood | null; meals: string[]; acorns: number; createdAt: number; creatorId: string | null };
 
-function pick(pool: PoolDish[], mood: Mood | null, hour: number, userId: string): PoolDish | null {
+function pick(pool: PoolDish[], mood: Mood | null, hour: number, userId: string, blocked: Set<string>): PoolDish | null {
   const meal = mealAt(hour);
-  const others = pool.filter((d) => d.creatorId !== userId);
+  const others = pool.filter((d) => d.creatorId !== userId && !(d.creatorId && blocked.has(d.creatorId)));
   const family = mood ? others.filter((d) => d.mood && GROUP[d.mood] === GROUP[mood]) : others;
   const candidates = family.length ? family : others;
   if (!candidates.length) return null;
@@ -137,7 +137,10 @@ Deno.serve(async (req) => {
     .from("push_tokens")
     .select("user_id, token, pick_time, tz, lat, lon, place, city, language, temp_unit, last_sent_on")
     .eq("daily_pick", true);
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  if (error) {
+    console.error("[daily-pick]", error.message);
+    return new Response(JSON.stringify({ error: "query_failed" }), { status: 500 });
+  }
 
   // Who is due: local pick_time within the last WINDOW_MIN minutes, not yet sent today.
   const due = ((rows ?? []) as Row[]).flatMap((r) => {
@@ -154,6 +157,7 @@ Deno.serve(async (req) => {
     .select("id, name, weather_condition, meal_type, created_at, creator_id, likes(count)")
     .eq("visibility", "everyone")
     .eq("status", "published")
+    .eq("moderation_state", "visible")
     .gte("created_at", since)
     .order("created_at", { ascending: false })
     .limit(300);
@@ -166,6 +170,20 @@ Deno.serve(async (req) => {
     createdAt: new Date(f.created_at as string).getTime(),
     creatorId: (f.creator_id as string | null) ?? null,
   }));
+
+  // Blocks hide dishes both ways (docs 6.10): never push a blocked (or blocking) cook's dish.
+  const dueIds = due.map((r) => r.user_id);
+  const blockedBy = new Map<string, Set<string>>();
+  const addBlock = (a: string, b: string) => { if (!blockedBy.has(a)) blockedBy.set(a, new Set()); blockedBy.get(a)!.add(b); };
+  for (let i = 0; i < dueIds.length; i += 200) {
+    const ids = dueIds.slice(i, i + 200);
+    const [mine, theirs] = await Promise.all([
+      supabase.from("blocks").select("blocker_id, blocked_id").in("blocker_id", ids),
+      supabase.from("blocks").select("blocker_id, blocked_id").in("blocked_id", ids),
+    ]);
+    for (const b of mine.data ?? []) addBlock(b.blocker_id, b.blocked_id);
+    for (const b of theirs.data ?? []) addBlock(b.blocked_id, b.blocker_id);
+  }
 
   // One weather call per ~1 km cell / city.
   const weatherCache = new Map<string, Promise<{ mood: Mood; tempC: number } | null>>();
@@ -180,7 +198,7 @@ Deno.serve(async (req) => {
       if (!weatherCache.has(where)) weatherCache.set(where, weatherAt(where));
       w = await weatherCache.get(where)!;
     }
-    const dish = pick(pool, w?.mood ?? null, r.local.hour, r.user_id);
+    const dish = pick(pool, w?.mood ?? null, r.local.hour, r.user_id, blockedBy.get(r.user_id) ?? new Set());
     if (!dish) continue;
     const s = STRINGS[(r.language in STRINGS ? r.language : "en") as Lang];
     const temp = w ? (r.temp_unit === "F" ? Math.round(w.tempC * 9 / 5 + 32) : w.tempC) : null;

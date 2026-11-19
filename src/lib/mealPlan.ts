@@ -37,7 +37,7 @@ function save(next: PlanItem[]) {
   emit();
 }
 
-export function getMealPlan() {
+function getMealPlan() {
   return items;
 }
 /** Plan a dish for a day's breakfast / lunch / dinner — replaces what was planned for that meal. */

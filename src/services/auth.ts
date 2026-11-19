@@ -1,3 +1,4 @@
+import { clearLocalUserData } from '../lib/localData';
 import { clearPush } from '../lib/push';
 // Sign in with Apple · Google through Supabase Auth (docs/04-screens/01-sign-in-setup.md 1.2).
 // Apple on iOS = native sheet → identity token → signInWithIdToken (nonce-checked).
@@ -59,6 +60,11 @@ export async function signInWithApple(): Promise<SignInResult> {
 
   const { data, error } = await supabase.auth.signInWithIdToken({ provider: 'apple', token: credential.identityToken, nonce: rawNonce });
   if (error || !data.user) throw error ?? new Error('No user');
+  // Keep Apple's refresh token on the server (apple-token function) so deleting the account can revoke it —
+  // App Store rule 5.1.1(v). Fire and forget: signing in never waits for it.
+  if (credential.authorizationCode) {
+    supabase.functions.invoke('apple-token', { body: { code: credential.authorizationCode } }).catch(() => undefined);
+  }
 
   // Apple sends the name only on the very first authorisation (and only if the user shares it) — keep it.
   const appleName = [credential.fullName?.givenName, credential.fullName?.familyName].filter(Boolean).join(' ').trim();
@@ -74,8 +80,9 @@ export async function signInWithApple(): Promise<SignInResult> {
  */
 export async function signInWithDevTestAccount(): Promise<SignInResult> {
   if (!__DEV__) throw new Error('Test sign-in is dev only');
-  const email = process.env.EXPO_PUBLIC_DEV_TEST_EMAIL;
-  const password = process.env.EXPO_PUBLIC_DEV_TEST_PASSWORD;
+  // `__DEV__ ?` is folded away in release builds, so the values can't end up in the bundle even if set by mistake.
+  const email = __DEV__ ? process.env.EXPO_PUBLIC_DEV_TEST_EMAIL : undefined;
+  const password = __DEV__ ? process.env.EXPO_PUBLIC_DEV_TEST_PASSWORD : undefined;
   if (!email || !password) throw new Error('Set EXPO_PUBLIC_DEV_TEST_EMAIL and EXPO_PUBLIC_DEV_TEST_PASSWORD in .env, then restart Metro.');
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error || !data.user) throw error ?? new Error('No user');
@@ -93,4 +100,5 @@ export async function resetOnboardingForDev() {
 export async function signOut() {
   await clearPush();
   await supabase.auth.signOut();
+  await clearLocalUserData('signOut');
 }

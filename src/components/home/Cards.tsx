@@ -2,7 +2,7 @@ import { Image, type ImageSource } from 'expo-image';
 
 type Pic = number | ImageSource;
 
-const SIMILAR_BITES = require('../../../assets/icons/similar-bites@3x.png');
+const SIMILAR_BITES = require('../../../assets/icons/similar-bites.png');
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronRight, MapPin } from '../icons/ongdal';
 import { useMemo } from 'react';

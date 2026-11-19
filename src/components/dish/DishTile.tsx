@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { DishSummary } from '../../services/foods';
@@ -7,7 +8,7 @@ import { AcornTag, WeatherTag } from '../PhotoTags';
 import { Text } from '../Text';
 
 /** Media is 167×208 in Figma — keep that ratio at any width. */
-export const tileMediaHeight = (width: number) => Math.round((width * 208) / 167);
+const tileMediaHeight = (width: number) => Math.round((width * 208) / 167);
 
 /**
  * Dish Tile 670:20058 — Media (radius 24): Weather Tag XL top-left 8 · Acorn Tag XL bottom-left 8;
@@ -17,7 +18,10 @@ export const tileMediaHeight = (width: number) => Math.round((width * 208) / 167
 /** `onAcorn` turns the Acorn Tag into a give / take-back toggle (`given` = filled); `acorns` overrides the count. */
 /** `place`: small label before the byline (Explore · Our area marks dishes from a wider range, e.g. "Mapo-gu"). */
 /** `rounded`: photo corner radius token (default xl; Explore · Our area uses 2xl like the other photo cards there). */
-export function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded = 'xl', place }: { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number; rounded?: 'xl' | '2xl'; place?: string }) {
+type Props = { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number; rounded?: 'xl' | '2xl'; place?: string };
+
+/** Memoized: a grid re-renders only the tiles whose props changed (FoodGrid passes stable handlers). */
+export const DishTile = memo(function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded = 'xl', place }: Props) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const mood = dish.moods?.[0];
@@ -54,7 +58,7 @@ export function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded
       </View>
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   tile: { gap: space[6] },

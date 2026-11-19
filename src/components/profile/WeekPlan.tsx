@@ -26,7 +26,7 @@ const RESULTS = 12;
 const DEBOUNCE_MS = 300;
 
 /** Today and the next 6 days (local dates). */
-export function weekDates() {
+function weekDates() {
   const now = new Date();
   return Array.from({ length: DAYS }, (_, i) => new Date(now.getFullYear(), now.getMonth(), now.getDate() + i));
 }

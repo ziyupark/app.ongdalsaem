@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { Check, CloudSun, Navigation, Search } from '../../src/components/icons/ongdal';
 import { useEffect, useRef, useState } from 'react';
+import { useLater } from '../../src/hooks/useLater';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,6 +25,7 @@ export default function ChooseCity() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [q, setQ] = useState('');
+  const later = useLater();
   const [hits, setHits] = useState<Hit[]>([]);
   const [busy, setBusy] = useState(false);
   const [current, setCurrent] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export default function ChooseCity() {
     setCurrent(city);
     setSaved(city);
     refreshHere();
-    setTimeout(() => router.back(), 900);
+    later(() => router.back(), 900);
   };
 
   const useHere = async () => {
@@ -68,7 +70,7 @@ export default function ChooseCity() {
       await saveLocationChoice({ city: place.city, country: place.countryCode ?? place.country, locationEnabled: true }).catch(() => undefined);
       setSaved(place.city);
       refreshHere();
-      setTimeout(() => router.back(), 900);
+      later(() => router.back(), 900);
     }
   };
 

@@ -38,7 +38,7 @@ const placeOf = (here: Here) => ({
 // ------------------------------------------------------------------------------------------------ data
 
 /** Nearby dishes for an area filter + search term (same-weather dishes first). null while loading. */
-export function useNearbyDishes(here: Here, area: Area, query: string, filters: SearchFilters = NO_FILTERS) {
+function useNearbyDishes(here: Here, area: Area, query: string, filters: SearchFilters = NO_FILTERS) {
   const f = here.forecast;
   const { city, district } = placeOf(here);
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
@@ -69,7 +69,7 @@ export function useNearbyDishes(here: Here, area: Area, query: string, filters: 
 }
 
 /** Questions asked in my area cell, with optimistic "me too". `fill`: top up to AREA_MIN from wider ranges (Our area). */
-export function useNearbyQuestions(here: Here, n: number, fill?: boolean) {
+function useNearbyQuestions(here: Here, n: number, fill?: boolean) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const { city, district } = placeOf(here);
   useTabFocusEffect(
@@ -93,7 +93,7 @@ export function useNearbyQuestions(here: Here, n: number, fill?: boolean) {
  * Search Field + 3.4 typing panel (suggestions · recent searches). While typing the panel replaces `children`.
  * `onSubmit` gets the trimmed term ('' = cleared).
  */
-export function NearbySearch({ city, initial = '', onSubmit, filters, onFilters, children }: {
+function NearbySearch({ city, initial = '', onSubmit, filters, onFilters, children }: {
   city: string | null; initial?: string; onSubmit: (term: string) => void;
   /** Filter button beside the field (popup) + the selected filters as chips under it. */
   filters?: SearchFilters; onFilters?: (f: SearchFilters) => void;
@@ -217,7 +217,7 @@ export function NearbySearch({ city, initial = '', onSubmit, filters, onFilters,
 // ------------------------------------------------------------------------------------------------ area chips
 
 /** Range chips: (All) · Within 1 km · <district> · Same weather — each only when it can apply. */
-export function AreaChips({ here, area, onChange, withAll, tight }: { here: Here; area: Area; onChange: (a: Area) => void; withAll?: boolean; tight?: boolean }) {
+function AreaChips({ here, area, onChange, withAll, tight }: { here: Here; area: Area; onChange: (a: Area) => void; withAll?: boolean; tight?: boolean }) {
   const { t } = useTranslation();
   const { district } = placeOf(here);
   return (

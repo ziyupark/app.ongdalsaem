@@ -6,7 +6,7 @@ import Animated, {
   withDelay, withRepeat, withSequence, withTiming,
 } from 'react-native-reanimated';
 import Svg, { Defs, Ellipse, Path, RadialGradient, Stop } from 'react-native-svg';
-import { WEATHER_FX, type BoltFx, type FlakeFx, type GlowFx, type GustFx, type PuffFx, type RainFx, type TwinkleFx, type WeatherMood } from '../theme';
+import { FX_COLOR, WEATHER_FX, type BoltFx, type FlakeFx, type GlowFx, type GustFx, type PuffFx, type RainFx, type TwinkleFx, type WeatherMood } from '../theme';
 
 /**
  * Weather motion over a mood wash — rain, snow, lightning, drifting clouds, fog, gusts, stars, sun glow.
@@ -97,7 +97,7 @@ function Drop({ x, len, dur, a, phase, h, drift, thick, angle }: { x: number; le
     opacity: a * edgeFade(p.value),
     transform: [{ translateX: x + drift * p.value }, { translateY: -len + p.value * (h + len) }, { rotate: angle }],
   }));
-  return <Animated.View style={[styles.abs, { width: thick, height: len, borderRadius: thick, backgroundColor: '#FFFFFF' }, style]} />;
+  return <Animated.View style={[styles.abs, { width: thick, height: len, borderRadius: thick, backgroundColor: FX_COLOR.white }, style]} />;
 }
 
 // ── snow / sleet pellets / dust ────────────────────────────────────────────
@@ -222,7 +222,7 @@ function Gust({ y, gw, dur, phase, rest, w, alpha }: { y: number; gw: number; du
     const t = Math.min(1, p.value * k); // 0→1 during the crossing, then held at 1 (off-screen)
     return { opacity: alpha * Math.sin(Math.PI * t), transform: [{ translateX: -gw + t * (w + gw) }] };
   });
-  return <Animated.View style={[styles.abs, { top: y, width: gw, height: 1.5, borderRadius: 1, backgroundColor: '#FFFFFF' }, style]} />;
+  return <Animated.View style={[styles.abs, { top: y, width: gw, height: 1.5, borderRadius: 1, backgroundColor: FX_COLOR.white }, style]} />;
 }
 
 // ── lightning ──────────────────────────────────────────────────────────────
@@ -250,11 +250,11 @@ function Bolt({ spec, w, h }: { spec: BoltFx; w: number; h: number }) {
   const d = `M ${bx} 0 L ${bx - 10} ${bh * 0.38} L ${bx + 4} ${bh * 0.42} L ${bx - 14} ${bh * 0.78} L ${bx - 2} ${bh * 0.8} L ${bx - 18} ${bh}`;
   return (
     <>
-      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#FFFFFF' }, sky]} />
+      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: FX_COLOR.white }, sky]} />
       <Animated.View style={[StyleSheet.absoluteFill, bolt]}>
         <Svg width={w} height={h}>
-          <Path d={d} stroke="#FFF6C8" strokeWidth={5} strokeOpacity={0.35} strokeLinejoin="round" strokeLinecap="round" fill="none" />
-          <Path d={d} stroke="#FFFFFF" strokeWidth={1.8} strokeLinejoin="round" strokeLinecap="round" fill="none" />
+          <Path d={d} stroke={FX_COLOR.boltGlow} strokeWidth={5} strokeOpacity={0.35} strokeLinejoin="round" strokeLinecap="round" fill="none" />
+          <Path d={d} stroke={FX_COLOR.white} strokeWidth={1.8} strokeLinejoin="round" strokeLinecap="round" fill="none" />
         </Svg>
       </Animated.View>
     </>

@@ -1,8 +1,11 @@
 // Account settings on `profiles` (9.2 · 9.4 · 9.5 · 9.6 · 9.7 · 9.9) + support tickets (9.8a).
 import * as Application from 'expo-application';
 import { Platform } from 'react-native';
-import { supabase } from '../lib/supabase';
+import { clearLocalUserData } from '../lib/localData';
+import { clearPush } from '../lib/push';
+import { fetchMyProfileRow, supabase } from '../lib/supabase';
 import { uploadAvatar } from './profile';
+import { owm } from './weather';
 
 export type AccountSettings = {
   id: string;
@@ -34,8 +37,8 @@ async function uid() {
 
 export async function fetchAccount(): Promise<AccountSettings> {
   const user = await uid();
-  const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-  if (error) throw error;
+  const data = await fetchMyProfileRow('*');
+  if (!data) throw new Error('No profile');
   const p = data as Row;
   return {
     id: user.id,
@@ -92,10 +95,41 @@ export async function saveProfile(a: AccountSettings, input: { displayName: stri
   if (error) throw error;
 }
 
+/**
+ * 9.x Delete account. The `delete-account` Edge Function removes the photos (dishes, questions, avatar), revokes the
+ * Sign in with Apple token and deletes the user (every row cascades). Until that function is deployed (404), the
+ * app removes its own files and calls delete_own_account() as before.
+ */
 export async function deleteMyAccount() {
-  const { error } = await supabase.rpc('delete_own_account');
-  if (error) throw error;
-  await supabase.auth.signOut();
+  const { error } = await supabase.functions.invoke('delete-account', { body: {} });
+  if (error) {
+    const status = (error as { context?: { status?: number } }).context?.status;
+    if (status !== 404) throw error;
+    await removeMyFiles();
+    const { error: rpcError } = await supabase.rpc('delete_own_account');
+    if (rpcError) throw rpcError;
+  }
+  await clearPush();
+  await supabase.auth.signOut().catch(() => undefined);
+  await clearLocalUserData('deleteAccount');
+}
+
+/** Every file in my folder of both photo buckets (best effort). */
+async function removeMyFiles() {
+  const user = await uid();
+  for (const bucket of ['food-illustrations', 'avatars']) {
+    try {
+      for (let round = 0; round < 50; round++) {
+        const { data } = await supabase.storage.from(bucket).list(user.id, { limit: 100 });
+        const paths = (data ?? []).filter((f) => f.id).map((f) => `${user.id}/${f.name}`);
+        if (!paths.length) break;
+        const { data: removed, error } = await supabase.storage.from(bucket).remove(paths);
+        if (error || !removed?.length) break;
+      }
+    } catch {
+      // the account is still deleted; leftover files are unlisted and unguessable
+    }
+  }
 }
 
 export async function sendSupportTicket(input: { topic: 'bug' | 'account' | 'report_content' | 'other'; message: string; replyEmail?: string; language: string }) {
@@ -116,7 +150,7 @@ export async function sendSupportTicket(input: { topic: 'bug' | 'account' | 'rep
 export async function exportMyData() {
   const user = await uid();
   const [profile, foods, comments, diary, saves] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    fetchMyProfileRow('*').then((data) => ({ data })),
     supabase.from('foods').select('*, food_images(image_url, display_order)').eq('creator_id', user.id),
     supabase.from('comments').select('*').eq('user_id', user.id),
     supabase.from('food_eaten_logs').select('*').eq('user_id', user.id),
@@ -128,14 +162,8 @@ export async function exportMyData() {
 /** 9.7 city search — OpenWeather geocoding (names only; coordinates are not stored). */
 export type CityHit = { name: string; country: string; state?: string; lat: number; lon: number };
 export async function searchCities(q: string): Promise<CityHit[]> {
-  const key = process.env.EXPO_PUBLIC_OPENWEATHER_API_KEY;
-  if (!key || q.trim().length < 2) return [];
-  try {
-    const res = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q.trim())}&limit=8&appid=${key}`);
-    if (!res.ok) return [];
-    const json = (await res.json()) as Row[];
-    return json.map((r) => ({ name: r.local_names?.ko && /[가-힣]/.test(q) ? r.local_names.ko : r.name, country: r.country, state: r.state, lat: r.lat, lon: r.lon }));
-  } catch {
-    return [];
-  }
+  if (q.trim().length < 2) return [];
+  const json = await owm<Row[]>({ kind: 'geo', q: q.trim() });
+  if (!Array.isArray(json)) return [];
+  return json.map((r) => ({ name: r.local_names?.ko && /[가-힣]/.test(q) ? r.local_names.ko : r.name, country: r.country, state: r.state, lat: r.lat, lon: r.lon }));
 }

@@ -29,7 +29,7 @@ function save(next: FridgeItem[]) {
   emit();
 }
 
-export function getFridge() {
+function getFridge() {
   return items;
 }
 export function addFridge(name: string, zone: FridgeZone = 'fridge') {

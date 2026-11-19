@@ -2,17 +2,21 @@
 // Fonts: Fraunces (display), Outfit (UI), Noto Sans KR (Korean / CJK fallback), Gaegu (1.1b handwriting). All SIL OFL.
 import type { TextStyle } from 'react-native';
 
-export const fontFiles = {
+/** Loaded before the first screen. */
+export const coreFontFiles = {
   'Fraunces-SemiBold': require('@expo-google-fonts/fraunces/600SemiBold/Fraunces_600SemiBold.ttf'),
   'Fraunces-Bold': require('@expo-google-fonts/fraunces/700Bold/Fraunces_700Bold.ttf'),
   'Outfit-Light': require('@expo-google-fonts/outfit/300Light/Outfit_300Light.ttf'),
   'Outfit-Regular': require('@expo-google-fonts/outfit/400Regular/Outfit_400Regular.ttf'),
   'Outfit-Medium': require('@expo-google-fonts/outfit/500Medium/Outfit_500Medium.ttf'),
-  'NotoSansKR-Regular': require('@expo-google-fonts/noto-sans-kr/400Regular/NotoSansKR_400Regular.ttf'),
-  'NotoSansKR-Medium': require('@expo-google-fonts/noto-sans-kr/500Medium/NotoSansKR_500Medium.ttf'),
   'Gaegu-Bold': require('@expo-google-fonts/gaegu/700Bold/Gaegu_700Bold.ttf'),
   // Sign in with Google branding font (Auth Button · Google only).
   'GoogleSans-Medium': require('@expo-google-fonts/google-sans/500Medium/GoogleSans_500Medium.ttf'),
+};
+/** Noto Sans KR (~12 MB) — drawn only in the Korean UI (components/Text), so only Korean waits for it. */
+export const koreanFontFiles = {
+  'NotoSansKR-Regular': require('@expo-google-fonts/noto-sans-kr/400Regular/NotoSansKR_400Regular.ttf'),
+  'NotoSansKR-Medium': require('@expo-google-fonts/noto-sans-kr/500Medium/NotoSansKR_500Medium.ttf'),
 };
 
 type T = Pick<TextStyle, 'fontFamily' | 'fontSize' | 'lineHeight' | 'letterSpacing' | 'textTransform'>;

@@ -10,7 +10,7 @@ import { Input } from '../Input';
 import { Text } from '../Text';
 
 const PRESETS = [1, 2, 5, 10, 15];
-export const MAX_TIMER_SEC = 99 * 60 + 59;
+const MAX_TIMER_SEC = 99 * 60 + 59;
 
 /** Card entrance: fade in while growing slightly (0.94 → 1). */
 const popIn = () => {

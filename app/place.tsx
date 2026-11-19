@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Camera, ChevronLeft, Copy, Footprints, Map as MapIcon, MapPin, Navigation, Utensils } from '../src/components/icons/ongdal';
 import { useMemo, useRef, useState } from 'react';
+import { useLater } from '../src/hooks/useLater';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import type MapViewType from 'react-native-maps';
@@ -30,6 +31,11 @@ function meters(a: { latitude: number; longitude: number }, b: { latitude: numbe
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 
+const coord = (v: string | undefined, max: number) => {
+  const n = Number(v);
+  return Number.isFinite(n) && Math.abs(n) <= max ? n : 0;
+};
+
 /**
  * 2.4b Place (v2, Figma 864:11999) — map on the top 40 % (you, the place, a dashed line) → name · kind → address +
  * Copy → walking distance → Start directions / View in a map app / I ate here → Google attribution.
@@ -45,10 +51,12 @@ export default function PlaceScreen() {
   const { here } = useHere();
   const map = useRef<MapViewType>(null);
   const [copied, setCopied] = useState(false);
+  const later = useLater();
   const [picker, setPicker] = useState<{ action: MapAction; apps: MapAppId[] } | null>(null);
   const [remember, setRemember] = useState(false);
 
-  const dest = useMemo(() => ({ latitude: Number(p.lat), longitude: Number(p.lon) }), [p.lat, p.lon]);
+  // Deep-linkable: coordinates outside the globe (or not numbers) fall back to 0 instead of breaking the map.
+  const dest = useMemo(() => ({ latitude: coord(p.lat, 90), longitude: coord(p.lon, 180) }), [p.lat, p.lon]);
   const target = { lat: dest.latitude, lon: dest.longitude, name: p.name ?? '', mapsUri: p.mapsUri || null };
   const me = here.coords;
   const dist = me ? meters(me, dest) : null;
@@ -76,7 +84,7 @@ export default function PlaceScreen() {
     if (!Clipboard || !p.address) return Alert.alert(t('shareSheet.needsRebuild'));
     await Clipboard.setStringAsync(p.address);
     setCopied(true);
-    setTimeout(() => setCopied(false), 1600);
+    later(() => setCopied(false), 1600);
   };
 
   // "I ate here" → 8.1 Pick with the place (name, position, today's weather there) already in the draft.

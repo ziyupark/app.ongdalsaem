@@ -10,7 +10,7 @@ import { Chip } from '../Chip';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 
-export type Difficulty = 'easy' | 'medium' | 'hard';
+type Difficulty = 'easy' | 'medium' | 'hard';
 /** Explore search filters — applied to the search results (3.1 Nearby list). */
 export type SearchFilters = { maxMinutes: 15 | 30 | null; difficulty: Difficulty | null; ingredients: string[] };
 

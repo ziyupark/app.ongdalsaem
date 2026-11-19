@@ -2,7 +2,7 @@
 export type Meal = 'breakfast' | 'lunch' | 'snack' | 'dinner' | 'late' | 'dawn';
 
 /** [start hour, end hour) in order through the day. */
-export const MEAL_WINDOWS: { meal: Meal; start: number; end: number }[] = [
+const MEAL_WINDOWS: { meal: Meal; start: number; end: number }[] = [
   { meal: 'dawn', start: 0, end: 6 },
   { meal: 'breakfast', start: 6, end: 11 },
   { meal: 'lunch', start: 11, end: 14 },

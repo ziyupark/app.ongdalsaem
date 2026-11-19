@@ -19,7 +19,7 @@ export type DraftPhoto = {
   remoteUrl?: string;
 };
 
-export type DraftContext = {
+type DraftContext = {
   mood: WeatherMood;
   tempC: number;
   place: Place | null;

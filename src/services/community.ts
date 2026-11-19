@@ -1,5 +1,7 @@
 // Community (3.x Nearby · 4.x Global / Following / Tables / Challenges) — reads and writes on the tables in
 // supabase/migrations/20261029000000_follows_and_messages.sql and 20261030020000_tables_questions_challenges.sql.
+import * as ImageManipulator from 'expo-image-manipulator';
+import { Image } from 'react-native';
 import { clashes, type DietPrefs } from '../lib/allergens';
 import { hasIngredients } from '../lib/ingredientMatch';
 import { myUserId, supabase } from '../lib/supabase';
@@ -47,7 +49,10 @@ async function needUid() {
 export type Sort = 'popular' | 'latest';
 const byAcorns = (a: DishSummary, b: DishSummary) => b.acorns - a.acorns;
 
-async function list(q: any, sort: Sort = 'latest', limit = 40): Promise<CardDish[]> {
+/** A foods query that can still be ordered and limited (any PostgREST select builder). */
+type ListQuery = { order: (column: string, options: { ascending: boolean }) => { limit: (n: number) => PromiseLike<{ data: unknown; error: unknown }> } };
+
+async function list(q: ListQuery, sort: Sort = 'latest', limit = 40): Promise<CardDish[]> {
   const { data, error } = await q.order('created_at', { ascending: false }).limit(sort === 'popular' ? 100 : limit);
   if (error) throw error;
   const rows = (data as Row[]).map(toCard);
@@ -137,14 +142,10 @@ export function topTags(rows: CardDish[], key: 'moods' | 'meals' = 'moods', max 
   for (const r of rows) for (const t of r[key]) m.set(t, (m.get(t) ?? 0) + 1);
   return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, max).map(([t]) => t);
 }
-export function countries(rows: CardDish[]) {
-  return [...new Set(rows.map((r) => r.country).filter((c): c is string => !!c))];
-}
-
 // ---------------------------------------------------------------------------------------------- 4.1 Viral Bites · 4.7 Viral
 
 /** Dish-name key: case and spaces ignored (same as viral_dishes() in 20261119000000_viral_bites.sql). */
-export const dishKey = (name: string) => name.trim().toLowerCase().replace(/\s+/g, ' ');
+const dishKey = (name: string) => name.trim().toLowerCase().replace(/\s+/g, ' ');
 
 export type ViralItem = {
   key: string;
@@ -389,7 +390,7 @@ export async function fetchSuggestedPlates(limit = 3, followees?: string[]): Pro
 }
 
 /** 4.4 Table · ③ — neighbours' plates per day section (max 9, one per cook). */
-export const NEIGHBOR_PLATES = 9;
+const NEIGHBOR_PLATES = 9;
 
 /**
  * 4.4 Table · ③ Neighbours — public dishes since `since` from cooks you don't follow, near you: your area cell
@@ -558,6 +559,11 @@ export type Question = {
 };
 export type Answer = { id: string; body: string; author: Person; helpful: number; helpfulByMe: boolean; place: string | null; createdAt: Date };
 
+/** The questions columns decorateQuestions reads. */
+const QUESTION_COLS = 'id, body, category, image_url, neighborhood, city, country, author_id, answer_count, me_too_count, best_answer_id, created_at, mood, temp_c';
+/** The challenges columns decorateChallenges reads. */
+const CHALLENGE_COLS = 'id, slug, title, description, rule, tag, country, cover_url, starts_at, ends_at, participant_count, entry_count, theme';
+
 async function decorateQuestions(rows: Row[]): Promise<Question[]> {
   if (!rows.length) return [];
   const me = await uid();
@@ -595,7 +601,7 @@ export async function fetchAreaQuestions(
 ): Promise<Question[]> {
   const own = await fetchNearbyQuestions(geohash, max);
   if (own.length >= min) return own;
-  const open = () => supabase.from('questions').select('*').is('table_id', null).order('created_at', { ascending: false }).limit(max);
+  const open = () => supabase.from('questions').select(QUESTION_COLS).is('table_id', null).order('created_at', { ascending: false }).limit(max);
   const steps: { load: () => PromiseLike<{ data: unknown; error: unknown }>; range?: string }[] = [
     { load: () => supabase.rpc('nearby_questions_wide', { p_geohash: geohash, p_limit: max }) },
   ];
@@ -621,7 +627,7 @@ export async function fetchAreaQuestions(
 }
 
 export async function fetchQuestion(id: string): Promise<Question | null> {
-  const { data, error } = await supabase.from('questions').select('*').eq('id', id).maybeSingle();
+  const { data, error } = await supabase.from('questions').select(QUESTION_COLS).eq('id', id).maybeSingle();
   if (error) throw error;
   return data ? (await decorateQuestions([data as Row]))[0] : null;
 }
@@ -630,7 +636,11 @@ export async function askQuestion(input: { body: string; category: QuestionCateg
   let imageUrl: string | null = null;
   if (input.imageUri) {
     const me = await needUid();
-    const body = await (await fetch(input.imageUri)).arrayBuffer();
+    // Same as dish photos: at most 1440 px, JPEG 0.82 — fits the bucket limit and drops the photo's metadata (GPS).
+    const size = await new Promise<{ w: number; h: number }>((ok) => Image.getSize(input.imageUri!, (w, h) => ok({ w, h }), () => ok({ w: 0, h: 0 })));
+    const resize = Math.max(size.w, size.h) > 1440 ? [{ resize: size.w >= size.h ? { width: 1440 } : { height: 1440 } }] : [];
+    const out = await ImageManipulator.manipulateAsync(input.imageUri, resize, { compress: 0.82, format: ImageManipulator.SaveFormat.JPEG });
+    const body = await (await fetch(out.uri)).arrayBuffer();
     const path = `${me}/question-${Date.now()}.jpg`;
     const up = await supabase.storage.from('food-illustrations').upload(path, body, { contentType: 'image/jpeg', upsert: false });
     if (up.error) throw up.error;
@@ -673,7 +683,7 @@ export async function fetchQuestionsPage(
   const query = f.query.trim();
   const like = `%${query.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
   const open = (from: number, n: number) => {
-    let q = supabase.from('questions').select('*').is('table_id', null);
+    let q = supabase.from('questions').select(QUESTION_COLS).is('table_id', null);
     if (f.category) q = q.eq('category', f.category);
     if (query) q = q.ilike('body', like);
     return q.order('created_at', { ascending: false }).order('id').range(from, from + n - 1);
@@ -762,7 +772,7 @@ export async function setBestAnswer(questionId: string, answerId: string | null)
 
 // ---------------------------------------------------------------------------------------------- challenges
 
-export type ChallengePhase = 'soon' | 'running' | 'ended';
+type ChallengePhase = 'soon' | 'running' | 'ended';
 export type Challenge = {
   id: string; slug: string; title: string; description: string | null; rule: string | null; tag: string; country: string | null; coverUrl: string | null;
   startsAt: Date; endsAt: Date; participants: number; entries: number; joined: boolean; phase: ChallengePhase;
@@ -777,9 +787,13 @@ const phaseOf = (s: Date, e: Date, now = Date.now()): ChallengePhase => (now < s
 async function decorateChallenges(rows: Row[]): Promise<Challenge[]> {
   if (!rows.length) return [];
   const me = await uid();
-  const mine = me ? await supabase.from('challenge_participants').select('challenge_id').eq('user_id', me).in('challenge_id', rows.map((r) => r.id)) : { data: [] as Row[] };
+  const ids = rows.map((r) => r.id);
+  const none = Promise.resolve({ data: [] as Row[] });
+  const [mine, posted] = await Promise.all([
+    me ? supabase.from('challenge_participants').select('challenge_id').eq('user_id', me).in('challenge_id', ids) : none,
+    me ? supabase.from('challenge_entries').select('challenge_id').eq('user_id', me).in('challenge_id', ids) : none,
+  ]);
   const joined = new Set(((mine.data ?? []) as Row[]).map((r) => r.challenge_id));
-  const posted = me ? await supabase.from('challenge_entries').select('challenge_id').eq('user_id', me).in('challenge_id', rows.map((r) => r.id)) : { data: [] as Row[] };
   const entered = new Set(((posted.data ?? []) as Row[]).map((r) => r.challenge_id));
   return rows.map((r) => {
     const startsAt = new Date(r.starts_at);
@@ -795,13 +809,13 @@ async function decorateChallenges(rows: Row[]): Promise<Challenge[]> {
 /** 4.9 — all challenges (ended ones from the last 30 days). */
 export async function fetchChallenges(): Promise<Challenge[]> {
   const since = new Date(Date.now() - 30 * 864e5).toISOString();
-  const { data, error } = await supabase.from('challenges').select('*').gte('ends_at', since).order('ends_at');
+  const { data, error } = await supabase.from('challenges').select(CHALLENGE_COLS).gte('ends_at', since).order('ends_at');
   if (error) throw error;
   return decorateChallenges(data as Row[]);
 }
 
 export async function fetchChallenge(slug: string): Promise<Challenge | null> {
-  const { data, error } = await supabase.from('challenges').select('*').eq('slug', slug).maybeSingle();
+  const { data, error } = await supabase.from('challenges').select(CHALLENGE_COLS).eq('slug', slug).maybeSingle();
   if (error) throw error;
   return data ? (await decorateChallenges([data as Row]))[0] : null;
 }

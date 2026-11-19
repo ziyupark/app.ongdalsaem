@@ -23,7 +23,7 @@ export type PoolDish = {
   ingredients: string[];
 };
 
-export type Place = { city?: string | null; neighborhood?: string | null };
+type Place = { city?: string | null; neighborhood?: string | null };
 export type Ctx = { mood?: WeatherMood | null; tempC?: number | null; place?: Place };
 
 const POOL_DAYS = 60;
@@ -146,7 +146,7 @@ function bestByTaste(list: PoolDish[], weight: (d: PoolDish) => number, mood: We
 }
 
 /** Today's pick prefers dishes posted within this many degrees of the current temperature. */
-export const PICK_TEMP_RANGE = 1;
+const PICK_TEMP_RANGE = 1;
 
 /**
  * §6.2 Today's pick. Candidates, first non-empty wins:

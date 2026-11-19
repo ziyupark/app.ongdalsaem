@@ -1,6 +1,10 @@
 // Weather Mood motion layer — what moves over each mood wash (src/components/WeatherFx.tsx).
 // Kept beside mood.ts so the wash colours and their motion are tuned in one place.
+import { light } from './colors';
 import type { WeatherMood } from './mood';
+
+/** Particle colours (same in light and dark): white drops / flakes / flash, and the bolt's warm glow. */
+export const FX_COLOR = { white: light['static/white'], boltGlow: '#FFF6C8' } as const;
 
 /** Falling streaks (rain). `slant` = sideways drift as a fraction of the fall height. */
 export type RainFx = { count: number; len: [number, number]; thick: number; dur: [number, number]; slant: number; alpha: [number, number] };

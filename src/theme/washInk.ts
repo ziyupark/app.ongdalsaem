@@ -20,7 +20,7 @@ const lum = ([r, g, b]: RGB) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin
 const contrast = (a: RGB, b: RGB) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 
 /** Wash colour at a height (0 = top, 1 = bottom of the wash), shown at `opacity` over `base` — same stops as MoodGradient. */
-export function washColorAt(mood: WeatherMood, at: number, opacity = 1, base = MOOD_BASE): RGB {
+function washColorAt(mood: WeatherMood, at: number, opacity = 1, base = MOOD_BASE): RGB {
   const spec = moods[mood];
   const b = parse(base).rgb;
   const t = Math.min(1, Math.max(0, at));
@@ -56,7 +56,7 @@ const LIGHT: ColorToken[] = ['fg/on-photo', 'fg/on-photo-secondary', 'fg/on-phot
 const MIN = [4.5, 4.5, 2.6, 1.4];
 
 /** Pure version (for lists — no hook). `color` = the theme's token resolver. */
-export function washInkFor(mood: WeatherMood, at: number, opacity: number, color: (t: ColorToken) => string, scheme: 'light' | 'dark'): WashInk {
+function washInkFor(mood: WeatherMood, at: number, opacity: number, color: (t: ColorToken) => string, scheme: 'light' | 'dark'): WashInk {
   const bg = washColorAt(mood, at, opacity);
   const on = (tok: ColorToken) => { const p = parse(color(tok)); return contrast(mix(bg, p.rgb, p.a), bg); };
   const ladder = on('fg/default') >= on('fg/on-photo') ? DARK : LIGHT;
