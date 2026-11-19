@@ -12,8 +12,8 @@ export const WEATHER_ICON: Record<WeatherMood, LucideIcon> = {
 };
 
 /**
- * 3D Weather Mood images (Figma 1037:228 "Weather 3D") — floated in the screen wash (WeatherFx → WeatherIcon3D).
- * Moods without an image here show none. Every icon in the UI (cards, chips, tags) stays WEATHER_ICON.
+ * 3D Weather Mood images (Figma 1037:228 "Weather 3D") for the large weather icon only (Home Weather Card, Profile
+ * header). Moods without an image here keep the Lucide icon above. Small icons (≤ 24) always use WEATHER_ICON.
  */
 export const WEATHER_3D: Partial<Record<WeatherMood, number>> = {
   clear: require('../../assets/weather3d/weather3d_clear.png'),

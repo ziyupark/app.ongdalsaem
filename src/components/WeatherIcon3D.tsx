@@ -1,42 +1,27 @@
 import { Image } from 'expo-image';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
-import Animated, { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import { StyleSheet, View } from 'react-native';
 import { getHere, onHere } from '../lib/useHere';
-import { WEATHER_3D, WEATHER_FX, type WeatherMood } from '../theme';
-
-/** One slow breath: up 6 pt and a 2° sway, then back (ms per half-cycle). */
-const FLOAT_MS = 3200;
-const FLOAT_Y = 6;
-const FLOAT_DEG = 2;
-/** Where the mood's light sits when it has no glow spec (fractions of the wash). */
-const SPOT = { cx: 0.78, cy: 0.1, r: 0.3 };
+import { moods, radius, useTheme, WEATHER_3D, WEATHER_ICON, withAlpha, type WeatherMood } from '../theme';
+import { Icon } from './Icon';
 
 /**
- * 3D Weather Mood image in the screen wash (inside <WeatherFx>, above the glow, under rain / snow). Sits on the mood's
- * light spot (WEATHER_FX glow) at half the glow's size and floats gently. `still` (Reduce Motion / screen not focused)
- * shows it without motion. Moods without a 3D image show nothing. Same image in light and dark (no tint).
+ * Large weather icon (Home Weather Card · Profile header) — the 3D Weather Mood image in the 56 slot, no orb.
+ * Moods without a 3D image (and no weather yet) keep the old mood orb: top colour at 35 % + Lucide 28.
+ * Same image in light and dark (no tint).
  */
-export function WeatherIcon3D({ mood, w, h, still }: { mood: WeatherMood; w: number; h: number; still: boolean }) {
+export function WeatherIcon3D({ mood }: { mood?: WeatherMood }) {
+  const { color } = useTheme();
   const { t } = useTranslation();
-  const p = useSharedValue(0);
-  useEffect(() => {
-    if (still) { cancelAnimation(p); p.value = 0; return; }
-    p.value = withRepeat(withTiming(1, { duration: FLOAT_MS, easing: Easing.inOut(Easing.sin) }), -1, true);
-    return () => cancelAnimation(p);
-  }, [still, p]);
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateY: -FLOAT_Y * p.value }, { rotate: `${FLOAT_DEG * (p.value - 0.5)}deg` }],
-  }));
-  const source = WEATHER_3D[mood];
-  if (!source) return null;
-  const spot = WEATHER_FX[mood].glow ?? SPOT;
-  const d = spot.r * w;
+  const source = mood ? WEATHER_3D[mood] : undefined;
+  const label = mood ? t(`weather.${mood}`) : undefined;
+  if (source) {
+    return <Image source={source} style={styles.slot} contentFit="contain" accessible accessibilityRole="image" accessibilityLabel={label} />;
+  }
   return (
-    <Animated.View style={[styles.abs, { left: spot.cx * w - d / 2, top: spot.cy * h - d / 2, width: d, height: d }, style]}>
-      <Image source={source} style={StyleSheet.absoluteFill} contentFit="contain" accessible accessibilityRole="image" accessibilityLabel={t(`weather.${mood}`)} />
-    </Animated.View>
+    <View accessible={!!mood} accessibilityRole="image" accessibilityLabel={label} style={[styles.slot, styles.orb, { backgroundColor: withAlpha(mood ? moods[mood].top : color('bg/muted'), 0.35) }]}>
+      <Icon icon={WEATHER_ICON[mood ?? 'overcast']} size={28} color={mood ? 'fg/default' : 'fg/muted'} />
+    </View>
   );
 }
 
@@ -54,5 +39,6 @@ export function preloadWeather3D() {
 }
 
 const styles = StyleSheet.create({
-  abs: { position: 'absolute' },
+  slot: { width: 56, height: 56 },
+  orb: { borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
 });
