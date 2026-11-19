@@ -23,7 +23,7 @@
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
   1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3)
-  2. **UnderlineTabs**: **Explore**(active) · Following · Challenges(좌우 20, 탭 간격 24). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음). 본문 150ms 페이드인.
+  2. **UnderlineTabs**: **Explore**(active) · Following · Challenges(좌우 20, 탭 간격 24). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
   3. **Story of the day**(p32 20 0, gap 6): SectionHeader "Story of the day" → Story Card 350×400(PhotoCard): 위 줄 Title/L "{요리}, {이름}’s way"(1줄) · `chevron-right` 20(gap 8) → 아래 Statement 캡션(3줄) + Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag(상태 글자 포함) · Acorn Tag. 탭 → 7.1.
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
   4. **Our area — Today’s table in our area**(아래 별도 설명: 오늘 인기 · 동네 질문)
@@ -133,7 +133,7 @@
 - 이동: 행 → 4.5 · Follow ↔ Following 그 자리에서 토글(Undo 토스트).
 
 ### 4.11 Messages — 받은 대화함 · 대화(코드 기준, Figma 4.11 [352:9114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=352-9114)는 99 Removed 섹션)
-- **들어가는 곳**: 다른 요리사 프로필(4.5)의 **Message**뿐이다. 받은 대화함(`/messages`) 화면과 요리 보내기 시트(7.5 Send to)는 코드에 있지만 **여는 버튼이 지금 화면에 없다**(게시물 Actions에 `send` 없음).
+- **들어가는 곳**: 다른 요리사 프로필(4.5)의 **Message**뿐이다. 받은 대화함(`/messages`) 화면은 코드에 있지만 **여는 버튼이 지금 화면에 없다**. 요리 보내기 시트(7.5 Send to)는 파일만 남아 있고 어디서도 열지 않는다(게시물 Actions에 `send` 없음).
 - **받은 대화함**: TopBar(Inline) "Messages" → 묶음(Overline + ListCard) **CONVERSATIONS** → **REQUESTS**(+ Caption "Requests are from cooks you don’t follow. Reply to accept — they can’t see that you read it until then."). 행 = Avatar 44 · 핸들(안 읽으면 Strong) + 오른쪽 시간 · 미리보기 1줄(요리 공유는 "Shared a dish", 내가 먼저 보내고 답이 없으면 "Waiting for a reply") · 안 읽은 수 배지(fg/accent 원 + fg/inverse 숫자). 당겨서 새로고침. 비면 EmptyState "No messages yet" / "Send a dish to someone you follow, or message a cook from their profile."
 - **대화**: TopBar(Inline) 상대 이름 + 오른쪽 ··· (View profile · **Block** — 차단하면 대화를 닫음). 날짜 구분(Today · Yesterday · 날짜) → 말풍선(내 것 = 오른쪽 bg/primary + fg/on-primary, 상대 = 왼쪽 bg/subtle) + 시간 Caption(내 마지막 메시지에 "· Seen"). 요리 링크는 요리 카드("Open dish" → 7.1)로 보인다. 맨 아래 안내 "Messages from cooks you don’t follow arrive as requests. Report or block from ··· anytime." → [고정] 입력 pill "Message {name}…" + 보내기. 실시간으로 새 메시지를 받고, 열면 읽음 처리.
 - 규칙: 상대가 나를 팔로우하지 않으면 상대 쪽에서는 **요청**으로 받는다. 받는 사람 범위는 9.5 Privacy의 **Who can message you** 설정을 따른다. 보내기 실패 시 "Couldn’t send. Try again."(입력 내용 복구).

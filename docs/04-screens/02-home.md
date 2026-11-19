@@ -13,7 +13,7 @@
    - 12 → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
    - 글자색은 wash 위치별 잉크(로고 12 % · 오버라인 26 % · 제목 33 % 지점의 밝기)에 맞춘다.
 4. **Weather card** (bg/subtle, radius 2xl 32, padding 20):
-   - 큰 기온 Numeric/XL "12°" + 상태 "Light rain" + "H 14° · L 8° · until 9 PM" + 무드 오브(우측).
+   - 큰 기온 Numeric/XL "12°"(padding 위 1 · 좌우 8 · 아래 4) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → 무드 오브(우측).
    - **Meal timeline**: 4개 슬롯 가로 배치 — 이전 끼니 · **Now** · 다음 · 그다음. 각 슬롯 = 끼니 라벨 + 썸네일 원 + 예보 기온. Now 슬롯은 **선셋 그라데이션 링**.
      - **네 칸은 항상 같은 폭**: 타임라인 폭(308)을 4등분, 칸 사이 4 → 칸당 74px(`flex: 1 1 0`). 라벨 길이(예: `BREAKFAST`)와 관계없이 폭이 같고, 라벨은 칸 가운데 정렬. 가장 긴 라벨 BREAKFAST(약 71px)도 74px 안에 들어간다.
    - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` → 8.1.
@@ -29,13 +29,13 @@
    - **Tab bar spacer** 96px.
    - 피드 내용 규칙은 [§6.7](../05-behavior.md).
 8. [A] TabBar(Home, CreateFAB 포함) · [A] Home Indicator · [A] Toast(새로고침 안내, TabBar 위 96).
-- 다른 탭에서 돌아왔을 때 날씨를 이미 읽어 두었으면 2.7 스켈레톤 없이 바로 보인다. 처음 열 때 본문은 150ms 페이드인.
+- 다른 탭에서 돌아왔을 때 날씨를 이미 읽어 두었으면 2.7 스켈레톤 없이 바로 보인다. 탭 상태는 유지된다(스크롤 위치 · 피드 그대로, [§6.4](../05-behavior.md)).
 
 ### 2.1 Home · Rainy evening — [19:191](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-191)
 - 데이터: "Tue, Oct 27 · Mapo, Seoul" / "Rainy evening" / 12° Light rain / H 14° · L 8° · until 9 PM.
 - 슬롯: Lunch 13° · **Now** 10° · Late 8° · Dawn 7°(빈 슬롯).
 - 이동: Lunch/Now/Late → 7.1 · Dawn(빈) → 8.1 · Story card → 7.1(Acorn Tag = 도토리 토글) · Similar Bites → 2.4 · 피드 사진 → 7.1 · 피드 댓글 → 7.2 · 탭바 Community 4.1 / Timer 5.1 / Profile 6.1 · FAB → 8.1.
-- 스크롤: 세로(피드 무한). 아래로 스크롤 시 TabBar → **Collapsed**(TabBar `State=Collapsed` variant) + CreateFAB 숨김, 위로 스크롤하면 Expanded로 복귀([§3.1](../02-components.md)). 별도 화면 없음.
+- 스크롤: 세로(피드 무한). 아래로 스크롤하면 TabBar(+CreateFAB)가 아래로 숨고, 위로 조금만 올려도 다시 나타난다([§3.1](../02-components.md)). Home 탭을 다시 누르면 맨 위로. 별도 화면 없음.
 - **피드**(예시 데이터):
 
   | # | Name | Meta | Weather(아이콘) | 사진 | Counter | 💬 | Caption |

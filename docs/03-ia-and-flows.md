@@ -62,8 +62,8 @@ Figma 페이지 구성:
 - **고정(Fixed) 요소** = 프레임의 마지막 레이어들(`numberOfFixedChildren`): 탭 루트 = TabBar(+FAB) · Home Indicator, 상세 = Top bar · Action bar · Home Indicator, 작성 = 하단 버튼 · Home Indicator, 메시지 = Comment Composer · Home Indicator, 토스트가 있으면 Toast 포함. 시트·팝업 화면은 Scrim · 시트까지 고정.
 - **가로 스크롤**: 칩 줄(3.x 범위 칩 · 4.1 Landscape chips · 4.1 Festive cards · 4.2/4.6 해시태그 칩 · 5.x presets)과 4.1 카드 carousel · 태그 줄, 7.1 More row는 줄 자체가 화면 폭(390) 스크롤 컨테이너(좌우 padding 20, Overflow Horizontal) — 첫 항목은 20 들여쓰기, 끝까지 밀면 화면 가장자리까지 보인다.
 - **뒤로**: 푸시 화면(1.3 · 1.3b · 1.4 · 1.5 · 3.1 · 3.7 · 3.8 · 4.1b · 4.2 · 4.3 · 4.5 · 4.11 · 4.6 · 4.7–4.10 · 9.2–9.9 · 2.8 · 시트들)의 뒤로/닫기는 모두 **Back**(이전 화면으로). 딤 탭 = Back.
-- **전환**: 탭 전환 = 즉시, 푸시 = Move in ← 300ms, 시트·팝업 = Move in ↑ 300ms / Dissolve 200ms(8.2b), 상태 전환 = Smart animate.
-- 프로토타입에서 표현 못 하는 동작(구현 시 적용): TabBar Expanded ↔ Minimized 스크롤 전환([§6.4](05-behavior.md)), 피드 · 4.2/4.3 히어로 사진 가로 스와이프, 키보드.
+- **전환**: 탭 전환 = 즉시(활성 알약만 220ms 이동 — [§6.4](05-behavior.md)), 푸시 = Move in ← 300ms, 시트·팝업 = Move in ↑ 300ms / Dissolve 200ms(8.2b), 상태 전환 = Smart animate.
+- 프로토타입에서 표현 못 하는 동작(구현 시 적용): TabBar 스크롤 숨김 · 탭 상태 유지 · 다시 누르면 맨 위로([§6.4](05-behavior.md)), 피드 · 4.2/4.3 히어로 사진 가로 스와이프, 키보드.
 
 | From | 트리거 | To |
 |---|---|---|
@@ -143,4 +143,4 @@ Figma 페이지 구성:
 | 8.4b | Try again / Replace / Remove / Cancel·딤 | 8.2 / 8.1 / 8.2 / 8.4 |
 | 탭 루트 공통 | TabBar 4개 · FAB | 2.1 · 4.1 · 5.1 · 6.1 · 8.1 |
 
-FAB은 TabBar 안에 있어 **TabBar가 있는 모든 화면에 함께** 나온다(2.x · 4.1 · 4.2 · 4.3 · 4.4 · 4.5 · 5.x · 6.x). 스크롤 다운 때 바와 함께 Minimized 크기(48)로 줄어든다([§3.1](02-components.md)). 푸시 · 모달 화면에는 TabBar도 FAB도 없다.
+FAB은 TabBar 안에 있어 **TabBar가 있는 모든 화면에 함께** 나온다(2.x · 4.1 · 4.2 · 4.3 · 4.4 · 4.5 · 5.x · 6.x). 스크롤 다운 때 바와 함께 아래로 숨는다([§3.1](02-components.md)). 푸시 화면의 TabBar를 누르면 그 화면을 닫고 탭으로 돌아간다. 푸시 · 모달 화면에는 TabBar도 FAB도 없다.

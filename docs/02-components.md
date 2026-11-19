@@ -27,7 +27,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 |---|---|---|---|
 | **Button** | 6:192 | Label T · Show icon B · Icon I · Variant V[Primary/Secondary/Outline/Ghost/Kick/Destructive/Glass/White] · Size V[L/M/S] · State V[Default/Disabled] | 높이 L 56 / M 46 / S 36, radius full. Primary = bg/primary + fg/on-primary. Glass = 반투명 흰색 + blur(사진 위). **Label 텍스트는 모든 Variant(Glass · White 포함)에서 `Label` prop에 연결** — 인스턴스에서 Label만 바꾸면 된다 |
 | **IconButton** | 6:217 | Icon I · Style V[Solid/Soft/Glass/Ghost] · Size V[L/M] · **State V[Default/Pressed]** | L 48, M 40 원형. Soft = bg/subtle + 테두리. **Pressed** = 누른 상태(하트 variant — v1에서는 쓰지 않음, 반응은 도토리 하나). Pressed variant에는 Icon 교체 속성이 없다 |
-| **CreateFAB** | 12:193 | State V[Default/Collapsed] · Label T(숨김) | **앱 = §3.1 Liquid Glass(62 → 48 원, bg/kick, 흰 `+`)**. 아래는 Figma 값: **TabBar 안에 포함**(화면에 따로 놓지 않음). Default **56px 원**, Collapsed **42px 원**(`+` 20, 선 1.5), `+` 아이콘만. 배경 bg/accent-subtle `#FFF3E6`, 그림자 = **TabBar와 동일** drop-shadow x0 y10 blur 30 spread 0 `#1A1A21` α0.08, `+` 28px 선 2px border/focus `#EE8B3D`. Label "Share a dish"는 숨김 레이어(접근성 라벨로 사용). 탭 → 8.1 |
+| **CreateFAB** | 12:193 | State V[Default/Collapsed] · Label T(숨김) | **앱 = §3.1 Liquid Glass(62 원, bg/kick, 흰 `+`, 스크롤하면 바와 함께 아래로 숨음)**. 아래는 Figma 값: **TabBar 안에 포함**(화면에 따로 놓지 않음). Default **56px 원**, Collapsed **42px 원**(`+` 20, 선 1.5), `+` 아이콘만. 배경 bg/accent-subtle `#FFF3E6`, 그림자 = **TabBar와 동일** drop-shadow x0 y10 blur 30 spread 0 `#1A1A21` α0.08, `+` 28px 선 2px border/focus `#EE8B3D`. Label "Share a dish"는 숨김 레이어(접근성 라벨로 사용). 탭 → 8.1 |
 | Acorn Button(이름 유지, 역할 = **I ate this 버튼**) | 12:309 | State V[Default/Eaten] · Size V[Bar/Compact] | **기록 버튼**: `utensils` + "I ate this · 12" 토글 → Eaten = "You ate this · 13"(bg/accent-subtle, `utensils` fg/accent). 7.1 Action bar에만 쓴다. 도토리(반응)와 다른 값 — 내 다이어리에 "만들었어요/먹었어요" 기록 + 후기. Compact(도토리+숫자)는 v1 미사용 |
 | **Action Count** | [288:7682](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=288-7682) | Type V[**Acorn/Acorn given**/Comment · Like/Liked(v1 미사용)] · Count T | 아이콘 24 + 숫자(Body/S Strong), gap 6. **Acorn = `acorn`(라인) fg/default · Acorn given = `acorn-color`(컬러)** · Comment = `message-circle`. Feed Post Actions에 사용 |
 | **Auth Button** | [201:801](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=201-801) | Provider V[Apple/Google] | 소셜 로그인 버튼, 350×46(FILL), radius full, padding 0 16, 가운데 정렬 [로고 20 + 제목 Outfit Medium 20/24], 로고–제목 간격 Apple 6 · Google 10. 아래 **브랜드 규정**을 지킨다 |
@@ -145,15 +145,19 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 
 ### 3.1 TabBar 동작 (중요) — 코드 기준(Liquid Glass)
 
-**TabBar와 CreateFAB은 항상 한 묶음**이다. TabBar가 있는 모든 화면(2.x · 4.1 · 4.2 · 4.3 · 4.5 · 5.x · 6.x)에서 FAB도 함께 보인다. Figma TabBar 12:182(Expanded/Collapsed pill)는 이전 모양이다.
+**TabBar와 CreateFAB은 항상 한 묶음**이다. TabBar가 있는 모든 화면(2.x · 4.1 · 4.2 · 4.3 · 4.5 · 5.x · 6.x)에서 FAB도 함께 보인다. Figma TabBar 12:182(Expanded/Collapsed pill)는 이전 모양이다. 축소(Minimized · 48 원) 상태는 없다.
 
 - **Expanded**(기본, 스크롤 최상단): 하단(홈 인디케이터 위, 바닥 84 기준) 한 줄에 **유리 캡슐(왼쪽, 좌우 16) + FAB(오른쪽 끝)**, 간격 10.
-  - 유리 캡슐: 높이 62, radius full, 블러 + glass/surface, 1px border/default, Elevation/3 Float. 4개 아이템 = 아이콘 22 + Nav label(`Home · Community · Timer · Profile`). **활성** = 아이콘 Gradient/Dusk + 라벨 fg/accent, 뒤에 bg/accent-subtle 알약. 비활성 = 아이콘 · 라벨 fg/default.
+  - 유리 캡슐: 높이 62, radius full, 블러 + glass/surface, 1px border/default, Elevation/3 Float. 4개 아이템 = 아이콘 22 + Nav label(`Home · Community · Timer · Profile`). **활성** = 아이콘 Gradient/Dusk + 라벨 fg/accent, 뒤에 **활성 알약**(높이 54, radius full, bg/accent-subtle 82 % + glass/stroke-strong 0.5 테두리 + Elevation/1 Low — 살짝 비치는 유리 칩). 비활성 = 아이콘 · 라벨 fg/default.
   - FAB: **62 원**, bg/kick + 1px border/default, 흰 `+` 24(선 2), Elevation/3 Float. 접근성 라벨 "Share a dish". 탭 → 8.1.
-- **Minimized**(스크롤 다운): 캡슐이 **48 유리 원**으로 줄며 지금 탭 아이콘만 남는다(탭 4개는 페이드아웃). FAB도 48로, `+`는 84 %. 작은 원을 탭하면 펼친다.
-- **모션**: 스크롤을 따라 움직인다 — 120pt를 내리는 동안 0→1, 각 단계는 250ms ease-out으로 뒤따라감. 멈추면 가까운 상태로 320ms에 정착, 최상단은 항상 Expanded, 탭으로 펼칠 때 260ms. ([§6.4](05-behavior.md))
+- **스크롤하면 아래로 숨는다**(유튜브식): 아래로 스크롤하면 바 전체(캡슐 + FAB)가 손가락 이동량만큼 아래로 내려간다(최대 = 바 높이 62 + 하단 safe area, 투명도는 그대로). 위로 스크롤하면 같은 비율로 올라온다. 손을 떼거나 스크롤이 140ms 멈추면 **마지막 스크롤 방향**으로 스냅(위 = 보임, 아래 = 숨김, spring damping 20 · stiffness 220) — 위로 조금만 올려도 다 나타난다. 반 넘게 숨은 동안은 터치를 막지 않는다(뒤 콘텐츠를 누를 수 있음).
+- **항상 보이는 때**: 맨 위(y ≤ 0) · 맨 아래 도달 · 탭을 누를 때 · 화면에 들어오거나 돌아올 때.
+- **Reduce Motion**: 손가락을 따라가지 않고, 반을 넘거나 멈췄을 때 200ms 타이밍으로 보임/숨김만.
+- **탭 전환**: 화면은 **애니메이션 없이 즉시** 바뀐다. 활성 알약만 새 탭으로 **미끄러진다**(220ms ease-out expo — 약 70ms 안에 90 % 도착해 화면 전환과 맞음). 아이콘(Gradient/Dusk)과 라벨(fg/accent)은 알약 위치를 따라 비활성 ↔ 활성으로 크로스페이드. Reduce Motion = 알약 · 색이 바로 바뀜.
+- **지금 탭을 다시 누르면** 그 탭 화면이 맨 위로 스크롤된다.
+- **탭 상태 유지**: 네 탭은 한 번 열면 계속 살아 있어 다른 탭에 갔다 와도 스크롤 위치 · 불러온 내용이 그대로다. 안 보이는 탭은 다시 그리지 않는다. 탭을 눌러 옮겨 왔을 때 그 탭을 3분 안에 불러왔으면 다시 불러오지 않는다(처음 열 때 · 조건이 바뀔 때 · 푸시 화면에서 돌아올 때는 다시 불러옴).
+- **푸시 화면에서 탭을 누르면**(4.2 · 4.3 · 4.5 등 TabBar가 있는 푸시 화면): 그 화면을 닫고 그 탭으로 돌아간다(탭이 두 벌 쌓이지 않음). ([§6.4](05-behavior.md))
 - 아이콘: Home `home`, Community `users`, Timer `timer`, Profile `user`.
-- 탭 화면 사이 이동은 애니메이션 없이 즉시.
 
 ### 3.1b ScreenHeader · ScreenWash — 네 탭 공통(코드 기준)
 - **ScreenWash**: 날씨 무드 그라데이션 85 % + 날씨 효과, 높이 420, 화면 맨 뒤. 스크롤하면 내용과 함께 올라가며 사라진다. 위치가 꺼지고 도시도 없으면 wash 없음. StatusBar 글자색도 wash 밝기에 맞춘다.

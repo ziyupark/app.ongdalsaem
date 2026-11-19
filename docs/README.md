@@ -52,7 +52,7 @@
 2. **컬러**: 시맨틱 토큰([01-foundations §2.1](01-foundations.md))만 쓴다. **보라색 계열 금지.** 하드코딩 HEX 대신 테마 변수(`var(--bg-default)` 등).
 3. **폰트**: Display = **Fraunces**(serif), UI 전부 = **Outfit**(sans), 손글씨 = **Gaegu**(지금 쓰는 화면 없음). **Noto Sans KR**은 한·중·일 글자 표시용(9.6의 언어 자체 표기, 한국어 로케일, 사용자가 쓴 한글). 크기·행간·자간은 [§2.6 타이포그래피](01-foundations.md) 그대로.
 4. **로고**: 텍스트 로고 `ongdalsaem`만. 심볼은 **도토리(Acorn Symbol)**만.
-5. **TabBar · FAB**: 탭은 4개(Home · Community · Timer · Profile). 공유 버튼(FAB)은 `+` 아이콘만, 라벨 없음, **TabBar 안에 포함된 한 묶음**(오른쪽 끝). 스크롤 다운 때 바와 함께 작아진다.
+5. **TabBar · FAB**: 탭은 4개(Home · Community · Timer · Profile). 공유 버튼(FAB)은 `+` 아이콘만, 라벨 없음, **TabBar 안에 포함된 한 묶음**(오른쪽 끝). 스크롤 다운 때 바와 함께 아래로 숨는다.
 6. **지도**: 앱 안에 지도 화면이 없다. 2.4 식당 카드 → 기기의 지도 앱으로 길찾기.
 7. **레이아웃**: 모든 화면은 세로 스택(auto layout). 문서의 블록 순서 = DOM 순서. `[고정]` 요소(TabBar · FAB · Home Indicator · 하단 액션바 · 시트)만 fixed/absolute.
 8. **텍스트 잘림**: 카드 제목·바이라인은 지정된 줄 수에서 말줄임(`…`)([02-components](02-components.md) 컴포넌트별 명시).
@@ -67,7 +67,7 @@
 
 1. 토큰([01-foundations](01-foundations.md)) → 테마 파일·폰트 로드.
 2. 기본 컴포넌트: Button · IconButton · Chip · Tab · Input · Switch · Radio · Avatar · Badge · Toast · ListRow · SectionHeader · TopBar · Auth Button.
-3. TabBar(Expanded/Collapsed + 스크롤 감지) + CreateFAB + 탭 라우팅.
+3. TabBar(스크롤 숨김 · 활성 알약 이동) + CreateFAB + 탭 라우팅.
 4. 카드: Weather Card(+ Refresh) · Story · Food(Grid/Row) · Country · Pick · Timer · Feed Post · Dish Tile · Weather Tag / Acorn Tag.
 5. Launch·온보딩(00–01) → Home 2.1 → 상태 2.5/2.6/2.7 → 2.4.
 6. Community(Explore · Following · Challenges) → Timer → Profile → Dish → Share → Settings.
