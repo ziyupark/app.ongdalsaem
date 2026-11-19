@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toast } from '../src/components/Toast';
-import { preloadWeather3D } from '../src/components/WeatherIcon3D';
 import { deviceLanguage } from '../src/i18n';
 import { coreFontFiles, koreanFontFiles, ThemeProvider, useTheme } from '../src/theme';
 import { loadPrefs, usePrefs } from '../src/lib/prefs';
@@ -74,7 +73,6 @@ export default function RootLayout() {
   useEffect(() => { loadPrefs().finally(() => setPrefsReady(true)); }, []);
   const loaded = coreLoaded && prefsReady && (koreanLoaded || (language ?? deviceLanguage()) !== 'ko');
   usePushSync();
-  useEffect(() => preloadWeather3D(), []);
   useEffect(() => {
     if (loaded) SplashScreen.hideAsync();
   }, [loaded]);
