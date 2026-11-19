@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goTab } from '../../src/components/TabBar';
 import { StatusBar } from 'expo-status-bar';
-import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils, WifiOff } from '../../src/components/icons/ongdal';
+import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -16,6 +16,7 @@ import { PostView } from '../../src/components/dish/PostView';
 import { ReportSheet } from '../../src/components/dish/ReportSheet';
 import { ShareSheet } from '../../src/components/dish/ShareSheet';
 import { Icon } from '../../src/components/Icon';
+import { InlineBanner } from '../../src/components/InlineBanner';
 import { Text } from '../../src/components/Text';
 import { Toast } from '../../src/components/Toast';
 import { isPresetMeal } from '../../src/lib/tags';
@@ -347,10 +348,7 @@ export default function PostDetail() {
         more={made || moreFrom ? <>{made}{moreFrom}</> : null}
         scrollToComments={openComments === '1'}
         banner={offline ? (
-          <View style={[styles.offline, { backgroundColor: color('bg/inverse') }]}>
-            <Icon icon={WifiOff} size={18} color="fg/inverse" />
-            <Text variant="Body/S Strong" color="fg/inverse" style={styles.flex}>{t('dish.offlineCopy')}</Text>
-          </View>
+          <InlineBanner text={t('dish.offlineCopy')} />
         ) : undefined}
       />
 
@@ -384,7 +382,6 @@ const styles = StyleSheet.create({
   backRow: { paddingHorizontal: space[16], paddingVertical: space[12] },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[6], paddingHorizontal: space[40] },
   flex: { flex: 1 },
-  offline: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: 30 },
   more: { paddingTop: space[32], gap: space[8] },
   px: { paddingHorizontal: space[20] },
   made: { paddingTop: space[32], gap: space[16] },

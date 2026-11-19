@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { AlertCircle, ChefHat, ChevronRight, Globe, List, Map as MapIcon, MapPin, Plus, type LucideIcon } from '../../src/components/icons/ongdal';
+import { ChefHat, ChevronRight, Globe, List, Map as MapIcon, MapPin, Plus, type LucideIcon } from '../../src/components/icons/ongdal';
 import { MessageCircle } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/Button';
 import { Chip } from '../../src/components/Chip';
 import { Icon } from '../../src/components/Icon';
+import { InlineBanner } from '../../src/components/InlineBanner';
 import { Input } from '../../src/components/Input';
 import { AddMoodDialog } from '../../src/components/share/AddMoodDialog';
 import { PhotoOptionsSheet } from '../../src/components/share/PhotoOptionsSheet';
@@ -164,10 +165,7 @@ export default function ShareDetails() {
                   </View>
                 ))}
               </View>
-              <View style={styles.failNote}>
-                <Icon icon={AlertCircle} size={18} color="fg/destructive" />
-                <Text variant="Body/S Strong" color="fg/destructive" style={styles.flex}>{t('share.uploadFailed')}</Text>
-              </View>
+              <InlineBanner tone="Warning" text={t('share.uploadFailed')} />
             </Pressable>
           ) : null}
           <Pressable
@@ -339,7 +337,6 @@ const styles = StyleSheet.create({
   failed: { gap: space[10] },
   failRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
   failThumb: { width: 72, height: 72, borderRadius: radius.lg, overflow: 'hidden' },
-  failNote: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   context: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[14], paddingRight: space[12], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1 },
   flex: { flex: 1, gap: space[2] },
   group: { gap: space[10] },

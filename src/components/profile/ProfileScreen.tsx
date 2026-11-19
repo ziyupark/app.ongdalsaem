@@ -13,8 +13,8 @@ import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
 import { DiaryView } from './DiaryView';
 import { SavedView } from './SavedView';
-import { WifiOff } from '../icons/ongdal';
 import { Icon } from '../Icon';
+import { InlineBanner } from '../InlineBanner';
 import { goTab, TabBar, useTabBarScroll, useTabFocusEffect, type TabKey } from '../TabBar';
 import { ScreenHeader, ScreenWash } from '../ScreenHeader';
 import { Text } from '../Text';
@@ -281,10 +281,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       />
       </View>
       {offline ? (
-        <View style={[styles.offline, { backgroundColor: color('bg/inverse') }]}>
-          <Icon icon={WifiOff} size={18} color="fg/inverse" />
-          <Text variant="Body/S Strong" color="fg/inverse" style={styles.flex1}>{t('profile.offline')}</Text>
-        </View>
+        <InlineBanner text={t('profile.offline')} />
       ) : null}
     </View>
     </>
@@ -370,7 +367,6 @@ const styles = StyleSheet.create({
   // Full screen width (cancels the header's p20) so the hairline runs edge to edge; tabs keep their x (20 + 20).
   tabs: { marginHorizontal: -space[20] },
   tabRow: { gap: 28, paddingHorizontal: space[40] },
-  offline: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.full }, // Inline Banner · Neutral
   flex1: { flex: 1 },
   grid: { paddingBottom: 96 + space[24] },
   loading: { marginTop: space[40] },

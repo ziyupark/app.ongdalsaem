@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AcornIcon } from '../src/components/AcornIcon';
 import { Button } from '../src/components/Button';
 import { Chip } from '../src/components/Chip';
+import { Icon } from '../src/components/Icon';
 import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { timeAgo } from '../src/lib/time';
@@ -72,8 +73,8 @@ export default function Notifications() {
           </View>
           {sections.length === 0 ? (
             <View style={styles.empty}>
-              <View style={[styles.emptyIcon, { backgroundColor: color('bg/muted') }]}><Bell size={30} strokeWidth={1.6} absoluteStrokeWidth color={color('fg/default')} /></View>
-              <Text variant="Title/L">{t('notifications.emptyTitle')}</Text>
+              <View style={[styles.emptyIcon, { backgroundColor: color('bg/muted') }]}><Icon icon={Bell} size={30} /></View>
+              <Text variant="Title/L" style={styles.center}>{t('notifications.emptyTitle')}</Text>
               <Text variant="Body/S" color="fg/secondary" style={styles.center}>{t('notifications.emptyBody')}</Text>
               <Button label={t('notifications.settings')} variant="Outline" size="M" onPress={() => Linking.openSettings()} />
             </View>
