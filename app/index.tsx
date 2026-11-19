@@ -2,10 +2,9 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
-import { Logo } from '../src/components/Logo';
+import { Logo, LOGO_OPTICAL } from '../src/components/Logo';
 import { hasSeenWelcomeLetter } from '../src/lib/flags';
 import { supabase } from '../src/lib/supabase';
 import { getMyProfile, needsProfileSetup } from '../src/services/profile';
@@ -29,7 +28,7 @@ async function nextRoute() {
 
 /** 1.1 Splash — 14:2. Sunset glow (Gradient/Sunset, blurred circle 390 at y 215) + Logo (Acorn lockup). */
 export default function Splash() {
-  const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const { color, scheme } = useTheme();
   const { t } = useTranslation();
 
@@ -59,7 +58,7 @@ export default function Splash() {
           <Circle cx={195} cy={195} r={195} fill="url(#splash-glow)" />
         </Svg>
       </View>
-      <View style={[styles.center, { paddingTop: insets.top }]}>
+      <View style={[styles.center, { transform: [{ translateY: -height * LOGO_OPTICAL.splashLift }] }]}>
         <Logo lockup="Acorn" tagline={t('common.brandTagline')} />
       </View>
     </View>
@@ -69,6 +68,6 @@ export default function Splash() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   glow: { position: 'absolute', left: 0, right: 0, top: 215, aspectRatio: 1 },
-  // Logo block = 790 tall below the 54 status bar with 65 bottom padding → optical centre slightly above middle.
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingBottom: 65 },
+  // Whole screen, centred, then lifted by LOGO_OPTICAL.splashLift → the visual centre (a little above the middle).
+  center: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center' },
 });
