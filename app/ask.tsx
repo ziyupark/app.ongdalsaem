@@ -13,6 +13,7 @@ import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { useHere } from '../src/lib/useHere';
 import { askQuestion, fetchQuestion, QUESTION_CATEGORIES, updateQuestion, type QuestionCategory } from '../src/services/community';
+import { isObjectionable } from '../src/services/moderation';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../src/theme';
 
 const MIN = 5;
@@ -63,8 +64,8 @@ export default function Ask() {
         mood: here.forecast?.mood ?? null, tempC: here.forecast?.tempC ?? null,
       });
       router.replace(`/question/${id}`);
-    } catch {
-      Alert.alert(t('ask.failed'));
+    } catch (e) {
+      Alert.alert(isObjectionable(e) ? t('moderation.objectionable') : t('ask.failed'));
     } finally {
       setSending(false);
     }

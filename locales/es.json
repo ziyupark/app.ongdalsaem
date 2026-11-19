@@ -1,0 +1,5 @@
+{
+  "NSLocationWhenInUseUsageDescription": "ongdalsaem usa tu ubicación aproximada para mostrarte el tiempo de hoy y los platos cocinados cerca. Tu ubicación exacta nunca se muestra a otras personas.",
+  "NSPhotoLibraryUsageDescription": "ongdalsaem usa tus fotos para que compartas platos que cocinaste o comiste.",
+  "NSCameraUsageDescription": "ongdalsaem usa la cámara para que hagas una foto de tu plato."
+}

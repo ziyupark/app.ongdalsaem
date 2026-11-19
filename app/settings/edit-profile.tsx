@@ -9,6 +9,7 @@ import { Input } from '../../src/components/Input';
 import { SettingsScreen } from '../../src/components/settings/Settings';
 import { Text } from '../../src/components/Text';
 import { canChangeHandle, fetchAccount, HANDLE_RE, saveProfile, type AccountSettings } from '../../src/services/settings';
+import { isObjectionable } from '../../src/services/moderation';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const MAX_BIO = 80;
@@ -53,7 +54,7 @@ export default function EditProfile() {
       router.back();
     } catch (e) {
       const code = (e as { code?: string }).code;
-      Alert.alert(code === 'handle-taken' ? t('settings.handleTaken') : t('settings.saveFailed'));
+      Alert.alert(code === 'handle-taken' ? t('settings.handleTaken') : isObjectionable(e) ? t('moderation.objectionable') : t('settings.saveFailed'));
     } finally {
       setSaving(false);
     }

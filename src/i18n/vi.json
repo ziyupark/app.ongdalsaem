@@ -530,7 +530,9 @@
     "blockBody": "Bạn sẽ không thấy món ăn hay bình luận của họ, và họ không thể nhắn tin cho bạn.",
     "thanksTitle": "Cảm ơn bạn đã báo cho chúng mình",
     "thanksBody": "Chúng mình sẽ xem xét. Người nấu sẽ không biết ai đã báo cáo.",
-    "failed": "Không gửi được. Hãy thử lại."
+    "failed": "Không gửi được. Hãy thử lại.",
+    "userTitle": "Hồ sơ này có vấn đề gì?",
+    "messageTitle": "Cuộc trò chuyện này có vấn đề gì?"
   },
   "shareSheet": {
     "title": "Chia sẻ món này",
@@ -689,7 +691,7 @@
     "delDishes_other": "{{count}} món ăn và ảnh",
     "delSocial": "Bình luận, hạt sồi & theo dõi",
     "delDiary": "Nhật ký & món đã lưu",
-    "deleteCaption": "Hoàn tất trong 7 ngày — chúng mình sẽ gửi email khi xong. Các bản ghi phải lưu theo luật (ví dụ: nhật ký đồng ý) được lưu riêng và không bao giờ hiển thị. Quyền Đăng nhập bằng Apple / Google sẽ bị thu hồi.",
+    "deleteCaption": "Tài khoản của bạn bị xóa ngay lập tức. Các bản ghi phải lưu theo luật (ví dụ: nhật ký đồng ý) được lưu riêng và không bao giờ hiển thị. Quyền Đăng nhập bằng Apple / Google sẽ bị thu hồi.",
     "keepAccount": "Giữ tài khoản",
     "deleteConfirmTitle": "Xóa vĩnh viễn?",
     "deleteConfirmBody": "Tài khoản và mọi thứ trong đó sẽ bị xóa. Không thể hoàn tác.",
@@ -1308,7 +1310,8 @@
     "block": "Chặn",
     "openDish": "Mở món ăn",
     "restricted": "Người này chỉ nhận tin nhắn từ những người họ theo dõi.",
-    "blocked": "Bạn không thể nhắn tin cho người này."
+    "blocked": "Bạn không thể nhắn tin cho người này.",
+    "report": "Báo cáo"
   },
   "sendTo": {
     "title": "Gửi tới",
@@ -1426,5 +1429,8 @@
     "emptyBody": "Hãy đặt câu hỏi đầu tiên",
     "reportTitle": "Báo cáo câu hỏi này",
     "answers_other": "{{count}} câu trả lời"
+  },
+  "moderation": {
+    "objectionable": "Có từ ngữ không được phép trên ongdalsaem. Hãy sửa rồi thử lại."
   }
 }

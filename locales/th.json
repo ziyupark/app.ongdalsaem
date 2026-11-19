@@ -1,0 +1,5 @@
+{
+  "NSLocationWhenInUseUsageDescription": "ongdalsaem ใช้ตำแหน่งโดยประมาณของคุณเพื่อแสดงสภาพอากาศวันนี้และเมนูที่ทำใกล้ๆ คุณ ตำแหน่งที่แน่นอนของคุณจะไม่แสดงให้ผู้อื่นเห็น",
+  "NSPhotoLibraryUsageDescription": "ongdalsaem ใช้รูปภาพของคุณเพื่อให้คุณแชร์เมนูที่ทำหรือกินได้",
+  "NSCameraUsageDescription": "ongdalsaem ใช้กล้องเพื่อให้คุณถ่ายรูปเมนูของคุณได้"
+}

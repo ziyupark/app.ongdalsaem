@@ -1,6 +1,6 @@
 import { router, useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Bell, ChevronLeft, Settings } from './icons/ongdal';
+import { Bell, ChevronLeft, MoreHorizontal, Settings } from './icons/ongdal';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -62,14 +62,15 @@ export function ScreenWash({ scrollStyle }: { scrollStyle?: StyleProp<AnimatedSt
   );
 }
 
-type Right = 'settings' | 'notifications' | 'none';
+type Right = 'settings' | 'notifications' | 'more' | 'none';
 
 /**
  * Header shared by Home · Community · Timer · Profile (Home 2.1): safe area → row 40 (logo · right button) → 20 →
  * date · place (Overline) → 12 → weather title (Display/XL) → 12. All its spacing lives here — screens add none.
- * `right`: settings / notifications (unread dot) / an empty 40 slot. `onBack` swaps the logo for a back button.
+ * `right`: settings / notifications (unread dot) / more (`onMore`: report · block on another cook) / an empty 40 slot.
+ * `onBack` swaps the logo for a back button.
  */
-export function ScreenHeader({ right, onBack, onLogoLongPress }: { right: Right; onBack?: () => void; onLogoLongPress?: () => void }) {
+export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void }) {
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -101,6 +102,8 @@ export function ScreenHeader({ right, onBack, onLogoLongPress }: { right: Right;
         )}
         {right === 'settings' ? (
           <IconButton icon={Settings} accessibilityLabel={t('profile.settings')} onPress={() => router.push('/settings')} />
+        ) : right === 'more' && onMore ? (
+          <IconButton icon={MoreHorizontal} accessibilityLabel={t('home.more')} onPress={onMore} />
         ) : right === 'notifications' ? (
           <IconButton icon={Bell} accessibilityLabel={t('home.notifications')} dot={unread} onPress={() => router.push('/notifications')} />
         ) : (

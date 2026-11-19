@@ -408,6 +408,8 @@ newOverline=新計時器
 newTitle=要多久？
 defaultLabel=計時器
 [report]
+userTitle=這個個人檔案有什麼問題？
+messageTitle=這段對話有什麼問題？
 title=這道料理有什麼問題？
 reasons.sexual=裸露或色情內容
 reasons.child_safety=兒童安全或違法內容
@@ -571,7 +573,7 @@ delProfile=個人檔案、設定與登入資訊
 delDishes_other={{count}} 道料理及其照片
 delSocial=留言、橡實與追蹤
 delDiary=日記與收藏的料理
-deleteCaption=會在 7 天內完成，完成後我們會寄信通知你。依法必須保留的紀錄（如同意紀錄）會另外保存且不會顯示。Apple / Google 登入的存取權會被撤銷。
+deleteCaption=帳號會立即刪除。依法必須保留的紀錄（如同意紀錄）會另外保存且不會顯示。Apple / Google 登入的存取權會被撤銷。
 keepAccount=保留我的帳號
 deleteConfirmTitle=確定永久刪除？
 deleteConfirmBody=你的帳號及其中所有內容都將被移除，且無法復原。
@@ -975,6 +977,7 @@ seasonal=季節餐桌
 youreInCta=已參加！
 cookedLabel=下廚人數
 [messages]
+report=檢舉
 title=訊息
 chats=對話
 requests=訊息請求
@@ -1196,3 +1199,6 @@ naver=NAVER 地圖
 kakao=KakaoMap
 google=Google 地圖
 apple=Apple 地圖
+
+[moderation]
+objectionable=內容含有 ongdalsaem 不允許的字詞，請修改後再試一次。

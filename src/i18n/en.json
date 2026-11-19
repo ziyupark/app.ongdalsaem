@@ -535,7 +535,9 @@
     "blockBody": "You won’t see their dishes or comments, and they can’t message you.",
     "thanksTitle": "Thanks for telling us",
     "thanksBody": "We’ll review it. The cook won’t know who reported.",
-    "failed": "Couldn’t send. Try again."
+    "failed": "Couldn’t send. Try again.",
+    "userTitle": "What’s wrong with this profile?",
+    "messageTitle": "What’s wrong with this conversation?"
   },
   "shareSheet": {
     "title": "Share this dish",
@@ -707,7 +709,7 @@
     "delDishes_other": "{{count}} dishes and their photos",
     "delSocial": "Comments, acorns & follows",
     "delDiary": "Diary & saved dishes",
-    "deleteCaption": "Finished within 7 days — we’ll email you when it’s done. Records we must keep by law (e.g., consent logs) are stored separately and never shown. Sign in with Apple / Google access is revoked.",
+    "deleteCaption": "Your account is deleted right away. Records we must keep by law (e.g., consent logs) are stored separately and never shown. Sign in with Apple / Google access is revoked.",
     "keepAccount": "Keep my account",
     "deleteConfirmTitle": "Delete for good?",
     "deleteConfirmBody": "Your account and everything in it will be removed. This can’t be undone.",
@@ -1325,7 +1327,8 @@
     "block": "Block",
     "openDish": "Open dish",
     "restricted": "This cook only takes messages from people they follow.",
-    "blocked": "You can’t message this cook."
+    "blocked": "You can’t message this cook.",
+    "report": "Report"
   },
   "sendTo": {
     "title": "Send to",
@@ -1448,5 +1451,8 @@
     "reportTitle": "Report this question",
     "answers_one": "{{count}} answer",
     "answers_other": "{{count}} answers"
+  },
+  "moderation": {
+    "objectionable": "That has words we don’t allow on ongdalsaem. Edit it and try again."
   }
 }

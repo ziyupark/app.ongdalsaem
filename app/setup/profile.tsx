@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AvatarEdit } from '../../src/components/AvatarEdit';
 import { Button } from '../../src/components/Button';
@@ -12,6 +12,7 @@ import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
 import { useKeyboardHeight } from '../../src/hooks/useKeyboardHeight';
 import { saveProfileSetup } from '../../src/services/profile';
+import { isObjectionable } from '../../src/services/moderation';
 import { makeHandle, randomHandleDigits } from '../../src/services/username';
 import { space, useTheme } from '../../src/theme';
 
@@ -49,6 +50,7 @@ export default function ProfileSetup() {
       router.push('/setup/taste');
     } catch (e) {
       console.warn('[profile-setup]', e);
+      if (isObjectionable(e)) Alert.alert(t('moderation.objectionable'));
       setFailed(true);
     } finally {
       setSaving(false);

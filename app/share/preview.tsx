@@ -13,6 +13,7 @@ import { markChallengeEntered, markEditSaved, resetShareDraft, updateShareDraft,
 import { enterChallenge, setChallengeJoined } from '../../src/services/community';
 import { createDish, updateDish, UploadError } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
+import { isObjectionable } from '../../src/services/moderation';
 import { space, useTheme } from '../../src/theme';
 
 /** 8.3 Preview (Figma 618:15418) — the post exactly as others will see it, then "Share to ongdalsaem". */
@@ -85,6 +86,7 @@ export default function SharePreview() {
       router.dismissAll();
     } catch (e) {
       console.warn('[share]', e);
+      if (isObjectionable(e)) { setSharing(false); Alert.alert(t('moderation.objectionable')); return; }
       if (e instanceof UploadError) {
         // 8.4 — back to Details with the "1 photo didn't upload" banner; notes stay in the draft.
         updateShareDraft({ uploadFailed: e.index });

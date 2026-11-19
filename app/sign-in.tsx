@@ -13,6 +13,7 @@ import { WelcomeMesh } from '../src/components/WelcomeMesh';
 import { Text } from '../src/components/Text';
 import { signInWithApple, signInWithDevTestAccount, signInWithGoogle, type SignInResult } from '../src/services/auth';
 import { getMyProfile, needsProfileSetup } from '../src/services/profile';
+import { openLegal } from '../src/lib/legal';
 import { space, useTheme, withAlpha } from '../src/theme';
 
 const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
@@ -74,10 +75,10 @@ export default function SignIn() {
           ) : (
             <>
               {t('signIn.legalPrefix')}
-              {/* Terms / Privacy open the 9.8c Document sheet (built with 9.8). */}
-              <Text variant="Caption Strong" color="fg/secondary" accessibilityRole="link">{t('signIn.terms')}</Text>
+              {/* Terms / Privacy open the published documents (src/lib/legal.ts) — accepting them is the EULA (1.2). */}
+              <Text variant="Caption Strong" color="fg/secondary" accessibilityRole="link" onPress={() => openLegal('terms')} suppressHighlighting>{t('signIn.terms')}</Text>
               {t('signIn.and')}
-              <Text variant="Caption Strong" color="fg/secondary" accessibilityRole="link">{t('signIn.privacy')}</Text>
+              <Text variant="Caption Strong" color="fg/secondary" accessibilityRole="link" onPress={() => openLegal('privacy')} suppressHighlighting>{t('signIn.privacy')}</Text>
               {t('signIn.legalSuffix')}
             </>
           )}

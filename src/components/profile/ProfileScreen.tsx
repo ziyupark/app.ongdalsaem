@@ -11,6 +11,7 @@ import { AcornIcon } from '../AcornIcon';
 import { BottomSheet } from '../BottomSheet';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
+import { ReportSheet } from '../dish/ReportSheet';
 import { DiaryView } from './DiaryView';
 import { SavedView } from './SavedView';
 import { Icon } from '../Icon';
@@ -28,6 +29,7 @@ import { getMyProfile, MAX_BIO, updateMyAvatar, updateMyBio, type MyProfile } fr
 import { myUserId, supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
 import { startThread } from '../../services/messages';
+import { isObjectionable, reportUser } from '../../services/moderation';
 import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
 
 /** Grid 670:20275 — x20 · 2 columns · gap 16 · rows 20 apart. */
@@ -127,6 +129,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     return { id: data.id, displayName: data.display_name || data.username, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: true };
   };
   const [missing, setMissing] = useState(false);
+  // 7.3 Report / block a cook (their name, @handle, photo or status line) — the same sheet as a dish report.
+  const [reportOpen, setReportOpen] = useState(false);
   const toggleFollow = async () => {
     if (!userId) return;
     const on = !following;
@@ -173,8 +177,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       const bio = await updateMyBio(bioDraft);
       setMe((p) => (p ? { ...p, bio } : p));
       setBioOpen(false);
-    } catch {
-      Alert.alert(t('settings.saveFailed'));
+    } catch (e) {
+      Alert.alert(isObjectionable(e) ? t('moderation.objectionable') : t('settings.saveFailed'));
     } finally {
       setBioSaving(false);
     }
@@ -212,7 +216,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   // 6.1 Profile 657:16468 — ScreenHeader (shared with Home · Community · Timer) → [card → 12 → tabs] → 20 → grid.
   const header = (
     <>
-    <ScreenHeader right={isMe ? 'settings' : 'none'} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
+    <ScreenHeader right={isMe ? 'settings' : userId && !missing ? 'more' : 'none'} onMore={() => setReportOpen(true)} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
     <View style={styles.header}>
       {/* Frame 10 — card → 12 → tabs. */}
       <View style={styles.cardGroup}>
@@ -321,6 +325,17 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           />
         )}
       />
+      {userId ? (
+        <ReportSheet
+          visible={reportOpen}
+          ownerId={userId}
+          ownerName={me?.displayName ?? ''}
+          title={t('report.userTitle')}
+          onClose={() => setReportOpen(false)}
+          onBlocked={() => (router.canGoBack() ? router.back() : router.replace('/community'))}
+          onReport={(reason) => reportUser(userId, reason)}
+        />
+      ) : null}
       <BottomSheet visible={bioOpen} onClose={() => setBioOpen(false)} title={t('profile.statusTitle')}>
         <View style={[styles.bioField, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
           <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}

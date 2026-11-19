@@ -535,7 +535,9 @@
     "blockBody": "Você não verá os pratos nem os comentários dessa pessoa, e ela não poderá te enviar mensagens.",
     "thanksTitle": "Obrigado por nos avisar",
     "thanksBody": "Vamos analisar. Quem cozinhou não vai saber quem denunciou.",
-    "failed": "Não foi possível enviar. Tente de novo."
+    "failed": "Não foi possível enviar. Tente de novo.",
+    "userTitle": "Qual é o problema com este perfil?",
+    "messageTitle": "Qual é o problema com esta conversa?"
   },
   "shareSheet": {
     "title": "Compartilhar este prato",
@@ -695,7 +697,7 @@
     "delDishes_other": "{{count}} pratos e suas fotos",
     "delSocial": "Comentários, bolotas e seguidores",
     "delDiary": "Diário e pratos salvos",
-    "deleteCaption": "Concluído em até 7 dias — enviaremos um e-mail quando terminar. Registros que precisamos manter por lei (como registros de consentimento) ficam guardados à parte e nunca são exibidos. O acesso de Entrar com Apple / Google é revogado.",
+    "deleteCaption": "Sua conta é excluída na hora. Registros que precisamos manter por lei (como registros de consentimento) ficam guardados à parte e nunca são exibidos. O acesso de Entrar com Apple / Google é revogado.",
     "keepAccount": "Manter minha conta",
     "deleteConfirmTitle": "Excluir para sempre?",
     "deleteConfirmBody": "Sua conta e tudo nela serão removidos. Isso não pode ser desfeito.",
@@ -1325,7 +1327,8 @@
     "block": "Bloquear",
     "openDish": "Abrir prato",
     "restricted": "Esta pessoa só recebe mensagens de quem ela segue.",
-    "blocked": "Você não pode enviar mensagens para esta pessoa."
+    "blocked": "Você não pode enviar mensagens para esta pessoa.",
+    "report": "Denunciar"
   },
   "sendTo": {
     "title": "Enviar para",
@@ -1448,5 +1451,8 @@
     "reportTitle": "Denunciar esta pergunta",
     "answers_one": "{{count}} resposta",
     "answers_other": "{{count}} respostas"
+  },
+  "moderation": {
+    "objectionable": "Tem palavras que não são permitidas no ongdalsaem. Edite e tente de novo."
   }
 }

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { timeAgo } from '../../lib/time';
 import { addComment, deleteComment, fetchComments, type Comment } from '../../services/foods';
-import { reportComment } from '../../services/moderation';
+import { isObjectionable, reportComment } from '../../services/moderation';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../theme';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
@@ -54,8 +54,8 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
       const c = await addComment(foodId, body);
       setDraft('');
       update([c, ...(items ?? [])]);
-    } catch {
-      Alert.alert(t('dish.commentsError'));
+    } catch (e) {
+      Alert.alert(isObjectionable(e) ? t('moderation.objectionable') : t('dish.commentsError'));
     } finally {
       setSending(false);
     }

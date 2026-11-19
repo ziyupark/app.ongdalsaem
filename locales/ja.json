@@ -1,0 +1,5 @@
+{
+  "NSLocationWhenInUseUsageDescription": "ongdalsaem は今日の天気と近くで作られた料理を表示するために、おおよその位置情報を使います。正確な位置がほかの人に表示されることはありません。",
+  "NSPhotoLibraryUsageDescription": "ongdalsaem は、作った料理や食べた料理をシェアできるように写真を使います。",
+  "NSCameraUsageDescription": "ongdalsaem は、料理の写真を撮れるようにカメラを使います。"
+}

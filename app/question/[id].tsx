@@ -14,7 +14,7 @@ import { timeAgo } from '../../src/lib/time';
 import {
   addAnswer, deleteAnswer, deleteQuestion, fetchAnswers, fetchQuestion, setBestAnswer, setHelpful, setMeToo, type Answer, type Question,
 } from '../../src/services/community';
-import { reportAnswer } from '../../src/services/moderation';
+import { isObjectionable, reportAnswer } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
@@ -64,8 +64,8 @@ export default function QuestionScreen() {
       await addAnswer(q.id, draft);
       setDraft('');
       load();
-    } catch {
-      Alert.alert(t('dish.commentsError'));
+    } catch (e) {
+      Alert.alert(isObjectionable(e) ? t('moderation.objectionable') : t('dish.commentsError'));
     } finally {
       setSending(false);
     }

@@ -1,0 +1,5 @@
+{
+  "NSLocationWhenInUseUsageDescription": "ongdalsaem dùng vị trí gần đúng của bạn để hiển thị thời tiết hôm nay và các món được nấu gần bạn. Vị trí chính xác của bạn không bao giờ hiển thị cho người khác.",
+  "NSPhotoLibraryUsageDescription": "ongdalsaem dùng ảnh của bạn để bạn chia sẻ món mình đã nấu hoặc đã ăn.",
+  "NSCameraUsageDescription": "ongdalsaem dùng máy ảnh để bạn chụp ảnh món ăn của mình."
+}

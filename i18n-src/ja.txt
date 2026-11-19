@@ -408,6 +408,8 @@ newOverline=新しいタイマー
 newTitle=何分にしますか？
 defaultLabel=タイマー
 [report]
+userTitle=このプロフィールのどこに問題がありますか？
+messageTitle=この会話のどこに問題がありますか？
 title=この料理のどこに問題がありますか？
 reasons.sexual=ヌードや性的なコンテンツ
 reasons.child_safety=子どもの安全や違法なコンテンツ
@@ -571,7 +573,7 @@ delProfile=プロフィール、設定、サインイン情報
 delDishes_other=料理{{count}}件とその写真
 delSocial=コメント、どんぐり、フォロー
 delDiary=ダイアリーと保存した料理
-deleteCaption=7日以内に完了し、完了時にメールでお知らせします。法律で保管が必要な記録（同意ログなど）は別に保管され、表示されることはありません。Apple / Google でのサインインのアクセスは取り消されます。
+deleteCaption=アカウントはすぐに削除されます。法律で保管が必要な記録（同意ログなど）は別に保管され、表示されることはありません。Apple / Google でのサインインのアクセスは取り消されます。
 keepAccount=アカウントを残す
 deleteConfirmTitle=完全に削除しますか？
 deleteConfirmBody=アカウントとその中のすべてが削除されます。元に戻せません。
@@ -975,6 +977,7 @@ seasonal=季節の食卓
 youreInCta=参加しました！
 cookedLabel=作った人
 [messages]
+report=報告する
 title=メッセージ
 chats=会話
 requests=リクエスト
@@ -1196,3 +1199,6 @@ naver=NAVER Map
 kakao=KakaoMap
 google=Google マップ
 apple=Apple マップ
+
+[moderation]
+objectionable=ongdalsaem では使えない言葉が含まれています。直してからもう一度お試しください。

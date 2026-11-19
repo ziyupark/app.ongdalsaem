@@ -11,7 +11,8 @@ import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
 import { fetchDish } from '../../src/services/foods';
 import { DISH_LINK, fetchMessages, fetchThread, markSeen, sendMessage, subscribeThread, type Message, type Thread } from '../../src/services/messages';
-import { blockUser } from '../../src/services/moderation';
+import { ReportSheet } from '../../src/components/dish/ReportSheet';
+import { blockUser, isObjectionable, reportMessage } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
@@ -28,6 +29,7 @@ export default function ThreadScreen() {
   const [msgs, setMsgs] = useState<Message[]>([]);
   const [me, setMe] = useState<MyProfile | null>(null);
   const [draft, setDraft] = useState('');
+  const [reportOpen, setReportOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const list = useRef<FlatList<Message>>(null);
 
@@ -49,7 +51,7 @@ export default function ThreadScreen() {
     if (!body || sending) return;
     setSending(true);
     setDraft('');
-    try { await sendMessage(id, body); await reload(); } catch { setDraft(body); Alert.alert(t('messages.sendFailed')); } finally { setSending(false); }
+    try { await sendMessage(id, body); await reload(); } catch (e) { setDraft(body); Alert.alert(isObjectionable(e) ? t('moderation.objectionable') : t('messages.sendFailed')); } finally { setSending(false); }
   };
 
   const menu = () => {
@@ -57,6 +59,7 @@ export default function ThreadScreen() {
     Alert.alert(thread.other.handle ?? thread.other.name, undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('messages.viewProfile'), onPress: () => router.push(`/cook/${thread.other.id}`) },
+      { text: t('messages.report'), onPress: () => setReportOpen(true) },
       { text: t('messages.block'), style: 'destructive', onPress: async () => { try { await blockUser(thread.other.id); router.back(); } catch { Alert.alert(t('settings.saveFailed')); } } },
     ]);
   };
@@ -127,6 +130,17 @@ export default function ThreadScreen() {
           <Icon icon={ArrowRight} size={22} color={draft.trim() ? 'fg/accent' : 'fg/muted'} />
         </Pressable>
       </View>
+      {thread ? (
+        <ReportSheet
+          visible={reportOpen}
+          ownerId={thread.other.id}
+          ownerName={thread.other.handle ?? thread.other.name}
+          title={t('report.messageTitle')}
+          onClose={() => setReportOpen(false)}
+          onBlocked={() => router.back()}
+          onReport={(reason) => reportMessage(thread.other.id, [...msgs].reverse().find((m) => !m.mine)?.id ?? null, reason)}
+        />
+      ) : null}
     </KeyboardAvoidingView>
   );
 }

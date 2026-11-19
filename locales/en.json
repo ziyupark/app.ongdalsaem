@@ -1,0 +1,5 @@
+{
+  "NSLocationWhenInUseUsageDescription": "ongdalsaem uses your rough location to show today’s weather and dishes cooked nearby. Your exact location is never shown to others.",
+  "NSPhotoLibraryUsageDescription": "ongdalsaem uses your photos so you can share dishes you cooked or ate.",
+  "NSCameraUsageDescription": "ongdalsaem uses the camera so you can take a photo of your dish."
+}

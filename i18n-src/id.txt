@@ -408,6 +408,8 @@ newOverline=Timer baru
 newTitle=Berapa lama?
 defaultLabel=Timer
 [report]
+userTitle=Ada masalah apa dengan profil ini?
+messageTitle=Ada masalah apa dengan percakapan ini?
 title=Ada masalah apa dengan masakan ini?
 reasons.sexual=Ketelanjangan atau konten seksual
 reasons.child_safety=Keamanan anak atau konten ilegal
@@ -571,7 +573,7 @@ delProfile=Profil, pengaturan & cara masuk
 delDishes_other={{count}} masakan beserta fotonya
 delSocial=Komentar, biji ek & ikutan
 delDiary=Diari & masakan tersimpan
-deleteCaption=Selesai dalam 7 hari — kami akan mengirim email saat selesai. Catatan yang wajib kami simpan menurut hukum (mis. log persetujuan) disimpan terpisah dan tidak pernah ditampilkan. Akses Masuk dengan Apple / Google dicabut.
+deleteCaption=Akunmu langsung dihapus. Catatan yang wajib kami simpan menurut hukum (mis. log persetujuan) disimpan terpisah dan tidak pernah ditampilkan. Akses Masuk dengan Apple / Google dicabut.
 keepAccount=Pertahankan akunku
 deleteConfirmTitle=Hapus selamanya?
 deleteConfirmBody=Akunmu dan semua isinya akan dihapus. Tindakan ini tidak bisa dibatalkan.
@@ -975,6 +977,7 @@ seasonal=Meja musiman
 youreInCta=Kamu sudah ikut!
 cookedLabel=Memasak
 [messages]
+report=Laporkan
 title=Pesan
 chats=Percakapan
 requests=Permintaan
@@ -1196,3 +1199,6 @@ naver=Naver Map
 kakao=KakaoMap
 google=Google Maps
 apple=Apple Maps
+
+[moderation]
+objectionable=Ada kata yang tidak diizinkan di ongdalsaem. Ubah lalu coba lagi.

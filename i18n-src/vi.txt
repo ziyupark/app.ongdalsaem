@@ -408,6 +408,8 @@ newOverline=Hẹn giờ mới
 newTitle=Bao lâu?
 defaultLabel=Hẹn giờ
 [report]
+userTitle=Hồ sơ này có vấn đề gì?
+messageTitle=Cuộc trò chuyện này có vấn đề gì?
 title=Món này có vấn đề gì?
 reasons.sexual=Khỏa thân hoặc nội dung tình dục
 reasons.child_safety=An toàn trẻ em hoặc nội dung bất hợp pháp
@@ -571,7 +573,7 @@ delProfile=Hồ sơ, cài đặt & đăng nhập
 delDishes_other={{count}} món ăn và ảnh
 delSocial=Bình luận, hạt sồi & theo dõi
 delDiary=Nhật ký & món đã lưu
-deleteCaption=Hoàn tất trong 7 ngày — chúng mình sẽ gửi email khi xong. Các bản ghi phải lưu theo luật (ví dụ: nhật ký đồng ý) được lưu riêng và không bao giờ hiển thị. Quyền Đăng nhập bằng Apple / Google sẽ bị thu hồi.
+deleteCaption=Tài khoản của bạn bị xóa ngay lập tức. Các bản ghi phải lưu theo luật (ví dụ: nhật ký đồng ý) được lưu riêng và không bao giờ hiển thị. Quyền Đăng nhập bằng Apple / Google sẽ bị thu hồi.
 keepAccount=Giữ tài khoản
 deleteConfirmTitle=Xóa vĩnh viễn?
 deleteConfirmBody=Tài khoản và mọi thứ trong đó sẽ bị xóa. Không thể hoàn tác.
@@ -975,6 +977,7 @@ seasonal=Bàn ăn theo mùa
 youreInCta=Bạn đã tham gia!
 cookedLabel=Đã nấu
 [messages]
+report=Báo cáo
 title=Tin nhắn
 chats=Cuộc trò chuyện
 requests=Tin nhắn chờ
@@ -1196,3 +1199,6 @@ naver=Naver Map
 kakao=KakaoMap
 google=Google Maps
 apple=Apple Maps
+
+[moderation]
+objectionable=Có từ ngữ không được phép trên ongdalsaem. Hãy sửa rồi thử lại.

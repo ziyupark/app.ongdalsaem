@@ -5,13 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 import { AcornIcon } from '../../src/components/AcornIcon';
 import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components/settings/Settings';
+import { openLegal, type LegalDoc } from '../../src/lib/legal';
 import { SUPPORT_EMAIL } from '../../src/lib/support';
 
-/** 9.8 Help & policies (Figma 194:6602). Legal documents open 9.8c with the text kept in docs/legal (shown when published). */
+/** 9.8 Help & policies (Figma 194:6602). Documents open their published page (src/lib/legal.ts), else the 9.8c sheet. */
 export default function Help() {
   const { t } = useTranslation();
   const version = `${Application.nativeApplicationVersion ?? '1.0.0'} (${Application.nativeBuildVersion ?? '0'})`;
-  const doc = (key: string) => router.push(`/settings/document?doc=${key}`);
+  const doc = (key: LegalDoc) => openLegal(key);
   return (
     <SettingsScreen title={t('settings.help')}>
       <SettingsGroup label={t('settings.helpGroup')}>

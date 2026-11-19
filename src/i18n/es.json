@@ -535,7 +535,9 @@
     "blockBody": "No verás sus platos ni comentarios, y no podrá enviarte mensajes.",
     "thanksTitle": "Gracias por avisarnos",
     "thanksBody": "Lo revisaremos. Quien cocinó no sabrá quién lo denunció.",
-    "failed": "No se pudo enviar. Inténtalo de nuevo."
+    "failed": "No se pudo enviar. Inténtalo de nuevo.",
+    "userTitle": "¿Qué le pasa a este perfil?",
+    "messageTitle": "¿Qué le pasa a esta conversación?"
   },
   "shareSheet": {
     "title": "Compartir este plato",
@@ -695,7 +697,7 @@
     "delDishes_other": "{{count}} platos y sus fotos",
     "delSocial": "Comentarios, bellotas y seguimientos",
     "delDiary": "Diario y platos guardados",
-    "deleteCaption": "Se completa en un máximo de 7 días; te escribiremos cuando termine. Los registros que debemos conservar por ley (p. ej., registros de consentimiento) se guardan por separado y nunca se muestran. Se revoca el acceso de Iniciar sesión con Apple / Google.",
+    "deleteCaption": "Tu cuenta se elimina al momento. Los registros que debemos conservar por ley (p. ej., registros de consentimiento) se guardan por separado y nunca se muestran. Se revoca el acceso de Iniciar sesión con Apple / Google.",
     "keepAccount": "Conservar mi cuenta",
     "deleteConfirmTitle": "¿Eliminar para siempre?",
     "deleteConfirmBody": "Se eliminará tu cuenta con todo su contenido. No se puede deshacer.",
@@ -1325,7 +1327,8 @@
     "block": "Bloquear",
     "openDish": "Abrir plato",
     "restricted": "Este cocinero solo acepta mensajes de quienes sigue.",
-    "blocked": "No puedes escribir a este cocinero."
+    "blocked": "No puedes escribir a este cocinero.",
+    "report": "Denunciar"
   },
   "sendTo": {
     "title": "Enviar a",
@@ -1448,5 +1451,8 @@
     "reportTitle": "Denunciar esta pregunta",
     "answers_one": "{{count}} respuesta",
     "answers_other": "{{count}} respuestas"
+  },
+  "moderation": {
+    "objectionable": "Contiene palabras que no se permiten en ongdalsaem. Edítalo y vuelve a intentarlo."
   }
 }

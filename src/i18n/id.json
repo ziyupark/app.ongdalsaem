@@ -530,7 +530,9 @@
     "blockBody": "Kamu tidak akan melihat masakan atau komentarnya, dan dia tidak bisa mengirimimu pesan.",
     "thanksTitle": "Terima kasih sudah memberi tahu",
     "thanksBody": "Kami akan meninjaunya. Si pemasak tidak akan tahu siapa yang melapor.",
-    "failed": "Gagal mengirim. Coba lagi."
+    "failed": "Gagal mengirim. Coba lagi.",
+    "userTitle": "Ada masalah apa dengan profil ini?",
+    "messageTitle": "Ada masalah apa dengan percakapan ini?"
   },
   "shareSheet": {
     "title": "Bagikan masakan ini",
@@ -689,7 +691,7 @@
     "delDishes_other": "{{count}} masakan beserta fotonya",
     "delSocial": "Komentar, biji ek & ikutan",
     "delDiary": "Diari & masakan tersimpan",
-    "deleteCaption": "Selesai dalam 7 hari — kami akan mengirim email saat selesai. Catatan yang wajib kami simpan menurut hukum (mis. log persetujuan) disimpan terpisah dan tidak pernah ditampilkan. Akses Masuk dengan Apple / Google dicabut.",
+    "deleteCaption": "Akunmu langsung dihapus. Catatan yang wajib kami simpan menurut hukum (mis. log persetujuan) disimpan terpisah dan tidak pernah ditampilkan. Akses Masuk dengan Apple / Google dicabut.",
     "keepAccount": "Pertahankan akunku",
     "deleteConfirmTitle": "Hapus selamanya?",
     "deleteConfirmBody": "Akunmu dan semua isinya akan dihapus. Tindakan ini tidak bisa dibatalkan.",
@@ -1308,7 +1310,8 @@
     "block": "Blokir",
     "openDish": "Buka masakan",
     "restricted": "Pemasak ini hanya menerima pesan dari orang yang dia ikuti.",
-    "blocked": "Kamu tidak bisa mengirim pesan ke pemasak ini."
+    "blocked": "Kamu tidak bisa mengirim pesan ke pemasak ini.",
+    "report": "Laporkan"
   },
   "sendTo": {
     "title": "Kirim ke",
@@ -1426,5 +1429,8 @@
     "emptyBody": "Jadilah yang pertama bertanya",
     "reportTitle": "Laporkan pertanyaan ini",
     "answers_other": "{{count}} jawaban"
+  },
+  "moderation": {
+    "objectionable": "Ada kata yang tidak diizinkan di ongdalsaem. Ubah lalu coba lagi."
   }
 }

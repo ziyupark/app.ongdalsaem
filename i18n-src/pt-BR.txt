@@ -413,6 +413,8 @@ newOverline=Novo timer
 newTitle=Quanto tempo?
 defaultLabel=Timer
 [report]
+userTitle=Qual é o problema com este perfil?
+messageTitle=Qual é o problema com esta conversa?
 title=Qual é o problema com este prato?
 reasons.sexual=Nudez ou conteúdo sexual
 reasons.child_safety=Segurança infantil ou conteúdo ilegal
@@ -577,7 +579,7 @@ delDishes_one={{count}} prato e suas fotos
 delDishes_other={{count}} pratos e suas fotos
 delSocial=Comentários, bolotas e seguidores
 delDiary=Diário e pratos salvos
-deleteCaption=Concluído em até 7 dias — enviaremos um e-mail quando terminar. Registros que precisamos manter por lei (como registros de consentimento) ficam guardados à parte e nunca são exibidos. O acesso de Entrar com Apple / Google é revogado.
+deleteCaption=Sua conta é excluída na hora. Registros que precisamos manter por lei (como registros de consentimento) ficam guardados à parte e nunca são exibidos. O acesso de Entrar com Apple / Google é revogado.
 keepAccount=Manter minha conta
 deleteConfirmTitle=Excluir para sempre?
 deleteConfirmBody=Sua conta e tudo nela serão removidos. Isso não pode ser desfeito.
@@ -989,6 +991,7 @@ seasonal=Mesas da estação
 youreInCta=Você está dentro!
 cookedLabel=Cozinharam
 [messages]
+report=Denunciar
 title=Mensagens
 chats=Conversas
 requests=Solicitações
@@ -1218,3 +1221,6 @@ naver=Naver Map
 kakao=KakaoMap
 google=Google Maps
 apple=Mapas da Apple
+
+[moderation]
+objectionable=Tem palavras que não são permitidas no ongdalsaem. Edite e tente de novo.

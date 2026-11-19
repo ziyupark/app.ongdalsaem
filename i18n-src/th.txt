@@ -408,6 +408,8 @@ newOverline=ตัวจับเวลาใหม่
 newTitle=นานแค่ไหน?
 defaultLabel=ตัวจับเวลา
 [report]
+userTitle=โปรไฟล์นี้มีปัญหาอะไร?
+messageTitle=บทสนทนานี้มีปัญหาอะไร?
 title=เมนูนี้มีปัญหาอะไร?
 reasons.sexual=ภาพเปลือยหรือเนื้อหาทางเพศ
 reasons.child_safety=ความปลอดภัยของเด็กหรือเนื้อหาผิดกฎหมาย
@@ -571,7 +573,7 @@ delProfile=โปรไฟล์ การตั้งค่า และกา�
 delDishes_other=เมนู {{count}} รายการและรูปภาพ
 delSocial=ความคิดเห็น ลูกโอ๊ก และการติดตาม
 delDiary=ไดอารี่และเมนูที่บันทึก
-deleteCaption=ดำเนินการเสร็จภายใน 7 วัน — เราจะส่งอีเมลแจ้งเมื่อเสร็จ ข้อมูลที่ต้องเก็บตามกฎหมาย (เช่น บันทึกความยินยอม) จะเก็บแยกและไม่แสดง สิทธิ์การเข้าสู่ระบบด้วย Apple / Google จะถูกเพิกถอน
+deleteCaption=บัญชีของคุณจะถูกลบทันที ข้อมูลที่ต้องเก็บตามกฎหมาย (เช่น บันทึกความยินยอม) จะเก็บแยกและไม่แสดง สิทธิ์การเข้าสู่ระบบด้วย Apple / Google จะถูกเพิกถอน
 keepAccount=เก็บบัญชีไว้
 deleteConfirmTitle=ลบถาวรเลยไหม?
 deleteConfirmBody=บัญชีของคุณและทุกอย่างในนั้นจะถูกลบ ย้อนกลับไม่ได้
@@ -975,6 +977,7 @@ seasonal=โต๊ะตามฤดูกาล
 youreInCta=เข้าร่วมแล้ว!
 cookedLabel=คนที่ทำ
 [messages]
+report=รายงาน
 title=ข้อความ
 chats=บทสนทนา
 requests=คำขอ
@@ -1196,3 +1199,6 @@ naver=Naver Map
 kakao=KakaoMap
 google=Google Maps
 apple=Apple Maps
+
+[moderation]
+objectionable=มีคำที่ ongdalsaem ไม่อนุญาต แก้ไขแล้วลองอีกครั้ง

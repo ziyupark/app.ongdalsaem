@@ -28,6 +28,25 @@ export async function reportAnswer(answerId: string, questionId: string, authorI
   if (error) throw error;
 }
 
+/** A direct message (the newest one from the other person, if any) — DB: reports.message_id (20261121000000). */
+export async function reportMessage(otherId: string, messageId: string | null, reason: ReportReason) {
+  const uid = await myId();
+  const { error } = await supabase.from('reports').insert({ reporter_id: uid, message_id: messageId, reported_user_id: otherId, reason });
+  if (error) throw error;
+}
+
+/** A person (their name, @handle, photo or bio): only reported_user_id is set. */
+export async function reportUser(userId: string, reason: ReportReason) {
+  const uid = await myId();
+  const { error } = await supabase.from('reports').insert({ reporter_id: uid, reported_user_id: userId, reason });
+  if (error) throw error;
+}
+
+/** The server's word filter refused the text (trigger ugc_filter, 20261121000000). */
+export function isObjectionable(e: unknown) {
+  return typeof e === 'object' && e !== null && String((e as { message?: unknown }).message ?? '').includes('objectionable_content');
+}
+
 export async function blockUser(userId: string) {
   const uid = await myId();
   const { error } = await supabase.from('blocks').insert({ blocker_id: uid, blocked_id: userId });

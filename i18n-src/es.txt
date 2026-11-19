@@ -413,6 +413,8 @@ newOverline=Nuevo temporizador
 newTitle=¿Cuánto tiempo?
 defaultLabel=Temporizador
 [report]
+userTitle=¿Qué le pasa a este perfil?
+messageTitle=¿Qué le pasa a esta conversación?
 title=¿Qué le pasa a este plato?
 reasons.sexual=Desnudos o contenido sexual
 reasons.child_safety=Seguridad infantil o contenido ilegal
@@ -577,7 +579,7 @@ delDishes_one={{count}} plato y sus fotos
 delDishes_other={{count}} platos y sus fotos
 delSocial=Comentarios, bellotas y seguimientos
 delDiary=Diario y platos guardados
-deleteCaption=Se completa en un máximo de 7 días; te escribiremos cuando termine. Los registros que debemos conservar por ley (p. ej., registros de consentimiento) se guardan por separado y nunca se muestran. Se revoca el acceso de Iniciar sesión con Apple / Google.
+deleteCaption=Tu cuenta se elimina al momento. Los registros que debemos conservar por ley (p. ej., registros de consentimiento) se guardan por separado y nunca se muestran. Se revoca el acceso de Iniciar sesión con Apple / Google.
 keepAccount=Conservar mi cuenta
 deleteConfirmTitle=¿Eliminar para siempre?
 deleteConfirmBody=Se eliminará tu cuenta con todo su contenido. No se puede deshacer.
@@ -989,6 +991,7 @@ seasonal=Mesas de temporada
 youreInCta=¡Ya participas!
 cookedLabel=Cocinaron
 [messages]
+report=Denunciar
 title=Mensajes
 chats=Conversaciones
 requests=Solicitudes
@@ -1218,3 +1221,6 @@ naver=Naver Map
 kakao=KakaoMap
 google=Google Maps
 apple=Mapas de Apple
+
+[moderation]
+objectionable=Contiene palabras que no se permiten en ongdalsaem. Edítalo y vuelve a intentarlo.
