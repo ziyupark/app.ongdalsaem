@@ -19,6 +19,7 @@ import { InlineBanner } from '../InlineBanner';
 import { goTab, TabBar, useTabBarScroll, useTabFocusEffect, type TabKey } from '../TabBar';
 import { ScreenHeader, ScreenWash } from '../ScreenHeader';
 import { Text } from '../Text';
+import { WeatherIcon3D } from '../WeatherIcon3D';
 import { UnderlineTabs } from '../UnderlineTabs';
 import { cached } from '../../lib/cache';
 import { useHere } from '../../lib/useHere';
@@ -30,7 +31,7 @@ import { myUserId, supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
 import { startThread } from '../../services/messages';
 import { isObjectionable, reportUser } from '../../services/moderation';
-import { moods, radius, space, text, useTheme, WEATHER_ICON, withAlpha, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
+import { radius, space, text, useTheme, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
 
 /** Grid 670:20275 — x20 · 2 columns · gap 16 · rows 20 apart. */
 const GAP = 16;
@@ -229,10 +230,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
             <Text variant="Title/M" numberOfLines={1}>{now ? t(`home.condition.${now.mood}`) : t('home.noWeather')}</Text>
             <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{nowDetail}</Text>
           </View>
-          {/* Mood orb — same rule as the Home Weather Card: the mood's top colour at 35 %. */}
-          <View style={[styles.orb, { backgroundColor: withAlpha(now ? moods[now.mood].top : color('bg/muted'), 0.35) }]}>
-            <Icon icon={WEATHER_ICON[now?.mood ?? 'overcast']} size={28} color={now ? 'fg/default' : 'fg/muted'} />
-          </View>
+          {/* Large weather icon — same as the Home Weather Card. */}
+          <WeatherIcon3D mood={now?.mood} />
         </View>
         <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
         <View style={styles.idRow}>
@@ -371,7 +370,6 @@ const styles = StyleSheet.create({
   card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden' },
   nowRow: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   nowText: { flex: 1, gap: space[2] },
-  orb: { width: 56, height: 56, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   divider: { height: 1 },
   tabular: { fontVariant: ['tabular-nums'] },
   idRow: { flexDirection: 'row', alignItems: 'center', gap: space[16] },

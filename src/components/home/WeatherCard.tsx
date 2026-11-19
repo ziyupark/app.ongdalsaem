@@ -7,10 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { elevation, iconRing, moods, radius, space, useTheme, WEATHER_ICON, withAlpha, type WeatherMood } from '../../theme';
+import { elevation, iconRing, radius, space, useTheme, WEATHER_ICON, type WeatherMood } from '../../theme';
 import type { Meal } from '../../lib/meals';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
+import { WeatherIcon3D } from '../WeatherIcon3D';
 import { useTemp } from '../../lib/prefs';
 
 export type SlotView = { meal: Meal; isNow: boolean; tempC?: number; mood?: WeatherMood; photo?: number | { uri: string } | null };
@@ -91,10 +92,8 @@ export function WeatherCard({ tempC, mood, condition, detail, until, slots, pick
             </View>
           </View>
         </View>
-        {/* Mood orb — the current mood's top colour at 35 %. */}
-        <View style={[styles.orb, { backgroundColor: withAlpha(mood ? moods[mood].top : color('bg/muted'), 0.35) }]}>
-          <Icon icon={WEATHER_ICON[mood ?? 'overcast']} size={28} color={mood ? 'fg/default' : 'fg/muted'} />
-        </View>
+        {/* Large weather icon — 3D Weather Mood image (falls back to the mood orb). */}
+        <WeatherIcon3D mood={mood} />
       </View>
       <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
       <View style={styles.head}>
@@ -155,7 +154,6 @@ const styles = StyleSheet.create({
   tempBox: { paddingHorizontal: space[8], paddingTop: 1, paddingBottom: space[4], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
-  orb: { width: 56, height: 56, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   divider: { height: 1, alignSelf: 'stretch' },
   head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flex: { flex: 1 },
