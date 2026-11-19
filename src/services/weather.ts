@@ -11,8 +11,15 @@ type Where = Coordinates | { city: string };
 export async function owm<T>(body: Record<string, unknown>): Promise<T | null> {
   try {
     const { data, error } = await supabase.functions.invoke('weather', { body });
+    if (error && __DEV__) {
+      // Dev builds only: why the weather is empty (status + the function's error code) in the Metro log.
+      const res = (error as { context?: Response }).context;
+      const detail = res ? `${res.status} ${await res.text().catch(() => '')}` : String(error);
+      console.warn('[weather]', body.kind, detail);
+    }
     return error || data == null ? null : (data as T);
-  } catch {
+  } catch (e) {
+    if (__DEV__) console.warn('[weather]', body.kind, e);
     return null;
   }
 }
