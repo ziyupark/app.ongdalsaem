@@ -21,9 +21,9 @@ import { elevation, iconRing, radius, space, useTheme } from '../../src/theme';
 /** A timer started this recently before the screen opened is treated as new and takes the big ring. */
 const JUST_STARTED_MS = 10_000;
 
-// Big ring (Active timer) — size / stroke are also the drag geometry.
-const RING = 196.8;
-const RING_STROKE = 18;
+// Big ring (Active timer 20:796) — 220 donut, inner radius 0.885 → stroke ≈ 12.65. Also the drag geometry.
+const RING = 220;
+const RING_STROKE = 12.65;
 /** Hold the ring this long, then drag around it to change the time. */
 const HOLD_MS = 350;
 /** Touches this close to the ring's centre line (pt) count as on the ring. */
@@ -234,9 +234,10 @@ export default function KitchenTimerScreen() {
           ) : null}
           {/* Frame 11 676:22599 — Add Timer now sits right under the controls (p20 0 20). */}
           <View style={styles.addWrap}>
-            <Pressable accessibilityRole="button" onPress={() => setAdding(true)} style={({ pressed }) => [styles.addBtn, { backgroundColor: color('bg/inverse') }, pressed && { opacity: 0.85 }]}>
-              <Icon icon={Timer} size={24} color="fg/inverse" />
-              <Text variant="Button/M" color="fg/inverse">{t('timer.addTimer')}</Text>
+            {/* Timer Button · Size=Bar 676:22600 — bg/subtle · border/default 1 · Elevation/1, `timer` 24 + Button/M fg/default. */}
+            <Pressable accessibilityRole="button" onPress={() => setAdding(true)} style={({ pressed }) => [styles.addBtn, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }, elevation['Elevation/1 Low'], pressed && { opacity: 0.85 }]}>
+              <Icon icon={Timer} size={24} color="fg/default" />
+              <Text variant="Button/M" color="fg/default">{t('timer.addTimer')}</Text>
             </Pressable>
           </View>
         </View>
@@ -333,18 +334,19 @@ function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label:
 const styles = StyleSheet.create({
   root: { flex: 1 },
   active: { alignItems: 'center', paddingHorizontal: space[20] },
-  // Inner circle is 196.8 − 2×18 ≈ 160 wide; the light numerals overhang their box, so give them side room.
+  // Inner circle is 220 − 2×12.65 ≈ 195 wide; the light numerals overhang their box, so give them side room.
   mid: { alignItems: 'center', gap: space[2], width: 152 },
   time: { paddingHorizontal: space[4] },
   tabular: { fontVariant: ['tabular-nums'] },
-  controls: { width: 196, marginTop: space[24], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  // Active timer 20:795 — ring → 28 → controls (48 · 28 · 48 · 28 · 48).
+  controls: { width: 196, marginTop: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   round: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   // Frame 14 676:22625 — 25 circle overlapping the + button's top-right corner.
   badge: { position: 'absolute', right: -11, top: -7, width: 25, height: 25, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   food: { maxWidth: 300, textAlign: 'center', marginBottom: 13 },
   presets: { gap: space[8], paddingHorizontal: space[20], paddingBottom: 30 },
   addWrap: { alignSelf: 'stretch', paddingTop: space[20], paddingBottom: space[12] },
-  addBtn: { height: 52, borderRadius: radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
+  addBtn: { height: 52, borderRadius: radius.full, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
   running: { paddingHorizontal: space[20], gap: space[10] },
   // Figma 676:22674 — dashed placeholder card with a thin 48px plus
   addCard: { height: 88, borderRadius: radius.xl, borderWidth: 1, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
