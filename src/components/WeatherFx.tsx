@@ -6,12 +6,13 @@ import Animated, {
   withDelay, withRepeat, withSequence, withTiming,
 } from 'react-native-reanimated';
 import Svg, { Defs, Ellipse, Path, RadialGradient, Stop } from 'react-native-svg';
+import { WeatherIcon3D } from './WeatherIcon3D';
 import { FX_COLOR, WEATHER_FX, type BoltFx, type FlakeFx, type GlowFx, type GustFx, type PuffFx, type RainFx, type TwinkleFx, type WeatherMood } from '../theme';
 
 /**
  * Weather motion over a mood wash — rain, snow, lightning, drifting clouds, fog, gusts, stars, sun glow.
  * Fills its parent (put it right after <MoodGradient>). Runs only while the screen is focused,
- * and not at all when the system "Reduce Motion" setting is on.
+ * and not at all when the system "Reduce Motion" setting is on (the 3D Weather Mood image then stays, without motion).
  */
 export const WeatherFx = memo(function WeatherFx({ mood }: { mood: WeatherMood }) {
   const reduce = useReducedMotion();
@@ -29,6 +30,7 @@ export const WeatherFx = memo(function WeatherFx({ mood }: { mood: WeatherMood }
       {live ? (
         <>
           {fx.glow ? <Glow spec={fx.glow} w={size.w} h={size.h} /> : null}
+          <WeatherIcon3D mood={mood} w={size.w} h={size.h} still={false} />
           {fx.puffs ? <Puffs spec={fx.puffs} w={size.w} h={size.h} seed={mood.length} /> : null}
           {fx.twinkle ? <Twinkles spec={fx.twinkle} w={size.w} h={size.h} /> : null}
           {fx.rain ? <Rain spec={fx.rain} w={size.w} h={size.h} /> : null}
@@ -37,6 +39,9 @@ export const WeatherFx = memo(function WeatherFx({ mood }: { mood: WeatherMood }
           {fx.gusts ? <Gusts spec={fx.gusts} w={size.w} h={size.h} /> : null}
           {fx.bolt ? <Bolt spec={fx.bolt} w={size.w} h={size.h} /> : null}
         </>
+      ) : size ? (
+        // Reduce Motion / not focused: no particles, the 3D image stays put.
+        <WeatherIcon3D mood={mood} w={size.w} h={size.h} still />
       ) : null}
     </View>
   );
