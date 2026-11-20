@@ -486,6 +486,8 @@
     "backToRecipe": "Kembali ke resep",
     "dismiss": "Selesai",
     "reset": "Atur ulang",
+    "resetAll": "Atur ulang semua",
+    "resetAllTitle": "Atur ulang semua timer?",
     "pause": "Jeda",
     "resume": "Lanjutkan",
     "running": "Berjalan",

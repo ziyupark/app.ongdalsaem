@@ -491,6 +491,8 @@
     "backToRecipe": "Back to recipe",
     "dismiss": "Done",
     "reset": "Reset",
+    "resetAll": "Reset all",
+    "resetAllTitle": "Reset all timers?",
     "pause": "Pause",
     "resume": "Resume",
     "running": "Running",

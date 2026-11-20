@@ -491,6 +491,8 @@
     "backToRecipe": "Volver a la receta",
     "dismiss": "Listo",
     "reset": "Reiniciar",
+    "resetAll": "Reiniciar todo",
+    "resetAllTitle": "¿Reiniciar todos los temporizadores?",
     "pause": "Pausar",
     "resume": "Reanudar",
     "running": "En marcha",

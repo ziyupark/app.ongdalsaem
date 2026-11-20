@@ -491,6 +491,8 @@
     "backToRecipe": "레시피로 돌아가기",
     "dismiss": "완료",
     "reset": "처음부터",
+    "resetAll": "모두 초기화",
+    "resetAllTitle": "모든 타이머를 초기화할까요?",
     "pause": "일시정지",
     "resume": "계속",
     "running": "진행 중",

@@ -165,6 +165,13 @@ export default function KitchenTimerScreen() {
   // Acting on the big timer keeps it there — otherwise "15s +" / pause would hand the ring to whichever timer now rings first.
   const pin = () => { if (featured) setFeaturedId(featured.id); };
 
+  // Every timer back to its full time, paused (the same as each one's reset button).
+  const resetAllAsk = () =>
+    Alert.alert(t('timer.resetAllTitle'), undefined, [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('timer.resetAll'), style: 'destructive', onPress: () => { timers.forEach((x) => { resetTimer(x.id); }); } },
+    ]);
+
   const removeAsk = (x: KitchenTimer) =>
     Alert.alert(t('timer.removeTitle', { label: x.label }), undefined, [
       { text: t('common.cancel'), style: 'cancel' },
@@ -177,6 +184,14 @@ export default function KitchenTimerScreen() {
       <ScreenWash wash={wash} />
       <ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <ScreenHeader right="none" />
+        {/* Reset all 1094:23665 — under the weather title, left aligned: glass pill (padding 2 9), Title/S fg/secondary. */}
+        {timers.length > 0 ? (
+          <View style={styles.resetAllRow}>
+            <Pressable accessibilityRole="button" onPress={resetAllAsk} hitSlop={space[8]} style={({ pressed }) => [styles.resetAll, { backgroundColor: color('glass/fill') }, pressed && { opacity: 0.7 }]}>
+              <Text variant="Title/S" color="fg/secondary">{t('timer.resetAll')}</Text>
+            </Pressable>
+          </View>
+        ) : null}
         <View>
         {/* Block · Active timer 88:3084 — p30 20 0: ring → 28 → food name pill (when there is one) → 28 → controls → Frame 11 (p20 0 12, Add Timer). */}
         <View style={[styles.active, { paddingTop: 30 }]}>
@@ -203,7 +218,7 @@ export default function KitchenTimerScreen() {
           </View>
           </GestureDetector>
           {food ? (
-            <View style={[styles.foodPill, { backgroundColor: color('bg/subtle') }]}>
+            <View style={[styles.foodPill, { backgroundColor: color('glass/fill') }]}>
               <Text variant="Display/Quote" numberOfLines={1}>{food}</Text>
             </View>
           ) : null}
@@ -227,8 +242,8 @@ export default function KitchenTimerScreen() {
               {/* 678:11164 — round + with a "15s" badge (1094:23662): each tap adds 15 seconds (a finished timer starts again). */}
               <View>
                 <RoundBtn icon={Plus} label={t('timer.plus15Label')} onPress={() => { pin(); addTime(featured.id, 15); }} />
-                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/success-subtle') }]}>
-                  <Text variant="Numeric/S">15s</Text>
+                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/emphasis') }]}>
+                  <Text variant="Tagline">15s</Text>
                 </View>
               </View>
             </View>
@@ -240,8 +255,8 @@ export default function KitchenTimerScreen() {
               <RoundBtn icon={Play} label={t('timer.resume')} primary disabled />
               <View>
                 <RoundBtn icon={Plus} label={t('timer.plus15Label')} disabled />
-                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/success-subtle') }]}>
-                  <Text variant="Numeric/S">15s</Text>
+                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/emphasis') }]}>
+                  <Text variant="Tagline">15s</Text>
                 </View>
               </View>
             </View>
@@ -357,14 +372,16 @@ const styles = StyleSheet.create({
   midDone: { gap: 25, paddingBottom: 22, transform: [{ translateY: 25.5 }] },
   time: { paddingHorizontal: space[4] },
   tabular: { fontVariant: ['tabular-nums'] },
-  // Food name 1089:23399 — bg/subtle pill, padding 6 16, Display/Quote; 28 under the ring.
+  // Food name 1089:23399 — glass pill (white 10 % in Figma → glass/fill, white 12 %), padding 6 16, Display/Quote; 28 under the ring.
   foodPill: { marginTop: 28, maxWidth: 300, paddingHorizontal: space[16], paddingVertical: space[6], borderRadius: radius.full },
   // Active timer 20:795 — ring → 28 → (food name → 28 →) controls (48 · 28 · 48 · 28 · 48).
   controls: { width: 196, marginTop: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   round: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
-  // Frame 28 1094:23662 — pill (padding 2 6, Numeric/S) over the + button's top-right corner: 1 above, 11 past its right edge.
-  // Figma fill is an unlinked light green (#C5E5AF at 41 %) → nearest token bg/success-subtle.
-  badge: { position: 'absolute', right: -11, top: -1, paddingHorizontal: space[6], paddingVertical: space[2], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  // Frame 28 1094:23662 — bg/emphasis pill (padding 2.2 6, Tagline) over the + button's top-right corner: 1 above, 11 past its right edge.
+  badge: { position: 'absolute', right: -11, top: -1, paddingHorizontal: space[6], paddingVertical: 2.2, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  // Reset all (Frame 30 1094:23668): left aligned with the header text; white 10 % in Figma → glass/fill (white 12 %).
+  resetAllRow: { paddingHorizontal: space[20], alignItems: 'flex-start' },
+  resetAll: { paddingHorizontal: 9, paddingVertical: space[2], borderRadius: radius.full },
   presets: { gap: space[8], paddingHorizontal: space[20], paddingBottom: 30 },
   addWrap: { alignSelf: 'stretch', paddingTop: space[20], paddingBottom: space[12] },
   addBtn: { height: 52, borderRadius: radius.full, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
