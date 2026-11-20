@@ -30,9 +30,9 @@ type Props = {
 };
 
 /**
- * Weather Card 136:4716 — glass surface (glass/surface + blur, 1px bg/subtle edge, Elevation/3), radius 2xl, padding 18 20, gap 14, children centred.
- * Now row (temp · condition / H·L / until · 3D icon 64) → divider → Picks head (Refresh 32) → Meal timeline
- * (centred, 16 px wider than the card's content box on each side — slots 5 px from the card edge; 4 equal slots of 82 at 390 wide, padding 8 4 10 4, gap 4).
+ * Weather Card 136:4716 — glass surface (glass/surface + blur, 1px bg/subtle edge, Elevation/3), radius 2xl, children centred.
+ * Padding 18 20 17, gap 12. Now row (temp · condition / H·L / until · 3D icon 64) → divider → [Picks head (Overline · Refresh 32)
+ * → 8 → Meal timeline (13 wider than the content box a side — slots 9 from the card edge; 4 equal slots of 82 at 390 wide, gap 2)].
  */
 export function WeatherCard({ tempC, mood, condition, detail, until, slots, picksHead, onRefresh, onSlotPress }: Props) {
   const { color } = useTheme();
@@ -49,8 +49,8 @@ export function WeatherCard({ tempC, mood, condition, detail, until, slots, pick
   const [rowW, setRowW] = useState(0);
   const busy = useRef(false);
   const x = useSharedValue(0);
-  const slotW = rowW ? (rowW - space[4] * (slots.length - 1)) / slots.length : 0;
-  const offset = (i: number) => i * (slotW + space[4]);
+  const slotW = rowW ? (rowW - space[2] * (slots.length - 1)) / slots.length : 0;
+  const offset = (i: number) => i * (slotW + space[2]);
   useEffect(() => { if (slotW && !busy.current) x.value = offset(selected); }, [slotW]); // eslint-disable-line react-hooks/exhaustive-deps
   useFocusEffect(useCallback(() => {
     busy.current = false;
@@ -97,25 +97,27 @@ export function WeatherCard({ tempC, mood, condition, detail, until, slots, pick
         <WeatherIcon3D mood={mood} size={64} />
       </View>
       <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
-      <View style={styles.head}>
-        <Text variant="Caption Strong" color="fg/muted" style={styles.flex}>{picksHead}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={t('home.newPicks')} hitSlop={space[6]} onPress={refresh} style={[styles.refresh, { borderColor: color('border/default') }]}>
-          <Animated.View style={spinStyle}>
-            <Icon icon={RotateCcw} size={16} />
-          </Animated.View>
-        </Pressable>
-      </View>
-      <View style={styles.timeline} onLayout={(e) => setRowW(e.nativeEvent.layout.width)}>
-        {slotW ? <Animated.View pointerEvents="none" style={[styles.highlight, { backgroundColor: color('bg/muted') }, highlight]} /> : null}
-        {slots.map((s, i) => (
-          <MealSlot key={`${s.meal}-${i}`} slot={s} active={i === selected} onPress={() => choose(i)} />
-        ))}
+      <View style={styles.picks}>
+        <View style={styles.head}>
+          <Text variant="Overline" color="fg/muted" style={styles.flex}>{picksHead}</Text>
+          <Pressable accessibilityRole="button" accessibilityLabel={t('home.newPicks')} hitSlop={space[6]} onPress={refresh} style={[styles.refresh, { borderColor: color('border/default') }]}>
+            <Animated.View style={spinStyle}>
+              <Icon icon={RotateCcw} size={16} />
+            </Animated.View>
+          </Pressable>
+        </View>
+        <View style={styles.timeline} onLayout={(e) => setRowW(e.nativeEvent.layout.width)}>
+          {slotW ? <Animated.View pointerEvents="none" style={[styles.highlight, { backgroundColor: color('bg/muted') }, highlight]} /> : null}
+          {slots.map((s, i) => (
+            <MealSlot key={`${s.meal}-${i}`} slot={s} active={i === selected} onPress={() => choose(i)} />
+          ))}
+        </View>
       </View>
     </View>
   );
 }
 
-/** Meal Slot 131:4280 — label (Overline, centred) → thumb 60 → weather icon 14 + temp. Active = fg/default label on the sliding bg/muted highlight. */
+/** Meal Slot 131:4280 — label (Caption Strong, centred) → thumb 74 (empty: plus 36) → weather icon 14 + temp. Active = fg/default label on the sliding bg/muted highlight. */
 function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; onPress: () => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
@@ -129,10 +131,10 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
       onPress={onPress}
       style={styles.slot}
     >
-      <Text variant="Overline" color={active ? 'fg/default' : 'fg/muted'} numberOfLines={1} style={styles.slotLabel}>{label}</Text>
+      <Text variant="Caption Strong" color={active ? 'fg/default' : 'fg/muted'} numberOfLines={1} style={styles.slotLabel}>{label}</Text>
       {empty ? (
         <View style={[styles.thumb, styles.emptyThumb, { backgroundColor: color('bg/muted'), borderColor: color('border/strong') }]}>
-          <Icon icon={Plus} size={18} color="fg/muted" />
+          <Icon icon={Plus} size={36} color="fg/muted" />
         </View>
       ) : (
         <View style={[styles.thumb, { backgroundColor: color('bg/subtle') }]}>
@@ -148,7 +150,9 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden', alignSelf: 'stretch' },
+  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: 18, paddingBottom: 17, gap: space[12], overflow: 'hidden', alignSelf: 'stretch' },
+  // Picks head → 8 → Meal timeline (Figma 1088:23142).
+  picks: { gap: space[8] },
   now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   // Now 876:13581 — temp (padding 0 · 8 · 2 · 8) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2).
   nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
@@ -159,11 +163,12 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flex: { flex: 1 },
   refresh: { width: 32, height: 32, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
-  timeline: { flexDirection: 'row', gap: space[4], marginHorizontal: -space[16] },
+  // The timeline is the card's full width minus 8 a side, so it overhangs the content box by 20 + 1 (border) − 8 = 13.
+  timeline: { flexDirection: 'row', gap: space[2], marginHorizontal: -(space[20] + 1 - space[8]) },
   highlight: { position: 'absolute', left: 0, top: 0, bottom: 0, borderRadius: radius.xl },
   slot: { flex: 1, alignItems: 'center', gap: space[6], paddingTop: space[8], paddingBottom: space[10], paddingHorizontal: space[4], borderRadius: radius.xl },
   slotLabel: { alignSelf: 'stretch', textAlign: 'center' },
-  thumb: { width: 60, height: 60, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  thumb: { width: 74, height: 74, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   emptyThumb: { borderWidth: 1, borderStyle: 'dashed' },
   slotTemp: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   tabular: { fontVariant: ['tabular-nums'] },
