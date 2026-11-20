@@ -16,13 +16,14 @@ import { EmptyState } from '../src/components/community/Parts';
 import { Icon } from '../src/components/Icon';
 import { IconButton } from '../src/components/IconButton';
 import { Text } from '../src/components/Text';
+import { WeatherIcon3D } from '../src/components/WeatherIcon3D';
 import { Toggle } from '../src/components/Toggle';
 import { chooseMapApp, MAP_APP_LABEL, searchInMapApp, setSavedMapApp, type MapAppId, type MapSearch } from '../src/lib/mapApps';
 import { loadMaps } from '../src/lib/optionalNative';
 import { useTemp } from '../src/lib/prefs';
 import { placeLabel, useHere } from '../src/lib/useHere';
 import { foodFamily, formatDistance, PlacesError, searchNearbyPlaces, type NearbyPlace } from '../src/services/places';
-import { elevation, moods, radius, space, useTheme, WEATHER_ICON, withAlpha } from '../src/theme';
+import { elevation, radius, space, useTheme } from '../src/theme';
 
 // Loaded lazily: a build without react-native-maps keeps the list (no map button).
 const Maps = loadMaps();
@@ -291,10 +292,8 @@ export default function EatNearby() {
                   ) : null}
                 </View>
               </View>
-              {/* Mood orb — the current mood's top colour at 35 %. */}
-              <View style={[styles.wOrb, { backgroundColor: f ? withAlpha(moods[f.mood].top, 0.35) : color('bg/muted') }]}>
-                <Icon icon={WEATHER_ICON[f?.mood ?? 'overcast']} size={28} color={f ? 'fg/default' : 'fg/muted'} />
-              </View>
+              {/* Large weather icon — 3D Weather Mood image (Weather Card 136:4508). */}
+              <WeatherIcon3D mood={f?.mood} />
             </View>
           </View>
         </View>
@@ -370,7 +369,6 @@ const styles = StyleSheet.create({
   tempBox: { paddingHorizontal: space[8], paddingTop: 1, paddingBottom: space[4], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
-  wOrb: { width: space[56], height: space[56], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   places: { paddingHorizontal: space[20], paddingTop: space[24] + space[6], gap: space[12] },
   forRow: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   forBar: { width: 5, height: 23 },
