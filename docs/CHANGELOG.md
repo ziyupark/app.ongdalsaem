@@ -2,6 +2,13 @@
 
 디자인 버전별 변경 요약이다. 본문 문서에는 최종 상태만 적고, 무엇이 바뀌었는지는 여기에만 남긴다. 새 변경은 맨 위에 추가한다.
 
+## v1.8.4 — 2026-11-20 (3D 날씨 아이콘 · 타이머 디자인 반영)
+
+- **3D 날씨 아이콘**: Weather Card의 56 자리(홈 2.1 · 프로필 헤더 · Nearby)를 무드 오브(무드 top 35 % 원 + Lucide 28) → **3D 이미지만**(원형 배경 없음)으로. 18개 무드 이미지 `assets/weather3d/{mood}@2x/@3x.png`(Figma Weather 3D 1037:228에서 내보냄) · 코드 `WEATHER_3D`. 날씨 없음은 bg/muted 원 + `cloud` 그대로. 24 이하 작은 아이콘은 Lucide 유지. 앱을 열 때 지금 날씨 이미지만 미리 불러옴
+- Figma: Weather Card 136:4508 · Profile Header 3개 변형(614:13901 등) · Weather Now 363:8179의 날씨 아이콘을 3D 비 이미지로(이전 아이콘은 숨김). Weather Now는 28 크기 그대로
+- **5.1 Kitchen timer**: 큰 링 196.8 · 선 18 → **220 · 12.65**, 링 → 컨트롤 간격 24 → **28**, **Add Timer** 버튼 bg/inverse(어두운) → bg/subtle + 1px border/default + Elevation/1, 아이콘 · 글자 fg/default
+- Figma: 타이머 링 프레임(`ring` · `Active timer` · `controls`)의 내용 자르기를 꺼서 링 가장자리와 버튼 그림자가 잘리지 않게(Screens · Timer Card)
+
 ## v1.8.3 — 2026-11-19 (TabBar 슬라이드 숨김 · 탭 상태 유지 · 활성 알약 이동)
 
 - **TabBar 축소(Minimized · 48 원) 삭제** → 스크롤하면 바 전체(캡슐 + FAB)가 아래로 숨는 방식(유튜브식). 손가락을 따라 움직이고, 멈추면 마지막 스크롤 방향으로 spring 스냅. 맨 위 · 맨 아래 · 탭 누름 · 화면 진입 때는 항상 보임. Reduce Motion = 200ms 스냅만

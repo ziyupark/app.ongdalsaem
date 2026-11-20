@@ -7,7 +7,7 @@
 ### 프로필 공통 헤더 (6.1 / 6.2 / 6.3 / 6.4) — 코드 기준(Figma 6.1 657:16468 · 컴포넌트 `Profile Header` [126:4345](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=126-4345)는 이전 구성)
 - **ScreenWash + ScreenHeader**(네 탭 공통): 오른쪽 = 내 프로필 `settings`(→ 9.1), 다른 요리사 = 빈 자리 + 로고 대신 **뒤로** 버튼(4.5).
 - **프로필 카드**(좌우 20, 유리: 블러 + glass/surface 88 %, 테두리 bg/subtle):
-  1. **날씨 줄** — 홈 Weather card와 같은 규칙: Numeric/XL 기온 · Title/M 상태 + Body/S fg/muted "H · L · until …" · 무드 오브(무드 top 색 35 % + 날씨 아이콘 28). **항상 내 위치의 날씨**(다른 요리사 프로필에서도). 날씨가 없으면 "--°" / "No weather yet".
+  1. **날씨 줄** — 홈 Weather card와 같은 규칙: Numeric/XL 기온 · Title/M 상태 + Body/S fg/muted "H · L · until …" · **3D 날씨 아이콘 56**(원형 배경 없음, 날씨 없으면 bg/muted 원 + `cloud` — [§2.4](../01-foundations.md)). **항상 내 위치의 날씨**(다른 요리사 프로필에서도). 날씨가 없으면 "--°" / "No weather yet".
   2. 구분선 border/default
   3. **아이디 줄**: 아바타(흰 테두리, 사진 없으면 bg/accent-subtle + 첫 글자 Display/M fg/accent; 내 프로필은 탭 → 사진 바꾸기) + Display/M 이름 · Body/S fg/muted "@username" · **도토리 칩**(bg/muted, 채운 도토리 16 + Caption Strong **"Total acorns {n}"**) — 받은 도토리 합계.
   4. **상태 메시지**(Body/S fg/secondary). 내 프로필은 눌러서 고침("Add a status message" fg/muted 자리표시) → BottomSheet "Status message"(입력칸 + 글자 수).

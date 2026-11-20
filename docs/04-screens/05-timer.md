@@ -7,9 +7,9 @@
 ### 5.1 Kitchen timer — [20:748](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-748) · 코드 기준
 - 블록:
   1. **ScreenWash + ScreenHeader**(네 탭 공통 — 로고 · 오른쪽 빈 자리(벨 없음) · 날짜·위치 · 날씨 제목)
-  2. **Active timer**(가운데 정렬, 위 30): 음식 이름 Display/M **“{Food Name}”**(있을 때, 1줄) → **큰 링** 196.8, 선 두께 **18**(진행 = fg/accent, 끝나면 fg/done 가득) — 가운데 시간 Numeric/Timer(끝나면 fg/done, 위에 Caption Strong "{label} — done"). 타이머가 없으면 "00:00" + Caption "Pick one below or add a timer".
-  3. **컨트롤**(타이머가 있을 때): RoundBtn `rotate-ccw` Reset · 가운데 Primary `pause`/`play`(끝났으면 `check` — 레시피 단계 타이머면 "Back to recipe" → 그 요리 7.1, 아니면 "Done" = 타이머 삭제) · `plus` + 작은 배지 "15s"(bg/kick) = **15초 추가**(끝난 타이머는 다시 시작).
-  4. **Add Timer** 버튼(bg/inverse, `timer` 24 + Button/M fg/inverse) → 5.1b.
+  2. **Active timer**(가운데 정렬, 위 30): 음식 이름 Display/M **“{Food Name}”**(있을 때, 1줄) → **큰 링** 220, 선 두께 **12.65**(Figma 20:796 도넛 안쪽 반지름 0.885)(진행 = fg/accent, 끝나면 fg/done 가득) — 가운데 시간 Numeric/Timer(끝나면 fg/done, 위에 Caption Strong "{label} — done"). 타이머가 없으면 "00:00" + Caption "Pick one below or add a timer".
+  3. **컨트롤**(타이머가 있을 때, 링 아래 28 · 48 버튼 3개 간격 28): RoundBtn `rotate-ccw` Reset · 가운데 Primary `pause`/`play`(끝났으면 `check` — 레시피 단계 타이머면 "Back to recipe" → 그 요리 7.1, 아니면 "Done" = 타이머 삭제) · `plus` + 작은 배지 "15s"(bg/kick) = **15초 추가**(끝난 타이머는 다시 시작).
+  4. **Add Timer** 버튼(Timer Button · Size=Bar 676:22600 — 350×52, bg/subtle + 1px border/default, radius full, Elevation/1 Low, `timer` 24 + Button/M fg/default) → 5.1b.
   5. **프리셋 칩**(가로 스크롤, `clock` 아이콘) **8개**: Soft egg 7 min · Hard egg 10 min · Ramen 4 min 30 s · Cup noodles 3 min · Pasta 9 min · Dumplings 8 min · Tea 3 min · Coffee 4 min. 탭 → 그 이름(음식 이름 = 프리셋 이름)으로 바로 시작, 큰 링으로.
   6. **Running**(Title/L): 큰 링에 없는 타이머 카드 목록. **끝난 타이머가 맨 위**. 카드 = 작은 링 52(선 9) · 이름 Body/S Strong fg/muted("음식 · 라벨") + 시간 Numeric/L · 오른쪽 원 버튼(bg/inverse: 일시정지 / 계속 / 끝났으면 `plus` = +1분). **끝난 카드**: 테두리 fg/done, 이름 옆 **Done** 배지(bg/success-subtle, fg/done), 시간 자리에 "Done". 카드 탭 → 큰 링으로, 길게 누름 → 삭제 확인("Remove “{label}”?"). 다른 타이머가 없으면 빈 자리 카드(점선 `+` 모양, 누를 수 없음). 타이머가 있으면 아래 Caption "Press and hold a timer to remove it."
   7. TabBar(Timer, CreateFAB) — 아래 여백 96 + 24.

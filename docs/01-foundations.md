@@ -131,6 +131,7 @@ mood:       mood/<key>/top · mood/<key>/base  (18종, §2.4 표)
 **우선순위**(동시 조건): thunder > heavy-rain/heavy-snow > sleet > rain/snow/shower > drizzle/flurries > heat/cold > dust > fog > windy > overcast > cloudy > clear/clear-night.
 
 각 무드에 매핑되는 Lucide 아이콘: clear `sun`, clear-night `moon`, cloudy `cloud-sun`, overcast `cloud`, drizzle `cloud-drizzle`, rain `cloud-rain`, heavy-rain `cloud-rain-wind`, shower `cloud-sun-rain`, thunder `cloud-lightning`, sleet `cloud-hail`, flurries `snowflake`, snow `cloud-snow`, heavy-snow `cloud-snow`, fog `cloud-fog`, dust `haze`, heat `thermometer-sun`, cold `thermometer-snowflake`, windy `wind`.
+**3D 날씨 아이콘**(큰 날씨 아이콘 전용): 18개 무드 모두 투명 배경 3D 이미지 `assets/weather3d/{mood}@2x.png` · `@3x.png`(Figma **Weather 3D** [1037:228](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1037-228)에서 내보냄, 코드 `WEATHER_3D` · `src/theme/weatherIcons.ts`). 쓰는 곳 = Weather Card의 56 자리(홈 · 프로필 헤더 · Nearby) — 원형 배경 없이 이미지만, 다크 모드도 같은 이미지(색 반전 없음), 접근성 라벨 = 날씨 이름. 날씨를 아직 모르면 bg/muted 35 % 원 + Lucide `cloud` 28(fg/muted). 앱을 열 때 지금 날씨 이미지 하나만 미리 불러온다. **24 이하 작은 아이콘**(끼니 칩 · 게시물 날씨 태그 · 리스트 메타)은 위 Lucide 그대로.
 Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=72-787)
 
 ### 2.5 Spacing / Radius

@@ -13,7 +13,7 @@
    - 12 → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
    - 글자색은 wash 위치별 잉크(로고 12 % · 오버라인 26 % · 제목 33 % 지점의 밝기)에 맞춘다.
 4. **Weather card** (bg/subtle, radius 2xl 32, padding 20):
-   - 큰 기온 Numeric/XL "12°"(padding 위 1 · 좌우 8 · 아래 4) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → 무드 오브(우측).
+   - 큰 기온 Numeric/XL "12°"(padding 위 1 · 좌우 8 · 아래 4) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → **3D 날씨 아이콘 56**(우측, 원형 배경 없음 — [§2.4](../01-foundations.md)). 날씨가 없으면 bg/muted 원 + `cloud`.
    - **Meal timeline**: 4개 슬롯 가로 배치 — 이전 끼니 · **Now** · 다음 · 그다음. 각 슬롯 = 끼니 라벨 + 썸네일 원 + 예보 기온. Now 슬롯은 **선셋 그라데이션 링**.
      - **네 칸은 항상 같은 폭**: 타임라인 폭(308)을 4등분, 칸 사이 4 → 칸당 74px(`flex: 1 1 0`). 라벨 길이(예: `BREAKFAST`)와 관계없이 폭이 같고, 라벨은 칸 가운데 정렬. 가장 긴 라벨 BREAKFAST(약 71px)도 74px 안에 들어간다.
    - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` → 8.1.
@@ -83,6 +83,7 @@
   - Mapo Jjigae House — 350 m · 5 min · till 22:00 · ₩9,000 · 212 · Aged kimchi, pork belly
   - Seogyo Kitchen — 700 m · 9 min · till 23:00 · Kimchi jjigae set ₩10,000 · 96 · Tuna, extra tofu
   - Hapjeong Sikdang — 950 m · 12 min · till 21:30 · ₩8,500 · 74 · Comes with rice refill
+- 화면 위 **날씨 카드**는 2.1 Weather card의 Now 줄과 같은 규칙(기온 · 상태 · H/L · until · 오른쪽 3D 날씨 아이콘 56).
 - 정렬: 거리 오름차순. 필터 기본값 Open now.
 - 이동: 뒤로 → 2.1 · 카드 탭 → 기기의 지도 앱으로 길찾기(카카오맵 · Apple 지도 · Google 지도 중 설치된 것, 목적지 = 식당 좌표). 앱 안 지도 화면은 없다.
 
