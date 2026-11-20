@@ -55,7 +55,8 @@ export const text = {
   'Numeric/L': t('Outfit-Medium', 28, 31, -0.7),
   'Numeric/M': t('Outfit-Medium', 17, 21, -0.25),
   'Numeric/S': t('Outfit-Medium', 12, 15, 0.3),
-  'Numeric/Timer': t('Outfit-Light', 52, 52, -2.2),
+  // Figma Numeric/Timer (5.1 mid 20:799): Fraunces SemiBold 52 / 58, +2.
+  'Numeric/Timer': t('Fraunces-SemiBold', 52, 58, 2),
   Statement: t('Outfit-Medium', 24, 29, -0.45),
   'Button/L': t('Outfit-Medium', 17, 22, -0.15),
   'Button/M': t('Outfit-Medium', 15, 20, -0.05),

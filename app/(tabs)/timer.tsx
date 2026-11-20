@@ -184,6 +184,7 @@ export default function KitchenTimerScreen() {
           <View collapsable={false}>
           <TimerRing
             mirror
+            knob
             size={RING}
             stroke={RING_STROKE}
             endAt={dragging ? null : featured?.endAt ?? null}
@@ -347,7 +348,7 @@ function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label:
 const styles = StyleSheet.create({
   root: { flex: 1 },
   active: { alignItems: 'center', paddingHorizontal: space[20] },
-  // Inner circle is 220 − 2×19 ≈ 182 wide; the numerals overhang their box, so give them side room.
+  // Inner circle is 220 − 2×19 ≈ 182 wide; Fraunces 52 with +2 tracking is ~142 for 00:00, so 152 leaves side room.
   mid: { alignItems: 'center', width: 152 },
   // 5.2 mid 676:22872 — time → 25 → "DONE" (+22 below), its box top 76 in the 220 ring: centred box (119 high, top 50.5)
   // moved down 25.5, so the time sits 8 higher than when running.
