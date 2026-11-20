@@ -110,7 +110,7 @@ export function DayPlanSheet({ date, forecast, onClose }: { date: string | null;
   const isToday = date === dateKey(new Date());
 
   const tiles = (list: DishSummary[]) => (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.rail} contentContainerStyle={styles.tiles}>
       {list.map((d) => <DishTile key={d.id} dish={d} width={TILE_W} compact onPress={() => choose(d)} />)}
     </ScrollView>
   );
@@ -138,44 +138,46 @@ export function DayPlanSheet({ date, forecast, onClose }: { date: string | null;
           {PLAN_MEALS.map((m) => <Chip key={m} label={t(`mealPlan.meals.${m}`)} selected={meal === m} onPress={() => setMeal(m)} />)}
         </View>
 
-        <SearchField
-          value={term}
-          onChangeText={setTerm}
-          placeholder={t('mealPlan.searchPlaceholder')}
-          focused={focused}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-        />
+        <View style={styles.find}>
+          <SearchField
+            value={term}
+            onChangeText={setTerm}
+            placeholder={t('mealPlan.searchPlaceholder')}
+            focused={focused}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+          />
 
-        {query ? (
-          <View style={styles.group}>
-            <Text variant="Body/M Strong">{t('mealPlan.searchResults')}</Text>
-            {results == null ? (
-              <ActivityIndicator color={color('fg/muted')} />
-            ) : results.length ? (
-              tiles(results)
-            ) : (
-              <Button label={t('mealPlan.addAsText', { term: query })} variant="Outline" size="M" onPress={() => setPlan(date, meal, { name: query })} />
-            )}
-          </View>
-        ) : (
-          <>
+          {query ? (
             <View style={styles.group}>
-              <View style={styles.head}>
-                <Text variant="Body/M Strong" style={styles.flex}>
-                  {forecast ? t(isToday ? 'mealPlan.fitsNow' : 'mealPlan.fitsThatDay') : t('mealPlan.suggested')}
-                </Text>
-                {forecast ? <Icon icon={WEATHER_ICON[forecast.mood]} size={18} color="fg/secondary" /> : null}
+              <Text variant="Body/M Strong">{t('mealPlan.searchResults')}</Text>
+              {results == null ? (
+                <ActivityIndicator color={color('fg/muted')} />
+              ) : results.length ? (
+                tiles(results)
+              ) : (
+                <Button label={t('mealPlan.addAsText', { term: query })} variant="Outline" size="M" onPress={() => setPlan(date, meal, { name: query })} />
+              )}
+            </View>
+          ) : (
+            <View style={styles.sections}>
+              <View style={styles.group}>
+                <View style={styles.head}>
+                  <Text variant="Body/M Strong" style={styles.flex}>
+                    {forecast ? t(isToday ? 'mealPlan.fitsNow' : 'mealPlan.fitsThatDay') : t('mealPlan.suggested')}
+                  </Text>
+                  {forecast ? <Icon icon={WEATHER_ICON[forecast.mood]} size={18} color="fg/secondary" /> : null}
+                </View>
+                {picks == null ? <ActivityIndicator color={color('fg/muted')} /> : picks.length ? tiles(picks) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noPicks')}</Text>}
               </View>
-              {picks == null ? <ActivityIndicator color={color('fg/muted')} /> : picks.length ? tiles(picks) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noPicks')}</Text>}
-            </View>
 
-            <View style={styles.group}>
-              <Text variant="Body/M Strong">{t('mealPlan.fromSaved')}</Text>
-              {saved == null ? <ActivityIndicator color={color('fg/muted')} /> : saved.length ? tiles(saved) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noSaved')}</Text>}
+              <View style={styles.group}>
+                <Text variant="Body/M Strong">{t('mealPlan.fromSaved')}</Text>
+                {saved == null ? <ActivityIndicator color={color('fg/muted')} /> : saved.length ? tiles(saved) : <Text variant="Body/S" color="fg/muted">{t('mealPlan.noSaved')}</Text>}
+              </View>
             </View>
-          </>
-        )}
+          )}
+        </View>
       </ScrollView>
     </BottomSheet>
   );
@@ -224,6 +226,11 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
   // Tiles 751:11371 — 6 between tiles.
-  tiles: { gap: space[6] },
+  tiles: { gap: space[6], paddingRight: space[20] },
+  // Sections 751:11366 run 370 wide — the rails reach the sheet's right edge.
+  rail: { marginRight: -space[20] },
+  // Frame 31 (1094:24716): Search Field → sections 16.
+  find: { gap: space[16] },
+  sections: { gap: space[20] },
   flex: { flex: 1 },
 });
