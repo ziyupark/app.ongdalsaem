@@ -31,8 +31,8 @@ type Props = {
 
 /**
  * Weather Card 136:4716 — glass surface (glass/surface + blur, 1px bg/subtle edge, Elevation/3), radius 2xl, padding 18 20, gap 14, children centred.
- * Now row (temp · condition / H·L / until · mood orb) → divider → Picks head (Refresh 32) → Meal timeline
- * (centred, padding 0 8 — 8 px wider than the card's content box on each side; 4 equal slots of 74 at 390 wide, padding 8 4 10 4, gap 4).
+ * Now row (temp · condition / H·L / until · 3D icon 64) → divider → Picks head (Refresh 32) → Meal timeline
+ * (centred, 16 px wider than the card's content box on each side — slots 5 px from the card edge; 4 equal slots of 82 at 390 wide, padding 8 4 10 4, gap 4).
  */
 export function WeatherCard({ tempC, mood, condition, detail, until, slots, picksHead, onRefresh, onSlotPress }: Props) {
   const { color } = useTheme();
@@ -49,9 +49,8 @@ export function WeatherCard({ tempC, mood, condition, detail, until, slots, pick
   const [rowW, setRowW] = useState(0);
   const busy = useRef(false);
   const x = useSharedValue(0);
-  // rowW includes the timeline's 8 px side padding; the absolute highlight is placed from the outer edge, so offset by it.
-  const slotW = rowW ? (rowW - space[8] * 2 - space[4] * (slots.length - 1)) / slots.length : 0;
-  const offset = (i: number) => space[8] + i * (slotW + space[4]);
+  const slotW = rowW ? (rowW - space[4] * (slots.length - 1)) / slots.length : 0;
+  const offset = (i: number) => i * (slotW + space[4]);
   useEffect(() => { if (slotW && !busy.current) x.value = offset(selected); }, [slotW]); // eslint-disable-line react-hooks/exhaustive-deps
   useFocusEffect(useCallback(() => {
     busy.current = false;
@@ -95,7 +94,7 @@ export function WeatherCard({ tempC, mood, condition, detail, until, slots, pick
           </View>
         </View>
         {/* Large weather icon — 3D Weather Mood image (falls back to the mood orb). */}
-        <WeatherIcon3D mood={mood} />
+        <WeatherIcon3D mood={mood} size={64} />
       </View>
       <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
       <View style={styles.head}>
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flex: { flex: 1 },
   refresh: { width: 32, height: 32, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
-  timeline: { flexDirection: 'row', gap: space[4], paddingHorizontal: space[8], marginHorizontal: -space[8] },
+  timeline: { flexDirection: 'row', gap: space[4], marginHorizontal: -space[16] },
   highlight: { position: 'absolute', left: 0, top: 0, bottom: 0, borderRadius: radius.xl },
   slot: { flex: 1, alignItems: 'center', gap: space[6], paddingTop: space[8], paddingBottom: space[10], paddingHorizontal: space[4], borderRadius: radius.xl },
   slotLabel: { alignSelf: 'stretch', textAlign: 'center' },

@@ -6,19 +6,19 @@ import { moods, radius, useTheme, WEATHER_3D, WEATHER_ICON, withAlpha, type Weat
 import { Icon } from './Icon';
 
 /**
- * Large weather icon (Weather Card 136:4508 — Home · Profile header · Nearby): the 3D Weather Mood image in the 56 slot,
+ * Large weather icon (Weather Card 136:4508 — Home · Profile header · Nearby): the 3D Weather Mood image in a 56 slot (Home: 64),
  * no orb. No weather yet → the old muted orb + Lucide 28. Same image in light and dark (no tint).
  */
-export function WeatherIcon3D({ mood }: { mood?: WeatherMood }) {
+export function WeatherIcon3D({ mood, size = 56 }: { mood?: WeatherMood; size?: number }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const source = mood ? WEATHER_3D[mood] : undefined;
   const label = mood ? t(`weather.${mood}`) : undefined;
   if (source) {
-    return <Image source={source} style={styles.slot} contentFit="contain" accessible accessibilityRole="image" accessibilityLabel={label} />;
+    return <Image source={source} style={{ width: size, height: size }} contentFit="contain" accessible accessibilityRole="image" accessibilityLabel={label} />;
   }
   return (
-    <View accessible={!!mood} accessibilityRole="image" accessibilityLabel={label} style={[styles.slot, styles.orb, { backgroundColor: withAlpha(mood ? moods[mood].top : color('bg/muted'), 0.35) }]}>
+    <View accessible={!!mood} accessibilityRole="image" accessibilityLabel={label} style={[{ width: size, height: size }, styles.orb, { backgroundColor: withAlpha(mood ? moods[mood].top : color('bg/muted'), 0.35) }]}>
       <Icon icon={WEATHER_ICON[mood ?? 'overcast']} size={28} color={mood ? 'fg/default' : 'fg/muted'} />
     </View>
   );
@@ -38,6 +38,5 @@ export function preloadWeather3D() {
 }
 
 const styles = StyleSheet.create({
-  slot: { width: 56, height: 56 },
   orb: { borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
 });
