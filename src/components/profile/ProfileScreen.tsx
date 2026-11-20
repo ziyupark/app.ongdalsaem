@@ -2,8 +2,6 @@ import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
-import { NotebookPen, Utensils, type LucideIcon } from '../icons/ongdal';
-import { Bookmark } from '../icons/ongdal';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, TextInput, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -39,7 +37,6 @@ const ROW_GAP = 20;
 const { lineHeight: _lh, ...bioField } = text['Body/M'];
 const TABS: ProfileTab[] = ['dishes', 'diary', 'saved'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
-const TAB_ICON: Record<ProfileTab, LucideIcon> = { dishes: Utensils, saved: Bookmark, diary: NotebookPen };
 
 type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: Date };
 
@@ -210,9 +207,9 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   };
   const dishesCount = lists.dishes?.length;
 
-  const nowDetail = now
-    ? `${t('home.hiLo', { hi: displayTemp(now.hi), lo: displayTemp(now.lo) })}${now.until ? t('home.until', { time: now.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : ''}`
-    : t('home.retry');
+  // Same Now row as the Home Weather Card: "H 14° · L 9°" on one line, "until 9 PM" on the next.
+  const nowDetail = now ? t('home.hiLo', { hi: displayTemp(now.hi), lo: displayTemp(now.lo) }) : t('home.retry');
+  const nowUntil = now?.until ? t('home.untilLine', { time: now.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
   // 6.1 Profile 657:16468 — ScreenHeader (shared with Home · Community · Timer) → [card → 12 → tabs] → 20 → grid.
   const header = (
@@ -224,14 +221,21 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       <View style={[styles.card, { borderColor: color('bg/subtle') }]}>
         <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
         <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface'), opacity: 0.88 }]} />
+        {/* Now 1094:24025 — same as the Home Weather Card: temp (padding 0 8 2 8) · 4 · condition → 6 → H/L · until (gap 2) · 14 · 3D icon 64. */}
         <View style={styles.nowRow}>
-          <Text variant="Numeric/XL" style={styles.tabular}>{now ? `${displayTemp(now.tempC)}°` : '--°'}</Text>
-          <View style={styles.nowText}>
-            <Text variant="Title/M" numberOfLines={1}>{now ? t(`home.condition.${now.mood}`) : t('home.noWeather')}</Text>
-            <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{nowDetail}</Text>
+          <View style={styles.nowMain}>
+            <View style={styles.tempBox}>
+              <Text variant="Numeric/XL" style={styles.tabular}>{now ? `${displayTemp(now.tempC)}°` : '--°'}</Text>
+            </View>
+            <View style={styles.nowText}>
+              <Text variant="Title/M" numberOfLines={1}>{now ? t(`home.condition.${now.mood}`) : t('home.noWeather')}</Text>
+              <View style={styles.details}>
+                <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{nowDetail}</Text>
+                {nowUntil ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{nowUntil}</Text> : null}
+              </View>
+            </View>
           </View>
-          {/* Large weather icon — same as the Home Weather Card. */}
-          <WeatherIcon3D mood={now?.mood} />
+          <WeatherIcon3D mood={now?.mood} size={64} />
         </View>
         <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
         <View style={styles.idRow}>
@@ -270,7 +274,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           </View>
         )}
       </View>
-      {/* My profile: icon tabs (the dish count is on the chip above). Other cooks keep the "Dishes N" label. */}
+      {/* Text tabs (126:4345): "Dishes 48" · "Saved" · "Diary" — the same on my profile and another cook's. */}
       <UnderlineTabs
         style={styles.tabs}
         contentStyle={styles.tabRow}
@@ -279,7 +283,6 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         items={tabs.map((k) => ({
           key: k,
           label: k === 'dishes' && dishesCount != null ? t('profile.tabs.dishesCount', { n: dishesCount }) : t(`profile.tabs.${k}`),
-          icon: isMe ? TAB_ICON[k] : undefined,
         }))}
       />
       </View>
@@ -361,7 +364,8 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   // Body under ScreenHeader: p20 · gap 13 · 8 between the tabs and the first Dish Tiles (Figma 16, tightened on request).
   header: { paddingHorizontal: space[20], paddingBottom: space[8], gap: 13 },
-  cardGroup: { gap: space[12] },
+  // Profile Header 126:4345 — card → 18 → tabs.
+  cardGroup: { gap: 18 },
   center: { alignItems: 'center', justifyContent: 'center' },
   bioRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[8] },
   btns: { flexDirection: 'row', gap: space[10] },
@@ -370,13 +374,16 @@ const styles = StyleSheet.create({
   count: { alignSelf: 'flex-end' },
   card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden' },
   nowRow: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  nowText: { flex: 1, gap: space[2] },
+  nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
+  tempBox: { paddingHorizontal: space[8], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
+  nowText: { flex: 1, gap: space[6] },
+  details: { gap: space[2] },
   divider: { height: 1 },
   tabular: { fontVariant: ['tabular-nums'] },
   idRow: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
   avatar: { width: 88, height: 88, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   name: { flex: 1, minWidth: 97, gap: 11, justifyContent: 'center', opacity: 0.8 },
-  nameText: { gap: space[6] },
+  nameText: { gap: space[2] },
   acorns: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[8], paddingVertical: space[6], borderRadius: radius.full, alignSelf: 'flex-start' },
   // Full screen width (cancels the header's p20) so the hairline runs edge to edge; tabs keep their x (20 + 20).
   tabs: { marginHorizontal: -space[20] },
