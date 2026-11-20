@@ -224,11 +224,11 @@ export default function KitchenTimerScreen() {
               ) : (
                 <RoundBtn icon={running ? Pause : Play} label={t(running ? 'timer.pause' : 'timer.resume')} primary onPress={() => { pin(); if (running) pauseTimer(featured.id); else resumeTimer(featured.id); }} />
               )}
-              {/* 678:11164 — round + with a "15s" badge (676:22625): each tap adds 15 seconds (a finished timer starts again). */}
+              {/* 678:11164 — round + with a "15s" badge (1094:23662): each tap adds 15 seconds (a finished timer starts again). */}
               <View>
                 <RoundBtn icon={Plus} label={t('timer.plus15Label')} onPress={() => { pin(); addTime(featured.id, 15); }} />
-                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/kick') }]}>
-                  <Text variant="Caption Strong">15s</Text>
+                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/success-subtle') }]}>
+                  <Text variant="Numeric/S">15s</Text>
                 </View>
               </View>
             </View>
@@ -240,8 +240,8 @@ export default function KitchenTimerScreen() {
               <RoundBtn icon={Play} label={t('timer.addTimer')} primary onPress={() => setAdding(true)} />
               <View>
                 <RoundBtn icon={Plus} label={t('timer.plus15Label')} onPress={async () => setFeaturedId(await startTimer(t('timer.defaultLabel'), 15))} />
-                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/kick') }]}>
-                  <Text variant="Caption Strong">15s</Text>
+                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/success-subtle') }]}>
+                  <Text variant="Numeric/S">15s</Text>
                 </View>
               </View>
             </View>
@@ -360,8 +360,9 @@ const styles = StyleSheet.create({
   // Active timer 20:795 — ring → 28 → (food name → 28 →) controls (48 · 28 · 48 · 28 · 48).
   controls: { width: 196, marginTop: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   round: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
-  // Frame 14 676:22625 — 25 circle overlapping the + button's top-right corner.
-  badge: { position: 'absolute', right: -11, top: -7, width: 25, height: 25, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  // Frame 28 1094:23662 — pill (padding 2 6, Numeric/S) over the + button's top-right corner: 1 above, 11 past its right edge.
+  // Figma fill is an unlinked light green (#C5E5AF at 41 %) → nearest token bg/success-subtle.
+  badge: { position: 'absolute', right: -11, top: -1, paddingHorizontal: space[6], paddingVertical: space[2], borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   presets: { gap: space[8], paddingHorizontal: space[20], paddingBottom: 30 },
   addWrap: { alignSelf: 'stretch', paddingTop: space[20], paddingBottom: space[12] },
   addBtn: { height: 52, borderRadius: radius.full, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
