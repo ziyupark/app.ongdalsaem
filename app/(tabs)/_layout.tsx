@@ -8,6 +8,7 @@ import { useTheme } from '../../src/theme';
  * while another tab is open, and switching is instant. Each screen draws its own TabBar (it hides with that screen's
  * scroll), so the navigator's built-in bar is off. Move between tabs with goTab() from TabBar.
  * freezeOnBlur: a tab in the background doesn't re-render (e.g. the Timer's 1 s tick) until it is shown again.
+ * Scenes are transparent: the global WeatherBackdrop (app/_layout.tsx) is the tabs' background.
  */
 export default function TabsLayout() {
   const { color } = useTheme();
@@ -17,7 +18,7 @@ export default function TabsLayout() {
     return () => setTabsOnTop(false);
   }, []));
   return (
-    <Tabs tabBar={() => null} screenOptions={{ headerShown: false, freezeOnBlur: true, sceneStyle: { backgroundColor: color('bg/default') } }}>
+    <Tabs tabBar={() => null} screenOptions={{ headerShown: false, freezeOnBlur: true, sceneStyle: { backgroundColor: 'transparent' } }}>
       <Tabs.Screen name="home" />
       <Tabs.Screen name="community" />
       <Tabs.Screen name="timer" />

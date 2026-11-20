@@ -77,7 +77,7 @@ export default function TagScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScreenWash scrollStyle={wash.style} />
+      <ScreenWash wash={wash} local />
       <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={[{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }]}>
         <CollectionTop
           dishes={all}

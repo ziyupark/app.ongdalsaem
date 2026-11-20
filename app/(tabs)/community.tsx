@@ -207,9 +207,10 @@ export default function Community() {
     return <ChallengesTab onJoinY={onJoinY} />;
   };
 
+  // Transparent root: the global WeatherBackdrop (bg/default + wash + weather motion) shows through.
   return (
-    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScreenWash scrollStyle={wash.style} />
+    <View style={styles.root}>
+      <ScreenWash wash={wash} />
       <Animated.ScrollView
         ref={outer}
         contentContainerStyle={{ paddingBottom: 110 + space[24] }}

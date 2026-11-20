@@ -4,35 +4,43 @@ import { Bell, ChevronLeft, MoreHorizontal, Settings } from './icons/ongdal';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { type AnimatedStyle } from 'react-native-reanimated';
+import Animated, { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDevWeather } from '../lib/devWeather';
 import { dayPart } from '../lib/meals';
 import { placeLabel, useHere } from '../lib/useHere';
 import { hasUnread } from '../services/activity';
-import { space, useTheme, type WeatherMood } from '../theme';
+import { washScrollY } from '../lib/weatherBackdrop';
+import type { WashScroll } from '../lib/useWashScroll';
+import { space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
 import { bwOn, useWashInk } from '../theme/washInk';
 import { IconButton } from './IconButton';
 import { Logo } from './Logo';
 import { MoodGradient } from './MoodGradient';
 import { Text } from './Text';
-import { WeatherFx } from './WeatherFx';
-import type { StyleProp, ViewStyle } from 'react-native';
 
 /** Wash height — the same on Home · Community · Timer · Profile. */
 const WASH_HEIGHT = 420;
-const WASH_OPACITY = 0.85;
+export const WASH_OPACITY = 0.85;
 /** Mood until the weather is known. */
 const FALLBACK_MOOD: WeatherMood = 'overcast';
 
 /**
  * The shared weather reading behind the header and the wash (lib/useHere — my location, cached between screens and
- * launches). `on` = false only when location is off and no city was chosen (no wash, plain inks).
+ * launches; the one place weather is read). `on` = false only when location is off and no city was chosen (no wash,
+ * plain inks). In dev, app/dev/weather.tsx can force the mood and time of day.
  */
-function useScreenWeather() {
+export function useScreenWeather() {
   const { here } = useHere();
+  const dev = useDevWeather();
   const f = here.forecast;
-  const off = here.status === 'off' && !here.place?.city;
-  return { here, forecast: f, on: !off, mood: f?.mood ?? FALLBACK_MOOD, place: placeLabel(here.place) || f?.city || '', off };
+  const off = here.status === 'off' && !here.place?.city && !dev;
+  return { here, forecast: f, on: !off, mood: dev?.mood ?? f?.mood ?? FALLBACK_MOOD, place: placeLabel(here.place) || f?.city || '', off, dev };
+}
+
+/** Night = a clear-night sky, or the night part of the day (21–5 h) for any other weather. */
+export function timeOfDayFor(mood: WeatherMood, now: Date): TimeOfDay {
+  return mood === 'clear-night' || dayPart(now) === 'night' ? 'night' : 'day';
 }
 
 /** Wash ink at a spot `at` (0–1 of the wash height) — for text that sits on the wash below the header (e.g. tabs). */
@@ -42,20 +50,29 @@ export function useScreenInk(at: number) {
 }
 
 /**
- * Mood wash + weather effect + status bar — identical on the four tab screens. Put it first in the screen root and pass
- * `useWashScroll().style` so it travels up with the content and fades out.
+ * Status bar ink for the wash + the wash itself. On the four tabs the wash (and its weather motion) is the global
+ * WeatherBackdrop behind the transparent screen — this only feeds it this screen's scroll offset while focused, so
+ * the wash moves up with the content and fades out. `local` (a pushed screen, e.g. another cook's profile): the
+ * screen is opaque, so it draws a still wash of its own that scrolls with `wash.style`.
  */
-export function ScreenWash({ scrollStyle }: { scrollStyle?: StyleProp<AnimatedStyle<StyleProp<ViewStyle>>> }) {
+export function ScreenWash({ wash, local = false }: { wash: WashScroll; local?: boolean }) {
   const { scheme } = useTheme();
   const { on, mood } = useScreenWeather();
   const logoInk = useWashInk(on ? mood : null, 0.12, WASH_OPACITY);
+  const focused = useSharedValue(false);
+  useFocusEffect(useCallback(() => {
+    if (local) return;
+    focused.value = true;
+    washScrollY.value = wash.y.value;
+    return () => { focused.value = false; };
+  }, [local, focused, wash.y]));
+  useAnimatedReaction(() => wash.y.value, (v) => { if (focused.value) washScrollY.value = v; });
   return (
     <>
       <StatusBar style={logoInk ? logoInk.bar : scheme === 'dark' ? 'light' : 'dark'} />
-      {on ? (
-        <Animated.View pointerEvents="none" style={[styles.wash, scrollStyle]}>
+      {local && on ? (
+        <Animated.View pointerEvents="none" style={[styles.wash, wash.style]}>
           <MoodGradient mood={mood} opacity={WASH_OPACITY} />
-          <WeatherFx mood={mood} />
         </Animated.View>
       ) : null}
     </>

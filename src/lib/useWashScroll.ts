@@ -1,12 +1,12 @@
 import { Extrapolation, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-
-/** Scroll distance (pt) by which the mood wash has fully faded out. */
-const FADE_BY = 300;
+import { WASH_FADE_BY as FADE_BY } from './weatherBackdrop';
 
 /**
  * Home / Profile mood wash — it moves up with the content and fades out as you scroll, gone after ~300 pt.
- * Call `onY(contentOffset.y)` from the screen's onScroll and put `style` on the wash's Animated.View.
+ * Call `onY(contentOffset.y)` from the screen's onScroll and put `style` on the wash's Animated.View
+ * (or hand the whole thing to <ScreenWash wash={…} /> on a tab, which drives the global WeatherBackdrop with `y`).
  */
+export type WashScroll = ReturnType<typeof useWashScroll>;
 export function useWashScroll() {
   const y = useSharedValue(0);
   const style = useAnimatedStyle(() => ({
@@ -19,5 +19,6 @@ export function useWashScroll() {
       y.value = v;
     },
     style,
+    y,
   };
 }

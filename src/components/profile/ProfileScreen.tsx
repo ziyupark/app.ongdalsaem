@@ -291,8 +291,9 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   );
 
   return (
-    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScreenWash scrollStyle={wash.style} />
+    // Own profile (tab): transparent over the global WeatherBackdrop. Another cook's (pushed): opaque, its own still wash.
+    <View style={[styles.root, userId ? { backgroundColor: color('bg/default') } : null]}>
+      <ScreenWash wash={wash} local={!!userId} />
       <FlatList
         ref={listRef}
         data={tab === 'dishes' ? data ?? [] : []}

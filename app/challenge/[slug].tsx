@@ -70,7 +70,7 @@ export default function ChallengeScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScreenWash scrollStyle={wash.style} />
+      <ScreenWash wash={wash} local />
       <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }}>
         {/* Header · Row — back · bell (Soft 40), px 20. */}
         <View style={styles.bar}>

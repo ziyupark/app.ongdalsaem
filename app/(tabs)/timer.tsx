@@ -170,9 +170,10 @@ export default function KitchenTimerScreen() {
       { text: t('timer.remove'), style: 'destructive', onPress: () => removeTimer(x.id) },
     ]);
 
+  // Transparent root: the global WeatherBackdrop (bg/default + wash + weather motion) shows through.
   return (
-    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScreenWash scrollStyle={wash.style} />
+    <View style={styles.root}>
+      <ScreenWash wash={wash} />
       <ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <ScreenHeader right="none" />
         <View>

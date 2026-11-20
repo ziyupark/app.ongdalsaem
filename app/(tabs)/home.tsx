@@ -208,6 +208,7 @@ export default function HomeScreen() {
   const devMenu = () => {
     if (!__DEV__) return;
     Alert.alert('Dev', undefined, [
+      { text: 'Weather mood preview', onPress: () => router.push('/dev/weather') },
       { text: 'Run onboarding again', onPress: async () => { await resetOnboardingForDev(); router.replace('/'); } },
       { text: 'Sign out', style: 'destructive', onPress: async () => { await signOut(); router.replace('/'); } },
       { text: 'Cancel', style: 'cancel' },
@@ -218,9 +219,10 @@ export default function HomeScreen() {
   const detail = f ? t('home.hiLo', { hi: displayTemp(f.hi), lo: displayTemp(f.lo) }) : t('home.retry');
   const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
+  // Transparent root: the global WeatherBackdrop (bg/default + wash + weather motion) shows through.
   return (
-    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <ScreenWash scrollStyle={wash.style} />
+    <View style={styles.root}>
+      <ScreenWash wash={wash} />
 
       <ScrollView
         ref={scroll}
