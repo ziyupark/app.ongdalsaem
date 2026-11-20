@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedProps, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { scheduleOnRN } from 'react-native-worklets';
-import { gradients, useTheme } from '../../theme';
+import { gradients, useTheme, type ColorToken } from '../../theme';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -16,6 +16,8 @@ type Props = {
   leftSec: number;
   totalSec: number;
   done?: boolean;
+  /** Finished ring as one solid colour (5.1 big ring 676:22871) instead of Gradient/Done. */
+  doneColor?: ColorToken;
   mirror?: boolean;
   /** Called once when a running ring reaches 0 (on the frame it empties). */
   onComplete?: () => void;
@@ -27,7 +29,7 @@ type Props = {
  * `mirror` (5.1 active ring 20:796): the spent part opens clockwise from 12 o'clock, so the remaining arc ends at the top.
  * While running, the arc is recomputed every frame on the UI thread from `endAt`, so it drains smoothly (not once a second).
  */
-export function TimerRing({ size, stroke, endAt, leftSec, totalSec, done, mirror, onComplete, children }: Props) {
+export function TimerRing({ size, stroke, endAt, leftSec, totalSec, done, doneColor, mirror, onComplete, children }: Props) {
   const { color } = useTheme();
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
@@ -95,7 +97,7 @@ export function TimerRing({ size, stroke, endAt, leftSec, totalSec, done, mirror
           cx={size / 2}
           cy={size / 2}
           r={r}
-          stroke={done ? `url(#${id}-done)` : `url(#${id})`}
+          stroke={done ? (doneColor ? color(doneColor) : `url(#${id}-done)`) : `url(#${id})`}
           strokeWidth={stroke}
           strokeLinecap="round"
           fill="none"

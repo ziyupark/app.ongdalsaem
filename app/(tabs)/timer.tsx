@@ -21,9 +21,9 @@ import { elevation, iconRing, radius, space, useTheme } from '../../src/theme';
 /** A timer started this recently before the screen opened is treated as new and takes the big ring. */
 const JUST_STARTED_MS = 10_000;
 
-// Big ring (Active timer 20:796) — 220 donut, inner radius 0.885 → stroke ≈ 12.65. Also the drag geometry.
+// Big ring (Active timer 20:796) — 220 donut. Stroke = 1.5 × the Figma 12.65 (inner radius 0.885) ≈ 19. Also the drag geometry.
 const RING = 220;
-const RING_STROKE = 12.65;
+const RING_STROKE = 12.65 * 1.5;
 /** Hold the ring this long, then drag around it to change the time. */
 const HOLD_MS = 350;
 /** Touches this close to the ring's centre line (pt) count as on the ring. */
@@ -159,8 +159,9 @@ export default function KitchenTimerScreen() {
   const left = dragging ? dragSec : featured ? secondsLeft(featured, now) : 0;
   const done = !!featured && left === 0;
   const running = !!featured && featured.endAt != null && !done;
-  // Food Name above the ring: the typed / recipe dish, else the timer's own name (presets: Soft egg).
-  const food = featured ? foodOf(featured) ?? featured.label : null;
+  // Food name pill under the ring (1089:23399): only a real name — typed in Add Timer, the recipe's dish, or a preset
+  // (Soft egg). A timer without one (e.g. started with "15s +" alone) shows just the ring (5.1-1 1094:23513).
+  const food = featured ? foodOf(featured) ?? null : null;
   // Acting on the big timer keeps it there — otherwise "15s +" / pause would hand the ring to whichever timer now rings first.
   const pin = () => { if (featured) setFeaturedId(featured.id); };
 
@@ -177,9 +178,8 @@ export default function KitchenTimerScreen() {
       <ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} scrollEnabled={!dragging} contentContainerStyle={{ paddingBottom: 96 + space[24] }} showsVerticalScrollIndicator={false}>
         <ScreenHeader right="none" />
         <View>
-        {/* Block · Active timer 88:3084 — p30 20 0: “Food Name” → 13 → ring → 24 → controls → Frame 11 (p20 0 12, Add Timer). */}
+        {/* Block · Active timer 88:3084 — p30 20 0: ring → 28 → food name pill (when there is one) → 28 → controls → Frame 11 (p20 0 12, Add Timer). */}
         <View style={[styles.active, { paddingTop: 30 }]}>
-          {food ? <Text variant="Display/M" numberOfLines={1} style={styles.food}>{`“${food}”`}</Text> : null}
           <GestureDetector gesture={ringPan}>
           <View collapsable={false}>
           <TimerRing
@@ -190,23 +190,22 @@ export default function KitchenTimerScreen() {
             leftSec={left}
             totalSec={featured?.totalSec ?? 1}
             done={done}
+            doneColor="fg/success"
             onComplete={featured ? () => onRingEnd(featured.id) : undefined}
           >
-            <View style={styles.mid}>
-              {/* mid 20:799 — only the time, centred in the ring (the name above the number is gone; “Food Name” sits above the ring). */}
-              {/* 5.2 finished (676:22872): "Simmer the stew — done" above the time. */}
-              {featured && done ? <Text variant="Caption Strong" color="fg/muted" numberOfLines={1}>{t('timer.labelDone', { label: featured.label })}</Text> : null}
-              <Text variant="Numeric/Timer" color={done ? 'fg/done' : 'fg/default'} numberOfLines={1} adjustsFontSizeToFit style={[styles.tabular, styles.time]}>{fmt(left)}</Text>
-              {/* The hint stays for the idle (no timer) state only. */}
-              {!featured ? (
-                <Text variant="Caption" color="fg/muted" numberOfLines={1}>
-                  {t('timer.idleHint')}
-                </Text>
-              ) : null}
+            {/* mid 20:799 — the time, centred. 5.2 finished (676:22872): 00:00 in fg/success → 25 → Overline "DONE" (fg/muted). */}
+            <View style={[styles.mid, done && styles.midDone]}>
+              <Text variant="Numeric/Timer" color={done ? 'fg/success' : 'fg/default'} numberOfLines={1} adjustsFontSizeToFit style={[styles.tabular, styles.time]}>{fmt(left)}</Text>
+              {done ? <Text variant="Overline" color="fg/muted">{t('timer.doneBadge')}</Text> : null}
             </View>
           </TimerRing>
           </View>
           </GestureDetector>
+          {food ? (
+            <View style={[styles.foodPill, { backgroundColor: color('bg/subtle') }]}>
+              <Text variant="Display/Quote" numberOfLines={1}>{food}</Text>
+            </View>
+          ) : null}
           {featured ? (
             <View style={styles.controls}>
               <RoundBtn icon={RotateCcw} label={t('timer.reset')} onPress={() => { pin(); resetTimer(featured.id); }} />
@@ -232,7 +231,20 @@ export default function KitchenTimerScreen() {
                 </View>
               </View>
             </View>
-          ) : null}
+          ) : (
+            // First screen (no timer yet, 5.1-1): the same three controls. Play opens Add Timer; "15s +" starts a
+            // 15-second timer with no food name (just the ring); reset has nothing to reset.
+            <View style={styles.controls}>
+              <RoundBtn icon={RotateCcw} label={t('timer.reset')} onPress={() => undefined} />
+              <RoundBtn icon={Play} label={t('timer.addTimer')} primary onPress={() => setAdding(true)} />
+              <View>
+                <RoundBtn icon={Plus} label={t('timer.plus15Label')} onPress={async () => setFeaturedId(await startTimer(t('timer.defaultLabel'), 15))} />
+                <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/kick') }]}>
+                  <Text variant="Caption Strong">15s</Text>
+                </View>
+              </View>
+            </View>
+          )}
           {/* Frame 11 676:22599 — Add Timer now sits right under the controls (p20 0 20). */}
           <View style={styles.addWrap}>
             {/* Timer Button · Size=Bar 676:22600 — bg/subtle · border/default 1 · Elevation/1, `timer` 24 + Button/M fg/default. */}
@@ -335,16 +347,20 @@ function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label:
 const styles = StyleSheet.create({
   root: { flex: 1 },
   active: { alignItems: 'center', paddingHorizontal: space[20] },
-  // Inner circle is 220 − 2×12.65 ≈ 195 wide; the light numerals overhang their box, so give them side room.
-  mid: { alignItems: 'center', gap: space[2], width: 152 },
+  // Inner circle is 220 − 2×19 ≈ 182 wide; the numerals overhang their box, so give them side room.
+  mid: { alignItems: 'center', width: 152 },
+  // 5.2 mid 676:22872 — time → 25 → "DONE" (+22 below), its box top 76 in the 220 ring: centred box (119 high, top 50.5)
+  // moved down 25.5, so the time sits 8 higher than when running.
+  midDone: { gap: 25, paddingBottom: 22, transform: [{ translateY: 25.5 }] },
   time: { paddingHorizontal: space[4] },
   tabular: { fontVariant: ['tabular-nums'] },
-  // Active timer 20:795 — ring → 28 → controls (48 · 28 · 48 · 28 · 48).
+  // Food name 1089:23399 — bg/subtle pill, padding 6 16, Display/Quote; 28 under the ring.
+  foodPill: { marginTop: 28, maxWidth: 300, paddingHorizontal: space[16], paddingVertical: space[6], borderRadius: radius.full },
+  // Active timer 20:795 — ring → 28 → (food name → 28 →) controls (48 · 28 · 48 · 28 · 48).
   controls: { width: 196, marginTop: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   round: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   // Frame 14 676:22625 — 25 circle overlapping the + button's top-right corner.
   badge: { position: 'absolute', right: -11, top: -7, width: 25, height: 25, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
-  food: { maxWidth: 300, textAlign: 'center', marginBottom: 13 },
   presets: { gap: space[8], paddingHorizontal: space[20], paddingBottom: 30 },
   addWrap: { alignSelf: 'stretch', paddingTop: space[20], paddingBottom: space[12] },
   addBtn: { height: 52, borderRadius: radius.full, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
