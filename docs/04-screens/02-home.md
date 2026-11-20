@@ -5,19 +5,21 @@
 ## 02 Home — [섹션 59:2361](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2361)
 
 ### 홈 공통 레이아웃 (2.1 / 2.2 / 2.3 / 2.6)
-1. [A] **Mood wash** — 현재 날씨 무드([§2.4](../01-foundations.md)) 그라데이션 85 % + 날씨 효과, 높이 420. 스크롤하면 내용과 함께 올라가며 사라진다. **Home · Community · Timer · Profile 네 탭이 같은 wash**를 쓴다([02-components §4](../02-components.md) ScreenHeader).
+1. [A] **Mood wash** — 현재 날씨 무드([§2.4](../01-foundations.md)) 그라데이션 85 % + **날씨 모션**(WeatherMoodLayer), 높이 420. 스크롤하면 내용과 함께 올라가며 사라진다. 앱 전체에 **하나뿐인 전역 배경**(WeatherBackdrop)이라 **Home · Community · Timer · Profile 네 탭이 같은 wash**를 쓰고, 탭을 옮겨도 모션이 끊기지 않는다([02-components §3.1b](../02-components.md)).
 2. StatusBar(글자색은 wash 밝기에 맞춤).
 3. **ScreenHeader**(네 탭 공통, 좌우 20, 아래 12):
    - 헤더 행(높이 40): 좌 Logo(Compact) "ongdalsaem"(길게 누르면 개발용 메뉴), 우 IconButton(Soft, M) `bell`(알림 → **2.8**, 안 읽은 알림이 있으면 6px 점). *Map 버튼 없음.*
    - 20 → **날짜·위치 오버라인**: "Tue, Oct 27 · Mapo, Seoul".
    - 12 → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
    - 글자색은 wash 위치별 잉크(로고 12 % · 오버라인 26 % · 제목 33 % 지점의 밝기)에 맞춘다.
-4. **Weather card** (bg/subtle, radius 2xl 32, padding 20):
-   - 큰 기온 Numeric/XL "12°"(padding 위 1 · 좌우 8 · 아래 4) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → **3D 날씨 아이콘 56**(우측, 원형 배경 없음 — [§2.4](../01-foundations.md)). 날씨가 없으면 bg/muted 원 + `cloud`.
+4. **Weather card**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716) — glass/surface + blur, 1px bg/subtle 테두리, Elevation/3, radius 2xl 32, 350×307, padding 위 18 · 좌우 20 · 아래 17, gap 12, 가운데 정렬):
+   - 큰 기온 Numeric/XL "12°"(padding 위 0 · 좌우 8 · 아래 2) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → **3D 날씨 아이콘 64**(우측, 원형 배경 없음 — [§2.4](../01-foundations.md)). 날씨가 없으면 bg/muted 원 + `cloud`.
+   - 구분선 → 12 → [**Picks head** → 8 → **Meal timeline**](한 묶음).
+   - **Picks head**: Overline fg/muted "Picks for this weather" ··· **Refresh** 아이콘 버튼(`rotate-ccw` 32 원, 글자 없음). 탭할 때마다 같은 날씨·기온·무드에 맞는 **다른 요리**로 네 슬롯을 다시 채운다([§6.1](../05-behavior.md)).
    - **Meal timeline**: 4개 슬롯 가로 배치 — 이전 끼니 · **Now** · 다음 · 그다음. 각 슬롯 = 끼니 라벨 + 썸네일 원 + 예보 기온. Now 슬롯은 **선셋 그라데이션 링**.
-     - **네 칸은 항상 같은 폭**: 타임라인 폭(308)을 4등분, 칸 사이 4 → 칸당 74px(`flex: 1 1 0`). 라벨 길이(예: `BREAKFAST`)와 관계없이 폭이 같고, 라벨은 칸 가운데 정렬. 가장 긴 라벨 BREAKFAST(약 71px)도 74px 안에 들어간다.
-   - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` → 8.1.
-   - **Picks head**(구분선과 타임라인 사이): "Picks for this weather" ··· **Refresh** 아이콘 버튼(`rotate-ccw` 32 원, 글자 없음). 탭할 때마다 같은 날씨·기온·무드에 맞는 **다른 요리**로 네 슬롯을 다시 채운다([§6.1](../05-behavior.md)).
+     - **네 칸은 항상 같은 폭**: 타임라인은 카드 안쪽 폭(308)보다 **양쪽 13씩 넓다**(카드 바깥 가장자리에서 8 안쪽, 칸이 카드 가장자리에서 9). 칸 사이 2 → 390 화면에서 칸당 82(`flex: 1 1 0`). 라벨 길이와 관계없이 폭이 같고, 라벨은 칸 가운데 정렬.
+     - 칸(Meal Slot): padding 8 4 10 4, gap 6 — 라벨 Caption Strong(대문자 아님) → 썸네일 원 **74** → 날씨 아이콘 14 + 기온(Body/S Strong).
+   - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` 36 → 8.1.
    - Mood Prompt(기분 입력)는 홈에 없다.
 5. 16 → **Story Card "Today’s pick"**(Show focus · Show byline **Off**): "Today’s pick"(Eyebrow 없음) → 문장 = 고른 요리 이름 + 요리사 Avatar 40 → 맨 아래 Tags 줄(Weather Tag · **Acorn Tag**). 태그 값: 2.1/2.1b/2.6 `cloud-rain` 12° · 128, 2.2 `sun` 21° · 96, 2.3 `cloud-snow` −4° · 141. 카드 탭 → 7.1.
    - **Acorn Tag = 도토리 주기 토글**(피드와 같음): 탭하면 주고 다시 탭하면 취소, 준 상태는 채운 도토리. 숫자는 바로 바뀌고 실패하면 되돌린다. 픽이 바뀔 때마다 내가 이미 줬는지 다시 읽는다.
@@ -96,10 +98,10 @@
 - 노트: 홈과 **같은 화면 구조**를 유지하고, 날씨 대신 **지금 시간(끼니) + 내 취향**(도토리·저장·다이어리 기록)으로 추천. 날씨 카드를 탭하면 다시 불러온다.
 - 차이점만:
   - 오버라인 "Tue, Oct 27 · Mapo, Seoul · 6:40 PM", 제목 "Dinner time".
-  - **Weather card는 2.1과 같은 규격**(350×285, Now 줄 높이 64): 큰 숫자 "--°" · 상태 "No weather yet" · 보조 "Tap ↻ to retry" · 오른쪽 `cloud`(fg/muted). Picks head = "Picks for your taste" + Refresh(탭 → 날씨 다시 불러오기).
+  - **Weather card는 2.1과 같은 규격**(350×307, Now 줄 높이 68): 큰 숫자 "--°" · 상태 "No weather yet" · 보조 "Tap ↻ to retry" · 오른쪽 `cloud`(fg/muted). Picks head = "Picks for your taste" + Refresh(탭 → 날씨 다시 불러오기).
   - 슬롯 라벨 아래 숫자 = 시간(Lunch 12:30 · Now 7:00 · Late 10:00 · Dawn 7:30).
   - Story: "Kimchi jjigae — you gave stews 12 acorns this month".
-  - Mood wash = 시간대 기본 톤(evening).
+  - Mood wash = `Mood/overcast`(Figma 108:3298). 날씨 데이터가 없으므로 **날씨 모션은 숨기고 멈춘다**(wash 그라데이션만).
   - 피드: 2.1과 같은 규칙(현재 날씨가 없으면 정렬 없이 최신순).
 - 이동: 날씨 카드("6:40") 탭 → 재시도 → 성공 시 2.1. 나머지는 2.1과 동일.
 

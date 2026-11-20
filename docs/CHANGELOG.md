@@ -2,6 +2,22 @@
 
 디자인 버전별 변경 요약이다. 본문 문서에는 최종 상태만 적고, 무엇이 바뀌었는지는 여기에만 남긴다. 새 변경은 맨 위에 추가한다.
 
+## v1.8.5 — 2026-11-20 (전역 날씨 배경 · Weather Card · 타이머 · 앱 아이콘)
+
+- **날씨 모션(WeatherMoodLayer)**: 무드별 느린 배경 모션 값을 정함(비 1.2–2초 · 투명도 0.15–0.35 · 10°, 눈 8–14초 · 깊이감, 구름 40/60/90초, 맑음 빛 번짐 1 → 1.06 · 8초 + 떠오르는 빛 입자, 번개 6–14초 · 최대 0.35, 밤 = 입자 60 % · 별 0.3 ↔ 0.8). 입자 상한 비 60 · 눈 40 · 기타 20. 무드 변경 크로스페이드 800/1200ms. Reduce Motion = 정지 한 장, 번개 없음. 개발용 무드 미리보기(홈 로고 길게 누르기)
+- **전역 날씨 배경(WeatherBackdrop)**: 탭마다 따로 있던 wash · 날씨 효과 → 앱 루트에 하나. 탭 전환 · 푸시 · 뒤로가기에서 모션이 처음부터 다시 시작되지 않음. 네 탭(투명 배경)에서만 보이고, 다른 화면에서는 300ms 페이드아웃 후 멈춤 → 돌아오면 이어서 재생. 2.6은 wash만(모션 없음)
+- 2.6 Mood wash: 저녁 기본 톤 → `Mood/overcast`(Figma 108:3298과 맞춤)
+- **2.1 Weather Card**: 350×285 → 350×307, padding 18 20 → 18 20 17, gap 14 → 12, 가운데 정렬. 기온 padding 위 1 · 아래 4 → 위 0 · 아래 2. 3D 날씨 아이콘 56 → 64. Picks head Caption Strong → Overline, Picks head → 8 → Meal timeline 묶음. 타임라인 = 카드 안쪽보다 양쪽 13 넓게, 칸 사이 4 → 2(칸 74 → 82). Meal Slot padding 8 0 10 0 → 8 4 10 4, 라벨 Overline → Caption Strong, 썸네일 46(코드 60) → 74, 빈 칸 `+` 18 → 36
+- Figma: Weather Card 원본(136:4716)에 2.3 인스턴스의 정렬 · 패딩 오버라이드를 옮겨 2.1 · 2.2 · 2.3 · 2.6에 같이 적용
+- **5.1 Kitchen timer**: 큰 링 선 12.65 → **19**(1.5배). 음식 이름 Display/M “…”(링 위) → 링 아래 **반투명 알약 박스**(Display/Quote, 이름이 있을 때만). **링 손잡이**(흰 점 + 빛 번짐 + 중심 쪽 바늘, 마지막 10초 맥박) 추가. **Reset all** 추가(확인 후 모든 타이머 초기화). "15s" 배지 bg/kick 원 → bg/emphasis 알약(Tagline). Active timer 위 30 → 22. Numeric/Timer Outfit Light 52/52 → **Fraunces SemiBold 52/58 +2**
+- **5.1-1 첫 화면(타이머 없음)**: 안내 문구 삭제, 빈 트랙 + 컨트롤 3개(눌리지 않음). 타이머는 Add Timer로만 추가
+- **5.2 끝남**: 큰 링 · 00:00 fg/done → fg/success, "{label} — done"(위) → "DONE"(아래)
+- Figma: 타이머 화면 5개 링 두께 · 손잡이 · 5.2 링 fg/success 반영, 5.1-1을 첫 화면 모양으로, 15s 배지 · Reset all 테두리를 모든 타이머 화면에 맞춤, `icon/play` 컴포넌트 추가
+- **Toast**: 아이콘 `acorn` 18(fg/inverse) → `acorn-color` 24
+- **앱 아이콘**: 3D 도토리 + 유리 그라데이션(Figma 1065:22998). iOS 1024 · Android adaptive(배경 · 전경 · 단색)
+- Display/Quote 자간 표기 −0.25 → −0.5(Figma · 코드와 맞춤)
+- 문구 키 추가(9개 언어): `timer.resetAll` · `timer.resetAllTitle`. `timer.idleHint`는 이제 쓰지 않음
+
 ## v1.8.4 — 2026-11-20 (3D 날씨 아이콘 · 타이머 디자인 반영)
 
 - **3D 날씨 아이콘**: Weather Card의 56 자리(홈 2.1 · 프로필 헤더 · Nearby)를 무드 오브(무드 top 35 % 원 + Lucide 28) → **3D 이미지만**(원형 배경 없음)으로. 18개 무드 이미지 `assets/weather3d/{mood}@2x/@3x.png`(Figma Weather 3D 1037:228에서 내보냄) · 코드 `WEATHER_3D`. 날씨 없음은 bg/muted 원 + `cloud` 그대로. 24 이하 작은 아이콘은 Lucide 유지. 앱을 열 때 지금 날씨 이미지만 미리 불러옴

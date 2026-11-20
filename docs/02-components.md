@@ -14,6 +14,7 @@ Components 페이지는 섹션 9개로 나뉜다(세로로 01 → 09). 각 컴�
 |---|---|---|---|
 | **Logo** | 4:18 | Tone V[Default/Inverse] · Lockup V[Type/Acorn/Compact] | Type = "ongdalsaem" 워드마크(+태그라인), Compact = 헤더용 작은 워드마크(Outfit Medium 24/26, −0.8), Acorn = Acorn Symbol 36×46 + 워드마크 + 태그라인(gap 10, 1.1). 워드마크 글자 칠 = Gradient/Ink metal(위→아래) |
 | Acorn Symbol | 52:525 | — (20×24) | 커스텀 SVG. 도토리 수(앱의 유일한 반응) 표시에 사용 |
+| **App Icon** | [1065:22998](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1065-22998) | — | 앱 아이콘: 3D 도토리(Brand 3D / acorn) + 부드러운 유리 그라데이션 배경. iOS = `assets/icon.png` 1024(불투명, 바깥 그림자 없음) · Android adaptive = 배경 그라데이션 + 안전 영역 안 도토리 전경 + 도토리 실루엣 단색. 스플래시 이미지는 별도 |
 | logo/apple · logo/google | 201:781 · 201:788 | — (20×20) | 브랜드 로고(01 Brand 섹션). Lucide 아이콘이 아니다. 색·비율 변경 금지 |
 
 
@@ -85,8 +86,8 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 | **Food Card** | 12:399 | Title T · Byline T · Type V[Grid/Row] · (Grid: Weather Tag · Acorn Tag 노출) | Grid(167×251) = Media 167×208(좌하단 Weather Tag·우하단 Acorn Tag) + **Text 블록**(세로, gap 2, **좌우 padding 20**: 제목 Title/S **1줄 말줄임** + 태그 바이라인 Caption 1줄). 텍스트는 사진 가장자리보다 20px 안쪽에서 시작한다(디자이너 지정). Row = 가로 리스트(오버라인 "DINNER · 10°" / 제목 / 바이라인) |
 | Country Card | 12:400 | Title T · **Flag**(노출 인스턴스 Flag Tag, Country 변형) · (Weather Tag · Acorn Tag 노출) | 280×180(4.1 가로 스크롤) . 나라는 사진 위 **국기 Flag Tag**(**좌상단 x 12 · y 12 고정**, absolute — 카드 폭이 바뀌어도 위치 유지)로, 날씨·기온은 Weather Tag. Title 1줄 말줄임 |
 | Dish Tile | 128:4188 · 670:20058 | (Weather Tag · Acorn Tag **노출 인스턴스**) | **앱(코드 기준) = 670:20058 모양**: 미디어 167:208 비율(radius xl, Our area는 2xl) + 좌하단 Weather Tag · 우하단 Acorn Tag(XL, 인셋 8) → 아래 제목 Title/S 1줄 · 바이라인 Caption "Comfort · Dinner"(Our area에서 넓혀 가져온 타일은 앞에 장소 라벨). 2열 그리드(열 16 · 줄 20)로 6.1 · 4.5 · 4.2 · 4.3 · 3.1에서 쓴다. **Acorn Tag = 도토리 토글**(6.1 · 4.5: 탭하면 주고/취소, 준 상태 = 채운 도토리). 128×160 3열(4:4 radius)은 이전 6.1 디자인 |
-| Weather Card | 136:4716 | 텍스트 props(기온·상태·H/L 등) | 홈 날씨 카드 350 폭, radius 2xl 32: Now 블록 + 구분선 + **Picks head**(Caption Strong "Picks for this weather" ··· **Refresh** 32 원 아이콘 버튼: `rotate-ccw` 16만, 1px 테두리, 글자 없음, 접근성 라벨 "New picks") + Meal Slot ×4 (2.1/2.2/2.3/2.6). Now 오른쪽 56 자리(136:4508) = **3D 날씨 아이콘**(원형 배경 없음). Refresh 동작 [§6.1](05-behavior.md) |
-| Meal Slot | 131:4280 | State V[Filled/Empty] · 라벨·기온 T | 홈 끼니 타임라인 칸. 세로(padding 8 0 10 0, gap 6, 가운데 정렬): 라벨(Overline, **가운데 정렬, 칸 폭 채움**) → 썸네일 원 46 → 날씨 아이콘+기온. Filled = 썸네일 사진, Now 칸은 bg/muted 배경 + 선셋 링 override. Empty = 점선 원 + `+` |
+| Weather Card | 136:4716 | 텍스트 props(기온·상태·H/L 등) | 홈 날씨 카드 350×307, radius 2xl 32, padding 18 20 17, gap 12, 가운데 정렬: Now 블록 + 구분선 + [**Picks head**(Overline "Picks for this weather" ··· **Refresh** 32 원 아이콘 버튼: `rotate-ccw` 16만, 1px 테두리, 글자 없음, 접근성 라벨 "New picks") → 8 → Meal Slot ×4(칸 사이 2, 카드 안쪽보다 양쪽 13 넓게)] (2.1/2.2/2.3/2.6). Now 오른쪽 64 자리(136:4508) = **3D 날씨 아이콘**(원형 배경 없음). Refresh 동작 [§6.1](05-behavior.md) |
+| Meal Slot | 131:4280 | State V[Filled/Empty] · 라벨·기온 T | 홈 끼니 타임라인 칸(390 화면에서 82 폭). 세로(padding 8 4 10 4, gap 6, 가운데 정렬): 라벨(Caption Strong, 대문자 아님, **가운데 정렬, 칸 폭 채움**) → 썸네일 원 74 → 날씨 아이콘 14 + 기온. Filled = 썸네일 사진, Now 칸은 bg/muted 배경 + 선셋 링 override. Empty = 점선 원 + `+` 36 |
 | **Weather Now** | [363:8179](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=363-8179) | Now T · Place T · Range T | Nearby 상단 고정 줄 350: glass/surface, radius 16, padding 12 16, gap 12 — 현재 날씨 **3D 아이콘 28** · Now Body/M Strong / Place Caption · Range Caption Strong. 3.1–3.6 |
 | Nearby Card | 131:4542 | 3줄 텍스트 T, 사진 fill | 홈 "Eat this nearby" 카드(홈 전용 — 7.1 상세에는 두지 않음) |
 | Place Card | 131:4620 | 거리·이름·메뉴·도토리 수·메모 T | 2.4 식당 카드 |
@@ -124,7 +125,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 | Recipe Step | 132:4806 | Timer V[No/Yes] · **Number T · Text T**(두 variant 공통) | 조리 단계 한 줄(번호 원 28 + 본문). Timer=Yes = "Start 15:00 timer" 버튼 포함. 7.1(8.2a 작성 화면은 표 형식 단계 줄) |
 | Feed Loader | 131:4592 | Text T | 피드 끝 스피너 + "Loading more like this…" |
 | Inline Banner | 136:5108 | Tone V[Neutral/Warning] · Text T | 아이콘 + 한 줄 안내(6.4 오프라인 = Neutral, 8.4 업로드 실패 = Warning) |
-| Toast | 12:264 | Message T | 350×42, bg/inverse, 하단 TabBar 위. 앞 아이콘 `acorn` 18 = fg/inverse(글자와 같은 색). 4초 뒤 사라짐(길이 바꿀 수 있음), 전체를 누를 수 있게 할 수 있음(타이머 "— done" 토스트 → 5.1) |
+| Toast | 12:264 | Message T | 350×42, bg/inverse, 하단 TabBar 위. 앞 아이콘 **`acorn-color` 24**(컬러 도토리, 색 바꾸지 않음). 4초 뒤 사라짐(길이 바꿀 수 있음), 전체를 누를 수 있게 할 수 있음(타이머 "— done" 토스트 → 5.1) |
 
 ### [09 Comments, messages & alerts](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=378-9966)
 
@@ -159,8 +160,12 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 - **푸시 화면에서 탭을 누르면**(4.2 · 4.3 · 4.5 등 TabBar가 있는 푸시 화면): 그 화면을 닫고 그 탭으로 돌아간다(탭이 두 벌 쌓이지 않음). ([§6.4](05-behavior.md))
 - 아이콘: Home `home`, Community `users`, Timer `timer`, Profile `user`.
 
-### 3.1b ScreenHeader · ScreenWash — 네 탭 공통(코드 기준)
-- **ScreenWash**: 날씨 무드 그라데이션 85 % + 날씨 효과, 높이 420, 화면 맨 뒤. 스크롤하면 내용과 함께 올라가며 사라진다. 위치가 꺼지고 도시도 없으면 wash 없음. StatusBar 글자색도 wash 밝기에 맞춘다.
+### 3.1b ScreenHeader · ScreenWash · WeatherBackdrop — 네 탭 공통(코드 기준)
+- **WeatherBackdrop**(전역 날씨 배경): bg/default → 날씨 무드 그라데이션 85 % → **날씨 모션**([§2.4](01-foundations.md) Weather Mood 모션), 높이 420. 앱 루트(내비게이터 바깥)에 **하나만** 있어 탭 전환 · 푸시 · 뒤로가기에서 다시 만들어지지 않고 모션이 끊기지 않는다. 화면 전환 애니메이션은 화면만 움직이고 배경은 고정. 위치가 꺼지고 도시도 없으면 wash 없음.
+  - **보이는 화면**: 네 탭(Home · Community · Timer · Profile)만 — 탭 배경이 투명해서 비친다. 목록은 코드 한 곳(`WEATHER_BG_ROUTES`)에서 관리하고 화면마다 wash 높이를 정할 수 있다(바뀌면 400ms에 걸쳐 변함).
+  - **그 밖의 모든 화면**(7.x 상세 · 설정 · 알림 · Question · Special days 등 푸시 화면): 각자 불투명 bg/default. 배경은 300ms에 페이드아웃한 뒤 멈추고, 탭으로 돌아오면 300ms 페이드인하며 멈춘 자리에서 이어진다. 네이티브 스택에서 푸시 화면을 투명하게 하면 아래 탭이 비쳐서 투명 배경은 탭만 쓴다.
+  - 2.6(날씨 없음)은 wash만 두고 모션은 숨기고 멈춘다. 앱이 백그라운드에 가면 멈추고, 돌아오면 페이드 없이 이어진다.
+- **ScreenWash**(각 탭 화면): 지금 탭의 스크롤 위치를 WeatherBackdrop에 넘겨, wash가 내용과 함께 올라가며 300pt에서 사라지게 한다. StatusBar 글자색도 wash 밝기에 맞춘다. 자체 wash가 있는 푸시 화면(다른 요리사 프로필 · Challenge · Tag · Country)은 움직임 없는 wash를 따로 그린다.
 - **ScreenHeader**(좌우 20, 아래 12): 안전 영역 → 행 40(왼쪽 Logo Compact — 다른 요리사 프로필은 뒤로 버튼 / 오른쪽 `bell`(Home · Community, 안 읽음 점) · `settings`(내 프로필) · 빈 40(Timer · 다른 요리사)) → 20 → Overline 날짜 · 위치 → 12 → Display/XL 날씨 제목("Rainy " + fg/disabled 톤 "evening", 한 줄 맞춤). 위치 꺼짐 = "Location off · showing {city}" / "Hello there".
 - 글자색은 wash 위 위치(로고 12 % · 오버라인 26 % · 제목 33 %)의 밝기에 맞춘 잉크. 마지막 날씨 값은 앱을 다시 열 때도 먼저 보여 준다(기기 캐시).
 
@@ -259,7 +264,7 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 
 ```
 <Screen bg=var(--bg-default)>
-  [ScreenWash]         absolute, top 0, 높이 420, 무드 그라데이션 85 % (Home · Community · Timer · Profile, §3.1b)
+  [WeatherBackdrop]    앱 루트에 하나, 높이 420, 무드 그라데이션 85 % + 날씨 모션 — 네 탭(투명 배경)에서만 보임(§3.1b)
   ScreenHeader         탭 화면 공통(§3.1b)
   StatusBar            44
   ...content (vertical stack, padding-x 20)

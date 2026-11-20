@@ -187,7 +187,7 @@ export default function KitchenTimerScreen() {
         {/* Reset all 1094:23665 — under the weather title, left aligned: glass pill (padding 2 9), Title/S fg/secondary. */}
         {timers.length > 0 ? (
           <View style={styles.resetAllRow}>
-            <Pressable accessibilityRole="button" onPress={resetAllAsk} hitSlop={space[8]} style={({ pressed }) => [styles.resetAll, { backgroundColor: color('glass/fill') }, pressed && { opacity: 0.7 }]}>
+            <Pressable accessibilityRole="button" onPress={resetAllAsk} hitSlop={space[8]} style={({ pressed }) => [styles.resetAll, { backgroundColor: color('glass/fill'), borderColor: color('glass/stroke-strong') }, pressed && { opacity: 0.7 }]}>
               <Text variant="Title/S" color="fg/secondary">{t('timer.resetAll')}</Text>
             </Pressable>
           </View>
@@ -379,9 +379,10 @@ const styles = StyleSheet.create({
   round: { width: 48, height: 48, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   // Frame 28 1094:23662 — bg/emphasis pill (padding 2.2 6, Tagline) over the + button's top-right corner: 1 above, 11 past its right edge.
   badge: { position: 'absolute', right: -11, top: -1, paddingHorizontal: space[6], paddingVertical: 2.2, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
-  // Reset all (Frame 30 1094:23668): left aligned with the header text; white 10 % in Figma → glass/fill (white 12 %).
+  // Reset all (Frame 30 1094:23668): left aligned with the header text. Figma fill white 10 % → glass/fill (white 12 %),
+  // 0.8 inside stroke white 46 % → glass/stroke-strong (white 55 %); the stroke adds to the size as in Figma (78.6 × 26.6).
   resetAllRow: { paddingHorizontal: space[20], alignItems: 'flex-start' },
-  resetAll: { paddingHorizontal: 9, paddingVertical: space[2], borderRadius: radius.full },
+  resetAll: { paddingHorizontal: 9, paddingVertical: space[2], borderRadius: radius.full, borderWidth: 0.8 },
   presets: { gap: space[8], paddingHorizontal: space[20], paddingBottom: 30 },
   addWrap: { alignSelf: 'stretch', paddingTop: space[20], paddingBottom: space[12] },
   addBtn: { height: 52, borderRadius: radius.full, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },

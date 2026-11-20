@@ -101,7 +101,7 @@ mood:       mood/<key>/top · mood/<key>/base  (18종, §2.4 표)
 
 화면 위에서 아래로 날씨 색이 번지다가 `bg/default`(크림)로 사라지는 워시. 날씨마다 **기본 페이드 + 흐린 색 덩어리(블롭) 2–3개 + 얇은 선 모티프**로 분위기를 표현한다. 브랜드 팔레트만(보라 없음), 아래쪽은 항상 크림이라 위에 얹는 글자(fg/default)가 읽힌다.
 - 견본: Foundations **Weather Mood 2.0 · Gradients** [518:821](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=518-821) · 모티프 컴포넌트 **Mood Motif** [518:820](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=518-820)(Mood V ×18, 흰 선 · 점 α0.25–0.95, 180×220 기준, 그라데이션 위에 얹어 크기 조절).
-- 홈 · Nearby의 **Mood wash**(390×420) = 해당 `Mood/<key>` 스타일 **α0.85**. 2.6 날씨 없음은 저녁 기본 톤 `#F5D19E`@42% → `#F5F2ED`@0%(그대로).
+- 홈 · Nearby의 **Mood wash**(390×420) = 해당 `Mood/<key>` 스타일 **α0.85**. 2.6 날씨 없음은 `Mood/overcast`(날씨 모션 없음).
 - 블롭 좌표 = 박스 기준 비율(cx, cy, 가로 반지름 rx, 세로 반지름 ry), 색 · 가운데 불투명도.
 
 | key | top(`mood/<key>/top`) | 블롭(색 · cx,cy · rx×ry · α) | 모티프 | 판정 기준(기상청 기준 응용) |
@@ -132,6 +132,13 @@ mood:       mood/<key>/top · mood/<key>/base  (18종, §2.4 표)
 
 각 무드에 매핑되는 Lucide 아이콘: clear `sun`, clear-night `moon`, cloudy `cloud-sun`, overcast `cloud`, drizzle `cloud-drizzle`, rain `cloud-rain`, heavy-rain `cloud-rain-wind`, shower `cloud-sun-rain`, thunder `cloud-lightning`, sleet `cloud-hail`, flurries `snowflake`, snow `cloud-snow`, heavy-snow `cloud-snow`, fog `cloud-fog`, dust `haze`, heat `thermometer-sun`, cold `thermometer-snowflake`, windy `wind`.
 **3D 날씨 아이콘**(큰 날씨 아이콘 전용): 18개 무드 모두 투명 배경 3D 이미지 `assets/weather3d/{mood}@2x.png` · `@3x.png`(Figma **Weather 3D** [1037:228](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1037-228)에서 내보냄, 코드 `WEATHER_3D` · `src/theme/weatherIcons.ts`). 쓰는 곳 = Weather Card의 56 자리(홈 · 프로필 헤더 · Nearby) — 원형 배경 없이 이미지만, 다크 모드도 같은 이미지(색 반전 없음), 접근성 라벨 = 날씨 이름. 날씨를 아직 모르면 bg/muted 35 % 원 + Lucide `cloud` 28(fg/muted). 앱을 열 때 지금 날씨 이미지 하나만 미리 불러온다. **24 이하 작은 아이콘**(끼니 칩 · 게시물 날씨 태그 · 리스트 메타)은 위 Lucide 그대로.
+**Weather Mood 모션**(WeatherMoodLayer — 코드 기준, 값 `src/theme/weatherFx.ts`): Mood wash 바로 위 · 콘텐츠 아래에 깔리는 **느리고 잔잔한** 배경 움직임. 터치는 통과하고, 아래 40 %에서 투명해져 카드 · 글자를 가리지 않는다.
+- 무드별: **clear** = 빛 번짐이 숨 쉬듯 확대 · 축소(1 → 1.06, 8초) + 옅은 빛 입자 몇 개가 천천히 떠오름(12–20초) · **cloudy / overcast / fog** = 반투명 구름 2–3장이 서로 다른 속도로 좌 → 우(40 · 60 · 90초, parallax) · **drizzle / rain / heavy-rain / shower / sleet** = 약 10° 기운 가는 흰 빗줄기, 한 줄기가 1.2–2초에 지나감, 투명도 0.15–0.35(drizzle은 적고 짧고 흐리게) · **snow / flurries / heavy-snow / cold** = 2–6 pt 흐린 눈송이가 8–14초에 내리며 10–24 pt 좌우로 흔들림, 앞(크고 빠름) · 뒤(작고 느림) 깊이감 · **thunder** = rain + 6–14초 랜덤 간격 번개(흰 플래시 0 → 0.35 → 0.1 → 0.25 → 0, 약 400ms, 최대 0.35, 1초에 3회 미만) + 3번에 1번 상단 지그재그 번개 줄기 150ms · **windy** = 가는 바람 선이 좌 → 우로 천천히(3.2–5.2초) · **night** = 입자 밝기 60 %, 맑은 밤은 별이 0.3 ↔ 0.8로 3–6초에 반짝임.
+- 입자 수 상한: 비 60 · 눈 40 · 그 밖 20. transform · opacity만 움직인다(레이아웃 변경 없음, UI 스레드).
+- 무드가 바뀌면 이전 효과 800ms 페이드아웃 + 새 효과 1200ms 페이드인(크로스페이드). 앱 첫 실행 때만 wash가 400ms 페이드인되고 300ms 뒤 모션이 1200ms에 걸쳐 나타난다. 화면 · 탭 전환 · 뒤로가기 · 백그라운드 복귀에서는 페이드 없이 멈춘 자리에서 이어진다.
+- **Reduce Motion**: 움직이지 않는 한 장만 보이고 번개는 아예 없다.
+- 개발용: 홈 로고 길게 누르기 → "Weather mood preview"에서 18개 무드 × 낮/밤을 바로 바꿔 볼 수 있다(개발 빌드만).
+
 Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=72-787)
 
 ### 2.5 Spacing / Radius
@@ -153,7 +160,7 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 | Display/XL | Fraunces Bold | 46 / 49 | −1.5 | 홈 대제목 |
 | Display/L | Fraunces Bold | 34 / 37 | −0.9 | |
 | Display/M | Fraunces SemiBold | 26 / 29 | −0.45 | 화면 타이틀(온보딩, 공유) |
-| Display/Quote | Fraunces SemiBold | 22 / 29 | −0.25 | 인용/스토리 |
+| Display/Quote | Fraunces SemiBold | 22 / 29 | −0.5 | 인용/스토리, 5.1 음식 이름 박스 |
 | Title/L | Outfit Medium | 22 / 27 | −0.35 | |
 | Title/M | Outfit Medium | 18 / 23 | −0.2 | 카드 제목 |
 | Title/S | Outfit Medium | 16 / 21 | −0.1 | |
@@ -166,7 +173,7 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 | Caption Strong | Outfit Medium | 12 / 15 | 0 | |
 | Overline | Outfit Regular | 11 / 14 | 1.3 | **UPPERCASE** |
 | Numeric/XL | Outfit Light | 64 / 64 | −2.6 | 홈 Weather Card 기온(2.6에서는 시각 "6:40"), `tabular-nums` |
-| Numeric/Timer | Outfit Light | 52 / 52 | −2.2 | 5.1/5.2 진행 링 안 타이머 숫자, `tabular-nums` |
+| Numeric/Timer | Fraunces SemiBold | 52 / 58 | 2 | 5.1/5.2 진행 링 안 타이머 숫자, `tabular-nums` |
 | Numeric/L | Outfit | 28 / 31 | — | |
 | Numeric/M | Outfit | 17 / 21 | — | |
 | Numeric/S | Outfit | 12 / 15 | — | |
