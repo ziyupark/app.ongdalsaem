@@ -18,10 +18,11 @@ const tileMediaHeight = (width: number) => Math.round((width * 208) / 167);
 /** `onAcorn` turns the Acorn Tag into a give / take-back toggle (`given` = filled); `acorns` overrides the count. */
 /** `place`: small label before the byline (Explore · Our area marks dishes from a wider range, e.g. "Mapo-gu"). */
 /** `rounded`: photo corner radius token (default xl; Explore · Our area uses 2xl like the other photo cards there). */
-type Props = { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number; rounded?: 'xl' | '2xl'; place?: string };
+/** `compact`: Dish Tile 02 (1094:24388, 131 wide — 6.3 day plan sheet rails): text flush with the photo, no side padding. */
+type Props = { dish: DishSummary; width: number; onPress?: () => void; given?: boolean; onAcorn?: () => void; acorns?: number; rounded?: 'xl' | '2xl'; place?: string; compact?: boolean };
 
 /** Memoized: a grid re-renders only the tiles whose props changed (FoodGrid passes stable handlers). */
-export const DishTile = memo(function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded = 'xl', place }: Props) {
+export const DishTile = memo(function DishTile({ dish, width, onPress, given, onAcorn, acorns, rounded = 'xl', place, compact }: Props) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const mood = dish.moods?.[0];
@@ -46,7 +47,7 @@ export const DishTile = memo(function DishTile({ dish, width, onPress, given, on
           )}
         </View>
       </View>
-      <View style={styles.text}>
+      <View style={compact ? undefined : styles.text}>
         <Text variant="Title/S" numberOfLines={1}>{dish.name}</Text>
         {byline || place ? (
           <Text variant="Caption" color="fg/muted" numberOfLines={1}>

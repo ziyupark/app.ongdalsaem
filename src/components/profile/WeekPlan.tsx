@@ -20,7 +20,8 @@ import { Icon } from '../Icon';
 import { Text } from '../Text';
 
 const DAYS = 7;
-const TILE_W = 112;
+/** Dish Tile 02 (1094:24388) — 131 × 163 photo. */
+const TILE_W = 131;
 const PICKS = 3;
 const RESULTS = 12;
 const DEBOUNCE_MS = 300;
@@ -110,7 +111,7 @@ export function DayPlanSheet({ date, forecast, onClose }: { date: string | null;
 
   const tiles = (list: DishSummary[]) => (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tiles}>
-      {list.map((d) => <DishTile key={d.id} dish={d} width={TILE_W} onPress={() => choose(d)} />)}
+      {list.map((d) => <DishTile key={d.id} dish={d} width={TILE_W} compact onPress={() => choose(d)} />)}
     </ScrollView>
   );
 
@@ -222,6 +223,7 @@ const styles = StyleSheet.create({
   group: { gap: space[10] },
   head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
-  tiles: { gap: space[12] },
+  // Tiles 751:11371 — 6 between tiles.
+  tiles: { gap: space[6] },
   flex: { flex: 1 },
 });
