@@ -125,6 +125,31 @@
     "cold": "한파",
     "windy": "바람"
   },
+  "weatherDetail": {
+    "mostly-sunny": "대체로 맑음",
+    "partly-cloudy": "구름 조금",
+    "mostly-clear": "대체로 맑은 밤",
+    "partly-cloudy-night": "구름 조금 낀 밤",
+    "mostly-cloudy-night": "구름 많은 밤",
+    "rain-snow": "비 또는 눈",
+    "hail": "우박",
+    "hurricane": "태풍",
+    "rain-thunder": "비와 천둥",
+    "partly-sunny-thunder": "햇살 사이 천둥",
+    "ice": "결빙",
+    "drizzle-night": "밤 이슬비",
+    "shower-night": "밤 소나기",
+    "rain-night": "밤비",
+    "heavy-rain-night": "밤 폭우",
+    "thunder-night": "밤 뇌우",
+    "rain-thunder-night": "밤 비와 천둥",
+    "flurries-night": "밤 눈날림",
+    "snow-night": "밤 눈",
+    "heavy-snow-night": "밤 폭설",
+    "rain-snow-night": "밤 비 또는 눈",
+    "hail-night": "밤 우박",
+    "fog-night": "밤 안개"
+  },
   "home": {
     "dayPart": {
       "morning": "아침",

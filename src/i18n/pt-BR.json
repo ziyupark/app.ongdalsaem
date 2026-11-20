@@ -125,6 +125,31 @@
     "cold": "Frio",
     "windy": "Ventania"
   },
+  "weatherDetail": {
+    "mostly-sunny": "Predominantemente ensolarado",
+    "partly-cloudy": "Parcialmente nublado",
+    "mostly-clear": "Predominantemente limpo",
+    "partly-cloudy-night": "Noite parcialmente nublada",
+    "mostly-cloudy-night": "Noite predominantemente nublada",
+    "rain-snow": "Chuva e neve",
+    "hail": "Granizo",
+    "hurricane": "Furacão",
+    "rain-thunder": "Chuva e trovoada",
+    "partly-sunny-thunder": "Sol com trovoada",
+    "ice": "Gelo",
+    "drizzle-night": "Garoa à noite",
+    "shower-night": "Pancadas à noite",
+    "rain-night": "Chuva à noite",
+    "heavy-rain-night": "Chuva forte à noite",
+    "thunder-night": "Trovoada à noite",
+    "rain-thunder-night": "Chuva e trovoada à noite",
+    "flurries-night": "Neve fraca à noite",
+    "snow-night": "Neve à noite",
+    "heavy-snow-night": "Neve forte à noite",
+    "rain-snow-night": "Chuva e neve à noite",
+    "hail-night": "Granizo à noite",
+    "fog-night": "Neblina à noite"
+  },
   "home": {
     "dayPart": {
       "morning": "manhã",

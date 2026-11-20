@@ -2,7 +2,7 @@ import { roundCoord } from './location';
 // Current weather → Weather Mood (docs/01-foundations.md §2.4 판정 기준 · 우선순위). Provider = OpenWeather,
 // called through the `weather` Edge Function so the API key stays on the server.
 import { supabase } from '../lib/supabase';
-import type { WeatherMood } from '../theme';
+import type { Weather3DKey, WeatherMood } from '../theme';
 import type { Coordinates } from './location';
 
 type Where = Coordinates | { city: string };
@@ -27,7 +27,16 @@ export async function owm<T>(body: Record<string, unknown>): Promise<T | null> {
 const at = (where: Where) =>
   'city' in where ? { city: where.city } : { lat: roundCoord(where.latitude), lon: roundCoord(where.longitude) };
 
-export type CurrentWeather = { city: string; countryCode: string; tempC: number; mood: WeatherMood; /** seconds from UTC at that place */ timezoneOffset?: number };
+export type CurrentWeather = {
+  city: string;
+  countryCode: string;
+  tempC: number;
+  mood: WeatherMood;
+  /** Finer 3D icon key for the large weather icon (absent in forecasts cached before it existed → use `mood`). */
+  icon?: Weather3DKey;
+  /** seconds from UTC at that place */
+  timezoneOffset?: number;
+};
 
 type OwmResponse = {
   name: string;
@@ -71,11 +80,44 @@ function moodFromOwm(r: OwmResponse): WeatherMood {
   return sky;
 }
 
+const NIGHT_VARIANT = new Set<Weather3DKey>([
+  'drizzle', 'shower', 'rain', 'heavy-rain', 'thunder', 'rain-thunder', 'flurries', 'snow', 'heavy-snow', 'rain-snow', 'hail', 'fog',
+]);
+
+/**
+ * Mood → the finer Weather 3D key (Figma 1132:220). Cloud amount picks the sky icon (801 few → mostly-sunny / mostly-clear,
+ * 802 scattered → partly-cloudy(-night), 803 broken → cloudy / mostly-cloudy-night, 804 → overcast); thunderstorm with rain
+ * → rain-thunder, light thunderstorm by day → partly-sunny-thunder; freezing rain → ice; rain and snow → rain-snow;
+ * tornado or hurricane-force wind (≥ 32.7 m/s) → hurricane. After sunset the 12 Night icons replace their Day forms.
+ */
+function iconFromOwm(r: OwmResponse, mood: WeatherMood): Weather3DKey {
+  const id = r.weather[0]?.id ?? 800;
+  const night = r.weather[0]?.icon?.endsWith('n') ?? false;
+  if (id === 781 || (r.wind?.speed ?? 0) >= 32.7) return 'hurricane';
+  let key: Weather3DKey = mood;
+  switch (mood) {
+    case 'clear':
+    case 'clear-night':
+      key = id === 801 ? (night ? 'mostly-clear' : 'mostly-sunny') : id === 802 ? (night ? 'partly-cloudy-night' : 'partly-cloudy') : night ? 'clear-night' : 'clear';
+      return key;
+    case 'cloudy':
+      return night ? 'mostly-cloudy-night' : 'cloudy';
+    case 'thunder':
+      key = (id >= 200 && id <= 202) || (id >= 230 && id <= 232) ? 'rain-thunder' : id === 210 && !night ? 'partly-sunny-thunder' : 'thunder';
+      break;
+    case 'sleet':
+      key = id === 511 ? 'ice' : id === 615 || id === 616 ? 'rain-snow' : 'sleet';
+      break;
+  }
+  return night && NIGHT_VARIANT.has(key) ? (`${key}-night` as Weather3DKey) : key;
+}
+
 export async function fetchCurrentWeather(where: Where): Promise<CurrentWeather | null> {
   const json = await owm<OwmResponse>({ kind: 'current', ...at(where) });
   if (!json?.main || !json.weather) return null;
   try {
-    return { city: json.name, countryCode: json.sys.country, tempC: Math.round(json.main.temp), mood: moodFromOwm(json), timezoneOffset: json.timezone };
+    const mood = moodFromOwm(json);
+    return { city: json.name, countryCode: json.sys.country, tempC: Math.round(json.main.temp), mood, icon: iconFromOwm(json, mood), timezoneOffset: json.timezone };
   } catch {
     return null;
   }
@@ -83,7 +125,7 @@ export async function fetchCurrentWeather(where: Where): Promise<CurrentWeather 
 
 type OwmForecast = { list: (Omit<OwmResponse, 'name' | 'sys'> & { dt: number })[] };
 
-type ForecastPoint = { at: Date; tempC: number; mood: WeatherMood };
+type ForecastPoint = { at: Date; tempC: number; mood: WeatherMood; icon?: Weather3DKey };
 export type Forecast = CurrentWeather & {
   hi: number;
   lo: number;
@@ -99,11 +141,11 @@ export async function fetchForecast(where: Where): Promise<Forecast | null> {
   try {
     const json = await owm<OwmForecast>({ kind: 'forecast', cnt: 16, ...at(where) });
     if (!json?.list) throw new Error('forecast');
-    const points: ForecastPoint[] = json.list.map((p) => ({
-      at: new Date(p.dt * 1000),
-      tempC: Math.round(p.main.temp),
-      mood: moodFromOwm({ ...p, name: '', sys: { country: '' } } as OwmResponse),
-    }));
+    const points: ForecastPoint[] = json.list.map((p) => {
+      const r = { ...p, name: '', sys: { country: '' } } as OwmResponse;
+      const mood = moodFromOwm(r);
+      return { at: new Date(p.dt * 1000), tempC: Math.round(p.main.temp), mood, icon: iconFromOwm(r, mood) };
+    });
     const today = new Date();
     const todays = points.filter((p) => p.at.toDateString() === today.toDateString());
     const temps = [now.tempC, ...todays.map((p) => p.tempC)];

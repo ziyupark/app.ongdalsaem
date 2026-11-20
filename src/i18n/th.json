@@ -125,6 +125,31 @@
     "cold": "หนาว",
     "windy": "ลมแรง"
   },
+  "weatherDetail": {
+    "mostly-sunny": "แดดเป็นส่วนใหญ่",
+    "partly-cloudy": "มีเมฆบางส่วน",
+    "mostly-clear": "คืนฟ้าโปร่งเป็นส่วนใหญ่",
+    "partly-cloudy-night": "คืนมีเมฆบางส่วน",
+    "mostly-cloudy-night": "คืนเมฆมาก",
+    "rain-snow": "ฝนปนหิมะ",
+    "hail": "ลูกเห็บ",
+    "hurricane": "พายุเฮอริเคน",
+    "rain-thunder": "ฝนฟ้าคะนอง",
+    "partly-sunny-thunder": "แดดสลับฟ้าคะนอง",
+    "ice": "น้ำแข็ง",
+    "drizzle-night": "ฝนปรอยยามค่ำ",
+    "shower-night": "ฝนไล่ช่วงยามค่ำ",
+    "rain-night": "ฝนยามค่ำ",
+    "heavy-rain-night": "ฝนตกหนักยามค่ำ",
+    "thunder-night": "ฟ้าคะนองยามค่ำ",
+    "rain-thunder-night": "ฝนฟ้าคะนองยามค่ำ",
+    "flurries-night": "หิมะเบาบางยามค่ำ",
+    "snow-night": "หิมะยามค่ำ",
+    "heavy-snow-night": "หิมะตกหนักยามค่ำ",
+    "rain-snow-night": "ฝนปนหิมะยามค่ำ",
+    "hail-night": "ลูกเห็บยามค่ำ",
+    "fog-night": "หมอกยามค่ำ"
+  },
   "home": {
     "dayPart": {
       "morning": "เช้า",

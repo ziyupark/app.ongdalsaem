@@ -293,7 +293,7 @@ export default function EatNearby() {
                 </View>
               </View>
               {/* Large weather icon — 3D Weather Mood image (Weather Card 136:4508). */}
-              <WeatherIcon3D mood={f?.mood} />
+              <WeatherIcon3D mood={f?.mood} icon={f?.icon} />
             </View>
           </View>
         </View>

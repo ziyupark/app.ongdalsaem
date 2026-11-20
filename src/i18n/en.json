@@ -125,6 +125,31 @@
     "cold": "Cold",
     "windy": "Windy"
   },
+  "weatherDetail": {
+    "mostly-sunny": "Mostly sunny",
+    "partly-cloudy": "Partly cloudy",
+    "mostly-clear": "Mostly clear",
+    "partly-cloudy-night": "Partly cloudy night",
+    "mostly-cloudy-night": "Mostly cloudy night",
+    "rain-snow": "Rain and snow",
+    "hail": "Hail",
+    "hurricane": "Hurricane",
+    "rain-thunder": "Rain and thunder",
+    "partly-sunny-thunder": "Partly sunny with thunder",
+    "ice": "Ice",
+    "drizzle-night": "Drizzle at night",
+    "shower-night": "Showers at night",
+    "rain-night": "Rain at night",
+    "heavy-rain-night": "Heavy rain at night",
+    "thunder-night": "Thunder at night",
+    "rain-thunder-night": "Rain and thunder at night",
+    "flurries-night": "Light snow at night",
+    "snow-night": "Snow at night",
+    "heavy-snow-night": "Heavy snow at night",
+    "rain-snow-night": "Rain and snow at night",
+    "hail-night": "Hail at night",
+    "fog-night": "Fog at night"
+  },
   "home": {
     "dayPart": {
       "morning": "morning",

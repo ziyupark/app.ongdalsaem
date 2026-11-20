@@ -28,7 +28,7 @@ import { myUserId, supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
 import { startThread } from '../../services/messages';
 import { isObjectionable, reportUser } from '../../services/moderation';
-import { radius, space, text, useTheme, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
+import { radius, space, text, useTheme, type Weather3DKey, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
 
 /** Grid 670:20275 — x20 · 2 columns · gap 16 · rows 20 apart. */
 const GAP = 16;
@@ -38,7 +38,7 @@ const { lineHeight: _lh, ...bioField } = text['Body/M'];
 const TABS: ProfileTab[] = ['dishes', 'saved', 'diary'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
 
-type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: Date };
+type Now = { mood: WeatherMood; icon?: Weather3DKey; tempC: number; hi: number; lo: number; until?: Date };
 
 /**
  * 6.1 Profile · Dishes (Figma 657:16468) — Profile Header + 2-column Dish Tiles (670:20058). Saved / Diary share the grid.
@@ -57,7 +57,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   // Weather + place = the shared reading (lib/useHere), identical to Home and Community.
   const { here } = useHere();
   const f = here.forecast;
-  const now: Now | null = f ? { mood: f.mood, tempC: f.tempC, hi: f.hi, lo: f.lo, until: f.until } : null;
+  const now: Now | null = f ? { mood: f.mood, icon: f.icon, tempC: f.tempC, hi: f.hi, lo: f.lo, until: f.until } : null;
   const [tab, setTab] = useState<ProfileTab>('dishes');
   // `?tab=diary&focus=shopping` (7.1 "Added to shopping memo" toast) → open Diary and scroll down to the shopping memo.
   const params = useLocalSearchParams<{ tab?: string; focus?: string; at?: string }>();
@@ -235,7 +235,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
               </View>
             </View>
           </View>
-          <WeatherIcon3D mood={now?.mood} size={64} />
+          <WeatherIcon3D mood={now?.mood} icon={now?.icon} size={64} />
         </View>
         <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
         <View style={styles.idRow}>

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { elevation, iconRing, radius, space, useTheme, WEATHER_ICON, type WeatherMood } from '../../theme';
+import { elevation, iconRing, radius, space, useTheme, WEATHER_ICON, type Weather3DKey, type WeatherMood } from '../../theme';
 import type { Meal } from '../../lib/meals';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
@@ -19,6 +19,8 @@ export type SlotView = { meal: Meal; isNow: boolean; tempC?: number; mood?: Weat
 type Props = {
   tempC?: number;
   mood?: WeatherMood;
+  /** Finer Weather 3D key for the large icon (falls back to `mood`). */
+  icon?: Weather3DKey;
   condition: string;
   detail: string;
   /** Second detail line ("until 9 PM") — optional. */
@@ -34,7 +36,7 @@ type Props = {
  * Padding 18 20 17, gap 12. Now row (temp · condition / H·L / until · 3D icon 64) → divider → [Picks head (Overline · Refresh 32)
  * → 8 → Meal timeline (13 wider than the content box a side — slots 9 from the card edge; 4 equal slots of 82 at 390 wide, gap 2)].
  */
-export function WeatherCard({ tempC, mood, condition, detail, until, slots, picksHead, onRefresh, onSlotPress }: Props) {
+export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots, picksHead, onRefresh, onSlotPress }: Props) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const temp = useTemp();
@@ -94,7 +96,7 @@ export function WeatherCard({ tempC, mood, condition, detail, until, slots, pick
           </View>
         </View>
         {/* Large weather icon — 3D Weather Mood image (falls back to the mood orb). */}
-        <WeatherIcon3D mood={mood} size={64} />
+        <WeatherIcon3D mood={mood} icon={icon} size={64} />
       </View>
       <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
       <View style={styles.picks}>

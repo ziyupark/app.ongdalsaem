@@ -267,6 +267,7 @@ export default function HomeScreen() {
               <WeatherCard
                 tempC={f?.tempC}
                 mood={f?.mood}
+                icon={f?.icon}
                 condition={f ? t(`home.condition.${f.mood}`) : t('home.noWeather')}
                 detail={detail}
                 until={until}
