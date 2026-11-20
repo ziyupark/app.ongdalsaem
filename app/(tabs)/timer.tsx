@@ -233,13 +233,13 @@ export default function KitchenTimerScreen() {
               </View>
             </View>
           ) : (
-            // First screen (no timer yet, 5.1-1): the same three controls. Play opens Add Timer; "15s +" starts a
-            // 15-second timer with no food name (just the ring); reset has nothing to reset.
+            // First screen (no timer yet, 5.1-1): the same three controls, shown but inactive — a timer is only ever
+            // added with the Add Timer button (or a preset chip / recipe step), never from these.
             <View style={styles.controls}>
-              <RoundBtn icon={RotateCcw} label={t('timer.reset')} onPress={() => undefined} />
-              <RoundBtn icon={Play} label={t('timer.addTimer')} primary onPress={() => setAdding(true)} />
+              <RoundBtn icon={RotateCcw} label={t('timer.reset')} disabled />
+              <RoundBtn icon={Play} label={t('timer.resume')} primary disabled />
               <View>
-                <RoundBtn icon={Plus} label={t('timer.plus15Label')} onPress={async () => setFeaturedId(await startTimer(t('timer.defaultLabel'), 15))} />
+                <RoundBtn icon={Plus} label={t('timer.plus15Label')} disabled />
                 <View pointerEvents="none" style={[styles.badge, { backgroundColor: color('bg/success-subtle') }]}>
                   <Text variant="Numeric/S">15s</Text>
                 </View>
@@ -327,12 +327,14 @@ export default function KitchenTimerScreen() {
   );
 }
 
-function RoundBtn({ icon, label, onPress, primary }: { icon: typeof Plus; label: string; onPress: () => void; primary?: boolean }) {
+function RoundBtn({ icon, label, onPress, primary, disabled }: { icon: typeof Plus; label: string; onPress?: () => void; primary?: boolean; disabled?: boolean }) {
   const { color } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityState={disabled ? { disabled: true } : undefined}
+      disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
         styles.round,
