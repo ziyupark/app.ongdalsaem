@@ -1,4 +1,3 @@
-import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -220,8 +219,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       {/* Frame 10 — card → 12 → tabs. */}
       <View style={styles.cardGroup}>
       <View style={[styles.card, { borderColor: color('bg/subtle') }]}>
-        <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
-        <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface'), opacity: 0.88 }]} />
+        {/* Weather card 614:13895 — glass/surface fill only (no blur, no shadow). */}
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
         {/* Now 1094:24025 — same as the Home Weather Card: temp (padding 0 8 2 8) · 4 · condition → 6 → H/L · until (gap 2) · 14 · 3D icon 64. */}
         <View style={styles.nowRow}>
           <View style={styles.nowMain}>
@@ -249,10 +248,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
             </View>
           </Pressable>
           <View style={styles.name}>
-            <View style={styles.nameText}>
-              <Text variant="Display/M" numberOfLines={1}>{me?.displayName ?? ' '}</Text>
-              {me?.username ? <Text variant="Body/S" color="fg/muted">{`@${me.username}`}</Text> : null}
-            </View>
+            {/* 614:13917 — @username only, Display/M (display name line removed). */}
+            <Text variant="Display/M" numberOfLines={1}>{me?.username ? `@${me.username}` : me?.displayName ?? ' '}</Text>
             <View style={[styles.acorns, { backgroundColor: color('bg/muted') }]}>
               <AcornIcon size={16} filled />
               <Text variant="Caption Strong">{t('profile.totalAcorns', { count: acorns ?? 0 })}</Text>
@@ -383,8 +380,8 @@ const styles = StyleSheet.create({
   tabular: { fontVariant: ['tabular-nums'] },
   idRow: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
   avatar: { width: 88, height: 88, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  name: { flex: 1, minWidth: 97, gap: 11, justifyContent: 'center', opacity: 0.8 },
-  nameText: { gap: space[2] },
+  // name 614:13916 — fixed 105 tall, centred, gap 11, 80 % opacity.
+  name: { flex: 1, minWidth: 97, height: 105, gap: 11, justifyContent: 'center', opacity: 0.8 },
   acorns: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[8], paddingVertical: space[6], borderRadius: radius.full, alignSelf: 'flex-start' },
   // Full screen width (cancels the header's p20) so the hairline runs edge to edge; tabs keep their x (20 + 20).
   tabs: { marginHorizontal: -space[20] },
