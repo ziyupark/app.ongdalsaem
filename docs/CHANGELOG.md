@@ -14,6 +14,8 @@
 - **5.2 끝남**: 큰 링 · 00:00 fg/done → fg/success, "{label} — done"(위) → "DONE"(아래)
 - Figma: 타이머 화면 5개 링 두께 · 손잡이 · 5.2 링 fg/success 반영, 5.1-1을 첫 화면 모양으로, 15s 배지 · Reset all 테두리를 모든 타이머 화면에 맞춤, `icon/play` 컴포넌트 추가
 - **Toast**: 아이콘 `acorn` 18(fg/inverse) → `acorn-color` 24
+- **6.x 프로필 헤더**(126:4345): 날씨 줄을 홈 Weather Card와 같게(H/L · until 두 줄, 기온 padding 0 8 2 8, 3D 아이콘 56 → 64), 이름 → 핸들 간격 6 → 2, 카드 → 탭 12 → 18, 내 프로필 탭 아이콘 → **글자 탭**, 순서 Dishes → Diary → Saved → **Dishes → Saved → Diary**
+- Figma: 07 Dish 샘플 요리를 김치찌개(사진은 훠궈) → **해물파전**(사진 Unsplash · sehoon ye, 출처 메모를 7.1 위에 둠) — 제목 · 설명 · 재료 · 단계 · 칼로리 · 댓글 · 7.3/7.4 Hero · 공유 미리보기
 - **앱 아이콘**: 3D 도토리 + 유리 그라데이션(Figma 1065:22998). iOS 1024 · Android adaptive(배경 · 전경 · 단색)
 - Display/Quote 자간 표기 −0.25 → −0.5(Figma · 코드와 맞춤)
 - 문구 키 추가(9개 언어): `timer.resetAll` · `timer.resetAllTitle`. `timer.idleHint`는 이제 쓰지 않음

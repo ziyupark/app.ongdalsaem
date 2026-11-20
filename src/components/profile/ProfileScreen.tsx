@@ -35,7 +35,8 @@ import { radius, space, text, useTheme, type WeatherMood, FONT_SCALE_MAX } from 
 const GAP = 16;
 const ROW_GAP = 20;
 const { lineHeight: _lh, ...bioField } = text['Body/M'];
-const TABS: ProfileTab[] = ['dishes', 'diary', 'saved'];
+// Profile Header 126:4345 tab order.
+const TABS: ProfileTab[] = ['dishes', 'saved', 'diary'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
 
 type Now = { mood: WeatherMood; tempC: number; hi: number; lo: number; until?: Date };
