@@ -193,8 +193,8 @@ export default function KitchenTimerScreen() {
           </View>
         ) : null}
         <View>
-        {/* Block · Active timer 88:3084 — p30 20 0: ring → 28 → food name pill (when there is one) → 28 → controls → Frame 11 (p20 0 12, Add Timer). */}
-        <View style={[styles.active, { paddingTop: 30 }]}>
+        {/* Block · Active timer 88:3084 — p22 20 0: ring → 28 → food name pill (when there is one) → 28 → controls → Frame 11 (p20 0 12, Add Timer). */}
+        <View style={[styles.active, { paddingTop: 22 }]}>
           <GestureDetector gesture={ringPan}>
           <View collapsable={false}>
           <TimerRing
