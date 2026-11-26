@@ -26,6 +26,18 @@ let current: Here = { status: 'loading', coords: null, place: null, forecast: nu
 let loadedAt = 0;
 let inflight: Promise<boolean> | null = null;
 const subs = new Set<(h: Here) => void>();
+const EMPTY: Here = { status: 'loading', coords: null, place: null, forecast: null, cell: null };
+
+/**
+ * Signed out / account deleted: forget the reading — its city can come from the old profile — so the next screen reads
+ * again for whoever signs in. Not stored (here.last is removed separately).
+ */
+export function resetHere() {
+  current = EMPTY;
+  loadedAt = 0;
+  inflight = null;
+  subs.forEach((s) => s(EMPTY));
+}
 const publish = (h: Here) => {
   current = h;
   subs.forEach((s) => s(h));

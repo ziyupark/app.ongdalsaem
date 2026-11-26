@@ -145,6 +145,10 @@ export async function fetchFeed(limit = 10): Promise<Dish[]> {
 
 export type RecipeCandidate = { id: string; name: string; photo: string | null; ingredients: string[] };
 let candidates: { at: number; list: RecipeCandidate[] } | null = null;
+/** Signed out / account deleted: drop the in-memory candidates so the next person loads their own. */
+export function resetRecipeCandidates() {
+  candidates = null;
+}
 /** Fridge memo "what can I cook" — the latest 200 public dishes that list ingredients. Cached in memory for 10 min. */
 export async function fetchRecipeCandidates(): Promise<RecipeCandidate[]> {
   if (candidates && Date.now() - candidates.at < 10 * 60_000) return candidates.list;

@@ -14,6 +14,13 @@ let loaded = false;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
+/** Account deleted: forget the in-memory copy too (the stored one is already removed) — the next read starts empty. */
+export function resetMealPlan() {
+  items = [];
+  loaded = false;
+  emit();
+}
+
 const pad = (n: number) => String(n).padStart(2, '0');
 /** Local date key YYYY-MM-DD. */
 export const dateKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;

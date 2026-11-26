@@ -12,6 +12,13 @@ let loaded = false;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
+/** Account deleted: forget the in-memory copy too (the stored one is already removed) — the next read starts empty. */
+export function resetShopping() {
+  items = [];
+  loaded = false;
+  emit();
+}
+
 async function load() {
   loaded = true;
   try {
