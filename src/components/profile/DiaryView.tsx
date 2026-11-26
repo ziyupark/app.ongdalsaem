@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   arrows: { flexDirection: 'row', gap: space[16] },
   flex: { flex: 1, gap: space[2] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', columnGap: space[4], rowGap: space[6] },
-  dow: { width: 47, height: 18, alignItems: 'center', justifyContent: 'center' },
+  dow: { width: 47, minHeight: 18, alignItems: 'center', justifyContent: 'center' }, // grows with larger text sizes
   cell: { width: 47, height: 46, borderRadius: radius.md, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   summary: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
   center: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, justifyContent: 'center', alignItems: 'center', padding: space[20] },

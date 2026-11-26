@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   row: { flexDirection: 'row', gap: space[4] },
   cell: { flex: 1, alignItems: 'center', gap: space[4], paddingVertical: space[8], borderRadius: radius.lg, borderWidth: 2 },
-  wx: { flexDirection: 'row', alignItems: 'center', gap: space[2], height: 16 },
+  wx: { flexDirection: 'row', alignItems: 'center', gap: space[2], minHeight: 16 }, // grows with larger text sizes
   dot: { width: DOT, height: DOT, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   add: { borderWidth: iconRing, borderStyle: 'dashed' },
 });

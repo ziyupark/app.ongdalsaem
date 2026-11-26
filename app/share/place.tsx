@@ -101,7 +101,7 @@ export default function EditPlace() {
           {busy ? <ActivityIndicator color={color('fg/muted')} /> : q ? <Pressable onPress={() => setQ('')} hitSlop={space[8]}><Icon icon={X} size={18} color="fg/muted" /></Pressable> : null}
         </View>
       </View>
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}>
+      <ScrollView keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}>
         <Pressable accessibilityRole="button" onPress={useCurrent} style={[styles.current, { backgroundColor: color('bg/default') }]}>
           <Icon icon={Navigation} size={20} color="fg/accent" />
           <View style={styles.flex}>

@@ -36,11 +36,17 @@ const ART = {
   shadow: { y: 398 - 21.1, w: 366.2, h: 83.2 },
 };
 
+/** Figma 844 frame: copy at y 482 (≈162 tall), buttons block 676–800 (124), so copy → buttons = 32. */
+const COPY_TOP = 482;
+const COPY_H = 162;
+const ACTIONS_H = 124;
+const FIT_GAP = 32;
+
 /** 1.2 Sign in — 1207:10884. Sky + glows (LaunchBackdrop), 3D sun with acorn on top, copy from y 482, Apple · Google at the bottom (Google = y 754–800). */
 export default function SignIn() {
   const insets = useSafeAreaInsets();
-  const { color } = useTheme();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+  const { color, scheme } = useTheme();
   const { t } = useTranslation();
   const [busy, setBusy] = useState<Provider | null>(null);
   const [failed, setFailed] = useState(false);
@@ -63,21 +69,39 @@ export default function SignIn() {
     }
   };
 
+  // Small screens (iPhone SE 667): the copy can't stay at y 482 — it sits FIT_GAP above the buttons instead, and the
+  // 3D art shrinks to the room left between the status bar and the copy. 844+ high = Figma as drawn (copy 482, art 385 at 89).
+  const [copyH, setCopyH] = useState(COPY_H);
+  const [actionsH, setActionsH] = useState(ACTIONS_H);
+  const actionsBottom = Math.max(insets.bottom, space[24]) + space[10];
+  const copyTop = Math.min(COPY_TOP, height - actionsBottom - actionsH - FIT_GAP - copyH);
+  const artBottom = copyTop - (COPY_TOP - (ART.top + ART.size)); // art ends 8 above the copy, as in Figma
+  const artSize = Math.max(0, Math.min(ART.size, artBottom - (insets.top + space[8])));
+  const k = artSize / ART.size;
+  const artTop = artBottom - artSize;
   // "3d icon" 1207:10995 — the 385 frame sits at x 2 in the 390 frame (centred); everything inside is placed from it.
-  const artLeft = (width - ART.size) / 2;
+  const artLeft = (width - artSize) / 2;
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <StatusBar style="dark" />
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <LaunchBackdrop />
       {/* Hero "3d icon": shadow ellipse 324×41 at y 398 (asset incl. its blur) → Weather 3D / clear 385 at y 89 → Brand 3D / acorn 179, 15.28°. */}
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-        <Image source={SUN_SHADOW} style={[styles.shadow, { left: (width - ART.shadow.w) / 2 }]} contentFit="fill" />
-        <Image source={SUN} style={[styles.sun, { left: artLeft }]} contentFit="cover" />
-        <Image source={ACORN} style={[styles.acorn, { left: artLeft + ART.acorn.x }]} contentFit="cover" />
+        <Image
+          source={SUN_SHADOW}
+          style={[styles.abs, { left: (width - ART.shadow.w * k) / 2, top: artTop + (ART.shadow.y - ART.top) * k, width: ART.shadow.w * k, height: ART.shadow.h * k }]}
+          contentFit="fill"
+        />
+        <Image source={SUN} style={[styles.abs, { left: artLeft, top: artTop, width: artSize, height: artSize }]} contentFit="cover" />
+        <Image
+          source={ACORN}
+          style={[styles.abs, styles.acornTilt, { left: artLeft + ART.acorn.x * k, top: artTop + ART.acorn.y * k, width: ART.acorn.size * k, height: ART.acorn.size * k }]}
+          contentFit="cover"
+        />
       </View>
 
-      <View style={styles.copy}>
+      <View style={[styles.copy, { top: copyTop }]} onLayout={(e) => setCopyH(e.nativeEvent.layout.height)}>
         <Logo lockup="Compact" />
         <View style={{ height: space[10] }} />
         <Text variant="Display/L" accessibilityRole="header">{t('signIn.title')}</Text>
@@ -86,7 +110,7 @@ export default function SignIn() {
       </View>
 
       {/* Block · Button (fixed): caption → Apple → Google, gap 10, bottom = home indicator + 10. */}
-      <View style={[styles.actions, { bottom: Math.max(insets.bottom, space[24]) + space[10] }]}>
+      <View style={[styles.actions, { bottom: actionsBottom }]} onLayout={(e) => setActionsH(e.nativeEvent.layout.height)}>
         <Text variant="Caption" color={failed ? 'fg/destructive' : 'fg/muted'} style={styles.legal}>
           {failed ? (
             t('signIn.error')
@@ -118,11 +142,10 @@ export default function SignIn() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  shadow: { position: 'absolute', top: ART.shadow.y, width: ART.shadow.w, height: ART.shadow.h },
-  sun: { position: 'absolute', top: ART.top, width: ART.size, height: ART.size },
-  acorn: { position: 'absolute', top: ART.top + ART.acorn.y, width: ART.acorn.size, height: ART.acorn.size, transform: [{ rotate: '15.28deg' }] },
-  // Logo y 482 → 10 → title 518 → 8 → body 600 (below the 3D art).
-  copy: { position: 'absolute', left: space[20], right: space[20], top: 482 },
+  abs: { position: 'absolute' },
+  acornTilt: { transform: [{ rotate: '15.28deg' }] },
+  // Logo y 482 → 10 → title 518 → 8 → body 600 (below the 3D art); `top` comes from the fit above.
+  copy: { position: 'absolute', left: space[20], right: space[20] },
   actions: { position: 'absolute', left: space[20], right: space[20], gap: space[10] },
   legal: { textAlign: 'center' },
   dev: { position: 'absolute', right: space[20] },

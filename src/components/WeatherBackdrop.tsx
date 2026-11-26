@@ -6,7 +6,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { WASH_FADE_BY, washScrollY, WEATHER_BG_MAX_HEIGHT, WEATHER_BG_TIMING, weatherBgFor } from '../lib/weatherBackdrop';
 import { FX_TIMING, useTheme } from '../theme';
 import { MoodGradient } from './MoodGradient';
-import { timeOfDayFor, useScreenWeather, WASH_OPACITY } from './ScreenHeader';
+import { timeOfDayFor, useScreenWeather, useWashLook } from './ScreenHeader';
 import { WeatherMoodLayer } from './WeatherMoodLayer';
 
 /**
@@ -23,6 +23,7 @@ import { WeatherMoodLayer } from './WeatherMoodLayer';
  */
 export function WeatherBackdrop() {
   const { color } = useTheme();
+  const look = useWashLook();
   const { width } = useWindowDimensions();
   const segments = useSegments();
   const route = weatherBgFor(segments as string[]);
@@ -81,7 +82,7 @@ export function WeatherBackdrop() {
     <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: color('bg/default') }]}>
       {on ? (
         <Animated.View style={[styles.wash, washStyle]}>
-          <MoodGradient mood={mood} opacity={WASH_OPACITY} />
+          <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
           <Animated.View style={[StyleSheet.absoluteFill, fxStyle]}>
             <WeatherMoodLayer
               mood={layerMood}

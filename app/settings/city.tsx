@@ -84,7 +84,7 @@ export default function ChooseCity() {
           {busy ? <ActivityIndicator color={color('fg/muted')} /> : null}
         </View>
       </View>
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}>
+      <ScrollView keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}>
         <Pressable accessibilityRole="button" onPress={useHere} style={styles.row}>
           <Icon icon={Navigation} size={20} color="fg/accent" />
           <Text variant="Body/M Strong" color="fg/accent">{t('settings.useCurrent')}</Text>

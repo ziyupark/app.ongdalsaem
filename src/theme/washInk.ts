@@ -57,7 +57,8 @@ const MIN = [4.5, 4.5, 2.6, 1.4];
 
 /** Pure version (for lists — no hook). `color` = the theme's token resolver. */
 function washInkFor(mood: WeatherMood, at: number, opacity: number, color: (t: ColorToken) => string, scheme: 'light' | 'dark'): WashInk {
-  const bg = washColorAt(mood, at, opacity);
+  // The wash fades to this theme's bg/default (light = MOOD_BASE cream) at the opacity it is drawn with (washOpacity).
+  const bg = washColorAt(mood, at, washOpacity(opacity, scheme), color('bg/default'));
   const on = (tok: ColorToken) => { const p = parse(color(tok)); return contrast(mix(bg, p.rgb, p.a), bg); };
   const ladder = on('fg/default') >= on('fg/on-photo') ? DARK : LIGHT;
   const role = (i: number) => {
@@ -81,6 +82,13 @@ function washInkFor(mood: WeatherMood, at: number, opacity: number, color: (t: C
  * Inks for text sitting on a wash. `at` = where the text sits within the wash height (0–1).
  * Returns null without a mood (plain background → normal tokens).
  */
+/**
+ * Dark mode: the wash sits over the dark bg/default at a lower strength (light weather colours at full strength under
+ * light dark-mode text would be unreadable). Same factor for the drawn wash (MoodGradient) and for the ink maths.
+ */
+export const DARK_WASH_SCALE = 0.4;
+export const washOpacity = (opacity: number, scheme: 'light' | 'dark') => (scheme === 'dark' ? opacity * DARK_WASH_SCALE : opacity);
+
 export function useWashInk(mood: WeatherMood | null | undefined, at = 0.15, opacity = 1): WashInk | null {
   const { color, scheme } = useTheme();
   return useMemo(() => (mood ? washInkFor(mood, at, opacity, color, scheme) : null), [mood, at, opacity, color, scheme]);

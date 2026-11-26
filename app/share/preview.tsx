@@ -101,7 +101,7 @@ export default function SharePreview() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
       <PostView
         dish={view}
         given={false}

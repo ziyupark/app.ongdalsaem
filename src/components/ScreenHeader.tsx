@@ -13,7 +13,7 @@ import { hasUnread } from '../services/activity';
 import { washScrollY } from '../lib/weatherBackdrop';
 import type { WashScroll } from '../lib/useWashScroll';
 import { space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
-import { bwOn, useWashInk } from '../theme/washInk';
+import { bwOn, useWashInk, washOpacity } from '../theme/washInk';
 import { IconButton } from './IconButton';
 import { Logo } from './Logo';
 import { MoodGradient } from './MoodGradient';
@@ -22,6 +22,11 @@ import { Text } from './Text';
 /** Wash height — the same on Home · Community · Timer · Profile. */
 const WASH_HEIGHT = 420;
 export const WASH_OPACITY = 0.85;
+/** The drawn wash: WASH_OPACITY in light mode, weaker in dark mode (theme/washInk washOpacity), over bg/default. */
+export function useWashLook() {
+  const { color, scheme } = useTheme();
+  return { opacity: washOpacity(WASH_OPACITY, scheme), base: color('bg/default') };
+}
 /** Mood until the weather is known. */
 const FALLBACK_MOOD: WeatherMood = 'overcast';
 
@@ -59,6 +64,7 @@ export function ScreenWash({ wash, local = false }: { wash: WashScroll; local?: 
   const { scheme } = useTheme();
   const { on, mood } = useScreenWeather();
   const logoInk = useWashInk(on ? mood : null, 0.12, WASH_OPACITY);
+  const look = useWashLook();
   const focused = useSharedValue(false);
   useFocusEffect(useCallback(() => {
     if (local) return;
@@ -72,7 +78,7 @@ export function ScreenWash({ wash, local = false }: { wash: WashScroll; local?: 
       <StatusBar style={logoInk ? logoInk.bar : scheme === 'dark' ? 'light' : 'dark'} />
       {local && on ? (
         <Animated.View pointerEvents="none" style={[styles.wash, wash.style]}>
-          <MoodGradient mood={mood} opacity={WASH_OPACITY} />
+          <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
         </Animated.View>
       ) : null}
     </>

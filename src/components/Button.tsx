@@ -38,7 +38,7 @@ const TONE: Record<Variant, { bg?: ColorToken; fg: ColorToken; border?: ColorTok
   Destructive: { bg: 'bg/default', fg: 'fg/destructive', border: 'border/strong', borderWidth: 1 },
   // Glass: Blur/Glass M (16) under glass/fill + 1.5 glass/stroke-strong; White: static/white + Elevation/2.
   Glass: { fg: 'fg/on-primary', border: 'glass/stroke-strong', borderWidth: 1.5 },
-  White: { bg: 'static/white', fg: 'fg/default' },
+  White: { bg: 'static/white', fg: 'static/ink' }, // stays white in dark mode, so its ink must stay dark too
 };
 
 export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, disabled, loading, style, accessibilityLabel, badge }: Props) {

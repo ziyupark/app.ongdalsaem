@@ -109,16 +109,16 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
             </View>
           </View>
 
-          {/* Frame 18 — p20: Join challenge (static/ink, Elevation/2) → 4.10b You're in! (bg/kick, fg/default). */}
+          {/* Frame 18 — p20: Join challenge (bg/primary = ink in light mode, inverts in dark; Elevation/2) → 4.10b You're in! (bg/kick, fg/default). */}
           <View style={styles.cta} onLayout={(e) => onJoinY?.(e.nativeEvent.layout.y)}>
             <Pressable
               accessibilityRole="button"
               accessibilityState={{ disabled: featured.entered }}
               disabled={featured.entered}
               onPress={() => enter(featured)}
-              style={({ pressed }) => [styles.join, elevation['Elevation/2 Raised'], { backgroundColor: color(featured.entered ? 'bg/kick' : 'static/ink') }, pressed && styles.pressed]}
+              style={({ pressed }) => [styles.join, elevation['Elevation/2 Raised'], { backgroundColor: color(featured.entered ? 'bg/kick' : 'bg/primary') }, pressed && styles.pressed]}
             >
-              <Text variant="Button/L" color={featured.entered ? 'fg/default' : 'static/white'}>{t(featured.entered ? 'challenge.youreInCta' : 'challenge.join')}</Text>
+              <Text variant="Button/L" color={featured.entered ? 'fg/default' : 'fg/on-primary'}>{t(featured.entered ? 'challenge.youreInCta' : 'challenge.join')}</Text>
             </Pressable>
           </View>
 
