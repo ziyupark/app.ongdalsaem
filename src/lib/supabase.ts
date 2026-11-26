@@ -5,7 +5,8 @@ import { SUPABASE_DIAG } from "./supabaseDiagFlag"; // SUPABASE_DIAG (temporary)
 import { createDiagnosticFetch } from "./supabaseDiagnostics"; // SUPABASE_DIAG (temporary)
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+// trim(): a key pasted into EAS with a trailing newline made iOS drop the apikey header → 401 "No API key found".
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn(
