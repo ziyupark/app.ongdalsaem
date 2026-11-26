@@ -26,6 +26,7 @@ interface Dish { id: string; title: string; authorId: string; photos: string[]; 
   // travel이면 설명 칸(story, ≤150자)이 "Where did you eat it?" 글이 된다. DB foods.place_name은 쓰지 않음(나중에 구조화된 장소용 예약, 항상 null)
   festive?: string;                                // 명절 태그(예: 'festive:halloween', 4.2 명절 헤더) — DB foods.character_tags에 함께 저장
   region: string; country: string; createdAt: string;
+  placeNames?: Partial<Record<AppLanguage, { city: string; district?: string }>>; // 지역 이름을 9개 언어로(공유 · 장소 수정 때 저장) — 화면에는 보는 사람의 앱 언어로, 없으면 저장된 city · neighborhood. 표시 전용(필터 · 비교는 city · neighborhood) — DB foods.place_names(20261127000000)
   regionPrecision: 'neighborhood'|'city'|'country'; // 공유 시점의 설정 9.5 Shared precision 값(게시물마다 묻지 않음) — DB foods.region_precision
   acorns: number;          // 도토리(공개 반응) 수 — 피드 Actions · 사진 위 Acorn Tag · 프로필 통계. DB likes 테이블(이름은 그대로, 뜻 = 도토리)
   madeCount: number; madeByMe: boolean; // "I ate this" 기록 수 · 내가 기록했는지 — 7.1 하단 버튼. DB food_eaten_logs(후기 포함)

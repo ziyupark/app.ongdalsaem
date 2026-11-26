@@ -8,7 +8,7 @@
 - **ScreenWash + ScreenHeader**(네 탭 공통): 오른쪽 = 내 프로필 `settings`(→ 9.1), 다른 요리사 = 빈 자리 + 로고 대신 **뒤로** 버튼(4.5).
 - **프로필 카드**(좌우 20, 유리: 블러 + glass/surface 88 %, 테두리 bg/subtle):
   1. **날씨 줄** — 홈 Weather card Now 줄과 같은 규칙: Numeric/XL 기온(padding 0 8 2 8) → 4 → Title/M 상태 → 6 → Body/S fg/muted 두 줄 "H 14° · L 9°" / "until 9 PM"(줄 간격 2) · **3D 날씨 아이콘 64**(원형 배경 없음, 날씨 없으면 bg/muted 원 + `cloud` — [§2.4](../01-foundations.md)). **항상 내 위치의 날씨**(다른 요리사 프로필에서도). 날씨가 없으면 "--°" / "No weather yet".
-  2. 구분선 border/default
+  2. 구분선 border/default — 날씨 줄 아래 12(홈 Weather Card와 같은 위치), 구분선 아래는 카드 간격 14
   3. **아이디 줄**: 아바타 88(흰 1.2 테두리, 사진 없으면 bg/accent-subtle + 첫 글자 Display/M fg/accent; 내 프로필은 탭 → 사진 바꾸기) + 16 + [Display/M 이름 → 2 → Body/S fg/muted "@username"] → 11 → **도토리 칩**(bg/muted, 채운 도토리 16 + Caption Strong **"Total acorns {n}"**) — 받은 도토리 합계.
   4. **상태 메시지**(Body/S fg/secondary). 내 프로필은 눌러서 고침("Add a status message" fg/muted 자리표시) → BottomSheet "Status message"(입력칸 + 글자 수).
   5. 다른 요리사만: **Follow**(Primary M, 팔로우 중이면 Secondary "Following") · **Message**(Outline M) 나란히 → 4.11.
@@ -33,7 +33,7 @@
 - **내가 올린 요리만** 보여 준다("I ate this" 기록은 이번 주 줄 · 월 보기 · 월 요약에 넣지 않는다).
 - 순서(위→아래): **이번 주 한 줄** → **월 요약 한 줄** → **Fridge memo**(냉장실/냉동실 → What you can cook now) → **Shopping list**.
 - **이번 주 한 줄**
-  - 헤더: Title/M "This week" + Caption fg/muted 날짜 범위("Nov 8 – Nov 14") · `chevron-left`/`chevron-right`(지난주/다음주, 제한 없음) · 오른쪽 Body/S Strong fg/accent "Month view". 이번 주가 아니면 제목 자리에 날짜 범위.
+  - 헤더: Title/M "Weekly Menu"(날짜 범위 없음 — 지난주 · 다음주로 넘겨도 제목은 그대로) · `calendar-days` 20 fg/accent(Month view) · `chevron-left`/`chevron-right` 20 fg/muted(지난주/다음주, 제한 없음). 어느 주인지는 칸의 날짜로 본다.
   - 7칸(로케일 주 시작 요일을 따름 — 기기 Intl 정보, 없으면 es · vi = 월요일, 나머지 = 일요일). 칸 = 요일 한 글자 · 날짜 · 날씨 줄(아이콘 14) · 원형 36. **오늘 칸** = border/focus 2 + 요일 · 날짜 fg/accent.
   - **지난 날**: 그날 날씨 아이콘 + 내가 만든 요리 원형 사진. 없으면 빈칸. 탭 → 그 요리 7.1.
   - **오늘 · 앞으로**: 예보 날씨 아이콘 + 최고기온 + 계획한 요리(사진, 없으면 이름 첫 글자 · bg/accent-subtle). 계획 없으면 점선 원 `plus`. 예보가 없는 먼 날짜는 날씨 생략.
@@ -46,8 +46,9 @@
 
 ### 6.3 Fridge memo(Diary 탭 아래) — 코드 기준, Figma 없음
 - **기기에만 저장**(서버에 올리지 않음).
-- Title/M "Fridge" → **칸 선택** 2개(높이 48, radius input 20): **Fridge** · **Freezer**(선택 = bg/inverse + fg/inverse, 아니면 bg/subtle + border/default).
-- **입력 줄**(높이 48): Input "Add an ingredient" + Button M "Add" → 고른 칸에 추가.
+- Title/M "Fridge" → **칸 선택** 3개(높이 48, radius input 20): **Fridge** · **Freezer** · **Shopping memo**(선택 = bg/inverse + fg/inverse, 아니면 bg/subtle + border/default).
+  - 고른 칸의 **상자가 강조**된다: 상자 테두리 2 border/focus(다이어리 오늘 칸과 같음). 고르지 않은 상자는 투명 테두리 2라 크기 · 안쪽 위치는 같다(테두리 2 + padding 14 = 16).
+- **입력 줄**(높이 48): Input "Add an ingredient" + Button M "Add" → 고른 칸(Shopping memo면 장보기 목록)에 추가.
 - **칸별 상자** Fridge / Freezer: 재료 칩. 넣은 지 **7일이 넘으면 칩 테두리 fg/accent**. 칩 탭 → "Remove {name}?" 확인 후 삭제. 비었으면 "Nothing in the fridge yet. Add what you just put in."
 - **"What you can cook now" 박스**(bg/accent-subtle): 냉장고 재료로 만들 수 있는 공개 레시피 **최대 5개**(사진 · 이름 · Caption fg/accent "{have}/{total} ingredients on hand" · Caption fg/muted "Need: {부족한 재료 2개}") → 7.1. 재료가 없으면 "Add ingredients and we’ll find dishes you can make with them."
   - 규칙: 재료 목록이 있는 최신 공개 게시물 200개(10분 캐시)에서, 내 재료와 겹치는 비율 → 겹친 개수 순. 하나도 안 겹치면 제외. 재료 이름은 소문자 · 복수형 · 수식어를 정리해서 비교.

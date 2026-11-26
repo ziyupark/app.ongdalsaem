@@ -24,7 +24,7 @@
 5. 16 → **Story Card "Today’s pick"**(Show focus · Show byline **Off**): "Today’s pick"(Eyebrow 없음) → 문장 = 고른 요리 이름 + 요리사 Avatar 40 → 맨 아래 Tags 줄(Weather Tag · **Acorn Tag**). 태그 값: 2.1/2.1b/2.6 `cloud-rain` 12° · 128, 2.2 `sun` 21° · 96, 2.3 `cloud-snow` −4° · 141. 카드 탭 → 7.1.
    - **Acorn Tag = 도토리 주기 토글**(피드와 같음): 탭하면 주고 다시 탭하면 취소, 준 상태는 채운 도토리. 숫자는 바로 바뀌고 실패하면 되돌린다. 픽이 바뀔 때마다 내가 이미 줬는지 다시 읽는다.
    - 고르는 규칙은 [§6.2](../05-behavior.md). 후보가 하나도 없으면 카드(와 아래 Nearby card)를 숨긴다.
-6. 16 → **Nearby card "Similar Bites"** (가로, padding 14, gap 14, radius 2xl(32), bg/subtle + 1px border/default): 72×72 사진(오늘의 픽 사진, radius lg 16) → "Similar Bites"(Title/M) / "You Might Like"(Body/S) → `chevron-right`. 탭 → 2.4(오늘의 픽 요리 이름으로 검색).
+6. 16 → **Nearby card "Similar Bites"** (가로, padding 14, gap 14, radius 2xl(32), bg/subtle + 1px border/default): 72×72 사진(오늘의 픽 사진, radius lg 16) → 글자 3줄(gap 8, Figma 131:4544): "Eat this nearby"(Overline fg/muted) / "Similar Bites"(Title/M) / "You Might Like"(Body/S fg/secondary) → `chevron-right`. 탭 → 2.4(오늘의 픽 요리 이름으로 검색).
 7. **Block · feed — 피드** (Nearby card 아래, 전체 폭, padding-top 40, 게시물 사이 24):
    - 피드 헤더 · Similar 칩 줄은 없다. **Feed Post ×N**([§3.3](../02-components.md))만 이어진다.
    - 20개 이상이면 끝에 **Loading more**(16px 원호 스피너 fg/accent + Caption fg/muted `Loading more like this…`).
