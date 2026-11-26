@@ -4,6 +4,8 @@ import { ArrowRight, ChevronRight, MoreHorizontal } from '../../src/components/i
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
@@ -104,11 +106,7 @@ export default function ThreadScreen() {
         contentContainerStyle={styles.body}
         onContentSizeChange={() => list.current?.scrollToEnd({ animated: false })}
         keyboardShouldPersistTaps="handled"
-        ListFooterComponent={
-          <View style={[styles.note, { borderColor: color('border/strong') }]}>
-            <Text variant="Nav label" color="fg/muted" style={styles.noteText}>{t('messages.requestNote')}</Text>
-          </View>
-        }
+        ListFooterComponent={<RequestNote started={msgs.length > 0} label={t('messages.requestNote')} />}
         renderItem={({ item, index }) => {
           const prev = msgs[index - 1];
           const showDay = !prev || prev.createdAt.toDateString() !== item.createdAt.toDateString();
@@ -196,6 +194,27 @@ function DishCard({ id, fallback }: { id: string; fallback: string }) {
       </View>
       <Icon icon={ChevronRight} size={18} color="fg/secondary" />
     </Pressable>
+  );
+}
+
+/** Request note 1219:18051 — only before the chat starts. On the first message it slides up and fades out, then unmounts. */
+function RequestNote({ started, label }: { started: boolean; label: string }) {
+  const { color } = useTheme();
+  const reduce = useReducedMotion();
+  // Opened on a chat that already has messages → never shown.
+  const [shown, setShown] = useState(!started);
+  const p = useSharedValue(started ? 0 : 1);
+  useEffect(() => {
+    if (!started || !shown) return;
+    if (reduce) { setShown(false); return; }
+    p.value = withTiming(0, { duration: 300, easing: Easing.out(Easing.cubic) }, (done) => { if (done) scheduleOnRN(setShown, false); });
+  }, [started, shown, reduce, p]);
+  const anim = useAnimatedStyle(() => ({ opacity: p.value, transform: [{ translateY: (p.value - 1) * 16 }] }));
+  if (!shown) return null;
+  return (
+    <Animated.View style={[styles.note, { borderColor: color('border/strong') }, anim]}>
+      <Text variant="Nav label" color="fg/muted" style={styles.noteText}>{label}</Text>
+    </Animated.View>
   );
 }
 
