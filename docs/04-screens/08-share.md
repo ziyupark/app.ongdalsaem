@@ -21,7 +21,7 @@
      - 날씨 상태(Rainy 등)·기온 구간(Cool 등)은 사용자가 고르지 않는다(데이터 정확도). 장소를 바꾸면 그 장소 기준으로 다시 조회.
   2. **Type** "· changes what we ask next"(**Segmented control**, 단일 선택, 기본 Home-cooked): **Home-cooked** · **Travel** — Dish name 바로 위에 둔다(무엇을 물을지 먼저 정하도록).
      - Home-cooked(8.2): 설명 칸 = "What makes it special?", 아래에 Recipe 묶음.
-     - Travel(→ **8.2e**): 설명 칸이 **"Where did you eat it?"**로 바뀌고 Recipe 묶음을 숨긴다(밖에서 먹은 음식이라 레시피 없음). 전환은 Smart Animate 300ms. 이미 쓴 재료·단계는 숨겨 두었다가 Home-cooked로 돌아오면 다시 보인다(Travel로 게시하면 저장하지 않음).
+     - **Eating Out**(→ **8.2e**, Figma 400:9707 · 저장 값 `travel`): 설명 칸이 **"Where did you eat it?"**로 바뀌고 Recipe 묶음을 숨긴다(밖에서 먹은 음식이라 레시피 없음). 전환은 Smart Animate 300ms. 이미 쓴 재료·단계는 숨겨 두었다가 Home-cooked로 돌아오면 다시 보인다(Travel로 게시하면 저장하지 않음).
   3. Input(Filled) **Dish name** "Kimchi jjigae for one"(필수).
   4. 텍스트영역 "What makes it special?" + 카운터 "74 / 150"(최대 150자).
   5. **Meal** "· required · pick all that fit"(**필수, 여러 개 선택**): 아이콘 칩 Breakfast · Lunch · **Dinner** · Snack · **Vegan**(`leaf`) · **Seafood**(`fish`) — 끼니(Breakfast–Snack)는 촬영 시각으로 하나를 미리 선택(05–10 Breakfast, 10–15 Lunch, 15–17 Snack, 17–22 Dinner, 그 외 Snack). Vegan · Seafood는 **식단 태그**로 끼니와 함께 고를 수 있다(예: Dinner + Vegan). 끼니가 하나 이상이어야 필수 충족. 화면 예: Dinner · Vegan 선택.

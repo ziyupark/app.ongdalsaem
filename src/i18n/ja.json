@@ -288,7 +288,7 @@
     "typeHint": "· 次の質問が変わります",
     "types": {
       "home": "手料理",
-      "travel": "おでかけ"
+      "travel": "外食"
     },
     "dishName": "料理名",
     "dishNamePlaceholder": "ひとり分のキムチチゲ",

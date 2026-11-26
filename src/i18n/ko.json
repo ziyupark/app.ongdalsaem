@@ -289,7 +289,7 @@
     "typeHint": "· 다음 질문이 달라져요",
     "types": {
       "home": "집밥",
-      "travel": "여행"
+      "travel": "외식"
     },
     "dishName": "요리 이름",
     "dishNamePlaceholder": "혼자 먹는 김치찌개",
