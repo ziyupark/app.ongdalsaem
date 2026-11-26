@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goTab } from '../../src/components/TabBar';
 import { StatusBar } from 'expo-status-bar';
-import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils } from '../../src/components/icons/ongdal';
+import { ChefHat, ChevronLeft, ChevronRight, Utensils } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -28,7 +28,7 @@ import {
   ateToday as fetchAteToday, deleteDish, editDraftFrom, fetchCookedFrom, fetchDish, fetchMoreFrom, fetchRecipeAuthor, fetchMyMarks, logEaten, setAcorn, setSaved, unlogEaten, type Dish, type DishSummary, type Person,
 } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
-import { iconRing, radius, space, useTheme } from '../../src/theme';
+import { radius, space, useTheme } from '../../src/theme';
 import { LoadError } from '../../src/components/LoadError';
 import { postPlaceLine } from '../../src/services/location';
 
@@ -168,17 +168,11 @@ export default function PostDetail() {
     if (!dish) return;
     const st = dish.steps[i];
     if (!st?.timerSec) return;
-    await startTimer(st.text.length > 40 ? `${st.text.slice(0, 40)}…` : st.text, st.timerSec, {
+    // The step's text is the timer's name (5.1_0 food name). Pushed over this post, so back returns here.
+    await startTimer(st.text, st.timerSec, {
       foodId: dish.id, dishName: dish.name, step: i + 1, stepCount: dish.steps.length, next: dish.steps[i + 1]?.text,
     });
-    goTab('timer');
-  };
-
-  const cookAlong = () => {
-    if (!dish) return;
-    const first = dish.steps.findIndex((s) => !!s.timerSec);
-    if (first >= 0) return startStep(first);
-    goTab('timer');
+    router.push('/cook-timer');
   };
 
   const onMore = () => {
@@ -262,14 +256,6 @@ export default function PostDetail() {
         <Icon icon={Utensils} size={20} color={ate ? 'fg/accent' : 'fg/inverse'} />
         <Text variant="Button/M" color={ate ? 'fg/accent' : 'fg/inverse'}>{t(ate ? 'dish.youAte' : 'dish.ateThis')}</Text>
         <Text variant="Body/S" color={ate ? 'fg/accent' : 'fg/inverse'} style={styles.dim}>{`· ${eaten}`}</Text>
-      </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t('dish.cookAlong')}
-        onPress={cookAlong}
-        style={[styles.cook, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}
-      >
-        <Icon icon={Timer} size={22} />
       </Pressable>
     </>
   );
@@ -399,5 +385,4 @@ const styles = StyleSheet.create({
   moreRow: { gap: space[16], paddingHorizontal: space[20] },
   ate: { flex: 1, height: 52, borderRadius: radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
   dim: { opacity: 0.7 },
-  cook: { width: 48, height: 48, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
 });

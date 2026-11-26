@@ -14,6 +14,7 @@ import { washScrollY } from '../lib/weatherBackdrop';
 import type { WashScroll } from '../lib/useWashScroll';
 import { space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
 import { bwOn, useWashInk, washOpacity } from '../theme/washInk';
+import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import { Logo } from './Logo';
 import { MoodGradient } from './MoodGradient';
@@ -97,7 +98,11 @@ type Right = 'settings' | 'notifications' | 'more' | 'none';
  * `withWeather`: Block · title & weather (2.1 Home 88:3025 · 6.1 Profile 1217:14479) — overline 2 in from the title,
  * overline → 11 → title, title → 18 → the Weather card below. Without it (Community · Timer): 12 / 12.
  */
-export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather }: { right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void; withWeather?: boolean }) {
+export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather, backBar }: {
+  right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void; withWeather?: boolean;
+  /** TopBar Type=timer (1219:18314): plain back 40 · centred Compact logo · empty 40, 52 high, px 12 — 5.1_0 from a recipe step. */
+  backBar?: boolean;
+}) {
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -119,6 +124,15 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
 
   return (
     <View style={[styles.root, withWeather && styles.rootWeather, { paddingTop: insets.top }]}>
+      {backBar && onBack ? (
+        <View style={styles.bar}>
+          <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[4]} onPress={onBack} style={styles.slotCenter}>
+            <Icon icon={ChevronLeft} size={22} />
+          </Pressable>
+          <Logo lockup="Compact" tone={logoInk?.light ? 'light' : 'ink'} />
+          <View style={styles.slot} />
+        </View>
+      ) : (
       <View style={styles.row}>
         {onBack ? (
           <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={onBack} />
@@ -137,6 +151,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
           <View style={styles.slot} />
         )}
       </View>
+      )}
       <View style={[styles.titleBlock, withWeather && styles.titleBlockWeather]}>
         {off ? (
           <>
@@ -165,6 +180,9 @@ const styles = StyleSheet.create({
   root: { paddingHorizontal: space[20], paddingBottom: space[12] },
   row: { height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   slot: { width: 40, height: 40 },
+  // 52 high, px 12 → 8 outside the header's 20 side padding.
+  bar: { height: 52, marginHorizontal: -space[8], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  slotCenter: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   titleBlock: { paddingTop: space[20], gap: space[12] },
   rootWeather: { paddingBottom: 18 },
   titleBlockWeather: { gap: 11 },

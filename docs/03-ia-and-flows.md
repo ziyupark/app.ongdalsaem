@@ -126,7 +126,7 @@ Figma 페이지 구성:
 | 9.9 | Delete account / Keep my account | 1.1 / 9.3 |
 | 9.2–9.6 · 9.8 · 9.8a · 9.8b · 9.9 | 뒤로 | Back |
 | 9.7 | 도시 선택 / 뒤로 | 2.x(해당 도시 홈) / 2.5 |
-| 7.1 | 뒤로 / more / 작성자·More See all / 댓글 아이콘 / Start 15:00 timer·Cook along / I ate this | Back / 7.3 / 4.5 / 7.2 / 5.1 / 7.1b |
+| 7.1 | 뒤로 / more / 작성자·More See all / 댓글 아이콘 / Start 15:00 timer / I ate this | Back / 7.3 / 4.5 / 7.2 / 5.1_0(푸시, 뒤로 = 7.1) / 7.1b |
 | 7.1b | You ate this(다시 탭) / Toast Undo | 7.1 / 7.1 |
 | 7.3 | Report / Block / 딤 | 2.1(신고 토스트) / 2.1(차단 토스트) / Back |
 | Feed Post(2.x · 4.4 · 7.1 · 7.1b) | Acorn / Share / Save | (도토리 토글) / 7.4 / (저장 토글) |

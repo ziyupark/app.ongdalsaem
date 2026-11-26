@@ -4,6 +4,9 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **5.1 음식 이름 박스**(1219:18385): padding 6 16 → 6 22, 폭 최대 300 → **150–322**. 길면 …로 자르지 않고 **왼쪽으로 흐른다**
+- **5.1_0 레시피 단계 타이머**(1219:18053): Start timer → 탭 전환 대신 게시물 위에 타이머 화면을 푸시(`/cook-timer`, TopBar 뒤로 + 가운데 로고). 음식 이름 = **단계 내용**(전엔 요리 이름). 뒤로 → 그 게시물 같은 스크롤 위치
+- **7.1 Action bar**: I ate this 오른쪽 타이머 버튼(Cook along) 삭제
 - **Comment Composer**(287:334): 앞의 Avatar 32 삭제, 입력칸 좌우 padding 16 → **20**, 입력칸 1px border/default(7.1 댓글 · 3.8 질문 답변 입력)
 - **Message 대화 안내**(1219:18052): 문구 → "Messages from accounts you don’t follow arrive as requests."(신고 · 차단 안내 문장 삭제), Caption 글자 → **박스**(폭 276, radius full, 0.8 border/strong, padding 6 15, Nav label fg/muted). 문구 `messages.requestNote` 9개 언어 변경
 - **Message 대화 안내 박스 사라짐**: 메시지가 없을 때만 보이고, 첫 메시지가 생기면 위로 올라가며 페이드아웃(300ms) 후 제거

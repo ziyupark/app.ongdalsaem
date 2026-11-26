@@ -17,13 +17,13 @@ export type KitchenTimer = {
   /** Paused: seconds left. */
   leftSec: number;
   source?: TimerSource;
-  /** 5.1 "Food Name" — typed in the Add timer sheet; recipe timers use the dish name. */
+  /** 5.1 "Food Name" — typed in the Add timer sheet (recipe timers show their step text, see foodOf). */
   foodName?: string;
   notificationId?: string;
 };
 
-/** The dish this timer is for: typed food name, else the recipe's dish. */
-export const foodOf = (t: KitchenTimer) => t.foodName?.trim() || t.source?.dishName || null;
+/** Name under the big ring: typed food name, else a recipe timer's step text (its label). */
+export const foodOf = (t: KitchenTimer) => t.foodName?.trim() || (t.source ? t.label : null);
 
 const KEY = 'ongdalsaem.timers';
 let timers: KitchenTimer[] = [];
