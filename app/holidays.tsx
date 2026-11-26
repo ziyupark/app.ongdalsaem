@@ -11,8 +11,8 @@ import { space, useTheme } from '../src/theme';
 const GAP = space[12];
 
 /**
- * All holidays — opened from the 4.1 "Holidays around the world" more button. Every holiday by its next date, soonest
- * first, as a 2-column grid of the same Festive Cards (keeping their 168:196 shape). Each card opens its tag.
+ * 4.3-1 Special days around the world (724:11491) — opened from the 4.1 Special days more button. Every holiday by its
+ * next date, soonest first, as a 2-column grid of the same Festive Cards (168:196). Each card opens 4.3-2 (app/holiday).
  */
 export default function Holidays() {
   const { color } = useTheme();

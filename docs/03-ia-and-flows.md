@@ -15,7 +15,7 @@ Dish         7.1 Post detail(모든 게시물 상세, 레시피·댓글 포함) 
 Community    탭: Explore(4.1) · Following(4.4) · Challenges
              4.1 Explore ─┬ (여는 버튼 없음) 3.1 Nearby list ─ 3.4 Search → 3.5 Results (3.3 no results) · 3.6 범위 칩 · 3.2 empty
                                │            └ Our area · 3.1 Ask → 3.7 Ask the neighborhood → 3.8 Question (위치 꺼짐 3.7b → 9.5)
-                               ├ Holidays more → 4.1b Holidays around the world → 4.2(명절 태그)
+                               ├ Special days more → 4.3-1 Special days around the world → 4.3-2(명절 페이지)
                                ├ 4.4 Following ─ 4.6 Cooks in your weather · 4.4b empty
                                │            ├ 칩 All · People · Tables (Tables, 테이블 없음 → 4.4c)
                                │            └ 4.7 Tables · Browse → 4.8 Table ⇄ 4.8b Joined (→ 8.1 Post to table)
@@ -61,7 +61,7 @@ Figma 페이지 구성:
 - **시작점(Flow)** 14개 — 주요 흐름: **A · First launch → 1.1** · **B · Home → 2.1** · **C · Community → 4.1** · **D · Share a dish → 8.1** · **E · Kitchen timer → 5.1** · **F · Profile → 6.1** · **G · Settings → 9.1**. 상태 확인용: S · Location off 2.5 · Weather unavailable 2.6 · Nearby empty 3.2 · Search no results 3.3 · Following empty 4.4b · Offline 6.4 · No notifications 2.8b.
 - **고정(Fixed) 요소** = 프레임의 마지막 레이어들(`numberOfFixedChildren`): 탭 루트 = TabBar(+FAB) · Home Indicator, 상세 = Top bar · Action bar · Home Indicator, 작성 = 하단 버튼 · Home Indicator, 메시지 = Comment Composer · Home Indicator, 토스트가 있으면 Toast 포함. 시트·팝업 화면은 Scrim · 시트까지 고정.
 - **가로 스크롤**: 칩 줄(3.x 범위 칩 · 4.1 Landscape chips · 4.1 Festive cards · 4.2/4.6 해시태그 칩 · 5.x presets)과 4.1 카드 carousel · 태그 줄, 7.1 More row는 줄 자체가 화면 폭(390) 스크롤 컨테이너(좌우 padding 20, Overflow Horizontal) — 첫 항목은 20 들여쓰기, 끝까지 밀면 화면 가장자리까지 보인다.
-- **뒤로**: 푸시 화면(1.3 · 1.3b · 1.4 · 1.5 · 3.1 · 3.7 · 3.8 · 4.1b · 4.2 · 4.3 · 4.5 · 4.11 · 4.6 · 4.7–4.10 · 9.2–9.9 · 2.8 · 시트들)의 뒤로/닫기는 모두 **Back**(이전 화면으로). 딤 탭 = Back.
+- **뒤로**: 푸시 화면(1.3 · 1.3b · 1.4 · 1.5 · 3.1 · 3.7 · 3.8 · 4.3-1 · 4.3-2 · 4.2 · 4.3 · 4.5 · 4.11 · 4.6 · 4.7–4.10 · 9.2–9.9 · 2.8 · 시트들)의 뒤로/닫기는 모두 **Back**(이전 화면으로). 딤 탭 = Back.
 - **전환**: 탭 전환 = 즉시(활성 알약만 220ms 이동 — [§6.4](05-behavior.md)), 푸시 = Move in ← 300ms, 시트·팝업 = Move in ↑ 300ms / Dissolve 200ms(8.2b), 상태 전환 = Smart animate.
 - 프로토타입에서 표현 못 하는 동작(구현 시 적용): TabBar 스크롤 숨김 · 탭 상태 유지 · 다시 누르면 맨 위로([§6.4](05-behavior.md)), 피드 · 4.2/4.3 히어로 사진 가로 스와이프, 키보드.
 
@@ -88,8 +88,9 @@ Figma 페이지 구성:
 | 3.5 · 3.6 | 카드 / 검색바 · All | 7.1 / 3.4 · 3.1 |
 | 3.2 | Share a dish | 8.1 |
 | 3.3 | 날씨 칩 / 태그 칩 | 3.1(Same weather) / 4.2 |
-| 4.1 | Following · Challenges 탭 / Story card / Our area: 인기 행 · Ask a question · 질문 카드 / Country Card / Festive 카드 · 더보기 / Trending tags See all (칩 = 같은 화면 전환) / Row 카드 / `bell` | 4.4 · Challenges / 7.1 / 7.1 · 3.7 · 3.8 / **4.3** / 4.2(명절) · 4.1b / 4.2 / 7.1 / 2.8 |
-| 4.1b | 카드 / 뒤로 | 4.2 / Back |
+| 4.1 | Following · Challenges 탭 / Story card / Our area: 인기 행 · Ask a question · 질문 카드 / Country Card / Festive 카드 · 더보기 / Trending tags See all (칩 = 같은 화면 전환) / Row 카드 / `bell` | 4.4 · Challenges / 7.1 / 7.1 · 3.7 · 3.8 / **4.3** / 4.3-2 · 4.3-1 / 4.2 / 7.1 / 2.8 |
+| 4.3-1 | 카드 / 뒤로 | 4.3-2 / Back |
+| 4.3-2 | 사진 카드 · 타일 / 음식 카테고리(같은 화면 거르기) / 뒤로 | 7.1 / — / Back |
 | 4.2 | 사진 · 카드 / 탭 · 카테고리 · 끼니 필터 (같은 화면 전환) / 뒤로 / TabBar | 7.1 / — / Back / 탭 |
 | 4.3 | 사진 · 카드 / 도시 탭 · 카테고리 · 끼니 필터 (같은 화면 전환) / 뒤로 / TabBar | 7.1 / — / Back / 탭 |
 | 4.5 | Follow / Message | (그 자리 토글) / 4.11 |

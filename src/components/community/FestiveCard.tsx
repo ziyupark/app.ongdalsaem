@@ -12,7 +12,7 @@ import { flagSource } from './Parts';
 
 /**
  * Festive card (Group · Festive 398:9710) — 168×196, radius 24, p16: flag badge · date · name · dish over the holiday's
- * food photo. Used by 4.1 Holidays around the world and the all-holidays list. Opens the holiday's tag.
+ * food photo. Used by 4.1 Special days around the world and 4.3-1 (all holidays). Opens 4.3-2, that holiday's page.
  */
 export function FestiveCard({ h, width = 168, height = 196 }: { h: UpcomingFestive; width?: number; height?: number }) {
   const { color } = useTheme();
@@ -21,7 +21,7 @@ export function FestiveCard({ h, width = 168, height = 196 }: { h: UpcomingFesti
   const date = h.at.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' }).toUpperCase();
   const flag = h.country ? flagSource(h.country) : undefined;
   return (
-    <Pressable accessibilityRole="button" onPress={() => router.push(`/tag/${h.tag}`)} style={[styles.card, { width, height }]}>
+    <Pressable accessibilityRole="button" onPress={() => router.push(`/holiday/${h.key}`)} style={[styles.card, { width, height }]}>
       <Image source={h.photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
       <LinearGradient colors={['transparent', color('overlay/scrim-strong')]} locations={[0.35, 1]} style={StyleSheet.absoluteFill} />
       {/* Badge 36 (glass) — the holiday's country flag; a globe for worldwide holidays. */}

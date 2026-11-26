@@ -7,7 +7,7 @@
 **탭 구성**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following · Challenges** 3개. 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 동네 내용은 Explore의 "Our area" 섹션으로 옮김. Explore에는 검색창이 없다). Figma 4.1 · 4.4 · Challenges 프레임이 이 구성이다(공통 헤더 + 밑줄 탭).
 
 섹션 안 배치(라벨 기준, 화면 종류별):
-- **MAIN** — 4.1 Community · Explore(탭 화면) · 4.1 Community · Challenges(탭 화면) · 4.1b Holidays around the world. Following(4.4)은 04b.
+- **MAIN** — 4.1 Community · Explore(탭 화면) · 4.1 Community · Challenges(탭 화면) · 4.3-1 / 4.3-2 Special days around the world. Following(4.4)은 04b.
 - **TEMPLATES** — 4.2 Tag · #Comfort · 4.3 Country · Japan. **앱은 v2 디자인**(Figma "4.2 Tag · #Comfort (v2)" [718:11114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11114) · "4.3 Country · Japan (v2)" [718:11248](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11248)). 명절 페이지(Halloween · Christmas …)도 **4.2 태그 템플릿**에 그 명절 태그를 넣은 것이다. 같은 종류의 다른 페이지(#Spicy, #Vegan, Italy …)는 **이 템플릿에 데이터만 바꿔** 쓴다.
 
 두 템플릿은 같은 뼈대(`CollectionParts`)를 쓰고 탭과 데이터만 다르다:
@@ -29,7 +29,7 @@
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
   5. **Popular today · Neighbourhood questions**(아래 "Our area")
   6. **Trending tags**(1113:25982, gap 16): SectionHeader "Trending tags" + ›(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(좌우 inset 20, 게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row 최대 3개(그 태그 게시물).
-  7. **Special days around the world**(1113:25999, gap 16): 제목 + ›(→ **4.1b**) → **Festive Card** 168×196 가로 스크롤(gap 12, 좌우 inset 20), **가까운 명절 8개**. 카드 → 그 명절 태그의 **4.2**.
+  7. **Special days around the world**(1113:25999, gap 16): 제목 + ›(→ **4.3-1** 전체 목록) → **Festive Card** 168×196 가로 스크롤(gap 12, 좌우 inset 20), **가까운 명절 8개**. 카드 → 그 명절의 **4.3-2**.
   8. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
 - Food Card Row: 썸네일 80 · Overline "끼니 · 기온°" · 제목 · "핸들 · 도시 · 시간" · 북마크(저장 토글) · **⋯**(남의 글일 때 → 신고·차단).
 - **⋯ 메뉴**(Story · Popular today · Question · Food Card): 7.3 ReportSheet — 신고(게시물 / 질문) · "{이름} 차단". 내 글에는 ⋯가 없다. 차단하면 화면 전체를 다시 불러오고, 차단한 사람의 글·질문은 RLS(`is_blocked_between`)로 모든 섹션에서 빠진다.
@@ -46,12 +46,17 @@
     - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다. 넓혀서 가져온 질문에는 그 범위(구 · 도시) 라벨이 붙는다.
 - 위치가 꺼져 있으면: 카드(bg/subtle + border/default, radius 2xl, padding 20, 가운데) `map-pin` 22 fg/secondary · Body/M fg/secondary "Turn on location to see today’s table in our area." · Button M "Allow location"(권한 요청 → 도시 저장).
 
-### 4.1b Holidays around the world — [724:11491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=724-11491)
-- 4.1 Festive 섹션의 더보기(`chevron-right`, 접근성 "See all holidays")에서 연다. 푸시, TopBar(Inline) "Holidays around the world"(뒤로).
-- 본문(좌우 20, 위 12, gap 12): Overline fg/accent "FESTIVE TABLES" → **Festive Card 2열 그리드**(gap 12, 카드 비율 168:196). **모든 명절 46개**를 다음 날짜가 가까운 순으로.
-- 카드 → 그 명절 태그의 4.2.
+### 4.3-1 Special days around the world — [724:11491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=724-11491)
+- 4.1 Special days 섹션의 더보기(`chevron-right`, 접근성 "See all holidays")에서 연다. 푸시, TopBar(Inline) "Special days around the world"(뒤로).
+- 본문(좌우 20, 위 12): **Festive Card 2열 그리드**(gap 12, 카드 비율 168:196). **모든 명절 46개**를 다음 날짜가 가까운 순으로.
+- 카드 → **4.3-2** 그 명절 페이지.
 
-### Festive Card(4.1 · 4.1b 공통)
+### 4.3-2 Special days around the world · {명절} — [1219:16713](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1219-16713)
+- 4.3-1의 카드, 4.1 Special days 카드에서 연다(`app/holiday/[key]`). 4.2 Tag와 같은 틀.
+- 블록: TopBar · Overlay(뒤로만) → **#명절** Display/XL(항상 영어, 예 "#Chuseok") → Group(위 22 · gap 16): Display/M "Special days around the world" → 사진 카드 350×400 가로 스크롤(그 명절 요리 중 도토리 1–3위) → 18 → **동그란 카테고리 = 그날 먹는 음식**(`community.holidays.<key>.food`를 나눈 것, 예 Songpyeon · Jeon · Galbi-jjim; 사진 = 그 음식 이름이 들어간 최신 게시물, 없으면 bg/muted 원) — 탭하면 그 음식으로 그리드를 거르고 다시 탭하면 해제 → 32 → Overline "LATEST · {음식}" → Dish Tile 2열 그리드(최신순) → TabBar.
+- 데이터: 공개 게시물 중 **명절 태그가 붙었거나**(무드 태그 = 명절 키) **이름에 그 음식(내 언어 · 영어)이 들어간** 것, 최신 60개. 비면 EmptyState, 실패 = LoadError.
+
+### Festive Card(4.1 · 4.3-1 공통)
 - 168×196, radius xl(24), padding 16, gap 6. 배경 = 그 명절 **음식 사진**(`assets/holidays/food/`, 600×800) + 아래로 overlay/scrim-strong 그라데이션(35 %부터).
 - 위 왼쪽 **배지 36 원**(glass/surface): 그 명절 나라 국기 20×14(radius 3), 세계 공통 명절(새해 등)은 `globe` 18. (Figma 카드 배지는 아직 아이콘 — 앱 기준은 국기)
 - 아래로 몰아서: Overline fg/on-photo-secondary 날짜 "OCT 31"(오늘 · 내일이면 "· TODAY" / "· TOMORROW") → Title/M fg/on-photo 명절 이름 → Caption fg/on-photo-secondary 대표 음식(1줄).

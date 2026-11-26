@@ -133,6 +133,17 @@ export async function fetchByTag(tag: string, sort: Sort = 'popular', city?: str
   return list(q, sort);
 }
 
+/**
+ * Special day page (4.3 1219:16713) — newest public dishes for a holiday: tagged with it (mood tag = the holiday key, as
+ * from its Festive Card) or named after one of its foods (`foods`: names in any language, matched anywhere in the name).
+ */
+export async function fetchByHoliday(key: string, foods: string[], limit = 60) {
+  const clean = (v: string) => v.replace(/[,()*%{}]/g, ' ').trim();
+  const terms = [...new Set(foods.map(clean).filter((f) => f.length > 1))].map((f) => `name.ilike.*${f}*`);
+  const q = publicFoods().or([`mood_tags.cs.{${key.toLowerCase()}}`, ...terms].join(','));
+  return list(q, 'latest', limit);
+}
+
 /** 4.3 Country — dishes shared in that country (ISO code, e.g. 'JP'). */
 export async function fetchByCountry(code: string, sort: Sort = 'popular', mood?: WeatherMood | null) {
   let q = publicFoods().eq('country', code.toUpperCase());
