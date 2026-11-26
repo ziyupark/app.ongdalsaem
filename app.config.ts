@@ -10,6 +10,14 @@ import { withEntitlementsPlist, type ConfigPlugin } from 'expo/config-plugins';
  */
 const FREE_TEAM = process.env.FREE_APPLE_TEAM === '1';
 
+/**
+ * TEMPORARY (SUPABASE_DIAG) — the Supabase diagnostics panel is only for the `diagnostic` EAS profile (TestFlight).
+ * Stop the build if the flag ever reaches the `production` profile, so a store release can't ship with it.
+ */
+if (process.env.EXPO_PUBLIC_SUPABASE_DIAG === '1' && process.env.EAS_BUILD_PROFILE === 'production') {
+  throw new Error('EXPO_PUBLIC_SUPABASE_DIAG=1 is not allowed in the production profile — use the diagnostic profile.');
+}
+
 /** Timer alerts use interruptionLevel 'timeSensitive' — iOS only honours it with this entitlement. */
 const TIME_SENSITIVE = 'com.apple.developer.usernotifications.time-sensitive';
 
