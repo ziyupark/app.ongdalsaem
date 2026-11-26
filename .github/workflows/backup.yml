@@ -1,0 +1,39 @@
+# Weekly database backup: supabase db dump → a workflow artifact in this (private) repository.
+# Artifacts expire after 30 days (retention-days), so older backups are deleted automatically.
+# Restore: psql "$DB_URL" -f roles.sql -f schema.sql -c 'SET session_replication_role = replica' -f data.sql
+name: backup
+
+on:
+  schedule:
+    - cron: "41 18 * * 0" # every Sunday 18:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Dump roles, schema and data
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          mkdir -p backup
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f backup/roles.sql --role-only
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f backup/schema.sql
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f backup/data.sql --use-copy --data-only
+          ls -lh backup
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_number }}-${{ github.run_id }}
+          path: backup/
+          retention-days: 30
+          if-no-files-found: error
