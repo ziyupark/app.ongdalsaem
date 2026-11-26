@@ -19,7 +19,7 @@
   1. **Auto context 카드**(bg/subtle, 1px border/default, radius 16, padding 12/12/12/14, gap 12): `cloud-rain` 22 → "Rainy 12° · Mapo, Seoul"(Body/M Strong) / "From your photo · Today 7:20 PM · Tap to edit"(Caption fg/muted) → `chevron-right` 20. 탭 → 8.2d.
      - **자동 채움 규칙**: 첫 사진의 촬영 시각·위치(EXIF) → 그 시각·장소의 날씨(상태·기온)와 동/구 단위 지역을 조회. EXIF가 없으면 현재 위치·시각. 위치 권한이 없으면 카드 문구 "Add where you ate it" → 8.3d에서 직접 고름.
      - 날씨 상태(Rainy 등)·기온 구간(Cool 등)은 사용자가 고르지 않는다(데이터 정확도). 장소를 바꾸면 그 장소 기준으로 다시 조회.
-  2. **Type** "· changes what we ask next"(**Segmented control**, 단일 선택, 기본 Home-cooked): **Home-cooked** · **Travel** — Dish name 바로 위에 둔다(무엇을 물을지 먼저 정하도록).
+  2. **Type** "· changes what we ask next"(**Segmented control**, 단일 선택, 기본 Home-cooked): **Home-cooked** · **Eating Out** — Dish name 바로 위에 둔다(무엇을 물을지 먼저 정하도록).
      - Home-cooked(8.2): 설명 칸 = "What makes it special?", 아래에 Recipe 묶음.
      - **Eating Out**(→ **8.2e**, Figma 400:9707 · 저장 값 `travel`): 설명 칸이 **"Where did you eat it?"**로 바뀌고 Recipe 묶음을 숨긴다(밖에서 먹은 음식이라 레시피 없음). 전환은 Smart Animate 300ms. 이미 쓴 재료·단계는 숨겨 두었다가 Home-cooked로 돌아오면 다시 보인다(Travel로 게시하면 저장하지 않음).
   3. Input(Filled) **Dish name** "Kimchi jjigae for one"(필수).
