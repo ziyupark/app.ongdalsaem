@@ -14,6 +14,7 @@ import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
+import { postPlace } from '../../services/location';
 
 const FLAGS: Record<string, number> = {
   CA: require('../../../assets/flags/CA.png'), CN: require('../../../assets/flags/CN.png'), DE: require('../../../assets/flags/DE.png'), ES: require('../../../assets/flags/ES.png'),
@@ -114,7 +115,7 @@ export function useByline() {
   return (d: CardDish, withPlace = false) => {
     const mood = d.moods[0] ? (i18n.exists(`share.moods.${d.moods[0]}`) ? t(`share.moods.${d.moods[0]}`) : d.moods[0]) : null;
     const meal = d.meals[0] ? (i18n.exists(`share.meals.${d.meals[0]}`) ? t(`share.meals.${d.meals[0]}`) : d.meals[0]) : null;
-    const place = withPlace ? d.neighborhood ?? d.city : null;
+    const place = withPlace ? (({ district, city }) => district ?? city)(postPlace(d, i18n.language)) : null;
     return [mood, meal, place].filter(Boolean).join(' · ') || (d.creator.handle ?? d.creator.name);
   };
 }

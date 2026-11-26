@@ -24,6 +24,7 @@ import { fetchFeed, fetchMyMarks, setAcorn, setSaved } from '../../src/services/
 import { timeAgo } from '../../src/lib/time';
 import { displayTemp, usePrefs } from '../../src/lib/prefs';
 import { getHere, placeLabel, useHere } from '../../src/lib/useHere';
+import { postPlaceLine } from '../../src/services/location';
 import { alertOpenSettings, locationBlocked } from '../../src/lib/permissions';
 import { fetchMyFavoriteTags, saveLocationChoice } from '../../src/services/profile';
 import { tempAt, type Forecast } from '../../src/services/weather';
@@ -74,7 +75,7 @@ export default function HomeScreen() {
             return {
               id: d.id,
               name: d.creator.handle ?? d.creator.name,
-              meta: [d.placeName ?? [d.neighborhood, d.city].filter(Boolean).join(', '), timeAgo(d.createdAt, t)].filter(Boolean).join(' · '),
+              meta: [d.placeName ?? postPlaceLine(d), timeAgo(d.createdAt, t)].filter(Boolean).join(' · '),
               avatar: d.creator.avatarUrl ? { uri: d.creator.avatarUrl } : undefined,
               photo: { uri: d.photo },
               photoCount: d.photos.length,
@@ -201,7 +202,7 @@ export default function HomeScreen() {
     setPickAcorn((a) => ({ ...a, given: on, delta: a.delta + step }));
     setAcorn(pick.id, on).catch(() => setPickAcorn((a) => ({ ...a, given: !on, delta: a.delta - step })));
   };
-  const pickByline = pick ? [pick.creator.name, [pick.neighborhood, pick.city].filter(Boolean).join(', '), timeAgo(pick.createdAt, t)].filter(Boolean).join(' · ') : '';
+  const pickByline = pick ? [pick.creator.name, postPlaceLine(pick), timeAgo(pick.createdAt, t)].filter(Boolean).join(' · ') : '';
 
   // Feed (Block · feed 123:3261 — no title / chips): posts from today's weather. Same weather family only
   // (rain · snow · clear · grey); closest first — same weather → nearer temperature → newer. Without weather: newest.

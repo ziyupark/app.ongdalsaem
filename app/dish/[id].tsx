@@ -30,6 +30,7 @@ import {
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { iconRing, radius, space, useTheme } from '../../src/theme';
 import { LoadError } from '../../src/components/LoadError';
+import { postPlaceLine } from '../../src/services/location';
 
 // 'error' = offline with no saved copy / server error (Try again); 'missing' = the dish really isn't there.
 type State = { kind: 'loading' } | { kind: 'missing' } | { kind: 'error' } | { kind: 'ready'; dish: Dish };
@@ -102,7 +103,7 @@ export default function PostDetail() {
 
   const view = useMemo<DishViewData | null>(() => {
     if (!dish) return null;
-    const where = dish.placeName ?? [dish.neighborhood, dish.city].filter(Boolean).join(', ');
+    const where = dish.placeName ?? postPlaceLine(dish);
     return {
       id: dish.id,
       photos: dish.photos.map((uri) => ({ uri })),

@@ -6,6 +6,7 @@ import { myUserId, supabase } from '../lib/supabase';
 import type { Difficulty, ShareDraft } from '../lib/shareDraft';
 import { geohash } from '../lib/geohash';
 import { temperatureTag } from '../lib/tags';
+import { asPlaceNames, placeNames, type PlaceNames } from './location';
 import { WEATHER_MOODS, type WeatherMood } from '../theme';
 
 const BUCKET = 'food-illustrations';
@@ -36,6 +37,8 @@ export type Dish = DishSummary & {
   difficulty: Difficulty | null;
   city: string | null;
   neighborhood: string | null;
+  /** The place in every app language (display: postPlace). null on older posts. */
+  placeNames: PlaceNames | null;
   placeName: string | null;
   createdAt: Date;
   comments: number;
@@ -62,7 +65,7 @@ export type Comment = { id: string; body: string; createdAt: Date; author: Perso
 export const SUMMARY_SELECT = 'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, likes(count)';
 const DISH_SELECT =
   'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, servings, cook_minutes, difficulty, cooked_from_id, ' +
-  'city, neighborhood, country, place_name, created_at, taken_at, dish_type, landscape, allow_comments, visibility, ' +
+  'city, neighborhood, place_names, country, place_name, created_at, taken_at, dish_type, landscape, allow_comments, visibility, ' +
   'creator:profiles!creator_id(id, display_name, username, avatar_url), food_images(image_url, display_order), likes(count), comments(count), food_eaten_counts(count)';
 
 export type Row = Record<string, any>;
@@ -113,6 +116,7 @@ function toDish(r: Row): Dish {
     difficulty: r.difficulty === 'easy' || r.difficulty === 'medium' || r.difficulty === 'hard' ? r.difficulty : null,
     city: r.city ?? null,
     neighborhood: r.neighborhood ?? null,
+    placeNames: asPlaceNames(r.place_names),
     placeName: r.place_name ?? null,
     createdAt: new Date(r.created_at),
     comments: countOf(r.comments),
@@ -400,6 +404,8 @@ export async function createDish(draft: ShareDraft): Promise<string> {
   const foodId = Crypto.randomUUID();
   const paths: string[] = [];
   const urls: string[] = [];
+  // The place in all 9 languages — looked up while the photos upload.
+  const names = draft.context?.coords ? placeNames(draft.context.coords).catch(() => null) : Promise.resolve(null);
 
   try {
     for (const [i, p] of draft.photos.entries()) {
@@ -426,6 +432,7 @@ export async function createDish(draft: ShareDraft): Promise<string> {
       city: ctx?.place?.city ?? null,
       country: ctx?.place?.countryCode ?? ctx?.place?.country ?? null,
       neighborhood: ctx?.place?.district ?? null,
+      place_names: await names,
       // 6-char geohash ≈ 1.2 × 0.6 km — never the exact point.
       landscape: draft.landscape ?? null,
       geohash6: ctx?.coords ? geohash(ctx.coords.latitude, ctx.coords.longitude, 6) : null,
@@ -449,7 +456,7 @@ export async function createDish(draft: ShareDraft): Promise<string> {
     // PGRST204 = unknown column: migration 20261106010000 (taken_at · weather_source · neighborhood) not applied yet.
     if (foodError?.code === 'PGRST204') {
       console.warn('[share] foods is missing new columns — apply supabase/migrations/20261106010000_foods_taken_at_source_neighborhood.sql', foodError.message);
-      const { taken_at: _a, weather_source: _b, neighborhood: _c, geohash6: _d, landscape: _e, ...legacy } = row;
+      const { taken_at: _a, weather_source: _b, neighborhood: _c, geohash6: _d, landscape: _e, place_names: _f, ...legacy } = row;
       ({ error: foodError } = await supabase.from('foods').insert(legacy));
     }
     if (foodError) throw foodError;
@@ -518,6 +525,7 @@ export async function updateDish(foodId: string, draft: ShareDraft): Promise<voi
   if (!uid) throw new Error('Not signed in');
   if (draft.photos.length === 0) throw new Error('No photos');
   const stamp = Date.now();
+  const names = draft.placeEdited && draft.context?.coords ? placeNames(draft.context.coords).catch(() => null) : Promise.resolve(null);
   const added: string[] = [];
   const urls: string[] = [];
   try {
@@ -554,8 +562,14 @@ export async function updateDish(foodId: string, draft: ShareDraft): Promise<voi
       row.country = ctx.place?.countryCode ?? ctx.place?.country ?? null;
       row.neighborhood = ctx.place?.district ?? null;
       row.geohash6 = ctx.coords ? geohash(ctx.coords.latitude, ctx.coords.longitude, 6) : null;
+      row.place_names = await names;
     }
-    const { error: foodError } = await supabase.from('foods').update(row).eq('id', foodId).eq('creator_id', uid);
+    let { error: foodError } = await supabase.from('foods').update(row).eq('id', foodId).eq('creator_id', uid);
+    // PGRST204 = unknown column: migration 20261127000000 (place_names) not applied yet.
+    if (foodError?.code === 'PGRST204' && 'place_names' in row) {
+      const { place_names: _n, ...rest } = row;
+      ({ error: foodError } = await supabase.from('foods').update(rest).eq('id', foodId).eq('creator_id', uid));
+    }
     if (foodError) throw foodError;
 
     const { error: delError } = await supabase.from('food_images').delete().eq('food_id', foodId);

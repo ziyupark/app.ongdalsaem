@@ -33,6 +33,7 @@ import { fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
 import { cellsAround } from '../../src/lib/geohash';
 import { useHere } from '../../src/lib/useHere';
 import { space, useTheme } from '../../src/theme';
+import { postPlace } from '../../src/services/location';
 
 /** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
 const FESTIVE_CAROUSEL = 8;
@@ -369,7 +370,7 @@ function Global() {
       key={d.id}
       dish={d}
       eyebrow={[d.meals[0] ? t(`share.meals.${d.meals[0]}`, { defaultValue: d.meals[0] }) : null, d.tempC != null ? `${d.tempC}°` : null].filter(Boolean).join(' · ')}
-      byline={[d.creator.handle ?? d.creator.name, d.city, timeAgo(d.createdAt, t)].filter(Boolean).join(' · ')}
+      byline={[d.creator.handle ?? d.creator.name, postPlace(d).city, timeAgo(d.createdAt, t)].filter(Boolean).join(' · ')}
       saved={saved.has(d.id)}
       onSave={() => toggleSave(d.id)}
       onPress={() => router.push(`/dish/${d.id}`)}
@@ -391,7 +392,7 @@ function Global() {
                   {/* Dish name (Statement, 2 lines) → description (Body/M, 2 lines) → byline. */}
                   <Text variant="Statement" color="fg/on-photo" numberOfLines={2}>{story.name}</Text>
                   {story.description ? <Text variant="Body/M" color="fg/on-photo-secondary" numberOfLines={2}>{story.description}</Text> : null}
-                  <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{[story.creator.name, story.city, timeAgo(story.createdAt, t)].filter(Boolean).join(' · ')}</Text>
+                  <Text variant="Body/S" color="fg/on-photo-secondary" numberOfLines={1}>{[story.creator.name, postPlace(story).city, timeAgo(story.createdAt, t)].filter(Boolean).join(' · ')}</Text>
                 </View>
                 <Avatar url={story.creator.avatarUrl} name={story.creator.name} size={40} />
               </View>

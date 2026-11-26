@@ -1,6 +1,6 @@
 // Device location for weather — city level only (moved from _reference/services/location.ts).
 import * as Location from 'expo-location';
-import i18n from '../i18n';
+import i18n, { SUPPORTED_LANGUAGES } from '../i18n';
 
 export type Coordinates = { latitude: number; longitude: number };
 
@@ -54,8 +54,7 @@ export async function reverseGeocodeCity(coordinates: Coordinates): Promise<Plac
 type Admin = { name: string; adminLevel?: number; order?: number };
 const BDC = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
 /** OSM admin levels: 2 country · 4 state/특별시 · 5–6 city/county/구 · 7–8 ward/구/区 · 9–10 dong/neighbourhood. */
-async function adminLevels({ latitude, longitude }: Coordinates): Promise<Place | null> {
-  const lang = i18n.language.split('-')[0];
+async function adminLevels({ latitude, longitude }: Coordinates, lang = i18n.language.split('-')[0]): Promise<Place | null> {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 4000);
   try {
@@ -98,3 +97,34 @@ async function osGeocode(coordinates: Coordinates): Promise<Place | null> {
     return null;
   }
 }
+
+/** A post's place in every app language — { ko: { city: '서울', district: '마포구' }, en: { … } } (foods.place_names). */
+export type PlaceNames = Partial<Record<string, { city: string; district?: string }>>;
+
+/**
+ * Coordinates → the place in all 9 app languages (one BigDataCloud call per language, in parallel), so each viewer
+ * reads a post's place in their own language. Rounded coordinates only, as above. null when every call failed.
+ */
+export async function placeNames(coordinates: Coordinates): Promise<PlaceNames | null> {
+  const found = await Promise.all(SUPPORTED_LANGUAGES.map(async (l) => [l, await adminLevels(coordinates, l.split('-')[0])] as const));
+  const out: PlaceNames = {};
+  for (const [l, p] of found) if (p) out[l] = p.district ? { city: p.city, district: p.district } : { city: p.city };
+  return Object.keys(out).length ? out : null;
+}
+
+export const asPlaceNames = (v: unknown): PlaceNames | null => (v && typeof v === 'object' && !Array.isArray(v) ? (v as PlaceNames) : null);
+
+/**
+ * A post's place for display, in the viewer's app language when the post has it (place_names), else as saved
+ * (the poster's language). Display only — filters and matching keep using the saved city / neighborhood.
+ */
+export function postPlace(d: { city: string | null; neighborhood: string | null; placeNames?: PlaceNames | null }, lang = i18n.language) {
+  const own = d.placeNames?.[lang] ?? d.placeNames?.[lang.split('-')[0]];
+  return own ? { city: own.city, district: own.district ?? null } : { city: d.city, district: d.neighborhood };
+}
+
+/** "Mapo-gu, Seoul" — ward, then city. */
+export const postPlaceLine = (d: Parameters<typeof postPlace>[0], lang?: string) => {
+  const p = postPlace(d, lang);
+  return [p.district, p.city].filter(Boolean).join(', ');
+};

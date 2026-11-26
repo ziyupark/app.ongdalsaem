@@ -7,6 +7,7 @@ import { hasIngredients } from '../lib/ingredientMatch';
 import { myUserId, supabase } from '../lib/supabase';
 import type { WeatherMood } from '../theme';
 import { countOf, SUMMARY_SELECT, toPerson, toSummary, type DishSummary, type Person, type Row } from './foods';
+import { asPlaceNames, type PlaceNames } from './location';
 
 export type CardDish = DishSummary & {
   creator: Person;
@@ -14,6 +15,8 @@ export type CardDish = DishSummary & {
   meals: string[];
   city: string | null;
   neighborhood: string | null;
+  /** The place in every app language (display: postPlace). */
+  placeNames: PlaceNames | null;
   country: string | null;
   createdAt: Date;
   description: string;
@@ -21,7 +24,7 @@ export type CardDish = DishSummary & {
   comments: number;
 };
 
-const CARD_SELECT = `${SUMMARY_SELECT}, city, neighborhood, country, created_at, description, food_images(count), comments(count), creator:profiles!creator_id(id, display_name, username, avatar_url)`;
+const CARD_SELECT = `${SUMMARY_SELECT}, city, neighborhood, place_names, country, created_at, description, food_images(count), comments(count), creator:profiles!creator_id(id, display_name, username, avatar_url)`;
 
 const toCard = (r: Row): CardDish => ({
   ...toSummary(r),
@@ -30,6 +33,7 @@ const toCard = (r: Row): CardDish => ({
   meals: r.meal_type ?? [],
   city: r.city ?? null,
   neighborhood: r.neighborhood ?? null,
+  placeNames: asPlaceNames(r.place_names),
   country: r.country ?? null,
   createdAt: new Date(r.created_at),
   description: r.description ?? '',
