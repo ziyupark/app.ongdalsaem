@@ -8,7 +8,7 @@ type Props = { provider: 'Apple' | 'Google'; label: string; onPress: () => void;
 /**
  * Official artwork only.
  * - Apple: Apple Design Resources › Sign in with Apple Logo › Left-aligned · Black · Medium (31×44, padding built in —
- *   its height = the button height, never cropped, no extra gap before the title).
+ *   drawn at the height inside the outline, never cropped, no extra gap before the title).
  * - Google: pre-approved Sign in with Google bundle › iOS · Light — the standard G (20×20), rendered to PNG
  *   because its SVG uses a blurred conic gradient that native SVG renderers can't draw.
  */
@@ -67,8 +67,9 @@ const styles = StyleSheet.create({
     borderColor: thirdPartyBrand.outline,
   },
   googleGap: { gap: space[12] },
-  // Logo file height = button height: span the 1px outline too.
-  appleLogo: { width: 31, height: HEIGHT, marginVertical: -1 },
+  // The logo file (31×44) has a white background rectangle. Sized to the height inside the 1px outline (42), same
+  // proportions, so that rectangle never paints over the outline (it did at 44 + negative margins).
+  appleLogo: { width: (31 * (HEIGHT - 2)) / HEIGHT, height: HEIGHT - 2 },
   googleLogo: { width: 20, height: 20 },
   appleTitle: { color: thirdPartyBrand.appleInk },
   googleTitle: { color: thirdPartyBrand.googleInk },
