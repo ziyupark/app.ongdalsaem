@@ -53,7 +53,7 @@ interface Settings { appearance: 'system'|'light'|'dark'; tempUnit: 'C'|'F';   /
 // DB: supabase/migrations/20261030000000_dish_type_privacy_language.sql — foods(dish_type · place_name(예약) · allow_comments · region_precision) · profiles(언어 · 공개 기본값 · 메시지 · 위치)
 // Today's pick · 끼니 슬롯은 서버 API 없이 앱이 공개 게시물 풀에서 고른다(src/services/recommend.ts, 규칙 = 05-behavior §6.1 · §6.2). Mood Prompt(기분 입력)는 없다.
 // 취향: profiles.favorite_tags(text[]) — 1.3b Taste에서 저장, Today's pick 취향 보너스에 사용
-// 매일 추천 알림 시간: 기기 prefs.pickTime("HH:MM", 기본 07:30, 1.5에서 정함) — 푸시 토큰과 함께 서버에 저장(20261108000000_daily_pick_push.sql)
+// 매일 추천 알림 시간: 기기 prefs.pickTime("HH:MM", 기본 07:30, 1.5에서 정함) — 푸시 토큰과 함께 서버에 저장(20261108000000_daily_pick_push.sql). push_tokens의 위치(lat · lon 소수 2자리 ≈ 1 km, city, place)는 알림이 켜져 있는 동안만 둔다 — 끄면 null로 지우고, 다시 켜면 채운다. 계정 삭제 시 행 삭제(auth.users → profiles → push_tokens cascade)
 interface Notification { id: string; type: 'acorn'|'comment'|'follow'|'daily-pick'|'timer'|'moderation';
   actorIds: string[];            // 묶인 사람들(도토리 "A and N others")
   dishId?: string; commentId?: string; threadId?: string; timerId?: string;

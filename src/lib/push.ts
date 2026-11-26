@@ -44,7 +44,11 @@ export async function syncPush({ ask = false } = {}) {
     if (!uid) return;
     const p = getPrefs();
     if (!p.notify.dailyPick) {
-      if (lastSaved !== 'off') await supabase.from('push_tokens').update({ daily_pick: false }).eq('user_id', uid);
+      // Off: the server keeps no location for this user (it is only there for the daily send). Location columns are
+      // filled again only once the toggle is back on (the code below never runs while it is off).
+      if (lastSaved !== 'off') {
+        await supabase.from('push_tokens').update({ daily_pick: false, lat: null, lon: null, city: null, place: null }).eq('user_id', uid);
+      }
       lastSaved = 'off';
       return;
     }

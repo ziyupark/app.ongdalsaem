@@ -8,6 +8,7 @@
 - **2.1 Nearby card**: 글자 줄 사이 3 → **8**(Figma 131:4544), 위에 Overline "Eat this nearby" 줄을 문서에 반영
 - **6.3 이번 주 한 줄**: 제목 "This week" + 날짜 범위 → **"Weekly Menu"만**(지난주 · 다음주에서도 그대로, 날짜 범위 없음). Month view는 글자 → `calendar-days` 아이콘(문서를 코드에 맞춤)
 - **6.3 Fridge memo**: 칸 선택에 Shopping memo 포함(3개, 문서를 코드에 맞춤). 고른 칸의 상자에 border/focus 2 테두리
+- **9.4 오늘의 픽 알림**: 알림을 끄면 서버 `push_tokens`의 위치(lat · lon · city · place)도 null로 지움
 - **지역 이름 언어**: 게시물 지역을 보는 사람의 앱 언어로 표시. DB `foods.place_names`(jsonb) 추가 — 20261127000000
 
 ## v1.8.5 — 2026-11-20 (전역 날씨 배경 · Weather Card · 타이머 · 앱 아이콘)
