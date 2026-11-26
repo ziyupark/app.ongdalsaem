@@ -389,7 +389,8 @@ const styles = StyleSheet.create({
   tempBox: { paddingHorizontal: space[8], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
-  divider: { height: 1 },
+  // Same line position as the Home Weather Card: 12 under the Now row (the card's gap is 14 — only the space below the line).
+  divider: { height: 1, marginTop: space[12] - space[14] },
   tabular: { fontVariant: ['tabular-nums'] },
   idRow: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
   avatar: { width: 88, height: 88, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
