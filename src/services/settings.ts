@@ -75,10 +75,10 @@ export function canChangeHandle(a: AccountSettings, now = new Date()) {
 
 export const HANDLE_RE = /^[a-z0-9._]{3,20}$/;
 
-/** 9.2 Save changes — name, bio, avatar, and (at most every 14 days) the @handle. */
-export async function saveProfile(a: AccountSettings, input: { displayName: string; username: string; bio: string; avatarUri?: string }) {
+/** 9.2 Save changes — bio, avatar, and (at most every 14 days) the @handle. There is no separate nickname to edit. */
+export async function saveProfile(a: AccountSettings, input: { username: string; bio: string; avatarUri?: string }) {
   const user = await uid();
-  const patch: Row = { display_name: input.displayName.trim(), bio: input.bio.trim() || null };
+  const patch: Row = { bio: input.bio.trim() || null };
   if (input.avatarUri) {
     patch.avatar_url = await uploadAvatar(user.id, input.avatarUri);
   }

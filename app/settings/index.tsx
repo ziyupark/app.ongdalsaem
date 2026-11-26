@@ -54,12 +54,12 @@ export default function Settings() {
       <Pressable accessibilityRole="button" onPress={() => router.push('/settings/edit-profile')} style={({ pressed }) => [styles.card, { backgroundColor: color('bg/subtle') }, pressed && { opacity: 0.85 }]}>
         <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle') }]}>
           {me?.avatarUrl ? <Image source={{ uri: me.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" /> : (
-            <Text variant="Title/L" color="fg/accent">{(me?.displayName ?? ' ').slice(0, 1).toUpperCase()}</Text>
+            <Text variant="Title/L" color="fg/accent">{(me?.username ?? me?.displayName ?? ' ').slice(0, 1).toUpperCase()}</Text>
           )}
         </View>
         <View style={styles.flex}>
-          <Text variant="Title/S" numberOfLines={1}>{me?.displayName ?? ' '}</Text>
-          <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{`${me?.username ? `@${me.username} · ` : ''}${t('settings.editProfile')}`}</Text>
+          <Text variant="Title/S" numberOfLines={1}>{me?.username ? `@${me.username}` : me?.displayName ?? ' '}</Text>
+          <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{t('settings.editProfile')}</Text>
         </View>
         <Icon icon={ChevronRight} size={18} />
       </Pressable>

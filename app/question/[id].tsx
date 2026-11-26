@@ -119,7 +119,7 @@ export default function QuestionScreen() {
                 <Avatar url={a.author.avatarUrl} name={a.author.name} size={32} />
                 <View style={styles.flex}>
                   <View style={styles.aHead}>
-                    <Text variant="Body/S Strong">{a.author.handle ?? a.author.name}</Text>
+                    <Text variant="Body/S Strong">{a.author.handle ? `@${a.author.handle}` : a.author.name}</Text>
                     <Text variant="Caption" color="fg/muted" numberOfLines={1} style={styles.shrink}>{[a.place, timeAgo(a.createdAt, t)].filter(Boolean).join(' · ')}</Text>
                     {q.bestAnswerId === a.id ? (
                       <View style={[styles.pick, { backgroundColor: color('bg/done-subtle') }]}>
@@ -138,6 +138,7 @@ export default function QuestionScreen() {
             )) : <Text variant="Body/S" color="fg/muted">{t('ask.noAnswers')}</Text>}
           </ScrollView>
           <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom + space[6], 40), borderTopColor: color('border/default') }]}>
+            <Avatar url={me?.avatarUrl ?? null} name={me?.username ?? me?.displayName ?? ''} size={40} />
             <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
               <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
                 value={draft}
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
   aHead: { flexDirection: 'row', alignItems: 'center', gap: space[6], flexWrap: 'wrap' },
   pick: { flexDirection: 'row', alignItems: 'center', gap: space[4], paddingLeft: space[6], paddingRight: space[8], paddingVertical: space[2], borderRadius: radius.full },
   helpful: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', paddingTop: space[2] },
-  composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingTop: space[10], borderTopWidth: 1 }, // Comment Composer 287:334
-  field: { flex: 1, minHeight: 48, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' },
-  input: { paddingVertical: space[12], maxHeight: 120 },
+  composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingTop: space[10], borderTopWidth: 1 }, // Comment Composer 287:334
+  field: { flex: 1, minHeight: 42, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' },
+  input: { paddingVertical: 11, maxHeight: 120 },
 });

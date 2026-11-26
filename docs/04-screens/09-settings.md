@@ -28,7 +28,7 @@
   - 위치기반서비스 이용약관, 개인정보처리방침, 마케팅 수신 약관, 오픈소스 라이선스를 제공한다.
 
 ### 9.1 Settings — [26:2](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-2)
-- TopBar "Settings" → **Profile card**: 가로, radius 16, bg/subtle, padding 14 16. 구성은 Avatar 56 + "Jiyu"(Title/S) / "@jiyu.cooks · Edit profile"(Body/S muted) + `chevron-right`. 탭 → 9.2.
+- TopBar "Settings" → **Profile card**: 가로, radius 16, bg/subtle, padding 14 16. 구성은 Avatar 56 + "@jiyu.cooks"(Title/S) / "Edit profile"(Body/S muted) + `chevron-right`. 탭 → 9.2.
 - 그룹:
   - ACCOUNT: Account & security › (9.3)
   - PREFERENCES: Notifications › (9.4) · `thermometer` Temperature **°C**(선택 시트: °C / °F) · `globe` **Language** "English" › (9.6)
@@ -41,7 +41,7 @@
 ### 9.2 Edit profile — [193:6134](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6134)
 - 위쪽(가운데 정렬): **Avatar edit**(96) = Avatar 88 + 오른쪽 아래 **편집 배지**(Edit, 32 원, bg/primary, 2px bg/default 테두리, `camera` 16 fg/on-primary). 아바타나 배지를 탭 → **9.2b**.
 - 입력:
-  - Display name "Jiyu" — helper "Shown on dishes you share."
+  - *(닉네임 Display name 입력칸 없음 — 앱 어디서나 @username이 이름이다)*
   - Username "@jiyu.cooks"(가입 때 자동 생성된 `jiyu_4821`을 사용자가 바꾼 예) — helper "ongdalsaem.app/@jiyu.cooks · changeable once every 30 days". 입력 중 실시간 중복 확인, 중복·허용 외 문자면 Error 상태. **30일에 1회만 변경**, 제한 중에는 Disabled + helper에 다음 변경 가능 날짜 표시. 바꾼 뒤 예전 handle은 14일간 예약(다른 사람이 못 씀).
   - Bio "Cooking for one, mostly when it rains." — helper "38 / 80"
 - Button Primary L "Save changes": 변경이 없으면 Disabled. 저장하면 9.1로 돌아간다.

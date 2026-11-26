@@ -236,7 +236,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         <View style={styles.nowRow}>
           <View style={styles.nowMain}>
             <View style={styles.tempBox}>
-              <Text variant="Numeric/XL" style={styles.tabular}>{now ? `${displayTemp(now.tempC)}°` : '--°'}</Text>
+              <Text variant="Numeric/XL" style={[styles.tabular, styles.temp]}>{now ? `${displayTemp(now.tempC)}°` : '--°'}</Text>
             </View>
             <View style={styles.nowText}>
               <Text variant="Title/M" numberOfLines={1}>{now ? t(`home.condition.${now.mood}`) : t('home.noWeather')}</Text>
@@ -392,6 +392,8 @@ const styles = StyleSheet.create({
   card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[12], overflow: 'hidden' },
   nowRow: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
+  // Temp 1094:24027 — Numeric/XL at 80 (Home Weather Card stays 72).
+  temp: { fontSize: 80 },
   tempBox: { paddingHorizontal: space[8], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },

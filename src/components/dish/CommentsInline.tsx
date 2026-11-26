@@ -84,13 +84,14 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
         {items != null && list.length === 0 ? <Text variant="Body/S" color="fg/muted">{t('dish.noComments')}</Text> : null}
         {shown.map((c) => (
           <Pressable key={c.id} onLongPress={() => onLong(c)} delayLongPress={350} style={styles.comment}>
-            <Avatar url={c.author.avatarUrl} name={c.author.name} />
+            <Avatar url={c.author.avatarUrl} name={c.author.handle ?? c.author.name} />
             <View style={styles.body}>
+              {/* Comment 132:4846 — @username Body/M Strong · time Caption fg/disabled → body Body/M. */}
               <View style={styles.nameRow}>
-                <Text variant="Body/S Strong">{c.author.name}</Text>
+                <Text variant="Body/M Strong" numberOfLines={1} style={styles.shrink}>{c.author.handle ? `@${c.author.handle}` : c.author.name}</Text>
                 <Text variant="Caption" color="fg/disabled">{timeAgo(c.createdAt, t)}</Text>
               </View>
-              <Text variant="Body/S" color="fg/secondary">{c.body}</Text>
+              <Text variant="Body/M">{c.body}</Text>
             </View>
           </Pressable>
         ))}
@@ -102,6 +103,7 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
       </View>
       {allowComments ? (
         <View style={[styles.composer, { backgroundColor: color('bg/default') }]}>
+          <Avatar url={me?.avatarUrl ?? null} name={me?.name ?? ''} />
           <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
             <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
               value={draft}
@@ -148,10 +150,11 @@ const styles = StyleSheet.create({
   sheet: { gap: space[16], paddingTop: space[12], paddingHorizontal: space[20], paddingBottom: 18 },
   comment: { flexDirection: 'row', alignItems: 'flex-start', gap: space[10] },
   body: { flex: 1, gap: space[2] },
-  nameRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[6] },
-  avatar: { width: 32, height: 32, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingTop: space[10], paddingBottom: space[20] },
-  field: { flex: 1, height: 48, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' }, // Comment Composer Field 287:327
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
+  shrink: { flexShrink: 1 },
+  avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingTop: space[10], paddingBottom: space[20] },
+  field: { flex: 1, height: 42, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' }, // Comment Composer Field 287:327
   input: { padding: 0 },
   off: { paddingHorizontal: space[20], paddingBottom: space[20] },
 });

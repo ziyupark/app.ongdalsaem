@@ -4,6 +4,13 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **Body/M 글자 스타일**: 15/22 · −0.05 → **15/20 · 0.13**(Figma 텍스트 스타일 변경, 앱 전체 Body/M에 적용)
+- **6.1 Profile 기온**(1094:24027): Numeric/XL 72 → **80**(홈 Weather Card는 72 그대로)
+- **댓글 이름 = @username**(Comment 132:4846): Avatar 32 → 40, 이름 Body/S Strong → Body/M Strong, 본문 Body/S fg/secondary → Body/M fg/default. 3.8 답변 이름도 @username
+- **닉네임 기능 삭제**: 9.2 Edit profile의 Display name 입력칸 삭제(저장도 안 함). 9.1 프로필 카드 = @username + "Edit profile". 가입(1.3)의 이름 입력은 그대로(@username 자동 생성용)
+- **Comment Composer**(287:334): Avatar 40 다시 추가, 좌우 padding 16 → 20, 입력칸 높이 48 → **42**
+- **Feed Post**(119:601 · 1219:18732): Actions · Caption 좌우 → **38**, Caption Body/M **1줄**, 캡션 없으면 숨김
+- **Question Card**(469:10124): 1px border/default 추가, radius 32 → 16, 질문 Body/L fg/secondary → Body/M fg/default, 사진 radius 12 → 32, 아래 줄 좌우 21
 - **5.1 음식 이름 박스**(1219:18385): padding 6 16 → 6 22, 폭 최대 300 → **150–322**. 길면 …로 자르지 않고 **왼쪽으로 흐른다**
 - **5.1_0 레시피 단계 타이머**(1219:18053): Start timer → 탭 전환 대신 게시물 위에 타이머 화면을 푸시(`/cook-timer`, TopBar 뒤로 + 가운데 로고). 음식 이름 = **단계 내용**(전엔 요리 이름). 뒤로 → 그 게시물 같은 스크롤 위치
 - **7.1 Action bar**: I ate this 오른쪽 타이머 버튼(Cook along) 삭제

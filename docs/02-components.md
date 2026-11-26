@@ -132,10 +132,10 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 | 컴포넌트 | ID | Props (T=text, B=boolean, I=instance swap, V=variant) | 구현 메모 |
 |---|---|---|---|
 | **Comments Sheet** | [287:367](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=287-367) | Title T | 390×560 바텀시트, bg/default, 상단 radius 28, 세로(padding 12/20, gap 16): Handle 40×5(bg/emphasis) → Title(Title/M, "Comments · 18") → Comment 목록. 7.2에서 사용 |
-| Comment | 132:4848 | Time V[Yes/No] · 이름·시간·본문 T | 댓글 한 줄(Comments Sheet 안) |
+| Comment | 132:4848 | Time V[Yes/No] · 이름·시간·본문 T | 댓글 한 줄(Comments Sheet 안): gap 10, Avatar 40 → [**@username** Body/M Strong + 시간 Caption fg/disabled(gap 6)] → 2 → 본문 Body/M fg/default |
 | Input helper | — | — | 모든 Input 변형의 Helper 글은 **FILL + 줄바꿈**(입력칸 폭 350을 넘지 않음) |
 | Checkbox | 화면 프레임(v1 사용처 없음 — 1.3 제거) | — | 22×22, radius 4. 선택 = bg/primary + `check` 14(fg/on-primary, 1.4) · 해제 = 1.5px border/strong. 글과 위 정렬, 간격 10, 글은 FILL로 줄바꿈 |
-| **Comment Composer** | [287:334](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=287-334) | Placeholder T | 390 폭 하단 입력 바, bg/default, 위쪽 1px border/default, padding 10/16/40/16, 세로 가운데, gap 10: **Field**(높이 48, padding 0/20, radius full, Body/M fg/muted "Say something warm…", **흰색 톤** bg/subtle + 1px border/default) → `arrow-right` 22(전송). 7.2 하단 고정 |
+| **Comment Composer** | [287:334](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=287-334) | Placeholder T | 390 폭 하단 입력 바, bg/default, 위쪽 1px border/default, padding 10/20/40/20, 세로 가운데, gap 10: Avatar 40(내 사진) → **Field**(높이 42, padding 0/20, radius full, Body/M fg/muted "Say something warm…", **흰색 톤** bg/subtle + 1px border/default) → `arrow-right` 22(전송). 7.2 하단 고정 |
 | **Notification Row** | [356:8636](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=356-8636) | Unread V[Yes/No] · Show avatar B · Show icon B · Show badge B · Show thumb B · Show action B | 알림 한 줄 390 폭, padding 12 20, gap 12, 세로 가운데: Lead 44(Avatar 40 **또는** Icon 원 40 bg/muted + 글리프 20) + 오른쪽 아래 Badge 20 원(bg/subtle, 종류 아이콘 14: `acorn-color` · `message-circle` · `send` · `user`) → Body(Text Body/S 여러 줄 · Meta: 안 읽음 점 6 fg/accent + 시간 Caption) → Thumb 44 radius 10(게시물 사진) 또는 Action(Button Primary S "Follow back"). Unread=Yes = 배경 bg/accent-subtle. 2.8 |
 
 ### 10 Weather mood
@@ -214,14 +214,14 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 
 ### 3.3 Feed Post 상세 (390 × 652, 전체 폭)
 
-세로 스택, gap 0, padding-bottom 24. 사진 카드는 좌우 20 안쪽(390 폭 → 350), Header · Actions는 좌우 21, Caption은 좌우 25.
+세로 스택, gap 0, padding-bottom 24. 사진 카드는 좌우 20 안쪽(390 폭 → 350), Header는 좌우 21, Actions · Caption은 좌우 38.
 
 | 순서 | 레이어 | 스펙 |
 |---|---|---|
 | 1 | **Header** | 가로, padding 12 21, gap 10, 세로 가운데 정렬. Avatar 40 → Who(세로, gap 1, 남은 폭 채움): **Name** Body/M Strong fg/default(`minji.cooks`) + **Meta** Caption fg/muted(`Mapo, Seoul · 40m`) → `more-horizontal` 24px(fg/secondary). *(날씨는 헤더가 아니라 사진 위 태그로 표시)* |
 | 2 | **Media** | **350 × 402**(좌우 20 안쪽), 사진 cover, clip, **radius 2xl = 32**. 안쪽 padding 18 18 16 18. **좌상단(18, 18) Weather Tag**(Size=XL, **Show condition = On** → "`cloud-snow` Snow −4°", §3.4). 도토리 수는 Actions에 있으므로 사진 위 Acorn Tag는 숨김, **좌하단(left 18, bottom 16) Photo Counter**(`1 / 3`, 노출 인스턴스 — 인스턴스에서 Count 값을 바꾼다). 피드는 사진을 넘기는 곳이라 장수 표시를 아래(넘기는 손 쪽)에 둔다. 가로 스와이프로 여러 장(사진 수 = Counter 분모) |
-| 3 | **Actions** | 가로, padding 12 21 8 21, gap 18, 아이콘 24px fg/default. **Acorn** = `Action Count`(Type=Acorn, 누르면 Acorn given, 숫자 = 받은 도토리) → **Comment** = `Action Count`(Type=Comment, → 7.2) → **Share** `share` → (spacer) → **Save** `bookmark`(오른쪽 끝). Direct(`send`)는 숨김(DM은 4.5 Message로만 시작) |
-| 4 | **Caption block** | 세로, padding 0 25. **Caption** Body/M(줄 높이 18) fg/default, **최대 2줄 말줄임**. 해시태그 줄은 두지 않는다(요리 속성은 사진 위 Weather Tag와 7.1 태그 칩으로 보여 준다) |
+| 3 | **Actions** | 가로, padding 12 38 8 38, gap 18, 아이콘 24px fg/default. **Acorn** = `Action Count`(Type=Acorn, 누르면 Acorn given, 숫자 = 받은 도토리) → **Comment** = `Action Count`(Type=Comment, → 7.2) → **Share** `share` → (spacer) → **Save** `bookmark`(오른쪽 끝). Direct(`send`)는 숨김(DM은 4.5 Message로만 시작) |
+| 4 | **Caption block** | 세로, padding 0 38. **Caption** Body/M fg/default, **1줄 말줄임**. 캡션이 없으면 블록째 숨김(1219:18732). 해시태그 줄은 두지 않는다(요리 속성은 사진 위 Weather Tag와 7.1 태그 칩으로 보여 준다) |
 
 인터랙션:
 - Media 탭 → 7.1 Post detail(상세에서도 같은 Feed Post를 Media 숨김으로 재사용해 헤더·액션·캡션이 그대로 이어진다). 더블탭 → 도토리 주기(`acorn-color` 팝 애니메이션, 숫자 +1).

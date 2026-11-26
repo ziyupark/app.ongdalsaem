@@ -44,7 +44,7 @@ export const text = {
   'Title/M': t('Outfit-Medium', 18, 18, -0.2),
   'Title/S': t('Outfit-Medium', 16, 21, -0.1),
   'Body/L': t('Outfit-Regular', 17, 25, -0.15),
-  'Body/M': t('Outfit-Regular', 15, 22, -0.05),
+  'Body/M': t('Outfit-Regular', 15, 20, 0.13),
   'Body/M Strong': t('Outfit-Medium', 15, 21, -0.1),
   'Body/S': t('Outfit-Regular', 13, 16),
   'Body/S Strong': t('Outfit-Medium', 13, 18),

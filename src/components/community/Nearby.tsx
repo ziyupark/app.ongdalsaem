@@ -306,8 +306,9 @@ function TopToday({ here, excludeId, reload, me, onMore }: { here: Here; exclude
 }
 
 /**
- * Question Card on Explore (4.1 1113:25964) — bg/subtle, r2xl, p16, gap 16: avatar 40 · name (Body/S Strong) · "district ·
- * time" · ⋯ → question (Body/L fg/secondary) → photo (r12, when there is one) → answers (message-circle 24 + count) · share.
+ * Question Card (469:10124, Explore 4.1) — bg/subtle + 1 border/default, r16, p16, gap 16: avatar 40 · name (Body/S Strong) ·
+ * "district · time" · ⋯ → question (Body/M fg/default) → photo (h 395 on a 318 card, r32, when there is one) →
+ * [answers (message-circle 24 + count) · 12 · share] ··· bookmark, 21 in from each side.
  * The place is the district / city the question was saved with — never a dong.
  */
 function ExploreQuestionCard({ q, me, onMore, onSave }: { q: Question; me: string | null; onMore: (t: ReportTarget) => void; onSave: () => void }) {
@@ -319,7 +320,7 @@ function ExploreQuestionCard({ q, me, onMore, onSave }: { q: Question; me: strin
     Share.share({ message: `${q.body} — ${link}`, url: link }).catch(() => undefined);
   };
   return (
-    <Pressable accessibilityRole="button" onPress={() => router.push(`/question/${q.id}`)} style={[styles.qCard, { backgroundColor: color('bg/subtle') }]}>
+    <Pressable accessibilityRole="button" onPress={() => router.push(`/question/${q.id}`)} style={[styles.qCard, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
       <View style={styles.qTop}>
         <Avatar url={q.author.avatarUrl} name={q.author.name} size={40} />
         <View style={styles.qWho}>
@@ -328,7 +329,7 @@ function ExploreQuestionCard({ q, me, onMore, onSave }: { q: Question; me: strin
         </View>
         {!q.mine && q.author.id !== me ? <MoreButton onPress={() => onMore({ kind: 'question', id: q.id, owner: q.author })} /> : null}
       </View>
-      <Text variant="Body/L" color="fg/secondary">{q.body}</Text>
+      <Text variant="Body/M">{q.body}</Text>
       {q.imageUrl ? <Image source={{ uri: q.imageUrl }} style={[styles.qPhoto, { backgroundColor: color('bg/muted') }]} contentFit="cover" /> : null}
       {/* 1219:15934 — [answers · 12 · share] ··· bookmark. */}
       <View style={styles.qFoot}>
@@ -523,12 +524,12 @@ const styles = StyleSheet.create({
   popName: { alignSelf: 'stretch', paddingLeft: 9, gap: space[2] },
   questions: { gap: space[16] },
   qList: { gap: space[14] },
-  qCard: { padding: space[16], gap: space[16], borderRadius: radius['2xl'] },
+  qCard: { padding: space[16], gap: space[16], borderRadius: radius.lg, borderWidth: 1 },
   qTop: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
   qWho: { flex: 1, gap: 3 },
   // Figma 318×395 at 390 wide — kept as a ratio so it scales with the card on SE / Pro Max.
-  qPhoto: { width: '100%', aspectRatio: 318 / 395, borderRadius: radius.md },
-  qFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  qPhoto: { width: '100%', aspectRatio: 318 / 395, borderRadius: radius['2xl'] },
+  qFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 21 },
   qLeft: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   qCount: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
 });

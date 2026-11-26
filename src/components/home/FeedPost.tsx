@@ -92,9 +92,11 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
           <Bookmark size={24} strokeWidth={1.6} absoluteStrokeWidth color={color('fg/default')} fill={saved ? color('fg/default') : 'none'} />
         </Pressable>
       </View>
-      <View style={styles.caption}>
-        <Text variant="Body/M" numberOfLines={2} style={styles.captionText}>{post.caption}</Text>
-      </View>
+      {post.caption ? (
+        <View style={styles.caption}>
+          <Text variant="Body/M" numberOfLines={1}>{post.caption}</Text>
+        </View>
+      ) : null}
     </View>
   );
 });
@@ -109,9 +111,8 @@ const styles = StyleSheet.create({
   // Media padding 18 18 16 18 (Figma component value)
   tagTL: { position: 'absolute', left: 18, top: 18 },
   counterBL: { position: 'absolute', left: 18, bottom: space[16] },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: 21 }, // Actions 119:623 — padding 12 21 8, gap 18
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: 38 }, // Actions 119:623 — padding 12 38 8, gap 18
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   spacer: { flex: 1 },
-  caption: { paddingHorizontal: 25 }, // Caption block 119:644 — padding 0 25
-  captionText: { lineHeight: 18 }, // Figma Body/M at line height 18, 2 lines (h 35)
+  caption: { paddingHorizontal: 38 }, // Caption block 119:644 — padding 0 38, Body/M 1 line
 });

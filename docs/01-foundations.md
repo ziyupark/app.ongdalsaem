@@ -167,7 +167,7 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 | Title/M | Outfit Medium | 18 / 23 | −0.2 | 카드 제목 |
 | Title/S | Outfit Medium | 16 / 21 | −0.1 | |
 | Body/L | Outfit Regular | 17 / 25 | −0.15 | |
-| Body/M | Outfit Regular | 15 / 22 | −0.05 | 기본 본문 |
+| Body/M | Outfit Regular | 15 / 20 | 0.13 | 기본 본문 |
 | Body/M Strong | Outfit Medium | 15 / 21 | 0 | |
 | Body/S | Outfit Regular | 13 / 19 | 0 | |
 | Body/S Strong | Outfit Medium | 13 / 18 | 0 | |
