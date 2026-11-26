@@ -1361,7 +1361,7 @@
     "placeholder": "Message {{name}}…",
     "seen": "Seen",
     "yesterday": "Yesterday",
-    "requestNote": "Messages from cooks you don’t follow arrive as requests. Report or block from ··· anytime.",
+    "requestNote": "Messages from accounts you don’t follow arrive as requests.",
     "sendFailed": "Couldn’t send. Try again.",
     "viewProfile": "View profile",
     "block": "Block",

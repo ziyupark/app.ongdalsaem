@@ -104,7 +104,11 @@ export default function ThreadScreen() {
         contentContainerStyle={styles.body}
         onContentSizeChange={() => list.current?.scrollToEnd({ animated: false })}
         keyboardShouldPersistTaps="handled"
-        ListFooterComponent={<Text variant="Caption" color="fg/muted" style={styles.note}>{t('messages.requestNote')}</Text>}
+        ListFooterComponent={
+          <View style={[styles.note, { borderColor: color('border/strong') }]}>
+            <Text variant="Nav label" color="fg/muted" style={styles.noteText}>{t('messages.requestNote')}</Text>
+          </View>
+        }
         renderItem={({ item, index }) => {
           const prev = msgs[index - 1];
           const showDay = !prev || prev.createdAt.toDateString() !== item.createdAt.toDateString();
@@ -206,7 +210,9 @@ const styles = StyleSheet.create({
   theirs: { alignSelf: 'flex-start', alignItems: 'flex-start' },
   bubbleCol: { gap: space[6] },
   bubble: { borderRadius: radius.xl, paddingHorizontal: space[14], paddingVertical: space[12] },
-  note: { textAlign: 'center', marginTop: space[8] },
+  // Request note 1219:18051 — pill 276 wide, 0.8 border/strong, padding 6 15
+  note: { alignSelf: 'center', width: 276, marginTop: space[8], paddingVertical: space[6], paddingHorizontal: 15, borderWidth: 0.8, borderRadius: radius.full },
+  noteText: { textAlign: 'center' },
   dish: { width: 240, flexDirection: 'row', alignItems: 'center', gap: space[10], padding: space[8], borderRadius: radius.lg, borderWidth: 1 },
   dishThumb: { width: 48, height: 48, borderRadius: radius.md, overflow: 'hidden' },
   composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingTop: space[10], borderTopWidth: 1 },

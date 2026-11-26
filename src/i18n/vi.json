@@ -1344,7 +1344,7 @@
     "placeholder": "Nhắn cho {{name}}…",
     "seen": "Đã xem",
     "yesterday": "Hôm qua",
-    "requestNote": "Tin nhắn từ người bạn không theo dõi sẽ đến dưới dạng tin nhắn chờ. Báo cáo hoặc chặn từ ··· bất cứ lúc nào.",
+    "requestNote": "Tin nhắn từ tài khoản bạn không theo dõi sẽ đến dưới dạng tin nhắn chờ.",
     "sendFailed": "Không gửi được. Hãy thử lại.",
     "viewProfile": "Xem hồ sơ",
     "block": "Chặn",

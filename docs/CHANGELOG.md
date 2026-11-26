@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **Message 대화 안내**(1219:18052): 문구 → "Messages from accounts you don’t follow arrive as requests."(신고 · 차단 안내 문장 삭제), Caption 글자 → **박스**(폭 276, radius full, 0.8 border/strong, padding 6 15, Nav label fg/muted). 문구 `messages.requestNote` 9개 언어 변경
 - **Feed Post Media**(119:620): 사진 카드 370×417(좌우 10) → **350×402(좌우 20)**, radius 32 그대로. 안쪽 padding 18 18 16 18 — Weather Tag 좌상단 16 → 18, Photo Counter 우하단 16 → **좌하단(left 18 · bottom 16)**
 - **Feed Post 행 여백**(119:601): Header padding 12 16 12 20 → **12 21**, Actions 좌우 20 → **21** · gap 16 → **18**, Caption 좌우 20 → **25**, 글자 Body/S 1줄 → **Body/M(줄 높이 18) 2줄**. 문서의 Header 값(Avatar 32 · Name Body/S Strong · more 20)도 실제 화면대로 40 · Body/M Strong · 24로 고침
 - **6.x 프로필 Weather card**: 날씨 줄 → 구분선 간격 14 → 12(홈 Weather Card와 같은 위치). 구분선 아래 간격 14는 그대로
