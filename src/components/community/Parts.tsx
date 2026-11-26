@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronRight, MapPin, MoreHorizontal, Search, Users, X, type LucideIcon } from '../icons/ongdal';
+import { ChevronRight, MapPin, MoreHorizontal, Search, X, type LucideIcon } from '../icons/ongdal';
 import { Bookmark, MessageCircle } from '../icons/ongdal';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -257,7 +257,8 @@ export function Faces({ people, size = 24 }: { people: { id: string; avatarUrl: 
 
 /** Question Card — author · place · time · category pill / body / answers · me too. */
 /** `style` overrides the card box (Explore · Our area: its shared box — no border, 2xl). `showImage`: 4:5 photo, full card width. */
-export function QuestionCard({ q, onPress, onMeToo, showImage, style }: { q: Question; onPress?: () => void; onMeToo?: () => void; showImage?: boolean; style?: StyleProp<ViewStyle> }) {
+/** Question Card — avatar · name · place · time → question → photo (showImage) → answers. No category badge or Me too (4.1). */
+export function QuestionCard({ q, onPress, showImage, style }: { q: Question; onPress?: () => void; showImage?: boolean; style?: StyleProp<ViewStyle> }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
@@ -276,9 +277,6 @@ export function QuestionCard({ q, onPress, onMeToo, showImage, style }: { q: Que
             </Text>
           </View>
         </View>
-        <View style={[styles.qCat, { backgroundColor: color('bg/accent-subtle') }]}>
-          <Text variant="Caption Strong" color="fg/accent">{t(`ask.categories.${q.category}`)}</Text>
-        </View>
       </View>
       <Text variant="Body/M">{q.body}</Text>
       {showImage && q.imageUrl ? <Image source={{ uri: q.imageUrl }} style={styles.qImage} contentFit="cover" /> : null}
@@ -287,10 +285,6 @@ export function QuestionCard({ q, onPress, onMeToo, showImage, style }: { q: Que
           <Icon icon={MessageCircle} size={16} />
           <Text variant="Caption Strong" color="fg/secondary">{t('ask.answers', { count: q.answers })}</Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityState={{ selected: q.meTooByMe }} disabled={!onMeToo || q.mine} onPress={onMeToo} hitSlop={space[8]} style={styles.qStat}>
-          <Icon icon={Users} size={16} color={q.meTooByMe ? 'fg/accent' : 'fg/default'} />
-          <Text variant="Caption Strong" color={q.meTooByMe ? 'fg/accent' : 'fg/secondary'}>{t('ask.meToo', { n: q.meToo })}</Text>
-        </Pressable>
       </View>
     </Pressable>
   );
@@ -399,7 +393,6 @@ const styles = StyleSheet.create({
   qCard: { borderRadius: radius.lg, borderWidth: 1, padding: space[16], gap: space[12] },
   qTop: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
   qPlace: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  qCat: { paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   qImage: { width: '100%', aspectRatio: 4 / 5, borderRadius: radius.md }, // 4:5 like the post photos
   qFoot: { flexDirection: 'row', gap: space[16] },
   qStat: { flexDirection: 'row', alignItems: 'center', gap: space[6] },

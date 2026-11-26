@@ -82,7 +82,8 @@ interface Question { id: string; authorId: string; body: string;  // 5–200자
   category: 'where_to_eat'|'recipe_help'|'ingredients'|'market_deals'|'other';
   photo?: string; neighborhood?: string; city?: string; country: string; tableId?: string; // 테이블 안 질문이면 tableId
   regionPrecision: 'neighborhood'|'city'|'country'; // 질문한 사람의 9.5 Shared precision — 그보다 자세한 장소 이름은 저장하지 않음(neighborhood/city가 null)
-  bestAnswerId?: string; answerCount: number; meTooCount: number; meToo: boolean;
+  bestAnswerId?: string; answerCount: number; meTooCount: number; meToo: boolean; // meToo는 화면에서 쓰지 않음(4.1)
+  saved: boolean;          // 내가 저장했는지 — DB question_saves(user_id, question_id, 본인만 읽기·쓰기·삭제, 20261128000000)
   expiresAt: string; createdAt: string }                        // 7일 — 3.1 · 3.7 · 3.8
 interface Answer { id: string; questionId: string; authorId: string; body: string; // ≤500자
   helpfulCount: number; helpful: boolean; createdAt: string }

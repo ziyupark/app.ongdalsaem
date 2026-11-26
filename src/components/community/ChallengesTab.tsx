@@ -9,7 +9,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, useWindowD
 import { THEME_ICON, THEME_MOOD, themeImage, type ThemeKey } from '../../lib/holidays';
 import { startChallengeDraft, takeChallengeEntered } from '../../lib/shareDraft';
 import {
-  fetchChallengeEntries, fetchChallengeFaces, fetchChallenges, setChallengeJoined, timeLeft, type Challenge,
+  fetchChallengeEntries, fetchChallengeFaces, fetchChallenges, fetchViralBites, setChallengeJoined, timeLeft, type Challenge, type ViralItem,
 } from '../../services/community';
 import type { DishSummary, Person } from '../../services/foods';
 import { elevation, radius, space, useTheme, type ColorToken } from '../../theme';
@@ -17,7 +17,8 @@ import { Icon } from '../Icon';
 import { MoodGradient } from '../MoodGradient';
 import { Text } from '../Text';
 import { LoadError } from '../LoadError';
-import { Avatar, EmptyState, FlagTag, SectionHeader } from './Parts';
+import { Avatar, EmptyState, FlagTag, PhotoCard, SectionHeader, ViralBadge } from './Parts';
+import { AcornTag, WeatherTag } from '../PhotoTags';
 
 /** Latest entries on the tab — a 3 × 3 grid. */
 const ENTRIES = 9;
@@ -34,6 +35,55 @@ const pickFeatured = (l: Challenge[]) =>
  * `onJoinY` reports where the Join button sits (for 4.10c's "back to the Join button").
  */
 export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
+  return (
+    <View>
+      <ChallengesBody onJoinY={onJoinY} />
+      <ViralBites />
+    </View>
+  );
+}
+
+const VIRAL_CARDS = 3;
+
+/**
+ * Viral Bites on the Challenges tab (Figma 1113:25966) — p32 · gap 6: SectionHeader "Viral Bites" → full-width Country
+ * Cards 350×180 stacked, gap 12 (r32, p 14 18, 120 pt ink fade at the bottom): flag (18, 12) + viral badge (62, 12) on top;
+ * at the bottom Display/M name → Weather Tag · Acorn Tag. Editor's picks first, then rising dishes; card → 4.7.
+ * Hidden when there is nothing (or it failed) — the challenges above don't depend on it.
+ */
+function ViralBites() {
+  const { t } = useTranslation();
+  const { width } = useWindowDimensions();
+  const [items, setItems] = useState<ViralItem[]>([]);
+  useTabFocusEffect(useCallback(() => {
+    let alive = true;
+    fetchViralBites().then((l) => alive && setItems(l.filter((v) => v.photo).slice(0, VIRAL_CARDS))).catch(() => undefined);
+    return () => { alive = false; };
+  }, []));
+  if (!items.length) return null;
+  return (
+    <View style={styles.viral}>
+      <SectionHeader title={t('community.viralBites')} />
+      <View style={styles.viralList}>
+        {items.map((v) => (
+          <PhotoCard key={v.key} photo={v.photo!} width={width - space[20] * 2} height={180} label={v.name} onPress={() => router.push({ pathname: '/viral/[name]', params: { name: v.name } })} style={styles.viralCard} scrim="bottom">
+            <View style={styles.viralTop}>
+              {v.country ? <FlagTag code={v.country} /> : null}
+              <ViralBadge item={v} />
+            </View>
+            <Text variant="Display/M" color="fg/on-photo" numberOfLines={1}>{v.name}</Text>
+            <View style={styles.viralTags}>
+              {v.cover?.mood && v.cover.tempC != null ? <WeatherTag mood={v.cover.mood} tempC={v.cover.tempC} condition={t(`weather.${v.cover.mood}`)} /> : <View />}
+              {v.cover ? <AcornTag count={v.cover.acorns} /> : null}
+            </View>
+          </PhotoCard>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function ChallengesBody({ onJoinY }: { onJoinY?: (y: number) => void }) {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const { width } = useWindowDimensions();
@@ -333,5 +383,10 @@ const styles = StyleSheet.create({
   carousel: { gap: space[12], paddingHorizontal: space[20] },
   card: { width: 168, height: 220, borderRadius: radius.xl, overflow: 'hidden', padding: space[16], gap: space[6] },
   badge: { width: 36, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
+  viral: { paddingTop: space[32], gap: space[6] },
+  viralList: { paddingHorizontal: space[20], gap: space[12] },
+  viralCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'flex-end', gap: space[10] },
+  viralTop: { position: 'absolute', left: 18, top: space[12], right: 18, flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  viralTags: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   smallBtn: { flexDirection: 'row', alignItems: 'center', gap: space[4], alignSelf: 'flex-start', height: 30, paddingHorizontal: space[12], borderRadius: radius.full, marginTop: space[4] },
 });

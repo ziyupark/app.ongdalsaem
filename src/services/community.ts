@@ -551,6 +551,8 @@ export type QuestionCategory = (typeof QUESTION_CATEGORIES)[number];
 export type Question = {
   id: string; body: string; category: QuestionCategory; imageUrl: string | null; place: string | null;
   author: Person; answers: number; meToo: number; mine: boolean; meTooByMe: boolean; bestAnswerId: string | null; createdAt: Date;
+  /** I saved (bookmarked) it — question_saves (20261128000000). */
+  savedByMe: boolean;
   /** Weather when it was asked. */
   mood: WeatherMood | null; tempC: number | null;
   /** Set when a question came from a wider range than your area cell (Explore · Our area), e.g. "Dongjak-gu", "Seoul". */
@@ -567,17 +569,21 @@ async function decorateQuestions(rows: Row[]): Promise<Question[]> {
   if (!rows.length) return [];
   const me = await uid();
   const authorIds = [...new Set(rows.map((r) => r.author_id))];
-  const [authors, mine] = await Promise.all([
+  const ids = rows.map((r) => r.id);
+  const [authors, mine, saved] = await Promise.all([
     supabase.from('profiles').select('id, display_name, username, avatar_url').in('id', authorIds),
-    me ? supabase.from('question_me_too').select('question_id').eq('user_id', me).in('question_id', rows.map((r) => r.id)) : Promise.resolve({ data: [] as Row[] }),
+    me ? supabase.from('question_me_too').select('question_id').eq('user_id', me).in('question_id', ids) : Promise.resolve({ data: [] as Row[] }),
+    // Errors (e.g. the question_saves migration not applied yet) just mean "nothing saved".
+    me ? supabase.from('question_saves').select('question_id').eq('user_id', me).in('question_id', ids) : Promise.resolve({ data: [] as Row[] }),
   ]);
+  const savedIds = new Set(((saved.data ?? []) as Row[]).map((r) => r.question_id));
   const byId = new Map(((authors.data ?? []) as Row[]).map((p) => [p.id, toPerson(p)]));
   const meToo = new Set(((mine.data ?? []) as Row[]).map((r) => r.question_id));
   return rows.map((r) => ({
     id: r.id, body: r.body, category: r.category, imageUrl: r.image_url ?? null,
     place: r.neighborhood ?? r.city ?? r.country ?? null,
     author: byId.get(r.author_id) ?? toPerson(null, r.author_id),
-    answers: r.answer_count ?? 0, meToo: r.me_too_count ?? 0, mine: r.author_id === me, meTooByMe: meToo.has(r.id),
+    answers: r.answer_count ?? 0, meToo: r.me_too_count ?? 0, mine: r.author_id === me, meTooByMe: meToo.has(r.id), savedByMe: savedIds.has(r.id),
     bestAnswerId: r.best_answer_id ?? null, createdAt: new Date(r.created_at),
     mood: r.mood ?? null, tempC: r.temp_c == null ? null : Number(r.temp_c),
   }));
@@ -720,6 +726,15 @@ export async function fetchQuestionsPage(
 export async function deleteQuestion(id: string) {
   const { error } = await supabase.from('questions').delete().eq('id', id);
   if (error) throw error;
+}
+
+/** Save / unsave a question (4.1 Explore question card bookmark). Saving twice is not an error. */
+export async function setQuestionSaved(questionId: string, on: boolean) {
+  const me = await needUid();
+  const { error } = on
+    ? await supabase.from('question_saves').insert({ question_id: questionId, user_id: me })
+    : await supabase.from('question_saves').delete().eq('question_id', questionId).eq('user_id', me);
+  if (error && error.code !== '23505') throw error;
 }
 
 export async function setMeToo(questionId: string, on: boolean) {

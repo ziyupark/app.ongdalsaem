@@ -13,7 +13,7 @@ import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
 import { timeAgo } from '../../src/lib/time';
 import {
-  addAnswer, deleteAnswer, deleteQuestion, fetchAnswers, fetchQuestion, setBestAnswer, setHelpful, setMeToo, type Answer, type Question,
+  addAnswer, deleteAnswer, deleteQuestion, fetchAnswers, fetchQuestion, setBestAnswer, setHelpful, type Answer, type Question,
 } from '../../src/services/community';
 import { isObjectionable, reportAnswer } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
@@ -61,12 +61,6 @@ export default function QuestionScreen() {
 
   const sorted = q ? [...answers].sort((a, b) => (a.id === q.bestAnswerId ? -1 : b.id === q.bestAnswerId ? 1 : 0)) : answers;
 
-  const meToo = async () => {
-    if (!q) return;
-    const on = !q.meTooByMe;
-    setQ({ ...q, meTooByMe: on, meToo: q.meToo + (on ? 1 : -1) });
-    try { await setMeToo(q.id, on); } catch { setQ(q); }
-  };
   const helpful = async (a: Answer) => {
     const on = !a.helpfulByMe;
     setAnswers((l) => l.map((x) => (x.id === a.id ? { ...x, helpfulByMe: on, helpful: x.helpful + (on ? 1 : -1) } : x)));
@@ -118,7 +112,7 @@ export default function QuestionScreen() {
       {!q ? <EmptyState icon={MessageCircle} title={t('ask.missing')} /> : (
         <>
           <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
-            <QuestionCard q={q} showImage onMeToo={meToo} />
+            <QuestionCard q={q} showImage />
             <Text variant="Overline" color="fg/muted">{t('ask.answersOverline', { count: answers.length })}</Text>
             {sorted.length ? sorted.map((a) => (
               <Pressable key={a.id} onLongPress={() => answerMenu(a)} delayLongPress={350} style={styles.answer}>

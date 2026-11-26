@@ -42,7 +42,7 @@
     - 카드(1219:15520): bg/subtle, radius 2xl, padding 8 16, 최소 높이 108 — 사진 80 radius lg → [알약 overlay/scrim "I ATE THIS ・ {n}"(Overline · Body/S Strong, fg/on-photo) → (왼쪽 9 안쪽) Body/M Strong 요리 이름 · Caption fg/muted "도시 · 시간"] → ⋯. 탭 → 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
     - 규칙: 공개 **게시물 단위**로 "I ate this" 수(`food_eaten_counts`) 많은 순 → 도토리 → 최신. 범위: 오늘 내 칸(geohash 5자리)과 주변 칸 → 오늘 같은 구 → 오늘 같은 도시 → 도시 최근 3일 → 같은 날씨 최근 7일 순으로 3개까지 채운다. Story of the day 게시물은 뺀다.
   - **Neighbourhood questions**(1113:25960, gap 16): SectionHeader + ›(→ 3.7 목록) → Question Card 최대 3개(gap 14) → Outline M `message-circle` **"Ask a question"**. 없으면 Body/S fg/muted "No questions nearby yet. Be the first to ask."
-    - Explore Question Card(1113:25964): bg/subtle, radius 2xl, padding 16, gap 16 — Avatar 40 · Body/S Strong 이름 · Caption "구(또는 넓힌 범위) · 시간" · ⋯ → Body/L fg/secondary 질문 → 사진(있을 때, 318:395 비율, radius md) → `message-circle` 24 + 답변 수 · `share` 24(시스템 공유: 질문 + 링크). 카테고리 배지 · Me too · 북마크는 Explore 카드에 없다(3.7 목록 카드는 그대로). 카드 → 3.8.
+    - Explore Question Card(1113:25964): bg/subtle, radius 2xl, padding 16, gap 16 — Avatar 40 · Body/S Strong 이름 · Caption "구(또는 넓힌 범위) · 시간" · ⋯ → Body/L fg/secondary 질문 → 사진(있을 때, 318:395 비율, radius md) → [`message-circle` 24 + 답변 수 · 12 · `share` 24(시스템 공유: 질문 + 링크)] ··· **`bookmark` 24 = 질문 저장 토글**(채움 = 저장됨, 바로 바뀌고 실패하면 되돌림, DB question_saves). 카테고리 배지 · Me too는 없다(질문 카드 어디에도 없음 — 3.7 목록 · 3.8 상세 포함). 카드 → 3.8.
     - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다. 넓혀서 가져온 질문에는 그 범위(구 · 도시) 라벨이 붙는다.
 - 위치가 꺼져 있으면: 카드(bg/subtle + border/default, radius 2xl, padding 20, 가운데) `map-pin` 22 fg/secondary · Body/M fg/secondary "Turn on location to see today’s table in our area." · Button M "Allow location"(권한 요청 → 도시 저장).
 
@@ -157,6 +157,7 @@
   3. **Top entries** + See all(→ 4.10): 그 챌린지 인증 사진 그리드.
   4. **Coming up** + See all(→ **4.9**): 가로 카드(남은 기간 대문자 · Join / Join early / Joined).
   5. **Recently ended**: 끝난 챌린지 행(흐리게, "Ended {date} · {n} entries").
+  - 맨 아래 **Viral Bites**(Figma 1113:25966, 위 32 · gap 6): SectionHeader "Viral Bites" → Country Card **전체 폭 × 180** 세로로 최대 3장(gap 12, r32, padding 14 18, 아래 120 잉크 페이드) — 위 Flag Tag(18, 12) + Viral badge(62, 12: "🔥 +n% this week" bg/kick · "✦ Editor’s pick" bg/inverse) · 아래 Display/M 요리 이름 → Weather Tag · Acorn Tag. 탭 → 4.7. 편집자 픽 먼저, 그다음 뜨는 요리. 없거나 실패하면 섹션을 숨긴다(챌린지가 없어도 보임). 모아 보는 목록 화면이 없어 제목 옆 ›는 두지 않는다.
   6. **How it works**: Join("Shows up on Home") · Cook(그 챌린지 규칙) · Post(#태그) + Caption "Challenges are made by ongdalsaem and last 3–14 days. Post one public dish with the tag while it runs."
 - 챌린지가 없으면 EmptyState `flag` "No challenges right now".
 

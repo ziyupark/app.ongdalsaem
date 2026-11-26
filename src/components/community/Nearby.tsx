@@ -14,15 +14,15 @@ import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
 import { alertOpenSettings, locationBlocked } from '../../lib/permissions';
 import {
-  fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, searchSuggestions, setMeToo,
+  fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, searchSuggestions, setQuestionSaved,
   type CardDish, type Question, type TopDish, type TopScope,
 } from '../../services/community';
 import { saveLocationChoice } from '../../services/profile';
-import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
+import { iconStroke, radius, space, useTheme, WEATHER_ICON } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Icon } from '../Icon';
-import { MessageCircle, Share as ShareIcon } from '../icons/ongdal';
+import { Bookmark, MessageCircle, Share as ShareIcon } from '../icons/ongdal';
 import { Text } from '../Text';
 import { FilterChips, FilterSheet, hasFilters, NO_FILTERS, type SearchFilters } from './SearchFilters';
 import { Avatar, EmptyState, FoodGrid, ListCard, MoreButton, QuestionCard, SearchField, SectionHeader, useByline, useMyId, type ReportTarget } from './Parts';
@@ -85,12 +85,13 @@ function useNearbyQuestions(here: Here, n: number, fill?: boolean, reload = 0) {
       load.then(setQuestions).catch(() => setQuestions([])).finally(() => setLoaded(true));
     }, [here.cell, n, fill, district, city, reload]),
   );
-  const meToo = async (q: Question) => {
-    const on = !q.meTooByMe;
-    setQuestions((l) => l.map((x) => (x.id === q.id ? { ...x, meTooByMe: on, meToo: x.meToo + (on ? 1 : -1) } : x)));
-    try { await setMeToo(q.id, on); } catch { setQuestions((l) => l.map((x) => (x.id === q.id ? q : x))); }
+  // Bookmark: flips at once, back again if the save fails.
+  const toggleSave = async (q: Question) => {
+    const on = !q.savedByMe;
+    setQuestions((l) => l.map((x) => (x.id === q.id ? { ...x, savedByMe: on } : x)));
+    try { await setQuestionSaved(q.id, on); } catch { setQuestions((l) => l.map((x) => (x.id === q.id ? { ...x, savedByMe: !on } : x))); }
   };
-  return { questions, meToo, loaded };
+  return { questions, loaded, toggleSave };
 }
 
 // ------------------------------------------------------------------------------------------------ search (3.4)
@@ -309,7 +310,7 @@ function TopToday({ here, excludeId, reload, me, onMore }: { here: Here; exclude
  * time" · ⋯ → question (Body/L fg/secondary) → photo (r12, when there is one) → answers (message-circle 24 + count) · share.
  * The place is the district / city the question was saved with — never a dong.
  */
-function ExploreQuestionCard({ q, me, onMore }: { q: Question; me: string | null; onMore: (t: ReportTarget) => void }) {
+function ExploreQuestionCard({ q, me, onMore, onSave }: { q: Question; me: string | null; onMore: (t: ReportTarget) => void; onSave: () => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const where = q.range ?? q.place;
@@ -329,13 +330,19 @@ function ExploreQuestionCard({ q, me, onMore }: { q: Question; me: string | null
       </View>
       <Text variant="Body/L" color="fg/secondary">{q.body}</Text>
       {q.imageUrl ? <Image source={{ uri: q.imageUrl }} style={[styles.qPhoto, { backgroundColor: color('bg/muted') }]} contentFit="cover" /> : null}
+      {/* 1219:15934 — [answers · 12 · share] ··· bookmark. */}
       <View style={styles.qFoot}>
-        <View style={styles.qCount} accessible accessibilityLabel={t('ask.answers', { count: q.answers })}>
-          <Icon icon={MessageCircle} size={24} />
-          <Text variant="Body/S Strong">{String(q.answers)}</Text>
+        <View style={styles.qLeft}>
+          <View style={styles.qCount} accessible accessibilityLabel={t('ask.answers', { count: q.answers })}>
+            <Icon icon={MessageCircle} size={24} />
+            <Text variant="Body/S Strong">{String(q.answers)}</Text>
+          </View>
+          <Pressable accessibilityRole="button" accessibilityLabel={t('home.share')} hitSlop={space[8]} onPress={share}>
+            <Icon icon={ShareIcon} size={24} />
+          </Pressable>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel={t('home.share')} hitSlop={space[8]} onPress={share}>
-          <Icon icon={ShareIcon} size={24} />
+        <Pressable accessibilityRole="button" accessibilityLabel={t('home.save')} accessibilityState={{ selected: q.savedByMe }} hitSlop={space[8]} onPress={onSave}>
+          <Bookmark size={24} strokeWidth={iconStroke(24)} absoluteStrokeWidth color={color('fg/default')} fill={q.savedByMe ? color('fg/default') : 'none'} />
         </Pressable>
       </View>
     </Pressable>
@@ -358,7 +365,7 @@ export function OurArea({ excludeId, reload = 0, onMore }: {
   const { t } = useTranslation();
   const { here, allow } = useHere();
   const me = useMyId();
-  const { questions, loaded } = useNearbyQuestions(here, AREA_QUESTIONS, true, reload);
+  const { questions, loaded, toggleSave } = useNearbyQuestions(here, AREA_QUESTIONS, true, reload);
   const [busy, setBusy] = useState(false);
 
   const turnOn = async () => {
@@ -394,7 +401,7 @@ export function OurArea({ excludeId, reload = 0, onMore }: {
           {!loaded ? (
             <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
           ) : questions.length ? (
-            questions.slice(0, AREA_QUESTIONS).map((q) => <ExploreQuestionCard key={q.id} q={q} me={me} onMore={onMore} />)
+            questions.slice(0, AREA_QUESTIONS).map((q) => <ExploreQuestionCard key={q.id} q={q} me={me} onMore={onMore} onSave={() => toggleSave(q)} />)
           ) : (
             <Text variant="Body/S" color="fg/muted">{t('community.area.questionsEmpty')}</Text>
           )}
@@ -421,7 +428,7 @@ export function NearbyFeed({ initialQuery = '', initialArea = 'all', initialFilt
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
   const dishes = useNearbyDishes(here, area, submitted, filters);
   const searching = !!submitted || hasFilters(filters);
-  const { questions, meToo } = useNearbyQuestions(here, 3);
+  const { questions } = useNearbyQuestions(here, 3);
   const condition = f ? t(`weather.${f.mood}`).toLowerCase() : '';
 
   return (
@@ -444,7 +451,7 @@ export function NearbyFeed({ initialQuery = '', initialArea = 'all', initialFilt
               <Icon icon={MessageCircle} size={20} color="fg/secondary" />
               <Text variant="Body/S" color="fg/muted">{t('community.askPlaceholder')}</Text>
             </Pressable>
-            {questions.slice(0, 1).map((q) => <QuestionCard key={q.id} q={q} onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
+            {questions.slice(0, 1).map((q) => <QuestionCard key={q.id} q={q} onPress={() => router.push(`/question/${q.id}`)} />)}
           </View>
         ) : null}
       </View>
@@ -521,6 +528,7 @@ const styles = StyleSheet.create({
   qWho: { flex: 1, gap: 3 },
   // Figma 318×395 at 390 wide — kept as a ratio so it scales with the card on SE / Pro Max.
   qPhoto: { width: '100%', aspectRatio: 318 / 395, borderRadius: radius.md },
-  qFoot: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
+  qFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  qLeft: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   qCount: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
 });
