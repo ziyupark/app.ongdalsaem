@@ -14,6 +14,7 @@ import { FeedPost, type FeedPostData } from '../../src/components/home/FeedPost'
 import { HomeSkeleton } from '../../src/components/home/HomeSkeleton';
 import { WeatherCard, type SlotView } from '../../src/components/home/WeatherCard';
 import { Toast } from '../../src/components/Toast';
+import { LoadError } from '../../src/components/LoadError';
 import { mealAt, mealTimeline, type Meal } from '../../src/lib/meals';
 import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
 import { useDietPrefs } from '../../src/lib/dietPrefs';
@@ -23,6 +24,7 @@ import { fetchFeed, fetchMyMarks, setAcorn, setSaved } from '../../src/services/
 import { timeAgo } from '../../src/lib/time';
 import { displayTemp, usePrefs } from '../../src/lib/prefs';
 import { getHere, placeLabel, useHere } from '../../src/lib/useHere';
+import { alertOpenSettings, locationBlocked } from '../../src/lib/permissions';
 import { fetchMyFavoriteTags, saveLocationChoice } from '../../src/services/profile';
 import { tempAt, type Forecast } from '../../src/services/weather';
 import { space, useTheme, type WeatherMood } from '../../src/theme';
@@ -54,7 +56,10 @@ export default function HomeScreen() {
   const [favoriteTags, setFavoriteTags] = useState<string[]>([]);
   const diet = useDietPrefs();
   useEffect(() => { fetchMyFavoriteTags().then(setFavoriteTags).catch(() => undefined); }, []);
-  useTabFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, []));
+  // Feed (and Today's pick pool) failed — offline / server error. With no posts on screen, the feed shows Try again.
+  const [feedFailed, setFeedFailed] = useState(false);
+  const [feedAttempt, setFeedAttempt] = useState(0);
+  useTabFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, [feedAttempt]));
   useTabFocusEffect(
     useCallback(() => {
       let alive = true;
@@ -63,6 +68,7 @@ export default function HomeScreen() {
           const dishes = (await fetchFeed(60)).filter((d) => d.mood && d.tempC != null);
           const marks = await fetchMyMarks(dishes.map((d) => d.id));
           if (!alive) return;
+          setFeedFailed(false);
           setRealPosts(dishes.map((d) => {
             const given = marks.given.has(d.id);
             return {
@@ -84,10 +90,11 @@ export default function HomeScreen() {
           }));
         } catch (e) {
           console.warn('[home] feed', e);
+          if (alive) setFeedFailed(true);
         }
       })();
       return () => { alive = false; };
-    }, [t]),
+    }, [t, feedAttempt]),
   );
   // New picks (§6.1): dishes already shown this session are skipped until the list runs out.
   const [seen, setSeen] = useState<Set<string>>(() => new Set());
@@ -109,13 +116,13 @@ export default function HomeScreen() {
   const load = reload;
 
   const allowLocation = async () => {
+    if (await locationBlocked()) return alertOpenSettings(t('home.locationOff.denied')); // iOS won't ask again
     setAllowing(true);
     const ok = await allow();
     setAllowing(false);
-    if (ok) {
-      const p = getHere().place;
-      await saveLocationChoice({ city: p?.city, country: p?.countryCode ?? p?.country, locationEnabled: true }).catch(() => undefined);
-    }
+    if (!ok) return; // the user just said no to the system prompt — nothing more to show
+    const p = getHere().place;
+    await saveLocationChoice({ city: p?.city, country: p?.countryCode ?? p?.country, locationEnabled: true }).catch(() => undefined);
   };
 
   // Mood wash scrolls away with the content and fades out (gone after ~300 pt).
@@ -299,6 +306,7 @@ export default function HomeScreen() {
               ) : null}
             </View>
             <View style={styles.feed}>
+              {feedFailed && !posts.length ? <LoadError onRetry={() => { setFeedFailed(false); setFeedAttempt((n) => n + 1); }} /> : null}
               {posts.map((p) => (
                 <HomePost key={p.id} post={p} />
               ))}

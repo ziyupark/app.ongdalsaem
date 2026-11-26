@@ -5,6 +5,9 @@ close=關閉
 cancel=取消
 save=儲存
 clear=清除
+loadErrorTitle=無法載入
+loadErrorBody=請檢查網路連線後再試一次。
+retry=再試一次
 [welcome]
 skip=略過
 title=有些餐點，會陪我們好多年。
@@ -166,6 +169,7 @@ tabs.profile=個人
 tabs.share=分享料理
 findNearby=在附近找{{dish}}
 opensInMaps=在地圖中開啟
+locationOff.denied=ongdalsaem 的定位已關閉。請到「設定」開啟，才能看到你所在地的天氣。
 [time]
 justNow=剛剛
 minutes={{n}} 分鐘
@@ -318,6 +322,7 @@ changesSaved=已儲存變更
 inChallenge=參加中：{{name}}
 challengeOnePhoto=挑戰只能上傳 1 張照片
 pickHintChallenge=挑戰用的 1 張照片
+cameraDenied=請在「設定」中允許取用相機，才能拍下你的料理。
 [dish]
 temperature.cold=寒冷
 temperature.cool=涼爽

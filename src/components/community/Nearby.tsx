@@ -9,6 +9,7 @@ import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWind
 import { useDietPrefs } from '../../lib/dietPrefs';
 import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
+import { alertOpenSettings, locationBlocked } from '../../lib/permissions';
 import {
   fetchAreaQuestions, fetchNearby, fetchNearbyQuestions, fetchTodayTopDishes, searchSuggestions, setMeToo,
   type CardDish, type Question, type TopDish, type TopScope,
@@ -309,13 +310,13 @@ export function OurArea({ excludeId }: {
   const [busy, setBusy] = useState(false);
 
   const turnOn = async () => {
+    if (await locationBlocked()) return alertOpenSettings(t('home.locationOff.denied')); // iOS won't ask again
     setBusy(true);
     const ok = await allow();
     setBusy(false);
-    if (ok) {
-      const p = getHere().place;
-      await saveLocationChoice({ city: p?.city, country: p?.countryCode ?? p?.country, locationEnabled: true }).catch(() => undefined);
-    }
+    if (!ok) return; // the user just said no to the system prompt — nothing more to show
+    const p = getHere().place;
+    await saveLocationChoice({ city: p?.city, country: p?.countryCode ?? p?.country, locationEnabled: true }).catch(() => undefined);
   };
 
   if (here.status === 'loading') return null;

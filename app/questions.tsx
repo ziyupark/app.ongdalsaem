@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../src/components/Button';
 import { Chip } from '../src/components/Chip';
 import { SearchField } from '../src/components/community/Parts';
+import { LoadError } from '../src/components/LoadError';
 import { ReportSheet } from '../src/components/dish/ReportSheet';
 import { Icon } from '../src/components/Icon';
 import { MessageCircle } from '../src/components/icons/ongdal';
@@ -67,18 +68,20 @@ export default function Questions() {
   const at = { geohash: here.cell, district: here.place?.district ?? null, city: here.place?.city ?? here.forecast?.city ?? null };
   const ready = here.status !== 'loading';
 
+  const [failed, setFailed] = useState(false);
   const load = useCallback(async () => {
     if (!ready) return;
     const id = ++run.current;
     setItems(null);
     setNext(null);
+    setFailed(false);
     try {
       const page = await fetchQuestionsPage(at, { category, query }, null, PAGE);
       if (id !== run.current) return;
       setItems(page.items);
       setNext(page.next);
     } catch {
-      if (id === run.current) setItems([]);
+      if (id === run.current) setFailed(true); // offline / server error — not "no questions yet"
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, at.geohash, at.district, at.city, category, query]);
@@ -200,7 +203,9 @@ export default function Questions() {
         </ScrollView>
       </View>
 
-      {items == null ? (
+      {failed ? (
+        <LoadError onRetry={load} />
+      ) : items == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
       ) : empty ? (
         // 4.5b — orb 64 bg/subtle · icon 28 fg/muted → 16 → Title/M → 6 → Body/S → 24 → Kick M.

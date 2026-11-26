@@ -1,12 +1,13 @@
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, StyleSheet, TextInput, View } from 'react-native';
 import { AvatarEdit } from '../../src/components/AvatarEdit';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { SettingsScreen } from '../../src/components/settings/Settings';
+import { LoadError } from '../../src/components/LoadError';
 import { Text } from '../../src/components/Text';
 import { canChangeHandle, fetchAccount, HANDLE_RE, saveProfile, type AccountSettings } from '../../src/services/settings';
 import { isObjectionable } from '../../src/services/moderation';
@@ -28,13 +29,15 @@ export default function EditProfile() {
   const [saving, setSaving] = useState(false);
   const [bioFocus, setBioFocus] = useState(false);
 
-  useEffect(() => {
-    fetchAccount().then((x) => { setA(x); setName(x.displayName); setHandle(x.username); setBio(x.bio); }).catch(() =>
-      // Don't leave the spinner up: say it failed, then go back to Settings.
-      Alert.alert(t('settings.loadFailed'), undefined, [{ text: t('common.back'), onPress: () => router.back() }]),
-    );
-  }, [t]);
+  const [failed, setFailed] = useState(false);
+  const load = useCallback(
+    () => fetchAccount().then((x) => { setA(x); setName(x.displayName); setHandle(x.username); setBio(x.bio); setFailed(false); }).catch(() => setFailed(true)),
+    [],
+  );
+  useEffect(() => { load(); }, [load]);
 
+  // Offline / server error: Try again in place of the form, never a spinner that doesn't stop.
+  if (!a && failed) return <SettingsScreen title={t('settings.editProfile')}><LoadError onRetry={load} /></SettingsScreen>;
   if (!a) return <SettingsScreen title={t('settings.editProfile')}><ActivityIndicator color={color('fg/muted')} /></SettingsScreen>;
 
   const cleanHandle = handle.trim().toLowerCase().replace(/^@/, '');

@@ -5,6 +5,9 @@ close=Fechar
 cancel=Cancelar
 save=Salvar
 clear=Limpar
+loadErrorTitle=Não foi possível carregar
+loadErrorBody=Verifique sua conexão e tente de novo.
+retry=Tentar de novo
 [welcome]
 skip=Pular
 title=Algumas refeições ficam com a gente por anos.
@@ -166,6 +169,7 @@ tabs.profile=Perfil
 tabs.share=Compartilhar um prato
 findNearby=Encontrar {{dish}} por perto
 opensInMaps=Abre no Mapas
+locationOff.denied=A localização está desativada para o ongdalsaem. Ative nos Ajustes para ver o clima onde você está.
 [time]
 justNow=Agora mesmo
 minutes={{n}} min
@@ -321,6 +325,7 @@ changesSaved=Alterações salvas
 inChallenge=Participando de: {{name}}
 challengeOnePhoto=Desafios aceitam só uma foto
 pickHintChallenge=Uma foto para o desafio
+cameraDenied=Permita o acesso à câmera nos Ajustes para fotografar seu prato.
 [dish]
 temperature.cold=Frio
 temperature.cool=Fresco

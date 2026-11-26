@@ -5,7 +5,10 @@
     "close": "Đóng",
     "cancel": "Hủy",
     "save": "Lưu",
-    "clear": "Xóa"
+    "clear": "Xóa",
+    "loadErrorTitle": "Không tải được",
+    "loadErrorBody": "Kiểm tra kết nối rồi thử lại nhé.",
+    "retry": "Thử lại"
   },
   "welcome": {
     "skip": "Bỏ qua",
@@ -234,7 +237,8 @@
       "unknown": "Chưa rõ thời tiết",
       "where": "Bạn đang nấu ở đâu?",
       "choose": "Chọn thành phố",
-      "allow": "Cho phép vị trí"
+      "allow": "Cho phép vị trí",
+      "denied": "Vị trí của ongdalsaem đang tắt. Bật trong Cài đặt để xem thời tiết nơi bạn ở."
     },
     "tabs": {
       "home": "Trang chủ",
@@ -409,7 +413,8 @@
     "changesSaved": "Đã lưu thay đổi",
     "inChallenge": "Đang tham gia: {{name}}",
     "challengeOnePhoto": "Thử thách chỉ đăng được 1 ảnh",
-    "pickHintChallenge": "Một ảnh cho thử thách"
+    "pickHintChallenge": "Một ảnh cho thử thách",
+    "cameraDenied": "Hãy cho phép truy cập camera trong Cài đặt để chụp món ăn của bạn."
   },
   "dish": {
     "temperature": {

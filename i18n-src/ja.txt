@@ -5,6 +5,9 @@ close=閉じる
 cancel=キャンセル
 save=保存
 clear=クリア
+loadErrorTitle=読み込めませんでした
+loadErrorBody=接続を確認して、もう一度お試しください。
+retry=もう一度試す
 [welcome]
 skip=スキップ
 title=何年たっても心に残る食事がある。
@@ -166,6 +169,7 @@ tabs.profile=プロフィール
 tabs.share=料理をシェア
 findNearby=近くの{{dish}}を探す
 opensInMaps=マップで開きます
+locationOff.denied=ongdalsaemの位置情報がオフになっています。今いる場所の天気を見るには、設定でオンにしてください。
 [time]
 justNow=たった今
 minutes={{n}}分
@@ -318,6 +322,7 @@ changesSaved=変更を保存しました
 inChallenge=参加中: {{name}}
 challengeOnePhoto=チャレンジは写真1枚だけ投稿できます
 pickHintChallenge=チャレンジ用の写真1枚
+cameraDenied=料理を撮影するには、設定でカメラへのアクセスを許可してください。
 [dish]
 temperature.cold=寒い
 temperature.cool=涼しい

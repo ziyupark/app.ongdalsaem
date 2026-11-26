@@ -14,6 +14,7 @@ import { FlowTopBar } from '../../src/components/share/FlowTopBar';
 import { Text } from '../../src/components/Text';
 import { Toast } from '../../src/components/Toast';
 import { CHALLENGE_PHOTOS, getShareDraft, resetShareDraft, updateShareDraft, useShareDraft, type DraftPhoto } from '../../src/lib/shareDraft';
+import { alertOpenSettings } from '../../src/lib/permissions';
 import { FIXED_BUTTON_BOTTOM, radius, space, useTheme, withAlpha } from '../../src/theme';
 
 const MAX_PHOTOS = 10;
@@ -92,8 +93,11 @@ export default function PickPhotos() {
   const openCamera = async () => {
     if (selected.length >= max) return;
     try {
+      // Turned off earlier → iOS won't show its prompt again: say why and offer Settings instead of doing nothing.
+      const before = await ImagePicker.getCameraPermissionsAsync();
+      if (!before.granted && !before.canAskAgain) return alertOpenSettings(t('share.cameraDenied'));
       const p = await ImagePicker.requestCameraPermissionsAsync();
-      if (!p.granted) return;
+      if (!p.granted) return; // the user just said no to the system prompt
       const r = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.9 });
       if (r.canceled || !r.assets[0]) return;
       const a = r.assets[0];

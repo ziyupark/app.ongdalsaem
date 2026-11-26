@@ -29,8 +29,10 @@ import {
 } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { iconRing, radius, space, useTheme } from '../../src/theme';
+import { LoadError } from '../../src/components/LoadError';
 
-type State = { kind: 'loading' } | { kind: 'missing' } | { kind: 'ready'; dish: Dish };
+// 'error' = offline with no saved copy / server error (Try again); 'missing' = the dish really isn't there.
+type State = { kind: 'loading' } | { kind: 'missing' } | { kind: 'error' } | { kind: 'ready'; dish: Dish };
 
 /**
  * 7.1 Post detail (601:12935) · 7.1b Ate it (601:13046) · 7.3 Report/block · 7.4 Share.
@@ -89,7 +91,7 @@ export default function PostDetail() {
         if (dish.cookedFromId) fetchRecipeAuthor(dish.cookedFromId).then((p) => alive && setRecipeAuthor(p)).catch(() => undefined);
         else setRecipeAuthor(null);
       } catch {
-        if (alive) setState({ kind: 'missing' });
+        if (alive) setState({ kind: 'error' });
       }
     })();
     return () => { alive = false; };
@@ -227,7 +229,9 @@ export default function PostDetail() {
           </Pressable>
         </View>
         <View style={styles.center}>
-          {state.kind === 'loading' ? <ActivityIndicator color={color('fg/muted')} /> : (
+          {state.kind === 'loading' ? <ActivityIndicator color={color('fg/muted')} /> : state.kind === 'error' ? (
+            <LoadError onRetry={() => { setState({ kind: 'loading' }); setReloadKey((k) => k + 1); }} />
+          ) : (
             <>
               <Text variant="Title/S">{t('dish.missingTitle')}</Text>
               <Text variant="Body/S" color="fg/muted">{t('dish.missingBody')}</Text>

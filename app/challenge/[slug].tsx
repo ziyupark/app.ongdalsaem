@@ -6,6 +6,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View, t
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChallengeHero, EntryGrid, Stat } from '../../src/components/community/ChallengesTab';
 import { EmptyState, FlagTag } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { IconButton } from '../../src/components/IconButton';
 import { ScreenWash } from '../../src/components/ScreenHeader';
 import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
@@ -41,6 +42,8 @@ export default function ChallengeScreen() {
   const [entries, setEntries] = useState<DishSummary[] | null>(null);
   const [live, setLive] = useState<Challenge | null>(null);
 
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let alive = true;
     fetchChallenge(String(slug ?? ''))
@@ -55,9 +58,9 @@ export default function ChallengeScreen() {
           .then((l) => alive && setLive(l.filter((x) => x.phase === 'running').sort((a, b) => a.endsAt.getTime() - b.endsAt.getTime())[0] ?? null))
           .catch(() => undefined);
       })
-      .catch(() => alive && setC(null));
+      .catch(() => alive && setFailed(true)); // offline / server error — not "this challenge doesn't exist"
     return () => { alive = false; };
-  }, [slug]);
+  }, [slug, attempt]);
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     bar.onY(e.nativeEvent.contentOffset.y);
@@ -78,7 +81,9 @@ export default function ChallengeScreen() {
           <IconButton icon={Bell} accessibilityLabel={t('home.notifications')} onPress={() => router.push('/notifications')} />
         </View>
 
-        {c === undefined ? (
+        {c === undefined && failed ? (
+          <LoadError onRetry={() => { setFailed(false); setAttempt((n) => n + 1); }} />
+        ) : c === undefined ? (
           <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
         ) : c === null ? (
           <EmptyState icon={Trophy} title={t('challenge.missing')} />

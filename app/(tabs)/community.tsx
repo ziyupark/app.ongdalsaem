@@ -6,6 +6,7 @@ import { Chip } from '../../src/components/Chip';
 import {
   Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag, ViralBadge,
 } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { ChallengesTab } from '../../src/components/community/ChallengesTab';
 import { OurArea } from '../../src/components/community/Nearby';
 import { upcomingFestive } from '../../src/lib/holidays';
@@ -331,8 +332,9 @@ function Global() {
     setAcorn(id, on).catch(() => setStoryAcorn((a) => (a.id === id ? { ...a, given: !on, delta: a.delta - step } : a)));
   };
 
-  useTabFocusEffect(
-    useCallback(() => {
+  // Popular dishes (and Trending tags) failed to load — offline / server error. A banner with Try again, not empty sections.
+  const [failed, setFailed] = useState(false);
+  const load = useCallback(() => {
       fetchViralBites().then(setViral).catch(() => undefined);
       fetchStoryOfTheDay().then(async (d) => {
         setStory(d);
@@ -342,13 +344,14 @@ function Global() {
         const marks = await fetchMyMarks([d.id]).catch(() => null);
         if (marks) setStoryAcorn({ id: d.id, given: marks.given.has(d.id), delta: 0 });
       }).catch(() => { setStory(null); setStoryReady(true); });
-      fetchGlobal(null).then(async (l) => {
+      return fetchGlobal(null).then(async (l) => {
         setDishes(l);
+        setFailed(false);
         const marks = await fetchMyMarks(l.map((d) => d.id)).catch(() => null);
         if (marks) setSavedIds((s) => new Set([...s, ...marks.saved]));
-      }).catch(() => setDishes([]));
-    }, []),
-  );
+      }).catch(() => setFailed(true));
+  }, []);
+  useTabFocusEffect(useCallback(() => { load(); }, [load]));
   const tags = useMemo(() => (dishes ? topTags(dishes, 'moods', 6) : []), [dishes]);
   useEffect(() => { if (tags.length && (!tag || !tags.includes(tag))) setTag(tags[0]); }, [tags, tag]);
   const tagged = (dishes ?? []).filter((d) => tag && d.moods.includes(tag)).slice(0, 3);
@@ -376,6 +379,7 @@ function Global() {
   // Explore: Story of the day → Our area → Trending Bites → Trending tags → Holidays around the world.
   return (
     <View>
+      {failed && !dishes ? <LoadError onRetry={load} /> : null}
       {/* Group 88:3081 — p22 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
       {story ? (
         <View style={[styles.sectionS, styles.px, styles.storyTop]}>

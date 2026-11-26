@@ -5,7 +5,10 @@
     "close": "Tutup",
     "cancel": "Batal",
     "save": "Simpan",
-    "clear": "Hapus"
+    "clear": "Hapus",
+    "loadErrorTitle": "Gagal memuat",
+    "loadErrorBody": "Periksa koneksimu lalu coba lagi.",
+    "retry": "Coba lagi"
   },
   "welcome": {
     "skip": "Lewati",
@@ -234,7 +237,8 @@
       "unknown": "Cuaca tidak diketahui",
       "where": "Kamu masak di mana?",
       "choose": "Pilih kota",
-      "allow": "Izinkan lokasi"
+      "allow": "Izinkan lokasi",
+      "denied": "Lokasi untuk ongdalsaem nonaktif. Aktifkan di Pengaturan untuk melihat cuaca di tempatmu."
     },
     "tabs": {
       "home": "Beranda",
@@ -409,7 +413,8 @@
     "changesSaved": "Perubahan disimpan",
     "inChallenge": "Ikut: {{name}}",
     "challengeOnePhoto": "Tantangan hanya bisa satu foto",
-    "pickHintChallenge": "Satu foto untuk tantangan"
+    "pickHintChallenge": "Satu foto untuk tantangan",
+    "cameraDenied": "Izinkan akses kamera di Pengaturan untuk memotret masakanmu."
   },
   "dish": {
     "temperature": {

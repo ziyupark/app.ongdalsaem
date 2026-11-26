@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState, ListCard, ListRow, SearchField } from '../src/components/community/Parts';
+import { LoadError } from '../src/components/LoadError';
 import { Button } from '../src/components/Button';
 import { goTab, TabBar } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
@@ -26,10 +27,13 @@ export default function Tables() {
   const [popular, setPopular] = useState<Table[] | null>(null);
 
   useFocusEffect(useCallback(() => { fetchMyTables().then(setMine).catch(() => undefined); }, []));
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    const h = setTimeout(() => fetchTables(term).then(setPopular).catch(() => setPopular([])), term ? 250 : 0);
+    const h = setTimeout(() => fetchTables(term).then((l) => { setPopular(l); setFailed(false); }).catch(() => setFailed(true)), term ? 250 : 0);
     return () => clearTimeout(h);
-  }, [term]);
+  }, [term, attempt]);
+  const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
   const toggle = async (tb: Table) => {
     const on = !tb.joined;
@@ -71,7 +75,7 @@ export default function Tables() {
 
         <View style={styles.group}>
         <Text variant="Overline" color="fg/muted">{term ? t('tables.results') : t('tables.popular')}</Text>
-        {popular == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : popular.length ? (
+        {failed ? <LoadError onRetry={retry} /> : popular == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : popular.length ? (
           <ListCard>
             {popular.map((tb, i) => (
               <ListRow

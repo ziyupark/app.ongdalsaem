@@ -13,6 +13,7 @@ import { DiaryView } from './DiaryView';
 import { SavedView } from './SavedView';
 import { Icon } from '../Icon';
 import { InlineBanner } from '../InlineBanner';
+import { LoadError } from '../LoadError';
 import { goTab, TabBar, useTabBarScroll, useTabFocusEffect, type TabKey } from '../TabBar';
 import { ScreenHeader, ScreenWash } from '../ScreenHeader';
 import { Text } from '../Text';
@@ -89,18 +90,28 @@ export function ProfileScreen({ userId }: { userId?: string }) {
     }
   }, []);
 
+  // The profile itself didn't load (offline / server error) and nothing is on screen yet → Try again.
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   useTabFocusEffect(
     useCallback(() => {
       let alive = true;
       (async () => {
-        const p = userId ? await loadOther(userId) : await getMyProfile().catch(() => null);
+        let p: MyProfile | null;
+        try {
+          p = userId ? await loadOther(userId) : await getMyProfile();
+        } catch {
+          if (alive) setFailed(true);
+          return;
+        }
         if (!alive || !p) return;
+        setFailed(false);
         setMe(p);
         (userId ? OTHER_TABS : TABS).forEach((k) => loadTab(p.id, k));
         fetchAcornTotal(p.id).then((n) => alive && setAcorns(n)).catch(() => undefined);
       })();
       return () => { alive = false; };
-    }, [loadTab, userId]),
+    }, [loadTab, userId, attempt]),
   );
 
   // Mood wash scrolls away with the content and fades out (gone after ~300 pt).
@@ -118,7 +129,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const loadOther = async (id: string): Promise<MyProfile | null> => {
     const me = await myUserId();
     if (me === id) { goTab('profile'); return null; }
-    const { data } = await supabase.from('profiles').select('id, display_name, username, avatar_url, city, bio').eq('id', id).maybeSingle();
+    const { data, error } = await supabase.from('profiles').select('id, display_name, username, avatar_url, city, bio').eq('id', id).maybeSingle();
+    if (error) throw error; // network / server — not "this cook doesn't exist"
     if (!data) { setMissing(true); return null; }
     if (me) {
       const { data: f } = await supabase.from('follows').select('followee_id').eq('follower_id', me).eq('followee_id', id).maybeSingle();
@@ -308,7 +320,8 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         scrollEventThrottle={16}
         ListFooterComponent={tab === 'saved' ? <SavedView onOffline={onOffline} /> : tab === 'diary' ? <DiaryView onOffline={onOffline} focus={focus} /> : undefined}
         ListEmptyComponent={tab !== 'dishes' ? undefined : 
-          data == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : (
+          data == null && failed && !me ? <LoadError onRetry={() => { setFailed(false); setAttempt((n) => n + 1); }} />
+          : data == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : (
             <View style={styles.empty}>
               <Text variant="Body/M" color="fg/secondary" style={styles.centerText}>{isMe ? t(`profile.empty.${tab}`) : missing ? t('cook.missing') : t('cook.noDishes')}</Text>
               {isMe ? <Button label={t('profile.shareFirst')} variant="Outline" size="M" onPress={() => router.push('/share/pick')} /> : null}

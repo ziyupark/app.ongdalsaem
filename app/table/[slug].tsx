@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomSheet } from '../../src/components/BottomSheet';
 import { Button } from '../../src/components/Button';
 import { EmptyState, Faces, FoodGrid } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { GlassIconButton } from '../../src/components/GlassIconButton';
 import { Icon } from '../../src/components/Icon';
 import { Text } from '../../src/components/Text';
@@ -36,11 +37,19 @@ export default function TableScreen() {
   const [picker, setPicker] = useState<DishSummary[] | null>(null);
   const ink = color('static/ink');
 
+  const [failed, setFailed] = useState(false);
   const load = useCallback(async () => {
-    const tb = await fetchTable(slug).catch(() => null);
+    let tb: Awaited<ReturnType<typeof fetchTable>>;
+    try {
+      tb = await fetchTable(slug);
+    } catch {
+      setFailed(true); // offline / server error — not the same as "this table doesn't exist"
+      return;
+    }
+    setFailed(false);
     setTable(tb);
     if (!tb) return;
-    fetchTablePosts(tb.id).then(setPosts).catch(() => setPosts([]));
+    fetchTablePosts(tb.id).then(setPosts).catch(() => setFailed(true));
     fetchTableFaces(tb.id).then(setFaces).catch(() => undefined);
   }, [slug]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
@@ -65,6 +74,14 @@ export default function TableScreen() {
     try { await postToTable(table.id, d.id); load(); } catch { Alert.alert(t('settings.saveFailed')); }
   };
 
+  if (failed && (table === undefined || posts == null)) {
+    return (
+      <View style={[styles.root, { paddingTop: insets.top + space[8], backgroundColor: color('bg/default') }]}>
+        <View style={styles.px}><GlassIconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={() => router.back()} /></View>
+        <LoadError onRetry={load} />
+      </View>
+    );
+  }
   if (table === undefined) return <View style={[styles.center, { backgroundColor: color('bg/default') }]}><ActivityIndicator color={color('fg/muted')} /></View>;
   if (table === null) {
     return (

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, EmptyState, QuestionCard } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { ReportSheet } from '../../src/components/dish/ReportSheet';
 import { Icon } from '../../src/components/Icon';
 import { Text } from '../../src/components/Text';
@@ -34,14 +35,28 @@ export default function QuestionScreen() {
   const [sending, setSending] = useState(false);
   const [reporting, setReporting] = useState<Answer | null>(null);
 
+  const [failed, setFailed] = useState(false);
   const load = useCallback(async () => {
-    const [question, list] = await Promise.all([fetchQuestion(id).catch(() => null), fetchAnswers(id).catch(() => [])]);
-    setQ(question);
-    setAnswers(list);
+    try {
+      const [question, list] = await Promise.all([fetchQuestion(id), fetchAnswers(id).catch(() => [])]);
+      setQ(question);
+      setAnswers(list);
+      setFailed(false);
+    } catch {
+      setFailed(true); // offline / server error — keep what is on screen; with nothing yet, show Try again
+    }
   }, [id]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
   useEffect(() => { getMyProfile().then(setMe).catch(() => undefined); }, []);
 
+  if (q === undefined && failed) {
+    return (
+      <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
+        <TopBar title={t('ask.questionTitle')} onBack={() => router.back()} backLabel={t('common.back')} />
+        <LoadError onRetry={load} />
+      </View>
+    );
+  }
   if (q === undefined) return <View style={[styles.center, { backgroundColor: color('bg/default') }]}><ActivityIndicator color={color('fg/muted')} /></View>;
 
   const sorted = q ? [...answers].sort((a, b) => (a.id === q.bestAnswerId ? -1 : b.id === q.bestAnswerId ? 1 : 0)) : answers;

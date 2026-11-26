@@ -5,7 +5,10 @@
     "close": "Close",
     "cancel": "Cancel",
     "save": "Save",
-    "clear": "Clear"
+    "clear": "Clear",
+    "loadErrorTitle": "Couldn’t load this",
+    "loadErrorBody": "Check your connection and try again.",
+    "retry": "Try again"
   },
   "welcome": {
     "skip": "Skip",
@@ -234,7 +237,8 @@
       "unknown": "Weather unknown",
       "where": "Where are you cooking?",
       "choose": "Choose city",
-      "allow": "Allow location"
+      "allow": "Allow location",
+      "denied": "Location is off for ongdalsaem. Turn it on in Settings to see the weather where you are."
     },
     "tabs": {
       "home": "Home",
@@ -412,7 +416,8 @@
     "changesSaved": "Changes saved",
     "inChallenge": "Joining: {{name}}",
     "challengeOnePhoto": "Challenges take one photo only",
-    "pickHintChallenge": "One photo for the challenge"
+    "pickHintChallenge": "One photo for the challenge",
+    "cameraDenied": "Allow camera access in Settings to take a photo of your dish."
   },
   "dish": {
     "temperature": {

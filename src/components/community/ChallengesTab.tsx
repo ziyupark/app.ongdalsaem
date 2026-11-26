@@ -16,6 +16,7 @@ import { elevation, radius, space, useTheme, type ColorToken } from '../../theme
 import { Icon } from '../Icon';
 import { MoodGradient } from '../MoodGradient';
 import { Text } from '../Text';
+import { LoadError } from '../LoadError';
 import { Avatar, EmptyState, FlagTag, SectionHeader } from './Parts';
 
 /** Latest entries on the tab — a 3 × 3 grid. */
@@ -42,6 +43,8 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
   const [busy, setBusy] = useState<string | null>(null);
 
   const featured = useMemo(() => (list ? pickFeatured(list) : null), [list]);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   // Refetch on every focus — after posting an entry the button, count and Latest entries are fresh at once.
   useTabFocusEffect(
@@ -53,6 +56,7 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
           if (!alive) return;
           const fixed = just ? l.map((c) => (c.id === just && !c.entered ? { ...c, entered: true, joined: true } : c)) : l;
           setList(fixed);
+          setFailed(false);
           const f = pickFeatured(fixed);
           if (!f) return;
           const [people, latest] = await Promise.all([fetchChallengeFaces(f.id).catch(() => []), fetchChallengeEntries(f.id, ENTRIES).catch(() => [])]);
@@ -60,9 +64,9 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
           setFaces(people);
           setEntries(latest);
         })
-        .catch(() => alive && setList([]));
+        .catch(() => alive && setFailed(true));
       return () => { alive = false; };
-    }, []),
+    }, [attempt]),
   );
 
   const patch = (id: string, p: Partial<Challenge>) => setList((l) => (l ? l.map((c) => (c.id === id ? { ...c, ...p } : c)) : l));
@@ -79,6 +83,7 @@ export function ChallengesTab({ onJoinY }: { onJoinY?: (y: number) => void }) {
     router.push('/share/pick');
   };
 
+  if (list == null && failed) return <LoadError onRetry={() => { setFailed(false); setAttempt((n) => n + 1); }} />;
   if (list == null) return <ActivityIndicator color={color('fg/muted')} style={styles.loading} />;
   if (!list.length) return <EmptyState icon={Flag} title={t('challenge.emptyTitle')} body={t('challenge.emptyBody')} />;
 

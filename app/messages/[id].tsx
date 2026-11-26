@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { Icon } from '../../src/components/Icon';
 import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
@@ -39,12 +40,14 @@ export default function ThreadScreen() {
     markSeen(id).catch(() => undefined);
   }, [id]);
 
+  // Offline / server error on open: Try again instead of an empty chat with no name.
+  const [failed, setFailed] = useState(false);
+  const loadThread = useCallback(() => fetchThread(id).then((th) => { setThread(th); setFailed(false); reload(); }).catch(() => setFailed(true)), [id, reload]);
   useEffect(() => {
-    fetchThread(id).then(setThread).catch(() => setThread(null));
+    loadThread(); // also loads the messages once the thread is there
     getMyProfile().then(setMe).catch(() => undefined);
-    reload();
     return subscribeThread(id, reload);
-  }, [id, reload]);
+  }, [id, reload, loadThread]);
 
   const send = async () => {
     const body = draft.trim();
@@ -64,6 +67,14 @@ export default function ThreadScreen() {
     ]);
   };
 
+  if (thread === undefined && failed) {
+    return (
+      <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
+        <TopBar title="" onBack={() => router.back()} backLabel={t('common.back')} />
+        <LoadError onRetry={loadThread} />
+      </View>
+    );
+  }
   if (thread === undefined) return <View style={[styles.center, { backgroundColor: color('bg/default') }]}><ActivityIndicator color={color('fg/muted')} /></View>;
   const name = thread?.other.handle ?? thread?.other.name ?? '';
   const lastMine = [...msgs].reverse().find((m) => m.mine);

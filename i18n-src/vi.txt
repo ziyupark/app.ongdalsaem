@@ -5,6 +5,9 @@ close=Đóng
 cancel=Hủy
 save=Lưu
 clear=Xóa
+loadErrorTitle=Không tải được
+loadErrorBody=Kiểm tra kết nối rồi thử lại nhé.
+retry=Thử lại
 [welcome]
 skip=Bỏ qua
 title=Có những bữa ăn ở lại với ta nhiều năm.
@@ -166,6 +169,7 @@ tabs.profile=Hồ sơ
 tabs.share=Chia sẻ món ăn
 findNearby=Tìm {{dish}} gần đây
 opensInMaps=Mở trong Bản đồ
+locationOff.denied=Vị trí của ongdalsaem đang tắt. Bật trong Cài đặt để xem thời tiết nơi bạn ở.
 [time]
 justNow=Vừa xong
 minutes={{n}} phút
@@ -318,6 +322,7 @@ changesSaved=Đã lưu thay đổi
 inChallenge=Đang tham gia: {{name}}
 challengeOnePhoto=Thử thách chỉ đăng được 1 ảnh
 pickHintChallenge=Một ảnh cho thử thách
+cameraDenied=Hãy cho phép truy cập camera trong Cài đặt để chụp món ăn của bạn.
 [dish]
 temperature.cold=Lạnh
 temperature.cool=Mát

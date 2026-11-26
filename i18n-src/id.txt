@@ -5,6 +5,9 @@ close=Tutup
 cancel=Batal
 save=Simpan
 clear=Hapus
+loadErrorTitle=Gagal memuat
+loadErrorBody=Periksa koneksimu lalu coba lagi.
+retry=Coba lagi
 [welcome]
 skip=Lewati
 title=Ada makanan yang terus kita ingat bertahun-tahun.
@@ -166,6 +169,7 @@ tabs.profile=Profil
 tabs.share=Bagikan masakan
 findNearby=Cari {{dish}} di dekat sini
 opensInMaps=Dibuka di Peta
+locationOff.denied=Lokasi untuk ongdalsaem nonaktif. Aktifkan di Pengaturan untuk melihat cuaca di tempatmu.
 [time]
 justNow=Baru saja
 minutes={{n}} mnt
@@ -318,6 +322,7 @@ changesSaved=Perubahan disimpan
 inChallenge=Ikut: {{name}}
 challengeOnePhoto=Tantangan hanya bisa satu foto
 pickHintChallenge=Satu foto untuk tantangan
+cameraDenied=Izinkan akses kamera di Pengaturan untuk memotret masakanmu.
 [dish]
 temperature.cold=Dingin
 temperature.cool=Sejuk

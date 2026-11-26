@@ -7,6 +7,7 @@ import { ActivityIndicator, ScrollView, Share, StyleSheet, useWindowDimensions, 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoryRow, CollectionTop, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
 import { EmptyState, FoodGrid } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
 import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
@@ -52,11 +53,14 @@ export default function TagScreen() {
   const headline = i18n.exists(`tag.headlines.${key}`) ? t(`tag.headlines.${key}`) : t('tag.overline', { tag: label });
   const myMood = here.forecast?.mood ?? null;
 
-  useEffect(() => { fetchByTag(key, 'popular').then(setAll).catch(() => setAll([])); }, [key]);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => { fetchByTag(key, 'popular').then(setAll).catch(() => setFailed(true)); }, [key, attempt]);
   useEffect(() => {
     if (sort !== 'latest' || latest) return;
-    fetchByTag(key, 'latest').then(setLatest).catch(() => setLatest([]));
-  }, [sort, key, latest]);
+    fetchByTag(key, 'latest').then(setLatest).catch(() => setFailed(true));
+  }, [sort, key, latest, attempt]);
+  const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
   const base = sort === 'latest' ? latest : sort === 'weather' ? (all ? all.filter((d) => myMood != null && d.mood === myMood) : null) : all;
   const list = base?.filter((d) => (!category || d.moods.includes(category)) && (!meal || d.meals.includes(meal))) ?? null;
@@ -112,7 +116,7 @@ export default function TagScreen() {
 
         <View style={styles.section}>
           <Text variant="Overline" color="fg/muted" style={styles.px}>{sectionTitle}</Text>
-          {list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
+          {failed && list == null ? <LoadError onRetry={retry} /> : list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
             <FoodGrid dishes={list} width={width} onOpen={(d) => router.push(`/dish/${d.id}`)} />
           ) : (
             <EmptyState icon={TrendingUp} title={t('tag.emptyTitle', { tag: label })} body={t('tag.emptyBody')} />

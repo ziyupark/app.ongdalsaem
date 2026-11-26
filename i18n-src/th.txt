@@ -5,6 +5,9 @@ close=ปิด
 cancel=ยกเลิก
 save=บันทึก
 clear=ล้าง
+loadErrorTitle=โหลดไม่สำเร็จ
+loadErrorBody=ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
+retry=ลองอีกครั้ง
 [welcome]
 skip=ข้าม
 title=บางมื้ออยู่ในใจเราไปอีกหลายปี
@@ -166,6 +169,7 @@ tabs.profile=โปรไฟล์
 tabs.share=แชร์เมนู
 findNearby=หา{{dish}}ใกล้ ๆ
 opensInMaps=เปิดในแผนที่
+locationOff.denied=ปิดตำแหน่งสำหรับ ongdalsaem อยู่ เปิดในการตั้งค่าเพื่อดูสภาพอากาศที่คุณอยู่
 [time]
 justNow=เมื่อสักครู่
 minutes={{n}} นาที
@@ -318,6 +322,7 @@ changesSaved=บันทึกการเปลี่ยนแปลงแล�
 inChallenge=กำลังร่วม: {{name}}
 challengeOnePhoto=ชาเลนจ์ลงได้แค่ 1 รูป
 pickHintChallenge=รูปเดียวสำหรับชาเลนจ์
+cameraDenied=อนุญาตให้เข้าถึงกล้องในการตั้งค่าเพื่อถ่ายรูปเมนูของคุณ
 [dish]
 temperature.cold=หนาว
 temperature.cool=เย็นสบาย

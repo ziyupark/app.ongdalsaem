@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Share, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { CategoryRow, CollectionTop, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
 import { countryName, EmptyState, FoodGrid } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
 import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
@@ -46,7 +47,10 @@ export default function CountryScreen() {
   const [weather, setWeather] = useState<Record<string, CurrentWeather | null>>({});
   const tagLabel = (k: string) => (i18n.exists(`share.moods.${k}`) ? t(`share.moods.${k}`) : k);
 
-  useEffect(() => { fetchByCountry(cc, 'popular').then(setAll).catch(() => setAll([])); }, [cc]);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => { fetchByCountry(cc, 'popular').then(setAll).catch(() => setFailed(true)); }, [cc, attempt]);
+  const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
   // Tabs = All + the three cities that share the most here.
   const cities = useMemo(() => {
@@ -126,7 +130,7 @@ export default function CountryScreen() {
 
         <View style={styles.section}>
           <Text variant="Overline" color="fg/muted" style={styles.px}>{sectionTitle}</Text>
-          {list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
+          {failed && list == null ? <LoadError onRetry={retry} /> : list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
             <FoodGrid dishes={list} width={width} onOpen={(d) => router.push(`/dish/${d.id}`)} />
           ) : (
             <EmptyState icon={MapPin} title={t('country.emptyTitle', { name })} body={t('tag.emptyBody')} />

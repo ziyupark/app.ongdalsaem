@@ -5,7 +5,10 @@
     "close": "Cerrar",
     "cancel": "Cancelar",
     "save": "Guardar",
-    "clear": "Borrar"
+    "clear": "Borrar",
+    "loadErrorTitle": "No se pudo cargar",
+    "loadErrorBody": "Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar"
   },
   "welcome": {
     "skip": "Omitir",
@@ -234,7 +237,8 @@
       "unknown": "Clima desconocido",
       "where": "¿Dónde estás cocinando?",
       "choose": "Elegir ciudad",
-      "allow": "Permitir ubicación"
+      "allow": "Permitir ubicación",
+      "denied": "La ubicación está desactivada para ongdalsaem. Actívala en Ajustes para ver el clima donde estás."
     },
     "tabs": {
       "home": "Inicio",
@@ -412,7 +416,8 @@
     "changesSaved": "Cambios guardados",
     "inChallenge": "Participas en: {{name}}",
     "challengeOnePhoto": "Los retos solo admiten una foto",
-    "pickHintChallenge": "Una foto para el reto"
+    "pickHintChallenge": "Una foto para el reto",
+    "cameraDenied": "Permite el acceso a la cámara en Ajustes para fotografiar tu plato."
   },
   "dish": {
     "temperature": {

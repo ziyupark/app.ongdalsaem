@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CookRow, EmptyState, ListCard } from '../src/components/community/Parts';
+import { LoadError } from '../src/components/LoadError';
 import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { displayTemp } from '../src/lib/prefs';
@@ -20,12 +21,15 @@ export default function CooksInWeather() {
   const insets = useSafeAreaInsets();
   const { here } = useHere();
   const [cooks, setCooks] = useState<CookCard[] | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const f = here.forecast;
 
   useEffect(() => {
     if (here.status === 'loading') return;
-    fetchCooksInWeather(f?.mood ?? null, f?.tempC ?? null, 30).then(setCooks).catch(() => setCooks([]));
-  }, [here.status, f?.mood, f?.tempC]);
+    fetchCooksInWeather(f?.mood ?? null, f?.tempC ?? null, 30).then(setCooks).catch(() => setFailed(true));
+  }, [here.status, f?.mood, f?.tempC, attempt]);
+  const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
   const toggle = async (c: CookCard) => {
     const on = !c.following;
@@ -41,7 +45,7 @@ export default function CooksInWeather() {
         <Text variant="Body/S" color="fg/secondary">
           {f ? t('cooksWeather.intro', { weather: t(`weather.${f.mood}`).toLowerCase(), temp: displayTemp(f.tempC), place }) : t('cooksWeather.introNoWeather')}
         </Text>
-        {cooks == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : cooks.length ? (
+        {failed ? <LoadError onRetry={retry} /> : cooks == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : cooks.length ? (
           <ListCard>
             {cooks.map((c, i) => <CookRow key={c.id} cook={c} last={i === cooks.length - 1} onPress={() => router.push(`/cook/${c.id}`)} onFollow={() => toggle(c)} />)}
           </ListCard>

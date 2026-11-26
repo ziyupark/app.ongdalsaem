@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensio
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/Button';
 import { FlagTag, FoodGrid, ViralBadge } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { Icon } from '../../src/components/Icon';
 import { MessageCircle } from '../../src/components/icons/ongdal';
 import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
@@ -36,14 +37,17 @@ export default function ViralScreen() {
   const [total, setTotal] = useState(0);
   const [more, setMore] = useState(false);
   const loading = useRef(false);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!name) return;
     findViral(name).then(setItem).catch(() => undefined);
     fetchPostsByName(name, 0, PAGE)
       .then((r) => { setPosts(r.items); setTotal(r.total); })
-      .catch(() => setPosts([]));
-  }, [name]);
+      .catch(() => setFailed(true));
+  }, [name, attempt]);
+  const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
   const loadMore = useCallback(async () => {
     if (loading.current || !posts || posts.length >= total) return;
@@ -103,7 +107,9 @@ export default function ViralScreen() {
           <Text variant="Body/M" color="fg/secondary">{note}</Text>
         </View>
 
-        {posts == null ? (
+        {failed ? (
+          <LoadError onRetry={retry} />
+        ) : posts == null ? (
           <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
         ) : empty ? (
           // 4.7b — orb 64 bg/subtle · icon 28 fg/muted → 16 → Title/M → 6 → Body/S → 24 → Kick M.

@@ -13,6 +13,7 @@ import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { timeAgo } from '../src/lib/time';
 import { fetchActivity, follow, lastSeen, markSeen, type Activity } from '../src/services/activity';
+import { LoadError } from '../src/components/LoadError';
 import { radius, space, useTheme } from '../src/theme';
 
 type Filter = 'all' | 'activity' | 'forYou';
@@ -26,19 +27,27 @@ export default function Notifications() {
   const [seen, setSeen] = useState<Date>(new Date(0));
   const [filter, setFilter] = useState<Filter>('all');
 
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   useFocusEffect(
     useCallback(() => {
       let alive = true;
       (async () => {
-        const [list, s] = await Promise.all([fetchActivity().catch(() => []), lastSeen()]);
-        if (!alive) return;
-        setSeen(s);
-        setItems(list);
-        markSeen();
+        try {
+          const [list, s] = await Promise.all([fetchActivity(), lastSeen()]);
+          if (!alive) return;
+          setSeen(s);
+          setItems(list);
+          setFailed(false);
+          markSeen(); // only once the list was really shown
+        } catch {
+          if (alive) setFailed(true);
+        }
       })();
       return () => { alive = false; };
-    }, []),
+    }, [attempt]),
   );
+  const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
   // "For you" = weather picks / reminders — not generated yet, so it is the empty state.
   const shown = (items ?? []).filter(() => filter !== 'forYou');
@@ -104,7 +113,9 @@ export default function Notifications() {
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/subtle') }]}>
       <TopBar title={t('notifications.title')} onBack={() => router.back()} backLabel={t('common.back')} />
-      {items == null ? (
+      {items == null && failed ? (
+        <LoadError onRetry={retry} />
+      ) : items == null ? (
         <ActivityIndicator color={color('fg/muted')} style={styles.loading} />
       ) : (
         // Virtualized (up to ~400 rows): section heads and rows in one list. Spacing as before — space[8] between the

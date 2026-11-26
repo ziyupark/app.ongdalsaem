@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, EmptyState, ListCard, ListRow } from '../../src/components/community/Parts';
+import { LoadError } from '../../src/components/LoadError';
 import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
 import { timeAgo } from '../../src/lib/time';
@@ -19,8 +20,10 @@ export default function Inbox() {
   const [list, setList] = useState<Thread[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  const [failed, setFailed] = useState(false);
+  // A failed refresh keeps the threads already on screen; a first load that fails shows the error, not "No messages".
   const load = useCallback(async () => {
-    try { setList(await fetchInbox()); } catch { setList((l) => l ?? []); }
+    try { setList(await fetchInbox()); setFailed(false); } catch { setFailed(true); }
   }, []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
@@ -62,7 +65,7 @@ export default function Inbox() {
         contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + space[24] }]}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={async () => { setRefreshing(true); await load(); setRefreshing(false); }} />}
       >
-        {list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
+        {list == null && failed ? <LoadError onRetry={load} /> : list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : list.length ? (
           <>
             {section(t('messages.chats'), chats)}
             {section(t('messages.requests'), requests)}

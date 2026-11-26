@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState, FlagTag, ListCard, ListRow } from '../src/components/community/Parts';
+import { LoadError } from '../src/components/LoadError';
 import { Image } from 'expo-image';
 import { MoodGradient } from '../src/components/MoodGradient';
 import { themeImage } from '../src/lib/holidays';
@@ -21,7 +22,10 @@ export default function Challenges() {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const [list, setList] = useState<Challenge[] | null>(null);
-  useFocusEffect(useCallback(() => { fetchChallenges().then(setList).catch(() => setList([])); }, []));
+  const [failed, setFailed] = useState(false);
+  // A failed refresh keeps the list already on screen; only a first load that fails shows the error.
+  const load = useCallback(() => fetchChallenges().then((l) => { setList(l); setFailed(false); }).catch(() => setFailed(true)), []);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const groups: { key: string; items: Challenge[] }[] = list
     ? [
@@ -42,7 +46,7 @@ export default function Challenges() {
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
       <TopBar title={t('challenge.listTitle')} onBack={() => router.back()} backLabel={t('common.back')} />
       <ScrollView contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + space[24] }]}>
-        {list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : groups.length ? groups.map((g) => (
+        {list == null && failed ? <LoadError onRetry={load} /> : list == null ? <ActivityIndicator color={color('fg/muted')} style={styles.loading} /> : groups.length ? groups.map((g) => (
           <View key={g.key} style={styles.group}>
             <Text variant="Overline" color="fg/muted">{t(`challenge.groups.${g.key}`)}</Text>
             <ListCard>
