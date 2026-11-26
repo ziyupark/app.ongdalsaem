@@ -646,7 +646,7 @@
     "displayName": "이름",
     "displayNameHelper": "공유하는 요리에 표시돼요.",
     "username": "사용자 이름",
-    "usernameHelper": "@{{handle}} · 30일에 한 번 바꿀 수 있어요",
+    "usernameHelper": "@{{handle}} · 14일에 한 번 바꿀 수 있어요",
     "handleFormat": "영문 소문자·숫자·. _ 3–20자",
     "handleCooldown": "{{date}}부터 다시 바꿀 수 있어요.",
     "handleTaken": "이미 쓰고 있는 이름이에요. 다른 이름을 골라주세요.",

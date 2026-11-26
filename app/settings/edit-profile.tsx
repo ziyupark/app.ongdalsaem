@@ -29,7 +29,10 @@ export default function EditProfile() {
   const [bioFocus, setBioFocus] = useState(false);
 
   useEffect(() => {
-    fetchAccount().then((x) => { setA(x); setName(x.displayName); setHandle(x.username); setBio(x.bio); }).catch(() => Alert.alert(t('settings.loadFailed')));
+    fetchAccount().then((x) => { setA(x); setName(x.displayName); setHandle(x.username); setBio(x.bio); }).catch(() =>
+      // Don't leave the spinner up: say it failed, then go back to Settings.
+      Alert.alert(t('settings.loadFailed'), undefined, [{ text: t('common.back'), onPress: () => router.back() }]),
+    );
   }, [t]);
 
   if (!a) return <SettingsScreen title={t('settings.editProfile')}><ActivityIndicator color={color('fg/muted')} /></SettingsScreen>;

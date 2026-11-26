@@ -646,7 +646,7 @@
     "displayName": "Display name",
     "displayNameHelper": "Shown on dishes you share.",
     "username": "Username",
-    "usernameHelper": "@{{handle}} · changeable once every 30 days",
+    "usernameHelper": "@{{handle}} · changeable once every 14 days",
     "handleFormat": "3–20 letters, numbers, . or _",
     "handleCooldown": "You can change it again on {{date}}.",
     "handleTaken": "That username is taken. Try another.",

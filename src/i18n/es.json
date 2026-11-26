@@ -634,7 +634,7 @@
     "displayName": "Nombre visible",
     "displayNameHelper": "Aparece en los platos que compartes.",
     "username": "Nombre de usuario",
-    "usernameHelper": "@{{handle}} · se puede cambiar una vez cada 30 días",
+    "usernameHelper": "@{{handle}} · se puede cambiar una vez cada 14 días",
     "handleFormat": "3–20 letras, números, . o _",
     "handleCooldown": "Podrás cambiarlo de nuevo el {{date}}.",
     "handleTaken": "Ese nombre de usuario ya existe. Prueba otro.",

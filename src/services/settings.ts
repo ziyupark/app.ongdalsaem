@@ -26,7 +26,7 @@ export type AccountSettings = {
   marketingNightAds: boolean;
 };
 
-const HANDLE_COOLDOWN_DAYS = 30;
+const HANDLE_COOLDOWN_DAYS = 14;
 type Row = Record<string, any>;
 
 async function uid() {
@@ -75,7 +75,7 @@ export function canChangeHandle(a: AccountSettings, now = new Date()) {
 
 export const HANDLE_RE = /^[a-z0-9._]{3,20}$/;
 
-/** 9.2 Save changes — name, bio, avatar, and (at most every 30 days) the @handle. */
+/** 9.2 Save changes — name, bio, avatar, and (at most every 14 days) the @handle. */
 export async function saveProfile(a: AccountSettings, input: { displayName: string; username: string; bio: string; avatarUri?: string }) {
   const user = await uid();
   const patch: Row = { display_name: input.displayName.trim(), bio: input.bio.trim() || null };

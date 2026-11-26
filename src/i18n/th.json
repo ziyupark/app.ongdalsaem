@@ -629,7 +629,7 @@
     "displayName": "ชื่อที่แสดง",
     "displayNameHelper": "แสดงบนเมนูที่คุณแชร์",
     "username": "ชื่อผู้ใช้",
-    "usernameHelper": "@{{handle}} · เปลี่ยนได้ทุก 30 วัน",
+    "usernameHelper": "@{{handle}} · เปลี่ยนได้ทุก 14 วัน",
     "handleFormat": "ตัวอักษร ตัวเลข . หรือ _ 3–20 ตัว",
     "handleCooldown": "คุณเปลี่ยนได้อีกครั้งในวันที่ {{date}}",
     "handleTaken": "ชื่อผู้ใช้นี้มีคนใช้แล้ว ลองชื่ออื่น",

@@ -629,7 +629,7 @@
     "displayName": "表示名",
     "displayNameHelper": "シェアした料理に表示されます。",
     "username": "ユーザー名",
-    "usernameHelper": "@{{handle}} · 30日に1回変更できます",
+    "usernameHelper": "@{{handle}} · 14日に1回変更できます",
     "handleFormat": "3〜20文字の英数字、. または _",
     "handleCooldown": "{{date}}に再び変更できます。",
     "handleTaken": "このユーザー名は使われています。別の名前をお試しください。",

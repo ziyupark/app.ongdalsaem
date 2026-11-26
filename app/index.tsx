@@ -35,7 +35,8 @@ export default function Splash() {
   useEffect(() => {
     let alive = true;
     const started = Date.now();
-    nextRoute().then((route) => {
+    // Any failure (session / storage read) still leaves the splash — to Sign in — instead of waiting forever.
+    nextRoute().catch(() => '/sign-in' as const).then((route) => {
       const wait = Math.max(0, SPLASH_MS - (Date.now() - started));
       setTimeout(() => alive && router.replace(route), wait);
     });

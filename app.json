@@ -180,7 +180,11 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "ongdalsaem uses your rough location to show today’s weather and dishes cooked nearby. Your exact location is never shown to others."
+          "locationWhenInUsePermission": "ongdalsaem uses your rough location to show today’s weather and dishes cooked nearby. Your exact location is never shown to others.",
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false,
+          "locationFullAccuracyPermission": false,
+          "motionUsagePermission": false
         }
       ],
       [

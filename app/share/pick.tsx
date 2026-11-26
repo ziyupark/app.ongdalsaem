@@ -69,11 +69,15 @@ export default function PickPhotos() {
 
   useEffect(() => {
     (async () => {
-      const res = await MediaLibrary.requestPermissionsAsync(false, ['photo']);
-      if (res.granted) {
-        setPerm('granted');
-        loadMore();
-      } else setPerm('denied');
+      try {
+        const res = await MediaLibrary.requestPermissionsAsync(false, ['photo']);
+        if (res.granted) {
+          setPerm('granted');
+          loadMore();
+        } else setPerm('denied');
+      } catch {
+        setPerm('denied'); // the permission request itself failed → same screen as a denial
+      }
     })();
   }, [loadMore]);
 
