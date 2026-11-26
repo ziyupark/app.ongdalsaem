@@ -146,7 +146,7 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png",
-        "backgroundColor": "#F5F2ED"
+        "backgroundColor": "#FFFFFF"
       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
