@@ -7,10 +7,10 @@
 ### 홈 공통 레이아웃 (2.1 / 2.2 / 2.3 / 2.6)
 1. [A] **Mood wash** — 현재 날씨 무드([§2.4](../01-foundations.md)) 그라데이션 85 % + **날씨 모션**(WeatherMoodLayer), 높이 420. 스크롤하면 내용과 함께 올라가며 사라진다. 앱 전체에 **하나뿐인 전역 배경**(WeatherBackdrop)이라 **Home · Community · Timer · Profile 네 탭이 같은 wash**를 쓰고, 탭을 옮겨도 모션이 끊기지 않는다([02-components §3.1b](../02-components.md)).
 2. StatusBar(글자색은 wash 밝기에 맞춤).
-3. **ScreenHeader**(네 탭 공통, 좌우 20, 아래 12):
+3. **ScreenHeader**(네 탭 공통, 좌우 20; 홈 · 프로필 = Block · title & weather — 아래 18, Community · Timer = 아래 12):
    - 헤더 행(높이 40): 좌 Logo(Compact) "ongdalsaem"(길게 누르면 개발용 메뉴), 우 IconButton(Soft, M) `bell`(알림 → **2.8**, 안 읽은 알림이 있으면 6px 점). *Map 버튼 없음.*
-   - 20 → **날짜·위치 오버라인**: "Tue, Oct 27 · Mapo, Seoul".
-   - 12 → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
+   - 20 → **날짜·위치 오버라인**: "Tue, Oct 27 · Mapo, Seoul"(홈 · 프로필은 제목보다 2 안쪽).
+   - 12(홈 · 프로필 11) → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
    - 글자색은 wash 위치별 잉크(로고 12 % · 오버라인 26 % · 제목 33 % 지점의 밝기)에 맞춘다.
 4. **Weather card**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716) — glass/surface + blur, 1px bg/subtle 테두리, Elevation/3, radius 2xl 32, 350×307, padding 위 18 · 좌우 20 · 아래 17, gap 12, 가운데 정렬):
    - 큰 기온 Numeric/XL "12°"(padding 위 0 · 좌우 8 · 아래 2) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → **3D 날씨 아이콘 64**(우측, 원형 배경 없음 — [§2.4](../01-foundations.md)). 날씨가 없으면 bg/muted 원 + `cloud`.
@@ -21,11 +21,7 @@
      - 칸(Meal Slot): padding 8 4 10 4, gap 6 — 라벨 Caption Strong(대문자 아님) → 썸네일 원 **74** → 날씨 아이콘 14 + 기온(Body/S Strong).
    - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` 36 → 8.1.
    - Mood Prompt(기분 입력)는 홈에 없다.
-5. 16 → **Story Card "Today’s pick"**(Show focus · Show byline **Off**): "Today’s pick"(Eyebrow 없음) → 문장 = 고른 요리 이름 + 요리사 Avatar 40 → 맨 아래 Tags 줄(Weather Tag · **Acorn Tag**). 태그 값: 2.1/2.1b/2.6 `cloud-rain` 12° · 128, 2.2 `sun` 21° · 96, 2.3 `cloud-snow` −4° · 141. 카드 탭 → 7.1.
-   - **Acorn Tag = 도토리 주기 토글**(피드와 같음): 탭하면 주고 다시 탭하면 취소, 준 상태는 채운 도토리. 숫자는 바로 바뀌고 실패하면 되돌린다. 픽이 바뀔 때마다 내가 이미 줬는지 다시 읽는다.
-   - 고르는 규칙은 [§6.2](../05-behavior.md). 후보가 하나도 없으면 카드(와 아래 Nearby card)를 숨긴다.
-6. 16 → **Nearby card "Similar Bites"** (가로, padding 14, gap 14, radius 2xl(32), bg/subtle + 1px border/default): 72×72 사진(오늘의 픽 사진, radius lg 16) → 글자 3줄(gap 8, Figma 131:4544): "Eat this nearby"(Overline fg/muted) / "Similar Bites"(Title/M) / "You Might Like"(Body/S fg/secondary) → `chevron-right`. 탭 → 2.4(오늘의 픽 요리 이름으로 검색).
-7. **Block · feed — 피드** (Nearby card 아래, 전체 폭, padding-top 40, 게시물 사이 24):
+5. **Block · feed — 피드** (Weather card 아래, 전체 폭, padding-top 40, 게시물 사이 24) — 홈의 중심은 **날씨에 맞는 요리 추천**(Weather card의 끼니 슬롯 + 이 피드). Today’s pick 카드 · Nearby card(Similar Bites)는 없다(2.1 19:191에서 뺌):
    - 피드 헤더 · Similar 칩 줄은 없다. **Feed Post ×N**([§3.3](../02-components.md))만 이어진다.
    - 20개 이상이면 끝에 **Loading more**(16px 원호 스피너 fg/accent + Caption fg/muted `Loading more like this…`).
    - **Tab bar spacer** 96px.
@@ -91,7 +87,7 @@
 
 ### 2.5 State · Location off — [76:2923](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=76-2923)
 - 노트: *Home still works. Defaults to the last chosen city and invites a manual pick — never blocks the feed.*
-- 블록: StatusBar → ScreenHeader(로고 + 벨, 오버라인 "Location off · showing Seoul", 제목 "Hello there" — wash 없음) → 안내 카드: "Weather unknown" / "Where are you cooking?" / Button Primary M "Choose city" + Outline M "Allow location" → Pick Card(맨 아래 태그 `cloud-rain` 12° · 128): "Kimchi jjigae for the first cold rain", "Minji · Mapo, Seoul · 40 min ago" → TabBar/FAB.
+- 블록: StatusBar → ScreenHeader(로고 + 벨, 오버라인 "Location off · showing Seoul", 제목 "Hello there" — wash 없음) → 안내 카드: "Weather unknown" / "Where are you cooking?" / Button Primary M "Choose city" + Outline M "Allow location" → 피드(2.1과 같은 Block · feed, 날씨 조건 없이 최신순) → TabBar/FAB. (Figma 2.5의 Pick Card는 Today’s pick을 뺀 뒤 코드에 없다.)
 - 이동: Choose city → 9.7 · Allow location → (권한) 2.1.
 
 ### 2.6 State · Weather unavailable — [108:3297](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=108-3297)
@@ -112,9 +108,8 @@
   2. StatusBar
   3. **헤더는 스켈레톤이 아니라 실제 ScreenHeader**(로고 · 벨 · 날짜 · 제목)가 그대로 보인다. 본문만 shimmer.
   4. **Weather card 스켈레톤** 350×239 r32(padding 20): [기온 96×56 r12 + 줄 110×14·150×12] → 구분선 → 끼니 슬롯 4칸(라벨 36×10 · 원 52 · 기온 28×10)
-  5. Story card 자리 350×273 r32 → Nearby card 스켈레톤 350×100 r32(썸네일 72 r16 + 줄 3개)
-  6. 피드: 헤더(150×11, 220×24) → 칩 4개(높이 36, 폭 49/110/72/92) → 게시물 1개(아바타 32 + 줄 2개, 사진 390×440 r4)
-  7. TabBar(Home, Expanded, CreateFAB 포함) · Home Indicator. 스크롤 없음.
+  5. 피드(padding-top 40): 헤더(150×11, 220×24) → 칩 4개(높이 36, 폭 49/110/72/92) → 게시물 1개(아바타 32 + 줄 2개, 사진 390×440 r4)
+  6. TabBar(Home, Expanded, CreateFAB 포함) · Home Indicator. 스크롤 없음.
 - shimmer: 좌→우 1.2초 반복, bg/muted ↔ bg/emphasis.
 - 순서: Mood wash 페이드인(200ms) → 콘텐츠 페이드인. 프로토타입상 1.2초 후 → 2.1.
 

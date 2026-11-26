@@ -5,18 +5,18 @@
 ## 06 Profile — [섹션 59:2369](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2369)
 
 ### 프로필 공통 헤더 (6.1 / 6.2 / 6.3 / 6.4) — 코드 기준(Figma 6.1 657:16468 · 컴포넌트 `Profile Header` [126:4345](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=126-4345)는 이전 구성)
-- **ScreenWash + ScreenHeader**(네 탭 공통): 오른쪽 = 내 프로필 `settings`(→ 9.1), 다른 요리사 = 빈 자리 + 로고 대신 **뒤로** 버튼(4.5).
-- **프로필 카드**(좌우 20, 유리: 블러 + glass/surface 88 %, 테두리 bg/subtle):
+- **ScreenWash + ScreenHeader**(네 탭 공통, Figma 6.1 1217:14479 Block · title & weather — 오버라인 → 11 → 제목 → 18 → 카드): 오른쪽 = 내 프로필 `settings`(→ 9.1), 다른 요리사 = 빈 자리 + 로고 대신 **뒤로** 버튼(4.5).
+- **프로필 카드**(1217:14567 — 좌우 20, padding 18 20, **gap 12**, 유리: glass/surface 88 %, 테두리 bg/subtle):
   1. **날씨 줄** — 홈 Weather card Now 줄과 같은 규칙: Numeric/XL 기온(padding 0 8 2 8) → 4 → Title/M 상태 → 6 → Body/S fg/muted 두 줄 "H 14° · L 9°" / "until 9 PM"(줄 간격 2) · **3D 날씨 아이콘 64**(원형 배경 없음, 날씨 없으면 bg/muted 원 + `cloud` — [§2.4](../01-foundations.md)). **항상 내 위치의 날씨**(다른 요리사 프로필에서도). 날씨가 없으면 "--°" / "No weather yet".
-  2. 구분선 border/default — 날씨 줄 아래 12(홈 Weather Card와 같은 위치), 구분선 아래는 카드 간격 14
-  3. **아이디 줄**: 아바타 88(흰 1.2 테두리, 사진 없으면 bg/accent-subtle + 첫 글자 Display/M fg/accent; 내 프로필은 탭 → 사진 바꾸기) + 16 + [Display/M 이름 → 2 → Body/S fg/muted "@username"] → 11 → **도토리 칩**(bg/muted, 채운 도토리 16 + Caption Strong **"Total acorns {n}"**) — 받은 도토리 합계.
-  4. **상태 메시지**(Body/S fg/secondary). 내 프로필은 눌러서 고침("Add a status message" fg/muted 자리표시) → BottomSheet "Status message"(입력칸 + 글자 수).
-  5. 다른 요리사만: **Follow**(Primary M, 팔로우 중이면 Secondary "Following") · **Message**(Outline M) 나란히 → 4.11.
-- 18 → **UnderlineTabs**(Profile Header [126:4345](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=126-4345), 좌우 40, 탭 사이 28). 내 프로필 = **글자 탭** "Dishes {n}" · "Saved" · "Diary"(순서 Dishes → Saved → Diary). 다른 요리사 = "Dishes {n}" 하나.
+  2. 구분선 border/default(위아래 12 — 홈 Weather Card와 같은 위치)
+  3. **아이디 줄**(높이 80): 아바타 **74**(1.2 테두리 border/default, 사진 없으면 bg/accent-subtle + 첫 글자 Display/M fg/accent; 내 프로필은 탭 → 사진 바꾸기) + 16 + [Display/M 이름 → 2 → Body/S fg/muted "@username"] → 11 → **도토리 칩**(bg/muted, 채운 도토리 16 + Caption Strong **"Total acorns {n}"**) — 받은 도토리 합계.
+  4. **상태 메시지**(**Body/M** fg/secondary). 내 프로필은 눌러서 고침("Add a status message" fg/muted 자리표시) → BottomSheet "Status message"(입력칸 + 글자 수).
+  5. 다른 요리사만(1217:15137): 높이 32 · radius sm 8 · 사이 6 버튼 두 개(반씩) — **Follow**(bg/kick + 흰 Button/M, 팔로우 중이면 bg/muted + fg/default "Following") · **Message**(bg/muted + fg/muted Button/M) → 4.11.
+- 15 → **UnderlineTabs**(Tabs 1217:14666 — 위아래 15, 좌우 20, 탭 사이 28). 내 프로필 = **글자 탭** "Dishes {n}" · "Saved" · "Diary"(순서 Dishes → Saved → Diary). 다른 요리사 = "Dishes {n}" 하나.
 - 오프라인이면 탭 아래 bg/inverse 띠(`wifi-off` + Body/S Strong fg/inverse "You’re offline — saved dishes still open.").
 
 ### 6.1 Profile · Dishes — [20:974](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-974) · 코드 기준
-- 탭 아래 **8** → **Dish Tile 2열 그리드**(좌우 20, 열 16, 줄 20). 세로 스크롤, TabBar.
+- 탭 아래 15 + **8** → **Dish Tile 2열 그리드**(좌우 20, 열 16, 줄 20). 세로 스크롤, TabBar.
 - 타일 = 사진(167:208 비율) + Weather Tag · **Acorn Tag** + 제목 · 바이라인.
 - **Acorn Tag = 도토리 토글**(내 요리 · 다른 요리사 요리 모두): 탭하면 주고 다시 탭하면 취소, 준 상태는 채운 도토리. 숫자는 바로 바뀌고 실패하면 되돌린다. 내 프로필이면 위 "Total acorns"도 같이 바뀐다.
 - 비었으면 Body/M 안내 + (내 프로필) Outline M "Share a dish" → 8.1.

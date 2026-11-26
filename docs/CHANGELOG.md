@@ -9,6 +9,9 @@
 - **6.3 이번 주 한 줄**: 제목 "This week" + 날짜 범위 → **"Weekly Menu"만**(지난주 · 다음주에서도 그대로, 날짜 범위 없음). Month view는 글자 → `calendar-days` 아이콘(문서를 코드에 맞춤)
 - **6.3 Fridge memo**: 칸 선택에 Shopping memo 포함(3개, 문서를 코드에 맞춤). 고른 칸의 상자에 border/focus 2 테두리
 - **9.4 오늘의 픽 알림**: 알림을 끄면 서버 `push_tokens`의 위치(lat · lon · city · place)도 null로 지움
+- **2.1 Home**: Today’s pick(Story Card) · Nearby card(Similar Bites) 삭제 — 홈은 Weather card(끼니 슬롯) + 날씨에 맞는 피드. 오버라인 → 제목 12 → 11(오버라인 2 안쪽), 제목 → Weather card 12 → 18. 2.5(위치 꺼짐)는 안내 카드 아래 피드, 2.7 스켈레톤에서 픽 · Nearby 자리 삭제
+- **6.1 Profile**(1217:14479): 헤더 간격 홈과 같게(11 / 18), 카드 gap 14 → 12, 아바타 88 → 74(테두리 흰색 → border/default), 아이디 줄 높이 80, 상태 메시지 Body/S → Body/M, Follow · Message 버튼 → 높이 32 · radius 8 · 사이 6(Follow = bg/kick), 카드 → 탭 18 → 15, 탭 좌우 40 → 20, 탭 → 그리드 8 → 23
+- **Switch**: 시스템 스위치 → 직접 그린 51×31(iOS 26에서 설정 행의 토글이 위 · 오른쪽으로 어긋나던 문제)
 - **라이트 모드 고정**: 기기 다크 모드를 따르지 않고 항상 Light. 9.1 Settings의 Appearance 행 삭제(앱 설정값 `appearance`도 없앰)
 - **지역 이름 언어**: 게시물 지역을 보는 사람의 앱 언어로 표시. DB `foods.place_names`(jsonb) 추가 — 20261127000000
 

@@ -59,7 +59,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 | **Mood Prompt** | [329:389](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=329-389) | State V[Empty/Typed] | 한 줄 기분 입력 350×48(Comment Composer 입력칸과 같은 높이·pill): `sparkles` 18 fg/accent · 텍스트 Body/M(1줄 말줄임, Empty = "How do you feel right now?" fg/muted) · Send 36 원(Empty bg/muted · Typed bg/primary, `arrow-down` 18). Typed = 1.5px border/focus. **앱에서 쓰지 않음**(홈에 기분 입력 없음) |
 | **Chip** | 6:245 | Label T · Icon I · State V[Default/Selected/Glass] · Icon V[Yes/No] | 높이 36, radius full. Selected = bg/primary + 흰 글자. 테두리 색을 바꿀 수 있음(냉장고 메모: 7일 넘은 재료 fg/accent) |
 | Tab | 6:252 | Label T · Active V[true/false] | 세그먼트/언더라인 탭. 탭 화면 · 4.2 · 4.3은 **UnderlineTabs**(§3.1c), 이 컴포넌트 모양(24×3 bg/primary)은 그 밖의 탭 줄 |
-| Switch | 6:257 | On V[true/false] | On = bg/kick 트랙 |
+| Switch | 6:253 | On V[true/false] | 51×31, 손잡이 27(안쪽 2, Elevation/4), On = bg/primary 트랙 · Off = bg/emphasis. 시스템 스위치가 아니라 직접 그림(iOS 26 시스템 스위치는 크기가 달라 행에서 어긋남) |
 | Radio | 41:515 | Selected V[true/false] | |
 | Radio Row | 132:4897 | Label T | 7.3 신고 사유 행(Radio + 텍스트) |
 | Photo Pick Cell | 132:4983 | Selected V[Yes/No] · 순번 T | 8.1 앨범 셀 129×129 |

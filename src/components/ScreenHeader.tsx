@@ -93,7 +93,11 @@ type Right = 'settings' | 'notifications' | 'more' | 'none';
  * `right`: settings / notifications (unread dot) / more (`onMore`: report · block on another cook) / an empty 40 slot.
  * `onBack` swaps the logo for a back button.
  */
-export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void }) {
+/**
+ * `withWeather`: Block · title & weather (2.1 Home 88:3025 · 6.1 Profile 1217:14479) — overline 2 in from the title,
+ * overline → 11 → title, title → 18 → the Weather card below. Without it (Community · Timer): 12 / 12.
+ */
+export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather }: { right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void; withWeather?: boolean }) {
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -114,7 +118,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right
   const part = dayPart(now);
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top }]}>
+    <View style={[styles.root, withWeather && styles.rootWeather, { paddingTop: insets.top }]}>
       <View style={styles.row}>
         {onBack ? (
           <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={onBack} />
@@ -133,10 +137,10 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right
           <View style={styles.slot} />
         )}
       </View>
-      <View style={styles.titleBlock}>
+      <View style={[styles.titleBlock, withWeather && styles.titleBlockWeather]}>
         {off ? (
           <>
-            <Text variant="Overline" color="fg/muted">{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
+            <Text variant="Overline" color="fg/muted" style={withWeather && styles.overlineWeather}>{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
             <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${t('home.locationOff.titleA')}${t('home.locationOff.titleB')}`} numberOfLines={1} adjustsFontSizeToFit>
               {en('home.locationOff.titleA')}
               <Text variant="Display/XL" color="fg/disabled">{en('home.locationOff.titleB')}</Text>
@@ -144,7 +148,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right
           </>
         ) : (
           <>
-            <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
+            <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))} style={withWeather && styles.overlineWeather}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
             <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
               {f ? `${en(`home.titleMood.${mood}`)} ` : ''}
               <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{en(`home.dayPart.${part}`)}</Text>
@@ -162,4 +166,7 @@ const styles = StyleSheet.create({
   row: { height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   slot: { width: 40, height: 40 },
   titleBlock: { paddingTop: space[20], gap: space[12] },
+  rootWeather: { paddingBottom: 18 },
+  titleBlockWeather: { gap: 11 },
+  overlineWeather: { paddingLeft: space[2] },
 });
