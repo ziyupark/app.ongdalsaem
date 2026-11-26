@@ -24,17 +24,20 @@ const CATEGORY = 64;
  * Group (p22 · gap 6): headline (Display/M) over 400-high photo cards (gap 6). Sits on the screen's mood wash; `titleInk`
  * / `headInk` are the wash inks at the title and headline. The title is shown as given; `titleLabel` is read out.
  */
-export function CollectionTop({ dishes, width, onOpen, onBack, onShare, title, titleLabel, headline, titleInk, headInk }: {
+export function CollectionTop({ dishes, width, onOpen, onBack, onShare, title, titleLabel, headline, titleInk, headInk, headGap = HERO_GAP }: {
   dishes: CardDish[] | null;
   width: number;
   onOpen: (d: CardDish) => void;
   onBack: () => void;
-  onShare: () => void;
+  /** Share button on the right of the TopBar — left out when not given (4.2 Tag has none). */
+  onShare?: () => void;
   title: string;
   titleLabel: string;
   headline: string;
   titleInk?: ColorToken;
   headInk?: ColorToken;
+  /** Headline → cards (4.3: 6 · 4.2 826:14288: 16). */
+  headGap?: number;
 }) {
   const { color } = useTheme();
   const { t } = useTranslation();
@@ -44,12 +47,12 @@ export function CollectionTop({ dishes, width, onOpen, onBack, onShare, title, t
     <View>
       <View style={styles.bar}>
         <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={onBack} />
-        <IconButton icon={Share2} accessibilityLabel={t('home.share')} onPress={onShare} />
+        {onShare ? <IconButton icon={Share2} accessibilityLabel={t('home.share')} onPress={onShare} /> : null}
       </View>
       <View style={styles.title}>
         <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={titleLabel} numberOfLines={1} adjustsFontSizeToFit color={titleInk ?? 'fg/default'}>{title}</Text>
       </View>
-      <View style={styles.heroGroup}>
+      <View style={[styles.heroGroup, { gap: headGap }]}>
         <Text variant="Display/M" color={headInk ?? 'fg/default'} style={styles.px}>{headline}</Text>
         {dishes == null ? (
           <View style={styles.heroLoading}><ActivityIndicator color={color('fg/muted')} /></View>

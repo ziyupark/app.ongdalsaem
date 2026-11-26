@@ -57,17 +57,16 @@
 - 아래로 몰아서: Overline fg/on-photo-secondary 날짜 "OCT 31"(오늘 · 내일이면 "· TODAY" / "· TOMORROW") → Title/M fg/on-photo 명절 이름 → Caption fg/on-photo-secondary 대표 음식(1줄).
 - 명절 46개 목록·국기·사진은 `src/lib/holidays.ts`, 날짜(2026–2035)는 `src/lib/holidayDates.ts`(`npm run holidays:dates`로 생성: 음력 · 절기 · 부활절 · 요일 규칙 · 달 기준 명절 · 마타리키 법정일). 이름 · 음식은 9개 언어.
 
-### 4.2 Tag · #Comfort (v2) — [718:11114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11114)
-- **태그 페이지 템플릿**(#Spicy · #Vegan · 명절 태그 … 모두 이 화면). 세로 스크롤, 블록 사이 20.
+### 4.2 Tag · #Comfort (v2) — [826:14271](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=826-14271)
+- **태그 페이지 템플릿**(#Spicy · #Vegan · 명절 태그 … 모두 이 화면). 세로 스크롤, 화면 무드 wash 위.
 - 블록:
-  1. **히어로**: 넘겨 보는 사진 390×420(인기 게시물 1–3위, 탭 → 7.1) + 아래쪽 페이지 점(활성 16×6 fg/on-photo · 나머지 6×6 fg/on-photo-tertiary, gap 6) + 왼쪽 위 **유리 뒤로 버튼**(GlassIconButton 40, 안전 영역 + 6, 왼쪽 12).
-  2. **제목 카드**(좌우 20, 사진 아래쪽에 40 겹침): bg/accent-subtle, radius xl — 위 padding 20 · gap 8: Overline fg/accent **"COMFORT FOOD"**(= "{태그} food") → Display/M 제목(`tag.headlines.<태그>`, 없으면 "#태그") → 아래 **띠** bg/inverse · padding 12 20 · Caption Strong fg/inverse "most shared on rainy days"(이 태그가 가장 많이 공유된 날씨, 없으면 요리 수).
-  3. **UnderlineTabs**: **Latest**(기본) · Popular · **By weather**(좌우 20, gap 24). By weather = 지금 **내 날씨와 같은 날씨**에 올라온 게시물만.
-  4. **정보 알약 줄**(좌우 20, gap 8): 알약(높이 40, bg/subtle + 1px border/default, radius full, 좌우 16, gap 12) = [날씨 아이콘 16 + Caption Strong "My weather · Rain 10°"] · 세로선 1×14 border/default · Caption fg/secondary "128 dishes" → 오른쪽 **원형 필터 버튼**(IconButton Soft 40, `list`, 접근성 "Filter") — 끼니 필터가 켜져 있으면 점 표시.
-  5. **동그란 카테고리**(가로 스크롤, 좌우 20, gap 16): 사진 64 원 + Caption 라벨(gap 8). 이 태그 게시물에 함께 많이 붙은 무드 태그 최대 6개(지금 태그 제외), 사진 = 그 태그 첫 게시물. 선택 = 2px fg/accent 테두리 + 라벨 fg/accent. 탭하면 같은 화면에서 그리드를 거르고, 다시 탭하면 해제.
-  6. **섹션 제목** Overline fg/muted "{탭} · {카테고리}"(대문자) → **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20). 비면 EmptyState "No #{tag} dishes here yet" / "Share one and it shows up here."
-  7. TabBar(Community active, CreateFAB) — 바닥 여백 110 + 24.
-- **끼니 필터 시트**(필터 버튼): BottomSheet "Filter by meal" — Chip "All meals" + 목록에 있는 끼니(Breakfast · Lunch · Dinner · Snack …). 고르면 닫히고 그리드를 거른다.
+  1. **TopBar · Overlay**(높이 52, 좌우 12): 왼쪽 **뒤로**(IconButton Soft 40)만. 공유 버튼 없음.
+  2. **#태그** Display/XL(항상 영어, 읽기는 내 언어) — padding 22 20 12.
+  3. **Group**(위 22 · gap 16): Display/M 한 줄 제목(`tag.headlines.<태그>`, 없으면 "{태그}") → **사진 카드 350×400 가로 스크롤**(gap 6, 좌우 20, 넘김 = 카드 한 장씩) — 이 태그 **인기 게시물 1–3위**, 사진만(아래 잉크 scrim). 탭 → 7.1.
+  4. 18 → **동그란 카테고리**(가로 스크롤, 좌우 20, gap 16): 사진 64 원 + Caption 라벨(gap 8). 이 태그 게시물에 함께 많이 붙은 무드 태그 최대 6개(지금 태그 제외), 사진 = 그 태그 첫 게시물. 선택 = 2px fg/accent 테두리 + 라벨 fg/accent. 탭하면 같은 화면에서 그리드를 거르고, 다시 탭하면 해제.
+  5. 32 → Overline fg/muted **"LATEST · {카테고리}"**(카테고리를 고르지 않았으면 "LATEST") → 12 → **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20) — **최신순**. 비면 EmptyState "No #{tag} dishes here yet" / "Share one and it shows up here." 불러오기 실패 = LoadError(Try again).
+  6. TabBar(Community active, CreateFAB) — 바닥 여백 110 + 24.
+- 정렬 탭(Latest · Popular · By weather) · 정보 알약(내 날씨 · 요리 수) · 끼니 필터 시트는 없다.
 - 이동: 사진 · 타일 → 7.1 · 뒤로 → BACK · TabBar.
 - **명절 태그**도 같은 화면이다(명절 날짜 헤더 · CELEBRATED IN 칩은 없다).
 
