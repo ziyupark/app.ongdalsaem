@@ -21,8 +21,8 @@ export type FeedPostData = {
 };
 
 /**
- * Feed Post 119:601 (390 wide, padding-bottom 24): Header (avatar 40 · name/meta · more) → Media 370×417 radius 32
- * (Weather Tag XL with condition top-left 16 · Photo Counter bottom-right 16) → Actions (acorn · comment · share ··· save) → Caption.
+ * Feed Post 119:601 (390 wide, padding-bottom 24): Header (avatar 40 · name/meta · more) → Media 350×402 radius 32, 20 in from each side
+ * (Weather Tag XL with condition top-left 18 · Photo Counter bottom-left: left 18, bottom 16) → Actions (acorn · comment · share ··· save) → Caption.
  */
 export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComments, onShare, onMore, onAcorn, onSave }: {
   post: FeedPostData; onOpen?: () => void; onAuthor?: () => void; onComments?: () => void; onShare?: () => void; onMore?: () => void;
@@ -70,7 +70,7 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
           <WeatherTag mood={post.weather} tempC={post.tempC} condition={t(`weather.${post.weather}`)} />
         </View>
         {post.photoCount > 1 ? (
-          <View style={styles.counterBR}>
+          <View style={styles.counterBL}>
             <PhotoCounter label={t('home.photoCount', { n: 1, total: post.photoCount })} />
           </View>
         ) : null}
@@ -105,9 +105,10 @@ const styles = StyleSheet.create({
   avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   author: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[10] },
   who: { flex: 1, justifyContent: 'center', gap: space[2] }, // Figma gap 1 → nearest token
-  media: { height: 417, marginHorizontal: space[10], borderRadius: radius['2xl'], overflow: 'hidden' }, // Media 119:620 — 370×417, radius 32
-  tagTL: { position: 'absolute', left: space[16], top: space[16] },
-  counterBR: { position: 'absolute', right: space[16], bottom: space[16] },
+  media: { height: 402, marginHorizontal: space[20], borderRadius: radius['2xl'], overflow: 'hidden' }, // Media 119:620 — 350×402, radius 32
+  // Media padding 18 18 16 18 (Figma component value)
+  tagTL: { position: 'absolute', left: 18, top: 18 },
+  counterBL: { position: 'absolute', left: 18, bottom: space[16] },
   actions: { flexDirection: 'row', alignItems: 'center', gap: space[16], paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   spacer: { flex: 1 },

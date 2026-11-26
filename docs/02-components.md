@@ -214,12 +214,12 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 
 ### 3.3 Feed Post 상세 (390 × 652, 전체 폭)
 
-세로 스택, gap 0, padding-bottom 24. 사진은 화면 좌우 끝까지(full-bleed), 나머지 행은 좌우 패딩 20.
+세로 스택, gap 0, padding-bottom 24. 사진 카드는 좌우 20 안쪽(390 폭 → 350), 나머지 행도 좌우 패딩 20.
 
 | 순서 | 레이어 | 스펙 |
 |---|---|---|
 | 1 | **Header** | 가로, padding 12 16 12 20, gap 10, 세로 가운데 정렬. Avatar 32 → Who(세로, gap 1, 남은 폭 채움): **Name** Body/S Strong fg/default(`minji.cooks`) + **Meta** Caption fg/muted(`Mapo, Seoul · 40m`) → `more-horizontal` 20px(fg/secondary). *(날씨는 헤더가 아니라 사진 위 태그로 표시)* |
-| 2 | **Media** | 390 × 440, 사진 cover, clip, **radius/xs = 4px**(네 모서리). **좌상단(16, 16) Weather Tag**(Size=XL, **Show condition = On** → "`cloud-snow` Snow −4°", §3.4). 도토리 수는 Actions에 있으므로 사진 위 Acorn Tag는 숨김, **우하단(right 16, bottom 16) Photo Counter**(`1 / 3`, 노출 인스턴스 — 인스턴스에서 Count 값을 바꾼다). 피드는 사진을 넘기는 곳이라 장수 표시를 아래(넘기는 손 쪽)에 둔다. 가로 스와이프로 여러 장(사진 수 = Counter 분모) |
+| 2 | **Media** | **350 × 402**(좌우 20 안쪽), 사진 cover, clip, **radius 2xl = 32**. 안쪽 padding 18 18 16 18. **좌상단(18, 18) Weather Tag**(Size=XL, **Show condition = On** → "`cloud-snow` Snow −4°", §3.4). 도토리 수는 Actions에 있으므로 사진 위 Acorn Tag는 숨김, **좌하단(left 18, bottom 16) Photo Counter**(`1 / 3`, 노출 인스턴스 — 인스턴스에서 Count 값을 바꾼다). 피드는 사진을 넘기는 곳이라 장수 표시를 아래(넘기는 손 쪽)에 둔다. 가로 스와이프로 여러 장(사진 수 = Counter 분모) |
 | 3 | **Actions** | 가로, padding 12 20 8 20, gap 18, 아이콘 24px fg/default. **Acorn** = `Action Count`(Type=Acorn, 누르면 Acorn given, 숫자 = 받은 도토리) → **Comment** = `Action Count`(Type=Comment, → 7.2) → **Share** `share` → (spacer) → **Save** `bookmark`(오른쪽 끝). Direct(`send`)는 숨김(DM은 4.5 Message로만 시작) |
 | 4 | **Caption block** | 세로, padding 0 20, gap 4. **Caption** Body/S fg/default, **최대 2줄 말줄임**. 해시태그 줄은 두지 않는다(요리 속성은 사진 위 Weather Tag와 7.1 태그 칩으로 보여 준다) |
 
@@ -249,7 +249,7 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 |---|---|
 | Dish Tile (6.1 · 4.5 · 4.2 · 4.3 · 3.1, 167:208 미디어) | 좌하단 8 / 우하단 8 |
 | Food Card Grid (3.1 · 3.5 · 3.6 · 4.2 · 4.3) | 좌하단 8 / 우하단 8 |
-| **Feed Post Media**(홈 피드 · 4.4 · 6.4b · 8.3 피드 미리보기) | **좌상단 16 / 우상단 16**(태그) · Photo Counter **우하단 16** |
+| **Feed Post Media**(홈 피드 · 4.4 · 6.4b · 8.3 피드 미리보기) | Weather Tag **좌상단 18 / 18** · Photo Counter **좌하단 left 18 · bottom 16** |
 | 상세 hero (7.x · 8.3 · 6.4b) | 좌하단 16 / 우하단 16(시트 시작선 위) · Photo Counter 우상단 |
 | Story Card (홈 2.x, 4.1) | 카드 맨 아래 Tags 줄(좌우 24, 아래 24). 그 위에 Body + Cook(Avatar 40) |
 | Pick Card (2.5) | 카드 맨 아래 Tags 줄(좌우 20, 아래 20). 그 위에 Meta |
