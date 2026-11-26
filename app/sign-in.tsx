@@ -14,7 +14,8 @@ import { Text } from '../src/components/Text';
 import { signInWithApple, signInWithDevTestAccount, signInWithGoogle, type SignInResult } from '../src/services/auth';
 import { getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { openLegal } from '../src/lib/legal';
-import { diagTap, SUPABASE_DIAG } from '../src/lib/supabaseDiagnostics'; // SUPABASE_DIAG (temporary)
+import { SUPABASE_DIAG } from '../src/lib/supabaseDiagFlag'; // SUPABASE_DIAG (temporary)
+import { diagTap } from '../src/lib/supabaseDiagnostics'; // SUPABASE_DIAG (temporary)
 import { space, useTheme, withAlpha } from '../src/theme';
 
 const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
@@ -94,6 +95,13 @@ export default function SignIn() {
         <AuthButton provider="Google" label={t('signIn.google')} onPress={() => run('Google')} loading={busy === 'Google'} disabled={busy !== null} />
       </View>
 
+      {/* SUPABASE_DIAG (temporary): visible entry in the diagnostic build only — never in store builds. */}
+      {SUPABASE_DIAG ? (
+        <View style={[styles.diag, { top: insets.top + space[8] }]}>
+          <Button label="Diagnostics" variant="Outline" size="S" onPress={() => router.push('/dev/supabase')} />
+        </View>
+      ) : null}
+
       {/* DEV ONLY — not in the design; stripped from release builds. */}
       {__DEV__ ? (
         <View style={[styles.dev, { top: insets.top + space[8] }]}>
@@ -114,5 +122,6 @@ const styles = StyleSheet.create({
   actions: { position: 'absolute', left: space[20], right: space[20], gap: space[10] },
   legal: { textAlign: 'center' },
   dev: { position: 'absolute', right: space[20] },
+  diag: { position: 'absolute', left: space[20] }, // SUPABASE_DIAG (temporary)
 });
 

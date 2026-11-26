@@ -14,7 +14,8 @@ import { setPrefs, usePrefs, type Appearance } from '../../src/lib/prefs';
 import { signOut } from '../../src/services/auth';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
-import { diagTap, SUPABASE_DIAG } from '../../src/lib/supabaseDiagnostics'; // SUPABASE_DIAG (temporary)
+import { SUPABASE_DIAG } from '../../src/lib/supabaseDiagFlag'; // SUPABASE_DIAG (temporary)
+import { diagTap } from '../../src/lib/supabaseDiagnostics'; // SUPABASE_DIAG (temporary)
 
 /** 9.1 Settings (Figma 26:2). */
 export default function Settings() {

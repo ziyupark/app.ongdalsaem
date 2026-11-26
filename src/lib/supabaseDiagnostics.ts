@@ -2,13 +2,12 @@
  * TEMPORARY — Supabase request diagnostics (401 "No API key found in request" on TestFlight).
  * Observes only: the wrapped fetch passes `input` / `init` through unchanged and returns the original response.
  * Off unless EXPO_PUBLIC_SUPABASE_DIAG=1 at build time. Never logs a full key or any Authorization value.
- * Remove: delete this file, app/dev/supabase.tsx, and the lines marked `SUPABASE_DIAG` in
- * src/lib/supabase.ts, app/sign-in.tsx and app/settings/index.tsx.
+ * Remove: delete this file, ./supabaseDiagFlag.ts, app/dev/supabase.tsx, and the lines marked `SUPABASE_DIAG` in
+ * src/lib/supabase.ts, app/sign-in.tsx, app/settings/index.tsx and app.config.ts.
  * No react-native imports, so it can be unit-tested in Node (scripts/supabaseDiagnostics.test.mjs).
  */
 
-// Literal `process.env.EXPO_PUBLIC_…` so Expo inlines it at build time.
-export const SUPABASE_DIAG = process.env.EXPO_PUBLIC_SUPABASE_DIAG === '1';
+// The on/off flag lives in ./supabaseDiagFlag (needs expo-constants), so this file stays testable in Node.
 
 type Fetch = typeof fetch;
 
@@ -274,9 +273,8 @@ export function inspectUrl(url: string | null | undefined) {
 }
 
 let taps: number[] = [];
-/** Hidden entry: true on the 5th tap within 3 s (only when SUPABASE_DIAG is on). */
+/** Hidden entry: true on the 5th tap within 3 s (callers only wire it up when SUPABASE_DIAG is on). */
 export function diagTap(now = Date.now()): boolean {
-  if (!SUPABASE_DIAG) return false;
   taps = [...taps.filter((t) => now - t < 3000), now];
   if (taps.length < 5) return false;
   taps = [];
@@ -286,7 +284,6 @@ export function diagTap(now = Date.now()): boolean {
 /** Everything the panel shows, as one masked object (for "Copy all"). */
 export function snapshot(extra: Record<string, unknown> = {}) {
   return {
-    flag: SUPABASE_DIAG,
     key: inspectValue(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY),
     url: inspectUrl(process.env.EXPO_PUBLIC_SUPABASE_URL),
     useRnFetch: process.env.EXPO_PUBLIC_USE_RN_FETCH ?? '(unset → expo/fetch is the global fetch)',

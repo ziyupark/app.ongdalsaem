@@ -14,15 +14,15 @@ import {
   inspectValue,
   snapshot,
   subscribeDiag,
-  SUPABASE_DIAG,
   type DirectResult,
   type ValueInfo,
 } from '../../src/lib/supabaseDiagnostics';
+import { SUPABASE_DIAG, SUPABASE_DIAG_SOURCES } from '../../src/lib/supabaseDiagFlag';
 import { radius, space, useTheme } from '../../src/theme';
 
 /**
- * TEMPORARY — Supabase request diagnostics (SUPABASE_DIAG). Opened by tapping the sign-in logo or the
- * Settings version line 5 times, only in a build with EXPO_PUBLIC_SUPABASE_DIAG=1. Not translated: never shipped to users.
+ * TEMPORARY — Supabase request diagnostics (SUPABASE_DIAG). Opened from the sign-in "Diagnostics" button,
+ * the sign-in logo or the Settings version line (5 taps) — only in the `diagnostic` EAS build. Not translated: never shipped to users.
  * Shows keys masked only (first 14 chars + *** + length).
  */
 export default function SupabaseDiagnostics() {
@@ -55,7 +55,7 @@ export default function SupabaseDiagnostics() {
     }
   };
   const copyAll = async () => {
-    const text = JSON.stringify(snapshot({ build, direct }), null, 2);
+    const text = JSON.stringify(snapshot({ flag: SUPABASE_DIAG_SOURCES, build, direct }), null, 2);
     await loadClipboard()?.setStringAsync(text);
     setCopied(true);
   };
@@ -86,6 +86,7 @@ export default function SupabaseDiagnostics() {
         <Line k="platform" v={build.platform} />
         <Line k="__DEV__" v={String(build.dev)} />
         <Line k="expo-updates" v={build.expoUpdates} />
+        <Line k="flag (extra / env)" v={`${SUPABASE_DIAG_SOURCES.extra} / ${SUPABASE_DIAG_SOURCES.env}`} />
         <Line k="EXPO_PUBLIC_USE_RN_FETCH" v={process.env.EXPO_PUBLIC_USE_RN_FETCH ?? '(unset → expo/fetch)'} />
       </View>
 
