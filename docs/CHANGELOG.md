@@ -7,7 +7,9 @@
 - **Body/M 글자 스타일**: 15/22 · −0.05 → **15/20 · 0.13**(Figma 텍스트 스타일 변경, 앱 전체 Body/M에 적용)
 - **6.1 Profile 기온**(1094:24027): Numeric/XL 72 → **80**(홈 Weather Card는 72 그대로)
 - **댓글 이름 = @username**(Comment 132:4846): Avatar 32 → 40, 이름 Body/S Strong → Body/M Strong, 본문 Body/S fg/secondary → Body/M fg/default. 3.8 답변 이름도 @username
-- **닉네임 기능 삭제**: 9.2 Edit profile의 Display name 입력칸 삭제(저장도 안 함). 9.1 프로필 카드 = @username + "Edit profile". 가입(1.3)의 이름 입력은 그대로(@username 자동 생성용)
+- **닉네임 기능 삭제**: 9.2 Edit profile의 Display name 입력칸 삭제(저장도 안 함). 9.1 프로필 카드 = @username + "Edit profile"
+- **1.3 Profile setup 삭제**: 첫 로그인 때 Apple/Google 이름으로 @username 자동 생성 → 바로 1.3b. 단계 표시 STEP n OF 4 → **OF 3**(9개 언어), 문구 `profileSetup.*` 삭제. 온보딩 완료 기준 = display_name → username
+- **이름 = @username**: 게시물 · 작성자 · 차단 목록 · 저장 목록 등 이름 자리에 닉네임 대신 username
 - **Comment Composer**(287:334): Avatar 40 다시 추가, 좌우 padding 16 → 20, 입력칸 높이 48 → **42**
 - **Feed Post**(119:601 · 1219:18732): Actions · Caption 좌우 → **38**, Caption Body/M **1줄**, 캡션 없으면 숨김
 - **Question Card**(469:10124): 1px border/default 추가, radius 32 → 16, 질문 Body/L fg/secondary → Body/M fg/default, 사진 radius 12 → 32, 아래 줄 좌우 21

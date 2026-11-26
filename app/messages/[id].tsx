@@ -128,7 +128,7 @@ export default function ThreadScreen() {
         }}
       />
       <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom, space[10]), borderTopColor: color('border/default') }]}>
-        <Avatar url={me?.avatarUrl ?? null} name={me?.displayName ?? ''} size={32} />
+        <Avatar url={me?.avatarUrl ?? null} name={me?.username ?? me?.displayName ?? ''} size={32} />
         <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
           <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             value={draft}

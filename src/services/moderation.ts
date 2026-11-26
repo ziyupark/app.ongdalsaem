@@ -70,7 +70,7 @@ export async function fetchBlocked(): Promise<BlockedUser[]> {
   if (error) throw error;
   return ((data ?? []) as Record<string, any>[]).map((r) => ({
     id: r.blocked_id,
-    name: r.who?.display_name || r.who?.username || '—',
+    name: r.who?.username || r.who?.display_name || '—',
     handle: r.who?.username ?? null,
     avatarUrl: r.who?.avatar_url ?? null,
   }));

@@ -135,7 +135,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       const { data: f } = await supabase.from('follows').select('followee_id').eq('follower_id', me).eq('followee_id', id).maybeSingle();
       setFollowing(!!f);
     }
-    return { id: data.id, displayName: data.display_name || data.username, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: true };
+    return { id: data.id, displayName: data.username || data.display_name, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: true };
   };
   const [missing, setMissing] = useState(false);
   // 7.3 Report / block a cook (their name, @handle, photo or status line) — the same sheet as a dish report.
@@ -253,7 +253,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           <Pressable accessibilityRole="button" accessibilityLabel={t('profile.changePhoto')} onPress={pickAvatar} disabled={!me || !isMe}>
             <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle'), borderColor: color('border/default') }]}>
               {me?.avatarUrl ? <Image source={{ uri: me.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} /> : (
-                <Text variant="Display/M" color="fg/accent">{(me?.displayName ?? '').slice(0, 1).toUpperCase()}</Text>
+                <Text variant="Display/M" color="fg/accent">{(me?.username ?? me?.displayName ?? '').slice(0, 1).toUpperCase()}</Text>
               )}
               {avatarBusy ? <View style={[StyleSheet.absoluteFill, styles.center, { backgroundColor: color('overlay/scrim') }]}><ActivityIndicator color={color('static/white')} /></View> : null}
             </View>
@@ -347,7 +347,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         <ReportSheet
           visible={reportOpen}
           ownerId={userId}
-          ownerName={me?.displayName ?? ''}
+          ownerName={me?.username ?? me?.displayName ?? ''}
           title={t('report.userTitle')}
           onClose={() => setReportOpen(false)}
           onBlocked={() => (router.canGoBack() ? router.back() : router.replace('/community'))}

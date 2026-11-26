@@ -264,7 +264,7 @@ export default function PostDetail() {
     <CommentsInline
       foodId={dish.id}
       allowComments={dish.allowComments || mine}
-      me={me ? { id: me.id, name: me.displayName ?? me.username ?? '', avatarUrl: me.avatarUrl } : null}
+      me={me ? { id: me.id, name: me.username ?? me.displayName ?? '', avatarUrl: me.avatarUrl } : null}
       dishOwnerId={dish.creator.id}
       onCountChange={onCount}
     />

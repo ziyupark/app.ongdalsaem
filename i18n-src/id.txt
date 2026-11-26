@@ -26,19 +26,8 @@ legalSuffix= kami.
 apple=Lanjutkan dengan Apple
 google=Lanjutkan dengan Google
 error=Proses masuk sedang tidur siang — ketuk untuk mencoba lagi.
-[profileSetup]
-step=Langkah 1 dari 4
-title=Kami harus\nmemanggilmu apa?
-label=Nama tampilan
-helper=Ditampilkan di masakan yang kamu bagikan.
-handlePrefix=Nama penggunamu akan menjadi
-handleSuffix= — bisa diubah kapan saja di Pengaturan.
-missingName=Tambahkan nama tampilan untuk melanjutkan.
-continue=Lanjutkan
-changePhoto=Ganti foto profil
-error=Gagal menyimpan — ketuk Lanjutkan untuk mencoba lagi.
 [location]
-step=Langkah 3 dari 4
+step=Langkah 2 dari 3
 title=Biar cuaca\nmembantumu memilih.
 body=Kami memakai prakiraan cuaca kotamu untuk menyarankan apa yang dimasak orang lain di cuaca yang sama. Hanya kotamu yang dibagikan — tidak pernah lokasi persisnya.
 chooseCity=Pilih kota saja
@@ -1160,7 +1149,7 @@ features.holidays=Hari istimewa dunia
 features.holidaysBody=Hidangan hari istimewa dari seluruh dunia.
 start=Mulai
 [taste]
-step=Langkah 2 dari 4
+step=Langkah 1 dari 3
 title=Makanan seperti apa\nyang kamu suka?
 body=Pilih sebanyak yang kamu mau. Rekomendasi akan menyesuaikan.
 skip=Lewati
@@ -1192,7 +1181,7 @@ allergens.sesame=Wijen
 whyTitle=Mengapa ini diperlukan?
 whyBody=Untuk cuaca di lingkunganmu dan tempat makan terdekat. Kami tidak pernah menyimpan koordinat persismu — hanya areamu yang dipakai.
 [notify]
-step=Langkah 4 dari 4
+step=Langkah 3 dari 3
 title=Jam berapa kami kirim\nrekomendasi harianmu?
 body=Satu hidangan untuk cuaca hari ini, setiap hari di jam ini. Bisa diubah di Pengaturan.
 skip=Lewati

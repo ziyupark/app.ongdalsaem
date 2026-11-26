@@ -43,20 +43,8 @@
     "google": "Continuar con Google",
     "error": "El inicio de sesión está echando una siesta. Toca para reintentar."
   },
-  "profileSetup": {
-    "step": "Paso 1 de 4",
-    "title": "¿Cómo\nte llamamos?",
-    "label": "Nombre visible",
-    "helper": "Aparece en los platos que compartes.",
-    "handlePrefix": "Tu usuario será ",
-    "handleSuffix": ". Puedes cambiarlo cuando quieras en Ajustes.",
-    "missingName": "Añade un nombre visible para continuar.",
-    "continue": "Continuar",
-    "changePhoto": "Cambiar foto de perfil",
-    "error": "No se guardó. Toca Continuar para reintentar."
-  },
   "location": {
-    "step": "Paso 3 de 4",
+    "step": "Paso 2 de 3",
     "title": "Deja que el clima\nte ayude a elegir.",
     "body": "Usamos el pronóstico de tu ciudad para sugerirte lo que otros cocinaron con el mismo clima. Solo se comparte tu ciudad, nunca tu ubicación exacta.",
     "chooseCity": "Elegir una ciudad",
@@ -66,7 +54,7 @@
     "whyBody": "Para el clima de tu barrio y los lugares cercanos. Nunca guardamos tus coordenadas exactas: solo usamos tu zona."
   },
   "taste": {
-    "step": "Paso 2 de 4",
+    "step": "Paso 1 de 3",
     "title": "¿Qué comidas\nte gustan?",
     "body": "Elige todas las que quieras. Tendremos en cuenta tus gustos.",
     "skip": "Omitir",
@@ -101,7 +89,7 @@
     }
   },
   "notify": {
-    "step": "Paso 4 de 4",
+    "step": "Paso 3 de 3",
     "title": "¿A qué hora te enviamos\ntu sugerencia diaria?",
     "body": "Un plato para el clima de hoy, cada día a esta hora. Puedes cambiarlo en Ajustes.",
     "skip": "Omitir",

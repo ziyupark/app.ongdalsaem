@@ -13,7 +13,7 @@ import { TASTE_TAGS } from '../../src/lib/tags';
 import { saveFavoriteTags } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
 
-/** Onboarding taste step (after 1.3 Profile, before 1.4 Location). Picks → profiles.favorite_tags. */
+/** Onboarding taste step (first step after sign-in, before 1.4 Location). Picks → profiles.favorite_tags. */
 export default function TasteStep() {
   const insets = useSafeAreaInsets();
   const { color, scheme } = useTheme();

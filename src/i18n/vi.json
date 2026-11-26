@@ -43,20 +43,8 @@
     "google": "Tiếp tục với Google",
     "error": "Đăng nhập đang ngủ trưa — chạm để thử lại."
   },
-  "profileSetup": {
-    "step": "Bước 1/4",
-    "title": "Chúng mình nên\ngọi bạn là gì?",
-    "label": "Tên hiển thị",
-    "helper": "Hiển thị trên các món bạn chia sẻ.",
-    "handlePrefix": "Tên người dùng của bạn sẽ là ",
-    "handleSuffix": " — bạn có thể đổi bất cứ lúc nào trong Cài đặt.",
-    "missingName": "Thêm tên hiển thị để tiếp tục.",
-    "continue": "Tiếp tục",
-    "changePhoto": "Đổi ảnh đại diện",
-    "error": "Chưa lưu được — chạm Tiếp tục để thử lại."
-  },
   "location": {
-    "step": "Bước 3/4",
+    "step": "Bước 2/3",
     "title": "Để thời tiết\ngiúp bạn chọn.",
     "body": "Chúng mình dùng dự báo thời tiết của thành phố bạn để gợi ý món người khác đã nấu trong cùng thời tiết. Chỉ chia sẻ thành phố — không bao giờ chia sẻ vị trí chính xác.",
     "chooseCity": "Chọn thành phố",
@@ -66,7 +54,7 @@
     "whyBody": "Để biết thời tiết khu phố và quán gần bạn. Chúng tôi không lưu tọa độ chính xác — chỉ dùng theo khu vực."
   },
   "taste": {
-    "step": "Bước 2/4",
+    "step": "Bước 1/3",
     "title": "Bạn thích\nbữa ăn kiểu nào?",
     "body": "Chọn bao nhiêu tùy thích. Gợi ý sẽ theo khẩu vị của bạn.",
     "skip": "Bỏ qua",
@@ -101,7 +89,7 @@
     }
   },
   "notify": {
-    "step": "Bước 4/4",
+    "step": "Bước 3/3",
     "title": "Mấy giờ gửi\ngợi ý mỗi ngày?",
     "body": "Một món cho thời tiết hôm nay, mỗi ngày vào giờ này. Có thể đổi trong Cài đặt.",
     "skip": "Bỏ qua",

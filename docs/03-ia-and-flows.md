@@ -6,7 +6,7 @@
 
 ```
 Launch      1.1 Splash → 1.1b Welcome(앱 소개, 첫 실행 1회)
-Onboarding  1.2 Sign in(Welcome) → Apple · Google → 1.3 Profile setup → 1.3b Taste → 1.4 Location → 1.5 Daily pick time → Home (기존 계정은 바로 Home)
+Onboarding  1.2 Sign in(Welcome) → Apple · Google(@username 자동 생성) → 1.3b Taste → 1.4 Location → 1.5 Daily pick time → Home (기존 계정은 바로 Home)
 Tab bar (4)  Home(2.x) · Community(4.x · 3.x Our area/Nearby list) · Timer(5.x) · Profile(6.x)  + FAB(탭바 줄 오른쪽 끝)
 Notifications  bell(2.x · 4.1 · 4.4 · 4.4b — 탭 화면 ScreenHeader) → 2.8 Notifications (2.8b empty)
 Global       + FAB → Share a dish (8.1 Pick photos → 8.2 Details ⇄ 8.2e Travel → 8.3 Preview → 공유, 2단계 + 미리보기)
@@ -61,7 +61,7 @@ Figma 페이지 구성:
 - **시작점(Flow)** 14개 — 주요 흐름: **A · First launch → 1.1** · **B · Home → 2.1** · **C · Community → 4.1** · **D · Share a dish → 8.1** · **E · Kitchen timer → 5.1** · **F · Profile → 6.1** · **G · Settings → 9.1**. 상태 확인용: S · Location off 2.5 · Weather unavailable 2.6 · Nearby empty 3.2 · Search no results 3.3 · Following empty 4.4b · Offline 6.4 · No notifications 2.8b.
 - **고정(Fixed) 요소** = 프레임의 마지막 레이어들(`numberOfFixedChildren`): 탭 루트 = TabBar(+FAB) · Home Indicator, 상세 = Top bar · Action bar · Home Indicator, 작성 = 하단 버튼 · Home Indicator, 메시지 = Comment Composer · Home Indicator, 토스트가 있으면 Toast 포함. 시트·팝업 화면은 Scrim · 시트까지 고정.
 - **가로 스크롤**: 칩 줄(3.x 범위 칩 · 4.1 Landscape chips · 4.1 Festive cards · 4.2/4.6 해시태그 칩 · 5.x presets)과 4.1 카드 carousel · 태그 줄, 7.1 More row는 줄 자체가 화면 폭(390) 스크롤 컨테이너(좌우 padding 20, Overflow Horizontal) — 첫 항목은 20 들여쓰기, 끝까지 밀면 화면 가장자리까지 보인다.
-- **뒤로**: 푸시 화면(1.3 · 1.3b · 1.4 · 1.5 · 3.1 · 3.7 · 3.8 · 4.3-1 · 4.3-2 · 4.2 · 4.3 · 4.5 · 4.11 · 4.6 · 4.7–4.10 · 9.2–9.9 · 2.8 · 시트들)의 뒤로/닫기는 모두 **Back**(이전 화면으로). 딤 탭 = Back.
+- **뒤로**: 푸시 화면(1.3b · 1.4 · 1.5 · 3.1 · 3.7 · 3.8 · 4.3-1 · 4.3-2 · 4.2 · 4.3 · 4.5 · 4.11 · 4.6 · 4.7–4.10 · 9.2–9.9 · 2.8 · 시트들)의 뒤로/닫기는 모두 **Back**(이전 화면으로). 딤 탭 = Back.
 - **전환**: 탭 전환 = 즉시(활성 알약만 220ms 이동 — [§6.4](05-behavior.md)), 푸시 = Move in ← 300ms, 시트·팝업 = Move in ↑ 300ms / Dissolve 200ms(8.2b), 상태 전환 = Smart animate.
 - 프로토타입에서 표현 못 하는 동작(구현 시 적용): TabBar 스크롤 숨김 · 탭 상태 유지 · 다시 누르면 맨 위로([§6.4](05-behavior.md)), 피드 · 4.2/4.3 히어로 사진 가로 스와이프, 키보드.
 
@@ -69,9 +69,8 @@ Figma 페이지 구성:
 |---|---|---|
 | 1.1 | 1.2초 자동(AFTER_TIMEOUT) | 1.1b(첫 실행) / 1.2 |
 | 1.1b | Get started | 1.2(다시 보기로 열었으면 BACK) |
-| 1.2 | Continue with Google · Apple | 1.3(첫 로그인) / 2.1(기존) |
-| 1.3 · 1.3b · 1.4 · 1.5 | 뒤로 | Back |
-| 1.3 | Continue | 1.3b |
+| 1.2 | Continue with Google · Apple | 1.3b(첫 로그인) / 2.1(기존) |
+| 1.3b · 1.4 · 1.5 | 뒤로 | Back |
 | 1.3b | Continue / Skip | 1.4 |
 | 1.4 | Use my location / Choose a city instead(또는 권한 거부) | 1.5 / 1.5(→ Home은 2.5 상태) |
 | 1.5 | Turn on notifications / Skip | 2.1(위치 꺼짐이면 2.5) |

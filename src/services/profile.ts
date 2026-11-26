@@ -13,9 +13,9 @@ export async function getMyProfile(): Promise<MyProfile | null> {
   return { id: data.id, displayName: data.display_name, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: data.location_enabled ?? true };
 }
 
-/** Onboarding is finished once a display name exists (1.3). Existing accounts go straight to Home. */
+/** A new account has no @username yet → make one (ensureHandle) and run onboarding. There is no nickname step. */
 export function needsProfileSetup(p: MyProfile | null) {
-  return !p?.displayName;
+  return !p?.username;
 }
 
 const UNIQUE_VIOLATION = '23505';
@@ -31,23 +31,17 @@ export async function uploadAvatar(userId: string, localUri: string) {
 }
 
 /**
- * 1.3 Continue: save display name + auto handle (+ photo). If the handle is taken, draw new digits and retry.
- * Returns the handle that was saved.
+ * First sign-in: give the account an automatic @username (from the Apple / Google name, else "cook") — the only name
+ * shown in the app; it can be changed in 9.2. If the handle is taken, draw new digits and retry. Returns the handle.
  */
-export async function saveProfileSetup(input: { displayName: string; digits: string; avatarUri?: string }) {
+export async function ensureHandle(suggestedName = '') {
   const uid = await myUserId();
   if (!uid) throw new Error('Not signed in');
-  const avatarUrl = input.avatarUri ? await uploadAvatar(uid, input.avatarUri) : undefined;
 
-  let digits = input.digits;
+  let digits = randomHandleDigits();
   for (let attempt = 0; attempt < 6; attempt++) {
-    const username = makeHandle(input.displayName, digits);
-    const fields = {
-      display_name: input.displayName.trim(),
-      username,
-      handle_auto_generated: true,
-      ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
-    };
+    const username = makeHandle(suggestedName, digits);
+    const fields = { username, handle_auto_generated: true };
     // The sign-up trigger already made the row, so this is an update; insert only if it's missing.
     // (Not upsert: ON CONFLICT DO UPDATE needs read access to columns others can't read — see my_profile().)
     let { error, count } = await supabase.from('profiles').update(fields, { count: 'exact' }).eq('id', uid);

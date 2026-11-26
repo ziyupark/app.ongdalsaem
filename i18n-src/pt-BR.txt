@@ -26,19 +26,8 @@ legalSuffix=.
 apple=Continuar com a Apple
 google=Continuar com o Google
 error=O login está tirando um cochilo — toque para tentar de novo.
-[profileSetup]
-step=Etapa 1 de 4
-title=Como devemos\nchamar você?
-label=Nome de exibição
-helper=Aparece nos pratos que você compartilha.
-handlePrefix=Seu usuário será
-handleSuffix= — você pode mudar quando quiser em Ajustes.
-missingName=Adicione um nome de exibição para continuar.
-continue=Continuar
-changePhoto=Mudar foto do perfil
-error=Não salvou — toque em Continuar para tentar de novo.
 [location]
-step=Etapa 3 de 4
+step=Etapa 2 de 3
 title=Deixe o clima\najudar você a escolher.
 body=Usamos a previsão da sua cidade para sugerir o que outras pessoas cozinharam no mesmo clima. Só a sua cidade é compartilhada — nunca a sua localização exata.
 chooseCity=Escolher uma cidade
@@ -1179,7 +1168,7 @@ features.holidays=Datas especiais do mundo
 features.holidaysBody=Pratos de datas especiais do mundo todo.
 start=Começar
 [taste]
-step=Etapa 2 de 4
+step=Etapa 1 de 3
 title=Que tipo de refeição\nvocê ama?
 body=Escolha quantas quiser. Vamos levar seu gosto em conta.
 skip=Pular
@@ -1211,7 +1200,7 @@ allergens.sesame=Gergelim
 whyTitle=Por que precisamos disso?
 whyBody=Para o clima do seu bairro e lugares por perto. Nunca salvamos suas coordenadas exatas — usamos só a sua região.
 [notify]
-step=Etapa 4 de 4
+step=Etapa 3 de 3
 title=Que horas enviamos\nsua sugestão diária?
 body=Um prato para o clima de hoje, todo dia neste horário. Você pode mudar em Ajustes.
 skip=Pular

@@ -26,19 +26,8 @@ legalSuffix=。
 apple=使用 Apple 繼續
 google=使用 Google 繼續
 error=登入正在打盹——點一下再試一次。
-[profileSetup]
-step=第 1 步，共 4 步
-title=我們該\n怎麼稱呼你？
-label=顯示名稱
-helper=會顯示在你分享的料理上。
-handlePrefix=你的帳號名稱將是
-handleSuffix=——隨時可以在設定中更改。
-missingName=請輸入顯示名稱以繼續。
-continue=繼續
-changePhoto=更換大頭照
-error=沒有儲存成功——點「繼續」重試。
 [location]
-step=第 3 步，共 4 步
+step=第 2 步，共 3 步
 title=讓天氣\n幫你決定。
 body=我們會用你所在城市的天氣預報，推薦別人在同樣天氣裡做的料理。只會分享你的城市——絕不分享精確位置。
 chooseCity=改為選擇城市
@@ -1160,7 +1149,7 @@ features.holidays=世界紀念日
 features.holidaysBody=世界各地的紀念日料理。
 start=開始使用
 [taste]
-step=第 2 步，共 4 步
+step=第 1 步，共 3 步
 title=你喜歡\n什麼樣的一餐？
 body=想選幾個都可以，我們會反映在推薦中。
 skip=略過
@@ -1192,7 +1181,7 @@ allergens.sesame=芝麻
 whyTitle=為什麼需要位置？
 whyBody=用來顯示你社區的天氣和附近的店。我們不會儲存你的精確座標，只以社區為單位使用。
 [notify]
-step=第 4 步，共 4 步
+step=第 3 步，共 3 步
 title=每天幾點\n傳送推薦給你？
 body=每天這個時間，送上一道適合今天天氣的菜。可在設定中更改。
 skip=略過

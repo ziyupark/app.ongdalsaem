@@ -12,7 +12,7 @@ import { Logo } from '../src/components/Logo';
 import { LaunchBackdrop } from '../src/components/LaunchBackdrop';
 import { Text } from '../src/components/Text';
 import { signInWithApple, signInWithDevTestAccount, signInWithGoogle, type SignInResult } from '../src/services/auth';
-import { getMyProfile, needsProfileSetup } from '../src/services/profile';
+import { ensureHandle, getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { openLegal } from '../src/lib/legal';
 import { space, useTheme } from '../src/theme';
 
@@ -59,7 +59,11 @@ export default function SignIn() {
         provider === 'Apple' ? await signInWithApple() : provider === 'Google' ? await signInWithGoogle() : await signInWithDevTestAccount();
       if (result.status === 'cancelled') return;
       const profile = await getMyProfile();
-      if (needsProfileSetup(profile)) router.push({ pathname: '/setup/profile', params: { name: result.suggestedName } });
+      // New account: automatic @username, then onboarding from Taste (no nickname step).
+      if (needsProfileSetup(profile)) {
+        await ensureHandle(result.suggestedName);
+        router.push('/setup/taste');
+      }
       else router.replace('/home');
     } catch (e) {
       console.warn('[sign-in]', e);
