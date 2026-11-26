@@ -16,7 +16,7 @@
 공유의 **두 번째이자 마지막 단계**. 날씨·기온·지역은 사진에서 자동으로 채우고, 사용자는 요리 이름 · Meal(미리 선택됨) · Mood만 정하면 바로 공유할 수 있다. 프레임 390×1366(세로 스크롤), Confirm 버튼은 아래 고정.
 - 상단: `chevron-left`(→ 8.1) · "Step 2 of 2" · Step Progress 2칸 모두 채움 → 제목 "Tell us about it".
 - form(좌우 20, 간격 16):
-  1. **Auto context 카드**(bg/subtle, 1px border/default, radius 16, padding 12/12/12/14, gap 12): `cloud-rain` 22 → "Rainy 12° · Mapo, Seoul"(Body/M Strong) / "From your photo · Today 7:20 PM · Tap to edit"(Caption fg/muted) → `chevron-right` 20. 탭 → 8.2d.
+  1. **Auto context 카드**(bg/subtle, 1px border/default, radius 16, padding 12/12/12/14, gap 12): (303:403) **3D 날씨 이미지 53**(Weather 3D / 무드, 불러오는 중 = 스피너 · 날씨 없음 = `map-pin` 22, 같은 53 자리) → "Rainy 12° · Mapo, Seoul"(Body/M Strong) / **"Today 7:20 PM"**(Caption fg/muted, 시각만) → `chevron-right` 18. 탭 → 8.2d, 길게 누르면 날씨를 다시 찾는다.
      - **자동 채움 규칙**: 첫 사진의 촬영 시각·위치(EXIF) → 그 시각·장소의 날씨(상태·기온)와 동/구 단위 지역을 조회. EXIF가 없으면 현재 위치·시각. 위치 권한이 없으면 카드 문구 "Add where you ate it" → 8.3d에서 직접 고름.
      - 날씨 상태(Rainy 등)·기온 구간(Cool 등)은 사용자가 고르지 않는다(데이터 정확도). 장소를 바꾸면 그 장소 기준으로 다시 조회.
   2. **Type** "· changes what we ask next"(**Segmented control**, 단일 선택, 기본 Home-cooked): **Home-cooked** · **Eating Out** — Dish name 바로 위에 둔다(무엇을 물을지 먼저 정하도록).
