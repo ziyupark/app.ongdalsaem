@@ -46,29 +46,6 @@ export const gradients = {
   ],
 } as const satisfies Record<string, readonly GradientStop[]>;
 
-/** welcome primitives (Figma Primitives › welcome/*) — used only by Gradient/Welcome. */
-const welcome = {
-  base: '#FFEDD5', blue: '#3F8FFF', pink: '#F472B6', green: '#34D399', amber: '#FBBF24',
-} as const;
-
-/**
- * Gradient/Welcome — 1.2 Sign in hero mesh, 390×420 box (Figma paint style).
- * Layers bottom → top. Each radial: centre (cx, cy), axis vectors (ux, uy) / (vx, vy) of the unit circle, in box px.
- * `dodge` = Figma Linear dodge (plus-lighter); colour α 1 at the centre → 0 at the edge.
- */
-export type WelcomeRadial = { color: string; cx: number; cy: number; ux: number; uy: number; vx: number; vy: number; dodge?: boolean };
-export const welcomeMesh: { width: number; height: number; base: string; radials: WelcomeRadial[] } = {
-  width: 390,
-  height: 420,
-  base: welcome.base,
-  radials: [
-    { color: welcome.blue, cx: 250.71, cy: 330, ux: 359.29, uy: -262, vx: 282.15, vy: 386.92, dodge: true },
-    { color: welcome.pink, cx: 130, cy: 175, ux: 162.5, uy: 0, vx: 0, vy: 175 },
-    { color: welcome.green, cx: 195, cy: 42, ux: 195, uy: 0, vx: 0, vy: 210 },
-    { color: welcome.amber, cx: 341.25, cy: 315, ux: 243.75, uy: 0, vx: 0, vy: 262.5 },
-  ],
-};
-
 /**
  * Third-party brand colours that the provider's branding rules fix (Auth Button, docs/02-components.md
  * "Auth Button 브랜드 규정"). They are not part of the ongdalsaem palette and must not be used elsewhere.

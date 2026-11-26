@@ -1,13 +1,14 @@
 import { useId } from 'react';
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 import Svg, { Defs, Ellipse, LinearGradient, RadialGradient, Rect, Stop } from 'react-native-svg';
-import { MOOD_BASE, moods, type WeatherMood } from '../theme';
+import { MOOD_BASE, moods, type MoodSpec, type WeatherMood } from '../theme';
 
-type Props = { mood: WeatherMood; style?: ViewStyle; opacity?: number; base?: string };
+/** `spec` draws a gradient that isn't one of the 18 moods (e.g. LAUNCH_SKY); `mood` is ignored then. */
+type Props = { mood?: WeatherMood; spec?: MoodSpec; style?: ViewStyle; opacity?: number; base?: string };
 
 /** Weather Mood 2.0 background (docs/01-foundations.md §2.4). Fills its parent. */
-export function MoodGradient({ mood, style, opacity = 1, base = MOOD_BASE }: Props) {
-  const spec = moods[mood];
+export function MoodGradient({ mood = 'clear', spec: custom, style, opacity = 1, base = MOOD_BASE }: Props) {
+  const spec = custom ?? moods[mood];
   const id = useId().replace(/:/g, '');
   return (
     <View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity }, style]}>

@@ -5,7 +5,7 @@ import { space, text, useTheme } from '../theme';
 import { Text } from './Text';
 
 /** tone 'light' = white wordmark for dark backgrounds (dark weather washes). */
-type Props = { lockup: 'Acorn' | 'Compact'; tagline?: string; tone?: 'ink' | 'light' };
+type Props = { lockup: 'Acorn' | 'Wordmark' | 'Compact'; tagline?: string; tone?: 'ink' | 'light' };
 
 const ACORN_SYMBOL = require('../../assets/brand/acorn-symbol.svg');
 
@@ -44,23 +44,25 @@ export const LOGO_OPTICAL = {
 
 /**
  * Logo — Figma "Logo · Ongdal": Compact = header wordmark 26 high, left aligned (1.2 · tab headers).
- * Acorn = Acorn Symbol 36×46 → 10 → wordmark 36 high → Tagline, centred (1.1 Splash).
+ * Acorn = Acorn Symbol 36×46 → 10 → wordmark 36 high → Tagline, centred. Wordmark = the same without the symbol
+ * (1.1 Splash 1207:10883: wordmark 36 → 10 → Tagline).
  * Fill fg/default (Tone=Default); tone 'light' = static/white on dark washes.
  */
 export function Logo({ lockup, tagline, tone = 'ink' }: Props) {
   const { color } = useTheme();
-  const centred = lockup === 'Acorn';
+  const centred = lockup !== 'Compact';
+  const symbol = lockup === 'Acorn';
   const h = text[centred ? 'Wordmark' : 'Wordmark/Compact'].lineHeight as number; // 36 / 26 — the Figma wordmark heights
   const w = (h * WORDMARK.w) / WORDMARK.h;
   const iconY = LOGO_OPTICAL.iconOffsetY * ACORN.h;
   const acornShift = { transform: [{ translateY: iconY }, { scale: LOGO_OPTICAL.overshoot }] };
   // Acorn lockup: keep acorn body → letters at space[10] after the acorn moved up and grew.
-  const lift = centred ? iconY + ((LOGO_OPTICAL.overshoot - 1) * ACORN.h) / 2 - LOGO_OPTICAL.gap * h : 0;
+  const lift = symbol ? iconY + ((LOGO_OPTICAL.overshoot - 1) * ACORN.h) / 2 - LOGO_OPTICAL.gap * h : 0;
   // Compact: the wordmark sits on its x-height centre, so the header row and its icon buttons line up on it.
   const wordShift = { transform: [{ translateY: LOGO_OPTICAL.wordmarkOffsetY * h }] };
   return (
     <View style={centred ? styles.stack : styles.compact} accessible accessibilityRole="header" accessibilityLabel="ongdalsaem">
-      {centred ? <Image source={ACORN_SYMBOL} style={[styles.acorn, acornShift]} contentFit="contain" /> : null}
+      {symbol ? <Image source={ACORN_SYMBOL} style={[styles.acorn, acornShift]} contentFit="contain" /> : null}
       <View style={centred ? { marginTop: lift } : wordShift}>
         <Svg width={w} height={h} viewBox={`0 0 ${WORDMARK.w} ${WORDMARK.h}`} pointerEvents="none">
           <Path d={WORDMARK.d} fill={color(tone === 'light' ? 'static/white' : 'fg/default')} />

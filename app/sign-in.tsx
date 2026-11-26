@@ -1,31 +1,48 @@
 import Constants from 'expo-constants';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuthButton } from '../src/components/AuthButton';
 import { Button } from '../src/components/Button';
 import { Logo } from '../src/components/Logo';
-import { WelcomeMesh } from '../src/components/WelcomeMesh';
+import { LaunchBackdrop } from '../src/components/LaunchBackdrop';
 import { Text } from '../src/components/Text';
 import { signInWithApple, signInWithDevTestAccount, signInWithGoogle, type SignInResult } from '../src/services/auth';
 import { getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { openLegal } from '../src/lib/legal';
 import { SUPABASE_DIAG } from '../src/lib/supabaseDiagFlag'; // SUPABASE_DIAG (temporary)
 import { diagTap } from '../src/lib/supabaseDiagnostics'; // SUPABASE_DIAG (temporary)
-import { space, useTheme, withAlpha } from '../src/theme';
+import { space, useTheme } from '../src/theme';
 
 const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
 
 type Provider = 'Apple' | 'Google' | 'Dev';
 
-/** 1.2 Sign in (Welcome) — 14:67. Photo on top, Apple · Google at the bottom (Google = y 754–800). */
+const SUN = require('../assets/launch/sun-3d.png');
+const ACORN = require('../assets/launch/acorn-3d.png');
+const SUN_SHADOW = require('../assets/launch/sun-shadow.png');
+
+/**
+ * 1207:10995 geometry (design px). Sun frame 385 at y 89. Acorn 179 rotated 15.28° in a 219.84 box at (157, 145) of the
+ * frame → its own box at (157 + 20.42, 145 + 20.42). Shadow: ellipse 324×41 at y 398; the exported asset adds the blur
+ * margin (366.2×83.2, 21.1 above).
+ */
+const ART = {
+  top: 89,
+  size: 385,
+  acorn: { x: 157 + (219.836 - 179) / 2, y: 145 + (219.836 - 179) / 2, size: 179 },
+  shadow: { y: 398 - 21.1, w: 366.2, h: 83.2 },
+};
+
+/** 1.2 Sign in — 1207:10884. Sky + glows (LaunchBackdrop), 3D sun with acorn on top, copy from y 482, Apple · Google at the bottom (Google = y 754–800). */
 export default function SignIn() {
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
+  const { width } = useWindowDimensions();
   const { t } = useTranslation();
   const [busy, setBusy] = useState<Provider | null>(null);
   const [failed, setFailed] = useState(false);
@@ -48,17 +65,18 @@ export default function SignIn() {
     }
   };
 
-  const bg = color('bg/default');
-  const ink = color('static/ink');
+  // "3d icon" 1207:10995 — the 385 frame sits at x 2 in the 390 frame (centred); everything inside is placed from it.
+  const artLeft = (width - ART.size) / 2;
 
   return (
-    <View style={[styles.root, { backgroundColor: bg }]}>
-      <StatusBar style="light" />
-      {/* Hero 390×420 = Gradient/Welcome + Fade (270–420, transparent → bg/default) + Scrim top (0–120, ink 45% → 0 at 40%). */}
-      <View style={styles.photo} pointerEvents="none">
-        <WelcomeMesh />
-        <LinearGradient colors={[withAlpha(bg, 0), bg]} style={styles.fade} />
-        <LinearGradient colors={[color('overlay/scrim'), withAlpha(ink, 0)]} style={styles.scrim} />
+    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
+      <StatusBar style="dark" />
+      <LaunchBackdrop />
+      {/* Hero "3d icon": shadow ellipse 324×41 at y 398 (asset incl. its blur) → Weather 3D / clear 385 at y 89 → Brand 3D / acorn 179, 15.28°. */}
+      <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+        <Image source={SUN_SHADOW} style={[styles.shadow, { left: (width - ART.shadow.w) / 2 }]} contentFit="fill" />
+        <Image source={SUN} style={[styles.sun, { left: artLeft }]} contentFit="cover" />
+        <Image source={ACORN} style={[styles.acorn, { left: artLeft + ART.acorn.x }]} contentFit="cover" />
       </View>
 
       <View style={styles.copy}>
@@ -114,11 +132,11 @@ export default function SignIn() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  photo: { position: 'absolute', left: 0, right: 0, top: 0, height: 420 },
-  fade: { position: 'absolute', left: 0, right: 0, top: 270, height: 150 },
-  scrim: { position: 'absolute', left: 0, right: 0, top: 0, height: 120, opacity: 0.4 },
-  // Logo y 424 → title 460 → body 542 (on the cream, below the photo).
-  copy: { position: 'absolute', left: space[20], right: space[20], top: 424 },
+  shadow: { position: 'absolute', top: ART.shadow.y, width: ART.shadow.w, height: ART.shadow.h },
+  sun: { position: 'absolute', top: ART.top, width: ART.size, height: ART.size },
+  acorn: { position: 'absolute', top: ART.top + ART.acorn.y, width: ART.acorn.size, height: ART.acorn.size, transform: [{ rotate: '15.28deg' }] },
+  // Logo y 482 → 10 → title 518 → 8 → body 600 (below the 3D art).
+  copy: { position: 'absolute', left: space[20], right: space[20], top: 482 },
   actions: { position: 'absolute', left: space[20], right: space[20], gap: space[10] },
   legal: { textAlign: 'center' },
   dev: { position: 'absolute', right: space[20] },

@@ -35,3 +35,13 @@ export const moods: Record<WeatherMood, MoodSpec> = {
   cold: { top: '#A6C4E2', mid: '#D1DDE8', blobs: [b('#7AA4D4', .82, 0, .46, .34, .85), b('#E6F0F9', .2, .2, .36, .24, .9)] },
   windy: { top: '#BBD6D3', mid: '#DBE5E1', blobs: [b('#86BFBA', .14, .04, .46, .32, .85), b('#E6F1EC', .78, .22, .5, .14, .85)] },
 };
+
+/**
+ * Figma `Mood/clear` as drawn on the launch screens (1.1 Splash 1157:10518 · 1.2 Sign in 1207:10884, layer photo:welcome,
+ * 390×420): clear-sky blue. Same blob geometry as `moods.clear`; the app-wide `moods.clear` still has the warm values.
+ */
+export const LAUNCH_SKY: MoodSpec = {
+  top: '#5DA8EE',
+  mid: '#BCDCF5',
+  blobs: [b('#3B8BE0', .1765, .0408, .4202, .3401, .85), b('#8ED3F7', .7615, .0985, .4587, .3788, .8), b('#FFF6D8', .7792, .0989, .1299, .1099, .95)],
+};

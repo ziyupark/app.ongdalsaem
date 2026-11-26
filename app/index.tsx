@@ -2,13 +2,14 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
-import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
-import { Logo, LOGO_OPTICAL } from '../src/components/Logo';
+import { StyleSheet, View } from 'react-native';
+import { Image } from 'expo-image';
+import { LaunchBackdrop } from '../src/components/LaunchBackdrop';
+import { Logo } from '../src/components/Logo';
 import { hasSeenWelcomeLetter } from '../src/lib/flags';
 import { supabase } from '../src/lib/supabase';
 import { getMyProfile, needsProfileSetup } from '../src/services/profile';
-import { gradients, useTheme } from '../src/theme';
+import { useTheme } from '../src/theme';
 
 const SPLASH_MS = 1200;
 
@@ -26,9 +27,8 @@ async function nextRoute() {
   return (await hasSeenWelcomeLetter()) ? '/sign-in' : '/welcome';
 }
 
-/** 1.1 Splash — 14:2. Sunset glow (Gradient/Sunset, blurred circle 390 at y 215) + Logo (Acorn lockup). */
+/** 1.1 Splash — 1157:10518. Sky + white glows (LaunchBackdrop) over a pond landscape at the bottom + Logo (Wordmark lockup). */
 export default function Splash() {
-  const { height } = useWindowDimensions();
   const { color, scheme } = useTheme();
   const { t } = useTranslation();
 
@@ -45,29 +45,25 @@ export default function Splash() {
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <View pointerEvents="none" style={styles.glow}>
-        {/* Soft edge of the Figma layer blur = the same stops fading to 0. */}
-        <Svg width="100%" height="100%" viewBox="0 0 390 390">
-          <Defs>
-            <RadialGradient id="splash-glow" cx="50%" cy="50%" r="50%">
-              {gradients['Gradient/Sunset'].map((s) => (
-                <Stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity={s.offset === 0 ? 0.32 : s.offset < 1 ? 0.12 : 0} />
-              ))}
-            </RadialGradient>
-          </Defs>
-          <Circle cx={195} cy={195} r={195} fill="url(#splash-glow)" />
-        </Svg>
+      {/* 1207:10854 — landscape 390×650, bottom of the frame; the image is placed inside it as in Figma (cropped). */}
+      <View pointerEvents="none" style={styles.landscape}>
+        <Image source={LANDSCAPE} style={styles.landscapeImage} contentFit="fill" />
       </View>
-      <View style={[styles.center, { transform: [{ translateY: -height * LOGO_OPTICAL.splashLift }] }]}>
-        <Logo lockup="Acorn" tagline={t('common.brandTagline')} />
+      <LaunchBackdrop />
+      {/* 1207:10883 — Wordmark 36 → 10 → Tagline, centred 19 above the middle. */}
+      <View style={styles.center}>
+        <Logo lockup="Wordmark" tagline={t('common.brandTagline')} />
       </View>
     </View>
   );
 }
 
+const LANDSCAPE = require('../assets/launch/splash-landscape.png');
+
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  glow: { position: 'absolute', left: 0, right: 0, top: 215, aspectRatio: 1 },
-  // Whole screen, centred, then lifted by LOGO_OPTICAL.splashLift → the visual centre (a little above the middle).
-  center: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center' },
+  // Box 390×650 whose bottom meets the frame bottom (844); image 188.64 % × 67.27 % at 0.01 % / 32.46 % of it.
+  landscape: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 650, overflow: 'hidden' },
+  landscapeImage: { position: 'absolute', left: '0.01%', top: '32.46%', width: '188.64%', height: '67.27%' },
+  center: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: -19 }] },
 });
