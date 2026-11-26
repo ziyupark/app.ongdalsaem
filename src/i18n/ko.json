@@ -797,7 +797,13 @@
     "viewInApp": "지도 앱에서 보기",
     "ateHere": "여기서 먹었어요",
     "source": "장소 정보: Google",
-    "walkLine": "걸어서 {{n}}분 · {{distance}}"
+    "walkLine": "걸어서 {{n}}분 · {{distance}}",
+    "title": "장소",
+    "search": "동네나 도시 검색",
+    "results": "검색 결과",
+    "use": "{{place}}(으)로 정하기",
+    "pick": "장소를 골라 주세요",
+    "areaNote": "요리에는 동네까지만 보이고, 정확한 주소는 표시되지 않아요."
   },
   "saved": {
     "collections": "컬렉션",

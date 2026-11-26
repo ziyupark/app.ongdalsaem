@@ -647,6 +647,7 @@ title=Địa điểm
 search=Tìm khu phố hoặc thành phố
 results=Kết quả
 note=Món ăn chỉ hiển thị khu phố của bạn — không bao giờ hiển thị địa chỉ chính xác.
+areaNote=Món ăn chỉ hiển thị khu phố của bạn — không bao giờ hiển thị địa chỉ chính xác.
 use=Dùng {{place}}
 pick=Chọn địa điểm
 directions=Bắt đầu chỉ đường

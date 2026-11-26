@@ -791,7 +791,13 @@
     "viewInApp": "在地圖 App 中查看",
     "ateHere": "我在這裡吃過",
     "source": "地點資訊：Google",
-    "walkLine": "步行 {{n}} 分鐘 · {{distance}}"
+    "walkLine": "步行 {{n}} 分鐘 · {{distance}}",
+    "title": "地點",
+    "search": "搜尋社區或城市",
+    "results": "結果",
+    "use": "使用 {{place}}",
+    "pick": "選擇地點",
+    "areaNote": "料理上只會顯示你的社區——絕不顯示精確地址。"
   },
   "saved": {
     "collections": "收藏集",

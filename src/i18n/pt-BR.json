@@ -797,7 +797,13 @@
     "viewInApp": "Ver em um app de mapas",
     "ateHere": "Comi aqui",
     "source": "Informações do lugar do Google",
-    "walkLine": "{{n}} min a pé · {{distance}}"
+    "walkLine": "{{n}} min a pé · {{distance}}",
+    "title": "Lugar",
+    "search": "Busque um bairro ou cidade",
+    "results": "Resultados",
+    "use": "Usar {{place}}",
+    "pick": "Escolher um lugar",
+    "areaNote": "Só o seu bairro aparece no prato — nunca o seu endereço exato."
   },
   "saved": {
     "collections": "Coleções",

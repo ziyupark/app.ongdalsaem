@@ -647,6 +647,7 @@ title=地點
 search=搜尋社區或城市
 results=結果
 note=料理上只會顯示你的社區——絕不顯示精確地址。
+areaNote=料理上只會顯示你的社區——絕不顯示精確地址。
 use=使用 {{place}}
 pick=選擇地點
 directions=開始導航

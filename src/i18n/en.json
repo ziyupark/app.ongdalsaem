@@ -797,7 +797,13 @@
     "viewInApp": "View in a map app",
     "ateHere": "I ate here",
     "source": "Place info from Google",
-    "walkLine": "{{n}}-min walk · {{distance}}"
+    "walkLine": "{{n}}-min walk · {{distance}}",
+    "title": "Place",
+    "search": "Search a neighborhood or city",
+    "results": "Results",
+    "use": "Use {{place}}",
+    "pick": "Pick a place",
+    "areaNote": "Only your neighborhood is shown on the dish — never your exact address."
   },
   "saved": {
     "collections": "Collections",

@@ -112,7 +112,7 @@ export default function EditPlace() {
         </Pressable>
         {opts.length ? <Text variant="Overline" color="fg/muted" style={styles.overline}>{t('place.results')}</Text> : null}
         {opts.map(row)}
-        <Text variant="Caption" color="fg/muted" style={styles.note}>{t('place.note')}</Text>
+        <Text variant="Caption" color="fg/muted" style={styles.note}>{t('place.areaNote')}</Text>
       </ScrollView>
       <View style={[styles.cta, { paddingBottom: Math.max(insets.bottom, space[12]), backgroundColor: color('bg/subtle') }]}>
         <Button label={picked ? t('place.use', { place: label(picked.place) }) : t('place.pick')} disabled={!picked} onPress={apply} />

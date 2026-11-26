@@ -34,8 +34,25 @@ function localeFont(fontFamily: unknown, lang: string): TextStyle | null {
  */
 const UNCLIP = new Set<TextVariant>(['Numeric/XL', 'Numeric/L', 'Numeric/Timer']);
 
-function unclip(fontFamily: unknown, fontSize: number, lineHeight: number): TextStyle | null {
-  const m = FONT_METRICS[String(fontFamily)];
+/**
+ * Scripts drawn taller than Outfit / Fraunces: Korean (Noto Sans KR, ~1.45 em) and the system fonts used for
+ * ja · zh-TW · vi (~1.4 em) and th (~1.6 em, stacked marks). The Figma line heights are set for Outfit (e.g. Title/M
+ * 18/18), so in these languages every variant gets the same unclip as the big numerals — otherwise iOS cuts the top of
+ * the glyphs (seen on "비슷한 한 입"). Fraunces has no Hangul / Kana / Han / Thai either: those glyphs fall back to the
+ * system font, so display text uses the system estimate. Latin languages (en · es · pt-BR · id) are unchanged.
+ */
+const TALL_SCRIPT = new Set(['ko', 'ja', 'zh-TW', 'th', 'vi']);
+const SYSTEM_METRICS: Record<string, { ascent: number; descent: number }> = {
+  th: { ascent: 1.15, descent: 0.45 },
+  default: { ascent: 1.05, descent: 0.35 },
+};
+const metricsFor = (fontFamily: string, lang: string) =>
+  (fontFamily === SYSTEM_FONT || fontFamily.startsWith('Fraunces')) && TALL_SCRIPT.has(lang)
+    ? SYSTEM_METRICS[lang] ?? SYSTEM_METRICS.default
+    : FONT_METRICS[fontFamily];
+
+function unclip(fontFamily: unknown, fontSize: number, lineHeight: number, lang = 'en'): TextStyle | null {
+  const m = metricsFor(String(fontFamily), lang);
   if (!m) return null;
   const natural = Math.ceil((m.ascent + m.descent) * fontSize);
   if (natural <= lineHeight) return null;
@@ -49,6 +66,9 @@ export function Text({ variant = 'Body/M', color = 'fg/default', style, ...rest 
   const { i18n } = useTranslation();
   const base = text[variant];
   const locale = localeFont(base.fontFamily, i18n.language);
-  const fit = UNCLIP.has(variant) && base.fontSize && base.lineHeight ? unclip(locale?.fontFamily ?? base.fontFamily, base.fontSize, base.lineHeight) : null;
+  const lang = i18n.language;
+  const fit = (UNCLIP.has(variant) || TALL_SCRIPT.has(lang)) && base.fontSize && base.lineHeight
+    ? unclip(locale?.fontFamily ?? base.fontFamily, base.fontSize, base.lineHeight, lang)
+    : null;
   return <RNText maxFontSizeMultiplier={fontScaleMax(base.fontSize)} {...rest} style={[base, locale, fit, { color: c(color) }, style]} />;
 }

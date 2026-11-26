@@ -791,7 +791,13 @@
     "viewInApp": "Lihat di aplikasi peta",
     "ateHere": "Aku makan di sini",
     "source": "Info tempat dari Google",
-    "walkLine": "{{n}} mnt jalan kaki · {{distance}}"
+    "walkLine": "{{n}} mnt jalan kaki · {{distance}}",
+    "title": "Tempat",
+    "search": "Cari lingkungan atau kota",
+    "results": "Hasil",
+    "use": "Gunakan {{place}}",
+    "pick": "Pilih tempat",
+    "areaNote": "Hanya lingkunganmu yang ditampilkan di masakan — tidak pernah alamat persismu."
   },
   "saved": {
     "collections": "Koleksi",

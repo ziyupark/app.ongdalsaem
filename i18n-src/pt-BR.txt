@@ -653,6 +653,7 @@ title=Lugar
 search=Busque um bairro ou cidade
 results=Resultados
 note=Só o seu bairro aparece no prato — nunca o seu endereço exato.
+areaNote=Só o seu bairro aparece no prato — nunca o seu endereço exato.
 use=Usar {{place}}
 pick=Escolher um lugar
 directions=Iniciar rota

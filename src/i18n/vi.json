@@ -791,7 +791,13 @@
     "viewInApp": "Xem trong ứng dụng bản đồ",
     "ateHere": "Mình đã ăn ở đây",
     "source": "Thông tin địa điểm từ Google",
-    "walkLine": "{{n}} phút đi bộ · {{distance}}"
+    "walkLine": "{{n}} phút đi bộ · {{distance}}",
+    "title": "Địa điểm",
+    "search": "Tìm khu phố hoặc thành phố",
+    "results": "Kết quả",
+    "use": "Dùng {{place}}",
+    "pick": "Chọn địa điểm",
+    "areaNote": "Món ăn chỉ hiển thị khu phố của bạn — không bao giờ hiển thị địa chỉ chính xác."
   },
   "saved": {
     "collections": "Bộ sưu tập",

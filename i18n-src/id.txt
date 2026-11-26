@@ -647,6 +647,7 @@ title=Tempat
 search=Cari lingkungan atau kota
 results=Hasil
 note=Hanya lingkunganmu yang ditampilkan di masakan — tidak pernah alamat persismu.
+areaNote=Hanya lingkunganmu yang ditampilkan di masakan — tidak pernah alamat persismu.
 use=Gunakan {{place}}
 pick=Pilih tempat
 directions=Mulai petunjuk arah
