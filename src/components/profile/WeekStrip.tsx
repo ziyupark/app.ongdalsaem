@@ -66,7 +66,6 @@ export function WeekStrip({ onMonth }: { onMonth: () => void }) {
   }, [startKey, todayKey]);
 
   const label = (d: Date) => d.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' });
-  const range = `${label(dates[0])} – ${label(dates[6])}`;
 
   const askRemove = (items: PlanItem[]) => Alert.alert(t('mealPlan.removeAsk'), items.map((p) => p.name).join(', '), [
     { text: t('common.cancel'), style: 'cancel' },
@@ -76,10 +75,8 @@ export function WeekStrip({ onMonth }: { onMonth: () => void }) {
   return (
     <View style={styles.root}>
       <View style={styles.head}>
-        <View style={styles.flex}>
-          <Text variant="Title/M">{offset === 0 ? t('diary.thisWeek') : range}</Text>
-          {offset === 0 ? <Text variant="Caption" color="fg/muted">{range}</Text> : null}
-        </View>
+        {/* Always "Weekly Menu" — no date range, on this week or after the arrows. */}
+        <Text variant="Title/M" style={styles.flex}>{t('diary.thisWeek')}</Text>
         <Pressable accessibilityRole="button" accessibilityLabel={t('diary.monthView')} onPress={onMonth} hitSlop={space[8]}>
           <Icon icon={CalendarDays} size={20} color="fg/accent" />
         </Pressable>
