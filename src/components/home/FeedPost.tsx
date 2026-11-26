@@ -93,7 +93,7 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
         </Pressable>
       </View>
       <View style={styles.caption}>
-        <Text variant="Body/S" numberOfLines={1}>{post.caption}</Text>
+        <Text variant="Body/M" numberOfLines={2} style={styles.captionText}>{post.caption}</Text>
       </View>
     </View>
   );
@@ -101,7 +101,7 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
 
 const styles = StyleSheet.create({
   post: { paddingBottom: space[24] },
-  header: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingLeft: space[20], paddingRight: space[16], paddingVertical: space[12] },
+  header: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: 21, paddingVertical: space[12] }, // Header 119:602 — padding 12 21
   avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   author: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[10] },
   who: { flex: 1, justifyContent: 'center', gap: space[2] }, // Figma gap 1 → nearest token
@@ -109,8 +109,9 @@ const styles = StyleSheet.create({
   // Media padding 18 18 16 18 (Figma component value)
   tagTL: { position: 'absolute', left: 18, top: 18 },
   counterBL: { position: 'absolute', left: 18, bottom: space[16] },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: space[16], paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: 21 }, // Actions 119:623 — padding 12 21 8, gap 18
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   spacer: { flex: 1 },
-  caption: { paddingHorizontal: space[20] },
+  caption: { paddingHorizontal: 25 }, // Caption block 119:644 — padding 0 25
+  captionText: { lineHeight: 18 }, // Figma Body/M at line height 18, 2 lines (h 35)
 });

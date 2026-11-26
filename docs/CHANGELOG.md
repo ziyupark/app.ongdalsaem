@@ -5,6 +5,7 @@
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
 - **Feed Post Media**(119:620): 사진 카드 370×417(좌우 10) → **350×402(좌우 20)**, radius 32 그대로. 안쪽 padding 18 18 16 18 — Weather Tag 좌상단 16 → 18, Photo Counter 우하단 16 → **좌하단(left 18 · bottom 16)**
+- **Feed Post 행 여백**(119:601): Header padding 12 16 12 20 → **12 21**, Actions 좌우 20 → **21** · gap 16 → **18**, Caption 좌우 20 → **25**, 글자 Body/S 1줄 → **Body/M(줄 높이 18) 2줄**. 문서의 Header 값(Avatar 32 · Name Body/S Strong · more 20)도 실제 화면대로 40 · Body/M Strong · 24로 고침
 - **6.x 프로필 Weather card**: 날씨 줄 → 구분선 간격 14 → 12(홈 Weather Card와 같은 위치). 구분선 아래 간격 14는 그대로
 - **2.1 Nearby card**: 글자 줄 사이 3 → **8**(Figma 131:4544), 위에 Overline "Eat this nearby" 줄을 문서에 반영
 - **6.3 이번 주 한 줄**: 제목 "This week" + 날짜 범위 → **"Weekly Menu"만**(지난주 · 다음주에서도 그대로, 날짜 범위 없음). Month view는 글자 → `calendar-days` 아이콘(문서를 코드에 맞춤)
