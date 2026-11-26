@@ -138,7 +138,6 @@ export default function QuestionScreen() {
             )) : <Text variant="Body/S" color="fg/muted">{t('ask.noAnswers')}</Text>}
           </ScrollView>
           <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom + space[6], 40), borderTopColor: color('border/default') }]}>
-            <Avatar url={me?.avatarUrl ?? null} name={me?.displayName ?? ''} size={32} />
             <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
               <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
                 value={draft}
@@ -182,6 +181,6 @@ const styles = StyleSheet.create({
   pick: { flexDirection: 'row', alignItems: 'center', gap: space[4], paddingLeft: space[6], paddingRight: space[8], paddingVertical: space[2], borderRadius: radius.full },
   helpful: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', paddingTop: space[2] },
   composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingTop: space[10], borderTopWidth: 1 }, // Comment Composer 287:334
-  field: { flex: 1, minHeight: 48, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[16], justifyContent: 'center' },
+  field: { flex: 1, minHeight: 48, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' },
   input: { paddingVertical: space[12], maxHeight: 120 },
 });

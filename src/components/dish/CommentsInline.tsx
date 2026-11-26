@@ -102,8 +102,7 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
       </View>
       {allowComments ? (
         <View style={[styles.composer, { backgroundColor: color('bg/default') }]}>
-          <Avatar url={me?.avatarUrl ?? null} name={me?.name ?? ''} />
-          <View style={[styles.field, { backgroundColor: color('bg/subtle') }]}>
+          <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
             <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
               value={draft}
               onChangeText={setDraft}
@@ -152,7 +151,7 @@ const styles = StyleSheet.create({
   nameRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[6] },
   avatar: { width: 32, height: 32, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingTop: space[10], paddingBottom: space[20] },
-  field: { flex: 1, height: 48, borderRadius: radius.full, paddingHorizontal: space[16], justifyContent: 'center' },
+  field: { flex: 1, height: 48, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' }, // Comment Composer Field 287:327
   input: { padding: 0 },
   off: { paddingHorizontal: space[20], paddingBottom: space[20] },
 });
