@@ -82,7 +82,7 @@ export default function RootLayout() {
   const [coreLoaded] = useFonts(coreFontFiles);
   const [koreanLoaded] = useFonts(koreanFontFiles);
   const [prefsReady, setPrefsReady] = useState(false);
-  const { appearance, language } = usePrefs();
+  const { language } = usePrefs();
   useEffect(() => { loadPrefs().finally(() => setPrefsReady(true)); }, []);
   const loaded = coreLoaded && prefsReady && (koreanLoaded || (language ?? deviceLanguage()) !== 'ko');
   usePushSync();
@@ -94,7 +94,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider appearance={appearance}>
+        <ThemeProvider>
           <Root />
         </ThemeProvider>
       </SafeAreaProvider>

@@ -1,7 +1,7 @@
 import * as Application from 'expo-application';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Map as MapIcon, Moon, Salad, Thermometer } from '../../src/components/icons/ongdal';
+import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Map as MapIcon, Salad, Thermometer } from '../../src/components/icons/ongdal';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
@@ -10,7 +10,7 @@ import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components
 import { Text } from '../../src/components/Text';
 import { useDietPrefs } from '../../src/lib/dietPrefs';
 import { getSavedMapApp, installedMapApps, MAP_APP_LABEL, setSavedMapApp, type MapAppId } from '../../src/lib/mapApps';
-import { setPrefs, usePrefs, type Appearance } from '../../src/lib/prefs';
+import { setPrefs, usePrefs } from '../../src/lib/prefs';
 import { signOut } from '../../src/services/auth';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
@@ -25,11 +25,6 @@ export default function Settings() {
   const [mapApp, setMapApp] = useState<MapAppId | null>(null);
   useFocusEffect(useCallback(() => { getMyProfile().then(setMe).catch(() => undefined); getSavedMapApp().then(setMapApp); }, []));
 
-  const pickAppearance = () =>
-    Alert.alert(t('settings.appearance'), undefined, [
-      ...(['system', 'light', 'dark'] as Appearance[]).map((a) => ({ text: t(`settings.appearanceOptions.${a}`), onPress: () => setPrefs({ appearance: a }) })),
-      { text: t('common.cancel'), style: 'cancel' as const },
-    ]);
   const pickUnit = () =>
     Alert.alert(t('settings.temperature'), undefined, [
       { text: '°C', onPress: () => setPrefs({ tempUnit: 'C' }) },
@@ -74,7 +69,6 @@ export default function Settings() {
       </SettingsGroup>
       <SettingsGroup label={t('settings.preferences')}>
         <SettingsRow icon={Bell} label={t('settings.notifications')} onPress={() => router.push('/settings/notifications')} />
-        <SettingsRow icon={Moon} label={t('settings.appearance')} value={t(`settings.appearanceOptions.${prefs.appearance}`)} onPress={pickAppearance} />
         <SettingsRow icon={Thermometer} label={t('settings.temperature')} value={prefs.tempUnit === 'F' ? '°F' : '°C'} onPress={pickUnit} />
         <SettingsRow icon={Globe} label={t('settings.language')} value={t(`settings.languages.${prefs.language ?? 'device'}`)} onPress={() => router.push('/settings/language')} />
         <SettingsRow

@@ -4,7 +4,7 @@
 
 ## 09 Settings — [섹션 192:6130](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=192-6130)
 
-출시에 **꼭 필요한 것만** 남긴 설정 화면 10개(9.1 · 9.2 · **9.2b** · 9.3 · 9.4 · 9.5 · **9.6** · 9.7 · 9.8 · 9.9)와 9.8 하위 화면 3개(9.8a · 9.8b · 9.8c)다. 화면이 따로 필요 없는 값(Appearance · Temperature)은 9.1에서 선택 시트로 바꾸고, 차단 목록은 9.5 안에 둔다. 모든 화면 공통 골격과 규칙:
+출시에 **꼭 필요한 것만** 남긴 설정 화면 10개(9.1 · 9.2 · **9.2b** · 9.3 · 9.4 · 9.5 · **9.6** · 9.7 · 9.8 · 9.9)와 9.8 하위 화면 3개(9.8a · 9.8b · 9.8c)다. 화면이 따로 필요 없는 값(Temperature)은 9.1에서 선택 시트로 바꾸고, 차단 목록은 9.5 안에 둔다. 모든 화면 공통 골격과 규칙:
 - **골격**: StatusBar → TopBar(Inline, 뒤로 → 9.1) → content(좌우 20, 그룹 간격 24) → Home Indicator. 세로 스크롤, TabBar·FAB 없음.
 - **그룹 패턴**: Overline 제목(fg/muted) → 박스(bg/subtle, radius lg 16, clip, 행 간격 0) 안에 행 세로 나열 → 필요 시 Caption 설명(fg/muted). 행 높이 56, 아이콘 20.
   - 박스 안 **모든 행 = 배경 bg/default, 테두리 없음**(ListRow · Radio Row · Blocked row · Lang 행 공통). 화면 배경이 bg/subtle(흰색)이라 행 배경이 박스 모양을 만든다. Radio Row 기본의 사방 테두리는 박스 안에서 끈다(둥근 모서리에서 선이 잘려 보이기 때문).
@@ -31,7 +31,7 @@
 - TopBar "Settings" → **Profile card**: 가로, radius 16, bg/subtle, padding 14 16. 구성은 Avatar 56 + "Jiyu"(Title/S) / "@jiyu.cooks · Edit profile"(Body/S muted) + `chevron-right`. 탭 → 9.2.
 - 그룹:
   - ACCOUNT: Account & security › (9.3)
-  - PREFERENCES: Notifications › (9.4) · `moon` Appearance **Match system**(선택 시트: Match system / Light / Dark) · `thermometer` Temperature **°C**(선택 시트: °C / °F) · `globe` **Language** "English" › (9.6)
+  - PREFERENCES: Notifications › (9.4) · `thermometer` Temperature **°C**(선택 시트: °C / °F) · `globe` **Language** "English" › (9.6)
   - PRIVACY & SAFETY: Privacy & location › (9.5)
   - SUPPORT: Help & policies › (9.8)
   - (제목 없음) Sign out (Destructive) → 1.2

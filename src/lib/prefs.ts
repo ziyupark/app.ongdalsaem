@@ -1,4 +1,4 @@
-// Device-side preferences (9.1 Appearance · Temperature · 9.4 notification toggles · 9.6 language).
+// Device-side preferences (9.1 Temperature · 9.4 notification toggles · 9.6 language).
 // Account-level values (privacy, location, marketing) live on profiles and are saved by services/settings.ts.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSyncExternalStore } from 'react';
@@ -6,10 +6,8 @@ import i18n, { deviceLanguage, ensureLanguage, type AppLanguage } from '../i18n'
 
 export { deviceLanguage, NATIVE_NAMES, SUPPORTED_LANGUAGES } from '../i18n';
 
-export type Appearance = 'system' | 'light' | 'dark';
 export type TempUnit = 'C' | 'F';
 export type Prefs = {
-  appearance: Appearance;
   tempUnit: TempUnit;
   /** null = follow the device language. */
   language: AppLanguage | null;
@@ -20,7 +18,6 @@ export type Prefs = {
 
 const KEY = 'ongdalsaem.prefs';
 const defaults: Prefs = {
-  appearance: 'system',
   tempUnit: 'C',
   language: null,
   notify: { acorns: true, comments: true, followers: true, dailyPick: true, timer: true },

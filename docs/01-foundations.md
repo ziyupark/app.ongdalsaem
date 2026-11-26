@@ -6,6 +6,8 @@
 
 ### 2.1 컬러 — 시맨틱 (Light / Dark)
 
+> **앱은 라이트 모드만 쓴다**(기기 다크 모드와 관계없이 Light 값, `app.json` userInterfaceStyle `light`). Dark 열은 Figma · 코드(`colors.ts`)에 보관만 하고 쓰지 않는다.
+
 | 토큰 | CSS 변수 | Light | Dark | 용도 |
 |---|---|---|---|---|
 | bg/default | `--bg-default` | `#F5F2ED` | `#121318` | 앱 배경(크림) |

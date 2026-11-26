@@ -9,6 +9,7 @@
 - **6.3 이번 주 한 줄**: 제목 "This week" + 날짜 범위 → **"Weekly Menu"만**(지난주 · 다음주에서도 그대로, 날짜 범위 없음). Month view는 글자 → `calendar-days` 아이콘(문서를 코드에 맞춤)
 - **6.3 Fridge memo**: 칸 선택에 Shopping memo 포함(3개, 문서를 코드에 맞춤). 고른 칸의 상자에 border/focus 2 테두리
 - **9.4 오늘의 픽 알림**: 알림을 끄면 서버 `push_tokens`의 위치(lat · lon · city · place)도 null로 지움
+- **라이트 모드 고정**: 기기 다크 모드를 따르지 않고 항상 Light. 9.1 Settings의 Appearance 행 삭제(앱 설정값 `appearance`도 없앰)
 - **지역 이름 언어**: 게시물 지역을 보는 사람의 앱 언어로 표시. DB `foods.place_names`(jsonb) 추가 — 20261127000000
 
 ## v1.8.5 — 2026-11-20 (전역 날씨 배경 · Weather Card · 타이머 · 앱 아이콘)
