@@ -152,7 +152,12 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
       addFridge(d.name, to);
     }
   };
-  const boxStyle = (z: Target) => [styles.box, { backgroundColor: color(drag && over === z && z !== drag.from ? 'bg/accent-subtle' : 'bg/subtle') }];
+  // The box picked in the top selector gets a border/focus ring (same as today's cell in the week strip); while dragging,
+  // the box under the finger also fills with bg/accent-subtle.
+  const boxStyle = (z: Target) => [styles.box, {
+    backgroundColor: color(drag && over === z && z !== drag.from ? 'bg/accent-subtle' : 'bg/subtle'),
+    borderColor: z === zone ? color('border/focus') : 'transparent',
+  }];
 
   // Shopping memo: tap = check / uncheck, long press (without dragging) → confirm once → remove.
   const askShopping = (it: ShoppingItem) => Alert.alert(t('fridge.removeAsk', { name: it.name }), undefined, [
@@ -293,7 +298,8 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   zone: { flex: 1, height: ROW, borderRadius: radius.input, alignItems: 'center', justifyContent: 'center' },
   addBtn: { height: ROW, borderRadius: radius.input },
-  box: { borderRadius: radius.xl, padding: space[16], gap: space[12] },
+  // 2 ring (always there, transparent when not picked) + 14 padding = the same 16 inset as before.
+  box: { borderRadius: radius.xl, borderWidth: 2, padding: space[14], gap: space[12] },
   cards: { gap: space[8] },
   card: { width: CARD, borderRadius: radius.lg, overflow: 'hidden' },
   photo: { width: CARD, height: 100 },
