@@ -417,6 +417,7 @@ dismiss=Selesai
 reset=Atur ulang
 resetAll=Atur ulang semua
 resetAllTitle=Atur ulang semua timer?
+resetAllBody=Semua timer dihapus dan alarmnya dibatalkan.
 pause=Jeda
 resume=Lanjutkan
 running=Berjalan

@@ -417,6 +417,7 @@ dismiss=完成
 reset=重設
 resetAll=全部重設
 resetAllTitle=要重設所有計時器嗎？
+resetAllBody=所有計時器都會被刪除，鬧鈴也會取消。
 pause=暫停
 resume=繼續
 running=執行中

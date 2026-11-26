@@ -417,6 +417,7 @@ dismiss=Xong
 reset=Đặt lại
 resetAll=Đặt lại tất cả
 resetAllTitle=Đặt lại tất cả hẹn giờ?
+resetAllBody=Tất cả hẹn giờ sẽ bị xóa và báo thức cũng bị hủy.
 pause=Tạm dừng
 resume=Tiếp tục
 running=Đang chạy

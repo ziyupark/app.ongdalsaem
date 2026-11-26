@@ -422,6 +422,7 @@ dismiss=Pronto
 reset=Zerar
 resetAll=Zerar tudo
 resetAllTitle=Zerar todos os timers?
+resetAllBody=Todos os timers são apagados e os alarmes, cancelados.
 pause=Pausar
 resume=Retomar
 running=Rodando

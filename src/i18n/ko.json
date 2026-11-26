@@ -523,6 +523,7 @@
     "reset": "처음부터",
     "resetAll": "모두 초기화",
     "resetAllTitle": "모든 타이머를 초기화할까요?",
+    "resetAllBody": "모든 타이머가 삭제되고 알림도 취소돼요.",
     "pause": "일시정지",
     "resume": "계속",
     "running": "진행 중",

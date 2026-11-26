@@ -523,6 +523,7 @@
     "reset": "Reset",
     "resetAll": "Reset all",
     "resetAllTitle": "Reset all timers?",
+    "resetAllBody": "Every timer is removed and their alarms are cancelled.",
     "pause": "Pause",
     "resume": "Resume",
     "running": "Running",

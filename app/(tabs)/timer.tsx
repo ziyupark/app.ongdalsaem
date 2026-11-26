@@ -14,7 +14,7 @@ import { Text } from '../../src/components/Text';
 import { TimerRing } from '../../src/components/timer/TimerRing';
 import { useWashScroll } from '../../src/lib/useWashScroll';
 import {
-  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useFocusRequest, useNow, useTimers, type KitchenTimer,
+  addMinute, addTime, fmt, foodOf, isFinished, pauseTimer, removeAllTimers, removeTimer, resetTimer, resumeTimer, ringFinished, secondsLeft, setTimeLeft, startTimer, useFocusRequest, useNow, useTimers, type KitchenTimer,
 } from '../../src/lib/timers';
 import { elevation, iconRing, radius, space, useTheme } from '../../src/theme';
 
@@ -165,11 +165,11 @@ export default function KitchenTimerScreen() {
   // Acting on the big timer keeps it there — otherwise "15s +" / pause would hand the ring to whichever timer now rings first.
   const pin = () => { if (featured) setFeaturedId(featured.id); };
 
-  // Every timer back to its full time, paused (the same as each one's reset button).
+  // Reset all = clear the page: every timer is removed (alarms cancelled) → the empty first screen (5.1-1).
   const resetAllAsk = () =>
-    Alert.alert(t('timer.resetAllTitle'), undefined, [
+    Alert.alert(t('timer.resetAllTitle'), t('timer.resetAllBody'), [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('timer.resetAll'), style: 'destructive', onPress: () => { timers.forEach((x) => { resetTimer(x.id); }); } },
+      { text: t('timer.resetAll'), style: 'destructive', onPress: () => { removeAllTimers(); setFeaturedId(null); } },
     ]);
 
   const removeAsk = (x: KitchenTimer) =>

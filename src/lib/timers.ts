@@ -233,6 +233,16 @@ export function removeTimer(id: string) {
   replace(id, null);
 }
 
+/** 5.1 Reset all — removes every timer (alarms cancelled, pending "done" toasts dropped): the page starts empty (5.1-1). */
+export function removeAllTimers() {
+  timers.forEach(cancel);
+  timers = [];
+  doneQueue = [];
+  focusReq = null;
+  uiEmit();
+  emit();
+}
+
 export function useTimers() {
   useEffect(() => { load(); }, []);
   return useSyncExternalStore((l) => { listeners.add(l); return () => { listeners.delete(l); }; }, () => timers);

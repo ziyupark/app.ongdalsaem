@@ -523,6 +523,7 @@
     "reset": "Reiniciar",
     "resetAll": "Reiniciar todo",
     "resetAllTitle": "¿Reiniciar todos los temporizadores?",
+    "resetAllBody": "Se eliminan todos los temporizadores y se cancelan sus alarmas.",
     "pause": "Pausar",
     "resume": "Reanudar",
     "running": "En marcha",

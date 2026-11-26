@@ -518,6 +518,7 @@
     "reset": "リセット",
     "resetAll": "すべてリセット",
     "resetAllTitle": "すべてのタイマーをリセットしますか？",
+    "resetAllBody": "すべてのタイマーが削除され、アラームも取り消されます。",
     "pause": "一時停止",
     "resume": "再開",
     "running": "実行中",
