@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   tags: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   nearby: { flexDirection: 'row', alignItems: 'center', gap: space[14], padding: space[14], borderRadius: radius['2xl'], borderWidth: 1, alignSelf: 'stretch' },
   nearbyPhoto: { width: 72, height: 72, borderRadius: radius.lg },
-  nearbyText: { flex: 1, gap: 3 },
+  nearbyText: { flex: 1, gap: space[8] },
   // Pick = Story of the day card (app/community.tsx): 400 high, r2xl, p24; title on top · foot at the bottom; foot gap 16 · body gap 16 · text gap 8.
   pick: { height: 400, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[24], justifyContent: 'space-between', alignSelf: 'stretch' },
   pickFoot: { gap: space[16] },
