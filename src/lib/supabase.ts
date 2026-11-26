@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { AppState } from "react-native";
 import { secureAuthStorage } from "./secureAuthStorage";
+import { createDiagnosticFetch, SUPABASE_DIAG } from "./supabaseDiagnostics"; // SUPABASE_DIAG (temporary)
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -26,6 +27,8 @@ export const supabase = createClient(
       // OAuth (Google) returns a ?code= to ongdalsaem:// that we exchange in services/auth.ts.
       flowType: "pkce",
     },
+    // SUPABASE_DIAG (temporary): observe-only fetch wrapper, off unless EXPO_PUBLIC_SUPABASE_DIAG=1.
+    ...(SUPABASE_DIAG ? { global: { fetch: createDiagnosticFetch((input, init) => fetch(input, init)) } } : {}),
   }
 );
 

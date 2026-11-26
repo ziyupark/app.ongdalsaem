@@ -14,6 +14,7 @@ import { setPrefs, usePrefs, type Appearance } from '../../src/lib/prefs';
 import { signOut } from '../../src/services/auth';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
+import { diagTap, SUPABASE_DIAG } from '../../src/lib/supabaseDiagnostics'; // SUPABASE_DIAG (temporary)
 
 /** 9.1 Settings (Figma 26:2). */
 export default function Settings() {
@@ -95,7 +96,8 @@ export default function Settings() {
         <SettingsRow icon={LogOut} label={t('profile.signOut')} destructive onPress={askSignOut} />
       </SettingsGroup>
       <View style={styles.indent}>
-        <Text variant="Caption" color="fg/disabled">{t('settings.versionLine', { version })}</Text>
+        {/* SUPABASE_DIAG (temporary): 5 taps → diagnostics; onPress is undefined (no change) in normal builds. */}
+        <Text variant="Caption" color="fg/disabled" onPress={SUPABASE_DIAG ? () => diagTap() && router.push('/dev/supabase') : undefined}>{t('settings.versionLine', { version })}</Text>
       </View>
     </SettingsScreen>
   );

@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuthButton } from '../src/components/AuthButton';
 import { Button } from '../src/components/Button';
@@ -14,6 +14,7 @@ import { Text } from '../src/components/Text';
 import { signInWithApple, signInWithDevTestAccount, signInWithGoogle, type SignInResult } from '../src/services/auth';
 import { getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { openLegal } from '../src/lib/legal';
+import { diagTap, SUPABASE_DIAG } from '../src/lib/supabaseDiagnostics'; // SUPABASE_DIAG (temporary)
 import { space, useTheme, withAlpha } from '../src/theme';
 
 const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
@@ -60,7 +61,12 @@ export default function SignIn() {
       </View>
 
       <View style={styles.copy}>
-        <Logo lockup="Compact" />
+        {/* SUPABASE_DIAG (temporary): 5 taps on the logo → diagnostics, only in a diagnostics build. */}
+        {SUPABASE_DIAG ? (
+          <Pressable onPress={() => diagTap() && router.push('/dev/supabase')}><Logo lockup="Compact" /></Pressable>
+        ) : (
+          <Logo lockup="Compact" />
+        )}
         <View style={{ height: space[10] }} />
         <Text variant="Display/L" accessibilityRole="header">{t('signIn.title')}</Text>
         <View style={{ height: space[8] }} />
