@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Chip } from '../../src/components/Chip';
 import {
-  Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag, ViralBadge,
+  Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, MoreButton, useMyId, useReportMenu,
 } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
 import { ChallengesTab } from '../../src/components/community/ChallengesTab';
@@ -26,7 +26,7 @@ import { timeAgo } from '../../src/lib/time';
 import { follow } from '../../src/services/activity';
 import {
   fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay, fetchSuggestedPlates,
-  fetchViralBites, localDate, localMidnight, topTags, type CardDish, type FollowingItem, type ViralItem,
+  localDate, localMidnight, topTags, type CardDish, type FollowingItem,
 } from '../../src/services/community';
 import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
 import { fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
@@ -314,7 +314,6 @@ function HeroTitle({ k }: { k: string }) {
 function Global() {
   const { t, i18n } = useTranslation();
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
-  const [viral, setViral] = useState<ViralItem[]>([]);
   const [story, setStory] = useState<CardDish | null>(null);
   // Story of the day fetched (or failed) — Popular today waits for it so the two never show the same post.
   const [storyReady, setStoryReady] = useState(false);
@@ -335,8 +334,10 @@ function Global() {
 
   // Popular dishes (and Trending tags) failed to load — offline / server error. A banner with Try again, not empty sections.
   const [failed, setFailed] = useState(false);
+  // Bumped after blocking someone: Our area (Popular today · questions) loads again too.
+  const [reload, setReload] = useState(0);
+  const me = useMyId();
   const load = useCallback(() => {
-      fetchViralBites().then(setViral).catch(() => undefined);
       fetchStoryOfTheDay().then(async (d) => {
         setStory(d);
         setStoryReady(true);
@@ -353,6 +354,8 @@ function Global() {
       }).catch(() => setFailed(true));
   }, []);
   useTabFocusEffect(useCallback(() => { load(); }, [load]));
+  // ⋯ → report / block (7.3). Blocking reloads every section — RLS then leaves that cook out of all of them.
+  const report = useReportMenu(() => { setReload((n) => n + 1); load(); });
   const tags = useMemo(() => (dishes ? topTags(dishes, 'moods', 6) : []), [dishes]);
   useEffect(() => { if (tags.length && (!tag || !tags.includes(tag))) setTag(tags[0]); }, [tags, tag]);
   const tagged = (dishes ?? []).filter((d) => tag && d.moods.includes(tag)).slice(0, 3);
@@ -374,18 +377,25 @@ function Global() {
       saved={saved.has(d.id)}
       onSave={() => toggleSave(d.id)}
       onPress={() => router.push(`/dish/${d.id}`)}
+      onMore={d.creator.id !== me ? () => report.open({ kind: 'dish', id: d.id, owner: d.creator }) : undefined}
     />
   );
 
-  // Explore: Story of the day → Our area → Trending Bites → Trending tags → Holidays around the world.
+  // Explore (4.1 1113:25908 · 1219:15437 — py 32, sections 38 apart): Story of the day → Popular today → Neighbourhood
+  // questions → Trending tags → Special days around the world.
   return (
-    <View>
+    <View style={styles.explore}>
       {failed && !dishes ? <LoadError onRetry={load} /> : null}
-      {/* Group 88:3081 — p22 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
+      {/* Group 1113:25926 — px 20 · gap 16: title → Story Card 350×420. */}
       {story ? (
-        <View style={[styles.sectionS, styles.px, styles.storyTop]}>
+        <View style={[styles.px, styles.storyGroup]}>
           <HeroTitle k="community.story" />
-          <PhotoCard photo={story.photo} width={0} height={400} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
+          <PhotoCard photo={story.photo} width={0} height={420} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
+            {story.creator.id !== me ? (
+              <View style={styles.storyMore}>
+                <MoreButton color="fg/on-photo" onPress={() => report.open({ kind: 'dish', id: story.id, owner: story.creator })} />
+              </View>
+            ) : null}
             <View style={styles.storyFoot}>
               <View style={styles.storyBody}>
                 <View style={[styles.flex, styles.storyText]}>
@@ -413,35 +423,12 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Our area — today's table: popular today · questions + Ask (or turn location on). */}
-      <OurArea excludeId={storyReady ? story?.id ?? null : undefined} />
+      {/* Our area — Popular today · Neighbourhood questions + Ask (or turn location on). */}
+      <OurArea excludeId={storyReady ? story?.id ?? null : undefined} reload={reload} onMore={report.open} />
 
-      {/* Viral Bites 88:3078 — p42 · gap 6: header → Country Cards 280×180, gap 12. Editor picks first, then rising dishes. */}
-      {viral.length ? (
-        <View style={styles.sectionS}>
-          <SectionHeader title={t('community.viralBites')} />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-            {viral.map((v) => (
-              <PhotoCard key={v.key} photo={v.photo!} width={280} height={180} label={v.name} onPress={() => router.push({ pathname: '/viral/[name]', params: { name: v.name } })} style={styles.countryCard} scrim="bottom">
-                {/* Country Card: p14 18, content at the bottom (gap 10): Display/M name → tags; Flag Tag · Viral badge pinned at 18, 12. */}
-                <View style={styles.countryFlag}>
-                  {v.country ? <FlagTag code={v.country} /> : null}
-                  <ViralBadge item={v} />
-                </View>
-                <Text variant="Display/M" color="fg/on-photo" numberOfLines={1}>{v.name}</Text>
-                <View style={styles.tagRow}>
-                  {v.cover?.mood && v.cover.tempC != null ? <WeatherTag mood={v.cover.mood} tempC={v.cover.tempC} condition={t(`weather.${v.cover.mood}`)} /> : <View />}
-                  {v.cover ? <AcornTag count={v.cover.acorns} /> : null}
-                </View>
-              </PhotoCard>
-            ))}
-          </ScrollView>
-        </View>
-      ) : null}
-
-      {/* Trending tags 435:366 — p42 · gap 9: header → chips → up to 3 Food Cards (rows inset p4, gap 12). */}
+      {/* Group · Trending tags 1113:25982 — gap 16: header → chips → up to 3 Food Cards (rows inset p4, gap 12). */}
       {tags.length ? (
-        <View style={styles.sectionM}>
+        <View style={styles.group16}>
           <SectionHeader title={t('community.trendingTags')} onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
             {tags.map((k) => <Chip key={k} label={tagLabel(k)} icon={MOOD_TAGS.find((m) => m.key === k)?.icon ?? CUSTOM_MOOD_ICON} selected={tag === k} onPress={() => setTag(k)} />)}
@@ -450,14 +437,14 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — p42 · gap 6: title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
-      <View style={styles.sectionS}>
+      {/* Group · Festive 1113:25999 — gap 16: title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
+      <View style={styles.group16}>
         <SectionHeader title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
           {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
         </ScrollView>
       </View>
-
+      {report.sheet}
     </View>
   );
 }
@@ -630,14 +617,15 @@ const styles = StyleSheet.create({
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },
   // 4.1 groups: p42 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags).
-  sectionS: { paddingTop: space[42], gap: space[6] },
-  sectionM: { paddingTop: space[42], gap: space[8] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
-  countryCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'flex-end', gap: space[10] },
-  countryFlag: { position: 'absolute', left: 18, top: space[12], right: 18, flexDirection: 'row', alignItems: 'center', gap: space[8] },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
   storyTop: { paddingTop: space[42] - space[20] },
+  explore: { paddingVertical: space[32], gap: 38 },
+  storyGroup: { gap: space[16] },
+  group16: { gap: space[16] },
+  // ⋯ on the photo, top right (the card's p24 corner).
+  storyMore: { position: 'absolute', top: space[24], right: space[24] },
   story: { width: '100%', padding: space[24], justifyContent: 'flex-end' },
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },

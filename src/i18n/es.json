@@ -1141,6 +1141,7 @@
       "posts_one": "{{count}} publicación",
       "posts_other": "{{count}} publicaciones",
       "topEmpty": "Aún no se han compartido platos cerca hoy.",
+      "questionsEmpty": "Aún no hay preguntas cerca. Sé el primero en preguntar.",
       "questionsTitle": "Preguntas del barrio",
       "ask": "Hacer una pregunta",
       "locationOff": "Activa la ubicación para ver la mesa de hoy en tu barrio."

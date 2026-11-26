@@ -1,8 +1,8 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronRight, MapPin, Search, Users, X, type LucideIcon } from '../icons/ongdal';
+import { ChevronRight, MapPin, MoreHorizontal, Search, Users, X, type LucideIcon } from '../icons/ongdal';
 import { Bookmark, MessageCircle } from '../icons/ongdal';
-import { useRef, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import { displayTemp } from '../../lib/prefs';
@@ -15,6 +15,9 @@ import { DishTile } from '../dish/DishTile';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { postPlace } from '../../services/location';
+import { myUserId } from '../../lib/supabase';
+import { reportQuestion } from '../../services/community';
+import { ReportSheet } from '../dish/ReportSheet';
 
 const FLAGS: Record<string, number> = {
   CA: require('../../../assets/flags/CA.png'), CN: require('../../../assets/flags/CN.png'), DE: require('../../../assets/flags/DE.png'), ES: require('../../../assets/flags/ES.png'),
@@ -145,7 +148,7 @@ export function FoodGrid({ dishes, width, onOpen }: { dishes: CardDish[]; width:
 }
 
 /** Food Card · Row — 80 thumb r16 · Overline eyebrow · Title/S · Caption · bookmark. */
-export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress }: { dish: CardDish; eyebrow: string; byline: string; saved?: boolean; onSave?: () => void; onPress: () => void }) {
+export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress, onMore }: { dish: CardDish; eyebrow: string; byline: string; saved?: boolean; onSave?: () => void; onPress: () => void; onMore?: () => void }) {
   const { color } = useTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={dish.name} onPress={onPress} style={styles.row}>
@@ -162,8 +165,52 @@ export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress }: { dis
           <Bookmark size={20} strokeWidth={1.6} absoluteStrokeWidth color={color('fg/muted')} fill={saved ? color('fg/muted') : 'none'} />
         </Pressable>
       ) : null}
+      {onMore ? <MoreButton onPress={onMore} /> : null}
     </Pressable>
   );
+}
+
+/** ⋯ 20 (fg/muted) — opens the report / block sheet for someone else's post. */
+export function MoreButton({ onPress, color: tone = 'fg/muted' }: { onPress: () => void; color?: 'fg/muted' | 'fg/on-photo' }) {
+  const { t } = useTranslation();
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={t('home.more')} hitSlop={space[12]} onPress={onPress}>
+      <Icon icon={MoreHorizontal} size={20} color={tone} />
+    </Pressable>
+  );
+}
+
+/** My user id (null until known / signed out) — so ⋯ (report · block) is never offered on my own posts. */
+export function useMyId() {
+  const [id, setId] = useState<string | null>(null);
+  useEffect(() => { myUserId().then(setId).catch(() => undefined); }, []);
+  return id;
+}
+
+export type ReportTarget = { kind: 'dish' | 'question'; id: string; owner: { id: string; name: string; handle?: string | null } };
+
+/**
+ * One report / block sheet for a screen (7.3 ReportSheet): `open(target)` from any card's ⋯. Reporting a dish or a
+ * question; "Block" calls `onBlocked(ownerId)` so the screen reloads — RLS (is_blocked_between) then leaves that
+ * cook's posts and questions out of every section.
+ */
+export function useReportMenu(onBlocked: (ownerId: string) => void) {
+  const { t } = useTranslation();
+  const [target, setTarget] = useState<ReportTarget | null>(null);
+  const close = useCallback(() => setTarget(null), []);
+  const sheet = (
+    <ReportSheet
+      visible={!!target}
+      title={target?.kind === 'question' ? t('questions.reportTitle') : undefined}
+      foodId={target?.kind === 'dish' ? target.id : undefined}
+      ownerId={target?.owner.id ?? ''}
+      ownerName={target?.owner.handle ?? target?.owner.name ?? ''}
+      onClose={close}
+      onBlocked={() => { const who = target?.owner.id; setTarget(null); if (who) onBlocked(who); }}
+      onReport={target?.kind === 'question' ? (reason) => reportQuestion(target.id, target.owner.id, reason) : undefined}
+    />
+  );
+  return { open: setTarget, sheet };
 }
 
 /** Photo card with Card scrim (Country Card 280×180 r32 / Story Card 350×400). */

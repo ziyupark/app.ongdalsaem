@@ -1131,6 +1131,7 @@
       "recent": "最近",
       "posts_other": "{{count}} 則分享",
       "topEmpty": "今天附近還沒有人分享料理。",
+      "questionsEmpty": "附近還沒有人發問，來當第一個吧。",
       "questionsTitle": "附近的提問",
       "ask": "提問",
       "locationOff": "開啟定位，就能看到今天附近的餐桌。"

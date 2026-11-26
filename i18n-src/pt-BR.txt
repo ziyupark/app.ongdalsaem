@@ -848,6 +848,7 @@ area.recent=Recente
 area.posts_one={{count}} publicação
 area.posts_other={{count}} publicações
 area.topEmpty=Ainda não compartilharam pratos perto de você hoje.
+area.questionsEmpty=Ainda não há perguntas por perto. Seja o primeiro a perguntar.
 area.questionsTitle=Perguntas do bairro
 area.ask=Fazer uma pergunta
 area.locationOff=Ative a localização para ver a mesa de hoje no seu bairro.

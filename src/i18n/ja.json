@@ -1131,6 +1131,7 @@
       "recent": "最近",
       "posts_other": "{{count}}件の投稿",
       "topEmpty": "今日はまだ近くで料理が共有されていません。",
+      "questionsEmpty": "近くの質問はまだありません。最初に聞いてみましょう。",
       "questionsTitle": "ご近所の質問",
       "ask": "質問する",
       "locationOff": "位置情報をオンにすると、今日のご近所の食卓が見られます。"

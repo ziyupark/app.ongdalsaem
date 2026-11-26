@@ -1141,6 +1141,7 @@
       "posts_one": "{{count}} post",
       "posts_other": "{{count}} posts",
       "topEmpty": "No dishes shared nearby today yet.",
+      "questionsEmpty": "No questions nearby yet. Be the first to ask.",
       "questionsTitle": "Neighbourhood questions",
       "ask": "Ask a question",
       "locationOff": "Turn on location to see today's table in our area."

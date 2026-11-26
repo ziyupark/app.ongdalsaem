@@ -839,6 +839,7 @@ area.last3Days=3 ngày qua
 area.recent=Gần đây
 area.posts_other={{count}} bài đăng
 area.topEmpty=Hôm nay chưa có món nào được chia sẻ gần bạn.
+area.questionsEmpty=Chưa có câu hỏi nào gần đây. Hãy là người hỏi đầu tiên.
 area.questionsTitle=Câu hỏi quanh khu
 area.ask=Đặt câu hỏi
 area.locationOff=Bật vị trí để xem mâm cơm hôm nay quanh khu mình.

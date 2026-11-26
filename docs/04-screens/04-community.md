@@ -19,31 +19,31 @@
 | 정보 알약의 날씨 | 내 날씨 | 고른 도시(All이면 1위 도시)의 날씨 |
 | 그리드 순서 | 탭 기준 | 인기순, 지금 그 도시 날씨와 같은 요리 먼저 |
 
-### 4.1 Community · Explore — [19:818](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-818)
+### 4.1 Community · Explore — [1113:25908](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1113-25908)
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
-  1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3)
-  2. **UnderlineTabs**: **Explore**(active) · Following · Challenges(좌우 20, 탭 간격 24). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
-  3. **Story of the day**(p32 20 0, gap 6): SectionHeader "Story of the day" → Story Card 350×400(PhotoCard): 위 줄 Title/L "{요리}, {이름}’s way"(1줄) · `chevron-right` 20(gap 8) → 아래 Statement 캡션(3줄) + Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag(상태 글자 포함) · Acorn Tag. 탭 → 7.1.
+  1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash + 날씨 모션 · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3 — Community는 오버라인 → 12 → 제목 → 12)
+  2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 24, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
+  3. 본문(1219:15437): 위아래 32, **섹션 사이 38**. 순서 = Story of the day → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
+  4. **Story of the day**(좌우 20, gap 16): Display/M 26 "Story of the day"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
-  4. **Our area — Today’s table in our area**(아래 별도 설명: 오늘 인기 · 동네 질문)
-  5. **Trending Bites**(p32, gap 6): SectionHeader "Trending Bites" → **Country Card** 280×180 가로 스크롤(gap 12): Flag Tag(18, 12) · 아래로 몰아서 Display/M 요리 이름 → Weather Tag · Acorn Tag, 아래 120pt 잉크 70 % 페이드. 탭 → **4.3**(그 나라).
-     - 데이터: 최근 14일(없으면 60일) 나라별 도토리 최다 게시물, 도토리순 최대 8개.
-  6. **Festive tables / Holidays around the world**(p32, gap 6): SectionHeader(Overline "FESTIVE TABLES" + 제목 + 오른쪽 `chevron-right` 더보기 → **4.1b**) → **Festive Card** 168×196 가로 스크롤(gap 12), **가까운 명절 8개**. 카드 → 그 명절 태그의 **4.2**.
-  7. **Trending tags**(p32, gap 8): SectionHeader "Trending tags" + "See all"(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row ×2(그 태그 게시물).
-  8. **Explore Together**(p32, gap 8): SectionHeader "Explore Together" + "See all"(5개 이상일 때, 누르면 같은 자리에서 20개까지 펼침) → 칩 **All** · 풍경(Forest · Sea · Lake · Mountain · Countryside · City) → Food Card Row ×4. 풍경 칩은 이 섹션만 거른다.
-  9. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
-- Food Card Row: 썸네일 · Overline "끼니 · 기온°" · 제목 · "핸들 · 도시 · 시간" · 북마크(저장 토글).
-- 순서는 항상 Story → Our area → Trending Bites → Holidays → Trending tags → Explore Together(데이터가 비어도 섹션 순서가 바뀌지 않도록 넓혀서 채움).
+  5. **Popular today · Neighbourhood questions**(아래 "Our area")
+  6. **Trending tags**(1113:25982, gap 16): SectionHeader "Trending tags" + ›(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(좌우 inset 20, 게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row 최대 3개(그 태그 게시물).
+  7. **Special days around the world**(1113:25999, gap 16): 제목 + ›(→ **4.1b**) → **Festive Card** 168×196 가로 스크롤(gap 12, 좌우 inset 20), **가까운 명절 8개**. 카드 → 그 명절 태그의 **4.2**.
+  8. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
+- Food Card Row: 썸네일 80 · Overline "끼니 · 기온°" · 제목 · "핸들 · 도시 · 시간" · 북마크(저장 토글) · **⋯**(남의 글일 때 → 신고·차단).
+- **⋯ 메뉴**(Story · Popular today · Question · Food Card): 7.3 ReportSheet — 신고(게시물 / 질문) · "{이름} 차단". 내 글에는 ⋯가 없다. 차단하면 화면 전체를 다시 불러오고, 차단한 사람의 글·질문은 RLS(`is_blocked_between`)로 모든 섹션에서 빠진다.
+- 상태: Popular today · 질문은 불러오는 동안 스피너, 실패·없음이면 안내 문구(무한 로딩 없음). 게시물 목록이 실패하면 맨 위 LoadError(Try again).
+- 위치 표시는 시 · 구까지(동 이름은 쓰지 않음).
 
-#### 4.1 Our area — Today’s table in our area(4.1 프레임 안 "Group · Our area")
-- 위치가 켜져 있을 때(p32 위, 좌우 20):
-  1. 헤더: Title/M "Today’s table in our area" + Caption fg/muted "{동(없으면 도시)} · {날씨} {기온}°"
-  2. 블록들(위 16, 블록 사이 24, 블록 안 10):
-     - **Popular today**(Title/S + 오른쪽 Caption "Based on {범위}" — 넓혀서 가져왔을 때만): ListCard에 1–3위 행(순위 숫자 Title/S fg/accent · 썸네일 48 radius md · 요리 이름 · "{n} posts"). 탭 → 그 대표 게시물 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
-       - 규칙: 오늘 0시(현지) 이후 공개 게시물을 **요리 이름으로 묶어**(대소문자·공백 무시) 개수순(같으면 도토리 합) 상위 3개. 대표 게시물 = 그 이름 중 도토리 최다(같으면 최신). 범위: 내 칸(geohash 5자리)과 주변 칸 → 이름이 0–1개면 같은 구 → 같은 도시.
-     - **Neighbourhood questions**(Title/S): **Question Card**(radius 2xl) 3–5개 → Outline M `message-circle` **"Ask a question"** → 3.7. 카드 → 3.8, Me too = 그 자리 토글.
-       - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다(최대 5). 넓혀서 가져온 질문에는 그 범위(구 · 도시 · 질문 장소) 라벨이 붙는다.
+#### 4.1 Our area — Popular today · Neighbourhood questions(4.1 1219:15435 · 1219:15436)
+- 위치가 켜져 있을 때(두 섹션 사이 38):
+  - **Popular today**(1113:25935, gap 12): SectionHeader "Popular today" + 오른쪽 범위 배지(구 · 도시 · "도시 · Last 3 days" · "날씨 · Recent") → 카드 최대 3개(gap 12).
+    - 카드(1219:15520): bg/subtle, radius 2xl, padding 8 16, 최소 높이 108 — 사진 80 radius lg → [알약 overlay/scrim "I ATE THIS ・ {n}"(Overline · Body/S Strong, fg/on-photo) → (왼쪽 9 안쪽) Body/M Strong 요리 이름 · Caption fg/muted "도시 · 시간"] → ⋯. 탭 → 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
+    - 규칙: 공개 **게시물 단위**로 "I ate this" 수(`food_eaten_counts`) 많은 순 → 도토리 → 최신. 범위: 오늘 내 칸(geohash 5자리)과 주변 칸 → 오늘 같은 구 → 오늘 같은 도시 → 도시 최근 3일 → 같은 날씨 최근 7일 순으로 3개까지 채운다. Story of the day 게시물은 뺀다.
+  - **Neighbourhood questions**(1113:25960, gap 16): SectionHeader + ›(→ 3.7 목록) → Question Card 최대 3개(gap 14) → Outline M `message-circle` **"Ask a question"**. 없으면 Body/S fg/muted "No questions nearby yet. Be the first to ask."
+    - Explore Question Card(1113:25964): bg/subtle, radius 2xl, padding 16, gap 16 — Avatar 40 · Body/S Strong 이름 · Caption "구(또는 넓힌 범위) · 시간" · ⋯ → Body/L fg/secondary 질문 → 사진(있을 때, 318:395 비율, radius md) → `message-circle` 24 + 답변 수 · `share` 24(시스템 공유: 질문 + 링크). 카테고리 배지 · Me too · 북마크는 Explore 카드에 없다(3.7 목록 카드는 그대로). 카드 → 3.8.
+    - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다. 넓혀서 가져온 질문에는 그 범위(구 · 도시) 라벨이 붙는다.
 - 위치가 꺼져 있으면: 카드(bg/subtle + border/default, radius 2xl, padding 20, 가운데) `map-pin` 22 fg/secondary · Body/M fg/secondary "Turn on location to see today’s table in our area." · Button M "Allow location"(권한 요청 → 도시 저장).
 
 ### 4.1b Holidays around the world — [724:11491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=724-11491)

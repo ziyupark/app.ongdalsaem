@@ -839,6 +839,7 @@ area.last3Days=3 hari terakhir
 area.recent=Terbaru
 area.posts_other={{count}} unggahan
 area.topEmpty=Belum ada masakan yang dibagikan di sekitarmu hari ini.
+area.questionsEmpty=Belum ada pertanyaan di sekitar. Jadilah yang pertama bertanya.
 area.questionsTitle=Pertanyaan sekitar
 area.ask=Ajukan pertanyaan
 area.locationOff=Aktifkan lokasi untuk melihat meja hari ini di sekitarmu.

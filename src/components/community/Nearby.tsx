@@ -5,7 +5,10 @@ import { useTabFocusEffect } from '../TabBar';
 import { Clock, CloudRain, MapPin, Search, SlidersHorizontal, X } from '../icons/ongdal';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Pressable, ScrollView, Share, StyleSheet, useWindowDimensions, View } from 'react-native';
+import * as Linking from 'expo-linking';
+import { timeAgo } from '../../lib/time';
+import { postPlace } from '../../services/location';
 import { useDietPrefs } from '../../lib/dietPrefs';
 import { cellsAround } from '../../lib/geohash';
 import { getHere, useHere, type Here } from '../../lib/useHere';
@@ -19,10 +22,10 @@ import { radius, space, useTheme, WEATHER_ICON } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Icon } from '../Icon';
-import { MessageCircle } from '../icons/ongdal';
+import { MessageCircle, Share as ShareIcon } from '../icons/ongdal';
 import { Text } from '../Text';
 import { FilterChips, FilterSheet, hasFilters, NO_FILTERS, type SearchFilters } from './SearchFilters';
-import { EmptyState, FoodGrid, ListCard, ListRow, QuestionCard, SearchField, SectionHeader, useByline } from './Parts';
+import { Avatar, EmptyState, FoodGrid, ListCard, MoreButton, QuestionCard, SearchField, SectionHeader, useByline, useMyId, type ReportTarget } from './Parts';
 
 export type Area = 'all' | 'near' | 'area' | 'weather';
 const RECENT_KEY = 'community.recentSearches';
@@ -70,22 +73,24 @@ function useNearbyDishes(here: Here, area: Area, query: string, filters: SearchF
 }
 
 /** Questions asked in my area cell, with optimistic "me too". `fill`: top up to AREA_MIN from wider ranges (Our area). */
-function useNearbyQuestions(here: Here, n: number, fill?: boolean) {
+function useNearbyQuestions(here: Here, n: number, fill?: boolean, reload = 0) {
   const [questions, setQuestions] = useState<Question[]>([]);
+  // false until the first answer (or failure) — no cell (city mode) counts as answered: nothing to load.
+  const [loaded, setLoaded] = useState(false);
   const { city, district } = placeOf(here);
   useTabFocusEffect(
     useCallback(() => {
-      if (!here.cell) return;
+      if (!here.cell) { setLoaded(true); return; }
       const load = fill ? fetchAreaQuestions(here.cell, { district, city }, AREA_MIN, n) : fetchNearbyQuestions(here.cell, n);
-      load.then(setQuestions).catch(() => setQuestions([]));
-    }, [here.cell, n, fill, district, city]),
+      load.then(setQuestions).catch(() => setQuestions([])).finally(() => setLoaded(true));
+    }, [here.cell, n, fill, district, city, reload]),
   );
   const meToo = async (q: Question) => {
     const on = !q.meTooByMe;
     setQuestions((l) => l.map((x) => (x.id === q.id ? { ...x, meTooByMe: on, meToo: x.meToo + (on ? 1 : -1) } : x)));
     try { await setMeToo(q.id, on); } catch { setQuestions((l) => l.map((x) => (x.id === q.id ? q : x))); }
   };
-  return { questions, meToo };
+  return { questions, meToo, loaded };
 }
 
 // ------------------------------------------------------------------------------------------------ search (3.4)
@@ -234,7 +239,12 @@ function AreaChips({ here, area, onChange, withAll, tight }: { here: Here; area:
 // ------------------------------------------------------------------------------------------------ Our area (Explore)
 
 /** Our area · Popular today — top 3 dish names nearby today, widened step by step until 3 (see fetchTodayTopDishes). */
-function TopToday({ here, excludeId }: { here: Here; excludeId: string | null | undefined }) {
+/**
+ * Popular today (4.1 1113:25935): SectionHeader (+ how far it widened as a badge) → 12 → up to 3 cards, gap 12.
+ * Card 1219:15520 — bg/subtle, r2xl, px 16 · py 8, min 108 high: photo 80 r16 · [I ATE THIS · n pill → name · city · time]
+ * · ⋯ (report / block, not on my own post). Ranked by "I ate this" (services/community fetchTodayTopDishes).
+ */
+function TopToday({ here, excludeId, reload, me, onMore }: { here: Here; excludeId: string | null | undefined; reload: number; me: string | null; onMore: (t: ReportTarget) => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { city, district } = placeOf(here);
@@ -246,12 +256,11 @@ function TopToday({ here, excludeId }: { here: Here; excludeId: string | null | 
       if (excludeId === undefined) return;
       const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : here.cell ? [here.cell] : [];
       fetchTodayTopDishes({ cells, district, city, mood }, excludeId ? [excludeId] : []).then(setTop).catch(() => setTop({ items: [], scope: 'area' }));
-    }, [here.coords, here.cell, district, city, mood, excludeId]),
+    }, [here.coords, here.cell, district, city, mood, excludeId, reload]),
   );
   // Belt and braces: if the story changes on refocus while the old list is still up, its post is hidden at once too.
   const items = (top?.items ?? []).filter((d) => d.dishId !== excludeId);
-  // Same header as Trending Bites (SectionHeader · section p32 · gap 6). Badge on the right = how far the list widened:
-  // my neighbourhood · district · city · "city · last 3 days" · "weather · recent".
+  // Badge on the right = how far the list widened: my neighbourhood · district · city · "city · last 3 days" · "weather · recent".
   const badge = (() => {
     if (top == null) return undefined;
     switch (top.scope) {
@@ -263,50 +272,93 @@ function TopToday({ here, excludeId }: { here: Here; excludeId: string | null | 
     }
   })();
   return (
-    <View style={styles.section}>
+    <View style={styles.popular}>
       <SectionHeader title={t('community.area.topTitle')} badge={badge} />
-      <View style={[styles.px, styles.block]}>
-      {top == null ? (
-        <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
-      ) : items.length ? (
-        <ListCard style={styles.areaCard}>
-          {items.map((d, i) => (
-            <ListRow
-              key={d.dishId}
-              last={i === items.length - 1}
-              onPress={() => router.push(`/dish/${d.dishId}`)}
-              leading={
-                <View style={styles.rankLead}>
-                  <Text variant="Title/S" color="fg/accent" style={styles.rank}>{i + 1}</Text>
-                  <Image source={{ uri: d.photo }} style={[styles.thumb, { backgroundColor: color('bg/muted') }]} contentFit="cover" recyclingKey={d.dishId} />
+      <View style={[styles.px, styles.popularList]}>
+        {top == null ? (
+          <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
+        ) : items.length ? (
+          items.map((d) => (
+            <Pressable key={d.dishId} accessibilityRole="button" accessibilityLabel={d.name} onPress={() => router.push(`/dish/${d.dishId}`)} style={[styles.popCard, { backgroundColor: color('bg/subtle') }]}>
+              <Image source={{ uri: d.photo }} style={[styles.popPhoto, { backgroundColor: color('bg/muted') }]} contentFit="cover" recyclingKey={d.dishId} />
+              <View style={styles.popText}>
+                <View style={[styles.ate, { backgroundColor: color('overlay/scrim') }]}>
+                  <Text variant="Overline" color="fg/on-photo" numberOfLines={1}>{t('dish.ateThis')}</Text>
+                  <Text variant="Body/S Strong" color="fg/on-photo">・</Text>
+                  <Text variant="Body/S Strong" color="fg/on-photo">{String(d.eaten)}</Text>
                 </View>
-              }
-              title={d.name}
-              sub={t('community.area.posts', { count: d.count })}
-            />
-          ))}
-        </ListCard>
-      ) : (
-        <Text variant="Body/S" color="fg/muted">{t('community.area.topEmpty')}</Text>
-      )}
+                <View style={styles.popName}>
+                  <Text variant="Body/M Strong" numberOfLines={1}>{d.name}</Text>
+                  {/* City only (never the neighbourhood / dong), in my language when the post has it. */}
+                  <Text variant="Caption" color="fg/muted" numberOfLines={1}>{[postPlace(d).city, timeAgo(d.createdAt, t)].filter(Boolean).join(' · ')}</Text>
+                </View>
+              </View>
+              {d.creator.id !== me ? <MoreButton onPress={() => onMore({ kind: 'dish', id: d.dishId, owner: d.creator })} /> : null}
+            </Pressable>
+          ))
+        ) : (
+          <Text variant="Body/S" color="fg/muted">{t('community.area.topEmpty')}</Text>
+        )}
       </View>
     </View>
   );
 }
 
 /**
- * Explore · "Our area" — Popular today (top 3) → area questions (max 3, topped up from wider ranges; more on the board) + Ask. Both titles
- * are the Trending Bites SectionHeader; questions' See more = its chevron (→ app/questions). Location off → a card
- * to turn it on.
+ * Question Card on Explore (4.1 1113:25964) — bg/subtle, r2xl, p16, gap 16: avatar 40 · name (Body/S Strong) · "district ·
+ * time" · ⋯ → question (Body/L fg/secondary) → photo (r12, when there is one) → answers (message-circle 24 + count) · share.
+ * The place is the district / city the question was saved with — never a dong.
  */
-export function OurArea({ excludeId }: {
+function ExploreQuestionCard({ q, me, onMore }: { q: Question; me: string | null; onMore: (t: ReportTarget) => void }) {
+  const { color } = useTheme();
+  const { t } = useTranslation();
+  const where = q.range ?? q.place;
+  const share = () => {
+    const link = Linking.createURL(`/question/${q.id}`);
+    Share.share({ message: `${q.body} — ${link}`, url: link }).catch(() => undefined);
+  };
+  return (
+    <Pressable accessibilityRole="button" onPress={() => router.push(`/question/${q.id}`)} style={[styles.qCard, { backgroundColor: color('bg/subtle') }]}>
+      <View style={styles.qTop}>
+        <Avatar url={q.author.avatarUrl} name={q.author.name} size={40} />
+        <View style={styles.qWho}>
+          <Text variant="Body/S Strong" numberOfLines={1}>{q.author.handle ?? q.author.name}</Text>
+          <Text variant="Caption" color="fg/muted" numberOfLines={1}>{[where, timeAgo(q.createdAt, t)].filter(Boolean).join(' · ')}</Text>
+        </View>
+        {!q.mine && q.author.id !== me ? <MoreButton onPress={() => onMore({ kind: 'question', id: q.id, owner: q.author })} /> : null}
+      </View>
+      <Text variant="Body/L" color="fg/secondary">{q.body}</Text>
+      {q.imageUrl ? <Image source={{ uri: q.imageUrl }} style={[styles.qPhoto, { backgroundColor: color('bg/muted') }]} contentFit="cover" /> : null}
+      <View style={styles.qFoot}>
+        <View style={styles.qCount} accessible accessibilityLabel={t('ask.answers', { count: q.answers })}>
+          <Icon icon={MessageCircle} size={24} />
+          <Text variant="Body/S Strong">{String(q.answers)}</Text>
+        </View>
+        <Pressable accessibilityRole="button" accessibilityLabel={t('home.share')} hitSlop={space[8]} onPress={share}>
+          <Icon icon={ShareIcon} size={24} />
+        </Pressable>
+      </View>
+    </Pressable>
+  );
+}
+
+/**
+ * Explore · "Our area" — Popular today (top 3) → 38 → Neighbourhood questions (max 3, topped up from wider ranges; more
+ * on the board, its chevron → app/questions) + Ask. Location off → a card to turn it on.
+ */
+export function OurArea({ excludeId, reload = 0, onMore }: {
   /** Story of the day's dish id — left out of Popular today. undefined while the story is loading; null = no story. */
   excludeId: string | null | undefined;
+  /** Bump to load again (after blocking someone). */
+  reload?: number;
+  /** ⋯ on a card — the screen's report / block sheet (useReportMenu). */
+  onMore: (t: ReportTarget) => void;
 }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { here, allow } = useHere();
-  const { questions, meToo } = useNearbyQuestions(here, AREA_QUESTIONS, true);
+  const me = useMyId();
+  const { questions, loaded } = useNearbyQuestions(here, AREA_QUESTIONS, true, reload);
   const [busy, setBusy] = useState(false);
 
   const turnOn = async () => {
@@ -322,7 +374,7 @@ export function OurArea({ excludeId }: {
   if (here.status === 'loading') return null;
   if (here.status === 'off') {
     return (
-      <View style={[styles.section, styles.px]}>
+      <View style={styles.px}>
         <View style={[styles.offCard, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
           <Icon icon={MapPin} size={22} color="fg/secondary" />
           <Text variant="Body/M" color="fg/secondary" style={styles.offText}>{t('community.area.locationOff')}</Text>
@@ -333,14 +385,19 @@ export function OurArea({ excludeId }: {
   }
 
   return (
-    <View>
-      {/* Popular today */}
-      <TopToday here={here} excludeId={excludeId} />
-      {/* Area questions + Ask */}
-      <View style={styles.section}>
+    <View style={styles.area}>
+      <TopToday here={here} excludeId={excludeId} reload={reload} me={me} onMore={onMore} />
+      {/* Neighbourhood questions 1113:25960 — SectionHeader (›) → 16 → cards, gap 14 → Ask a question. */}
+      <View style={styles.questions}>
         <SectionHeader title={t('community.area.questionsTitle')} onMore={() => router.push('/questions')} />
-        <View style={[styles.px, styles.block]}>
-          {questions.slice(0, AREA_QUESTIONS).map((q) => <QuestionCard key={q.id} q={q} style={styles.areaCard} onPress={() => router.push(`/question/${q.id}`)} onMeToo={() => meToo(q)} />)}
+        <View style={[styles.px, styles.qList]}>
+          {!loaded ? (
+            <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
+          ) : questions.length ? (
+            questions.slice(0, AREA_QUESTIONS).map((q) => <ExploreQuestionCard key={q.id} q={q} me={me} onMore={onMore} />)
+          ) : (
+            <Text variant="Body/S" color="fg/muted">{t('community.area.questionsEmpty')}</Text>
+          )}
           <Button label={t('community.area.ask')} variant="Outline" size="M" icon={MessageCircle} onPress={() => router.push('/questions')} />
         </View>
       </View>
@@ -447,7 +504,23 @@ const styles = StyleSheet.create({
   areaCard: { borderRadius: radius['2xl'], borderWidth: 0 },
   // Our area content under each SectionHeader (cards · Ask), gap 10.
   block: { gap: space[10] },
-  rankLead: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
-  rank: { width: space[16], textAlign: 'center' },
-  thumb: { width: 48, height: 48, borderRadius: radius.md },
+  // Explore (4.1 1219:15437): Popular today → 38 → Neighbourhood questions.
+  area: { gap: 38 },
+  popular: { gap: space[12] },
+  popularList: { gap: space[12] },
+  // minHeight (not height) so larger text sizes grow the card instead of clipping it.
+  popCard: { minHeight: 108, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[8], borderRadius: radius['2xl'] },
+  popPhoto: { width: 80, height: 80, borderRadius: radius.lg },
+  popText: { flex: 1, gap: 5, alignItems: 'flex-start' },
+  ate: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 9, paddingVertical: 3, borderRadius: radius.full, maxWidth: '100%' },
+  popName: { alignSelf: 'stretch', paddingLeft: 9, gap: space[2] },
+  questions: { gap: space[16] },
+  qList: { gap: space[14] },
+  qCard: { padding: space[16], gap: space[16], borderRadius: radius['2xl'] },
+  qTop: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
+  qWho: { flex: 1, gap: 3 },
+  // Figma 318×395 at 390 wide — kept as a ratio so it scales with the card on SE / Pro Max.
+  qPhoto: { width: '100%', aspectRatio: 318 / 395, borderRadius: radius.md },
+  qFoot: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
+  qCount: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
 });

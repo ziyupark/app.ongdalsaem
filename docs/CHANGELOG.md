@@ -13,6 +13,7 @@
 - **6.1 Profile**(1217:14479): 헤더 간격 홈과 같게(11 / 18), 카드 gap 14 → 12, 아바타 88 → 74(테두리 흰색 → border/default), 아이디 줄 높이 80, 상태 메시지 Body/S → Body/M, Follow · Message 버튼 → 높이 32 · radius 8 · 사이 6(Follow = bg/kick), 카드 → 탭 18 → 15, 탭 좌우 40 → 20, 탭 → 그리드 8 → 23
 - **Switch**: 시스템 스위치 → 직접 그린 51×31(iOS 26에서 설정 행의 토글이 위 · 오른쪽으로 어긋나던 문제)
 - **6.3 What you can cook now 빈 상태**(1217:15353): 안내 문구 → 점선 자리표시 카드 3장. 문구 `fridge.canCookEmpty` 9개 언어 변경
+- **4.1 Community · Explore**(1113:25908): 섹션 위아래 32 · 사이 38. Story Card 400 → 420 + ⋯. Viral Bites 섹션 삭제. Popular today = 이름별 묶음 순위 → **게시물 카드**("I ATE THIS · n" 많은 순, 사진 80 · ⋯). Neighbourhood questions 카드 = 아바타 40 · Body/L · 사진 · 답변 수 · 공유(카테고리 · Me too 없음) + 빈 상태 문구. Food Card ⋯. ⋯ = 신고 · 차단(차단 후 전체 새로고침). 문구 `community.area.questionsEmpty` 9개 언어 추가
 - **8.2 Auto context**(303:403): Lucide 날씨 아이콘 22 → 3D 날씨 이미지 53, 둘째 줄 "From your photo · {when} · Tap to edit" → 시각만("Today 7:20 PM")
 - **8.2 Type**: "Travel" → **"Eating Out"**(Figma 400:9707). 문구 `share.types.travel` — en · ko(외식) · es(Comer fuera) · ja · zh-TW(外食) 변경, pt-BR · id · th · vi는 이미 '외식' 뜻이라 그대로. 저장 값은 `travel` 그대로
 - **라이트 모드 고정**: 기기 다크 모드를 따르지 않고 항상 Light. 9.1 Settings의 Appearance 행 삭제(앱 설정값 `appearance`도 없앰)

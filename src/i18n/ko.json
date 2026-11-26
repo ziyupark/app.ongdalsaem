@@ -1141,6 +1141,7 @@
       "posts_one": "{{count}}번 올라왔어요",
       "posts_other": "{{count}}번 올라왔어요",
       "topEmpty": "오늘 근처에 올라온 요리가 아직 없어요.",
+      "questionsEmpty": "아직 근처에 올라온 질문이 없어요. 처음으로 물어보세요.",
       "questionsTitle": "동네 질문",
       "ask": "질문하기",
       "locationOff": "위치를 켜면 우리 동네 식탁을 볼 수 있어요"

@@ -839,6 +839,7 @@ area.last3Days=直近3日
 area.recent=最近
 area.posts_other={{count}}件の投稿
 area.topEmpty=今日はまだ近くで料理が共有されていません。
+area.questionsEmpty=近くの質問はまだありません。最初に聞いてみましょう。
 area.questionsTitle=ご近所の質問
 area.ask=質問する
 area.locationOff=位置情報をオンにすると、今日のご近所の食卓が見られます。

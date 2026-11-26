@@ -839,6 +839,7 @@ area.last3Days=3 วันล่าสุด
 area.recent=ล่าสุด
 area.posts_other={{count}} โพสต์
 area.topEmpty=วันนี้ยังไม่มีใครแชร์อาหารใกล้ๆ
+area.questionsEmpty=ยังไม่มีคำถามแถวนี้ มาเป็นคนแรกที่ถามกัน
 area.questionsTitle=คำถามในย่าน
 area.ask=ถามคำถาม
 area.locationOff=เปิดตำแหน่งเพื่อดูโต๊ะอาหารวันนี้ในย่านของเรา
