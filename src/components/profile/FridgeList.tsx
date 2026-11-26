@@ -258,11 +258,19 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
       </View>
       {/* What I can cook with what's in the fridge — public recipes ranked by how many of their ingredients I have. */}
       <View style={[styles.box, { backgroundColor: color('bg/accent-subtle') }]}>
-        <Text variant="Body/M Strong">{t('fridge.canCook')}</Text>
+        {/* Empty (1217:15353): title → 2 → hint, then three dashed placeholder cards (140×190, the size of a real card) in a row that runs off the edge. */}
+        <View style={styles.canCookHead}>
+          <Text variant="Body/M Strong">{t('fridge.canCook')}</Text>
+          {matches.length === 0 && !(items.length > 0 && recipes == null) ? <Text variant="Body/S" color="fg/muted">{t('fridge.canCookEmpty')}</Text> : null}
+        </View>
         {items.length > 0 && recipes == null ? (
           <ActivityIndicator color={color('fg/muted')} />
         ) : matches.length === 0 ? (
-          <Text variant="Body/S" color="fg/muted">{t('fridge.canCookEmpty')}</Text>
+          <View style={styles.placeholders} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            {[0, 1, 2].map((i) => (
+              <View key={i} style={[styles.placeholder, { backgroundColor: color('bg/default'), borderColor: color('fg/muted') }]} />
+            ))}
+          </View>
         ) : (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cards}>
             {matches.map((m) => (
@@ -299,9 +307,13 @@ const styles = StyleSheet.create({
   zone: { flex: 1, height: ROW, borderRadius: radius.input, alignItems: 'center', justifyContent: 'center' },
   addBtn: { height: ROW, borderRadius: radius.input },
   // 2 ring (always there, transparent when not picked) + 14 padding = the same 16 inset as before.
-  box: { borderRadius: radius.xl, borderWidth: 2, padding: space[14], gap: space[12] },
+  box: { borderRadius: radius.xl, borderWidth: 2, borderColor: 'transparent', padding: space[14], gap: space[12], overflow: 'hidden' },
   cards: { gap: space[8] },
   card: { width: CARD, borderRadius: radius.lg, overflow: 'hidden' },
+  canCookHead: { gap: space[2] },
+  // Clipped by the box (overflow hidden) so the third card shows only in part, as in Figma.
+  placeholders: { flexDirection: 'row', gap: space[8] },
+  placeholder: { width: CARD, height: 190, borderRadius: radius.lg, borderWidth: 0.66, borderStyle: 'dashed' },
   photo: { width: CARD, height: 100 },
   cardText: { padding: space[10], gap: space[2] },
   lifted: { opacity: 0.3 },

@@ -843,7 +843,7 @@
     "canCook": "Món bạn nấu được ngay",
     "haveCount": "Có {{have}}/{{total}} nguyên liệu",
     "needs": "Thiếu: {{items}}",
-    "canCookEmpty": "Thêm nguyên liệu, chúng tôi sẽ tìm món bạn nấu được.",
+    "canCookEmpty": "Tìm công thức với những gì có trong tủ lạnh.",
     "shoppingZone": "Ghi chú đi chợ",
     "moveToFridge": "Đã mua → vào tủ lạnh",
     "shoppingEmpty": "Ghi chú đi chợ đang trống. Chọn Ghi chú đi chợ ở trên và ghi món cần mua."
