@@ -3,12 +3,7 @@
   "build": {
     "development": { "developmentClient": true, "distribution": "internal" },
     "preview": { "distribution": "internal", "android": { "buildType": "apk" } },
-    "production": { "autoIncrement": true },
-    "diagnostic": {
-      "extends": "production",
-      "environment": "production",
-      "env": { "EXPO_PUBLIC_SUPABASE_DIAG": "1" }
-    }
+    "production": { "autoIncrement": true }
   },
   "submit": { "production": {} }
 }

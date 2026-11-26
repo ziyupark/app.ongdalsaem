@@ -1,8 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { AppState } from "react-native";
 import { secureAuthStorage } from "./secureAuthStorage";
-import { SUPABASE_DIAG } from "./supabaseDiagFlag"; // SUPABASE_DIAG (temporary)
-import { createDiagnosticFetch } from "./supabaseDiagnostics"; // SUPABASE_DIAG (temporary)
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 // trim(): a key pasted into EAS with a trailing newline made iOS drop the apikey header → 401 "No API key found".
@@ -29,8 +27,6 @@ export const supabase = createClient(
       // OAuth (Google) returns a ?code= to ongdalsaem:// that we exchange in services/auth.ts.
       flowType: "pkce",
     },
-    // SUPABASE_DIAG (temporary): observe-only fetch wrapper, off outside the diagnostic build.
-    ...(SUPABASE_DIAG ? { global: { fetch: createDiagnosticFetch((input, init) => fetch(input, init)) } } : {}),
   }
 );
 
