@@ -402,7 +402,27 @@
     "inChallenge": "Ikut: {{name}}",
     "challengeOnePhoto": "Tantangan hanya bisa satu foto",
     "pickHintChallenge": "Satu foto untuk tantangan",
-    "cameraDenied": "Izinkan akses kamera di Pengaturan untuk memotret masakanmu."
+    "cameraDenied": "Izinkan akses kamera di Pengaturan untuk memotret masakanmu.",
+    "editPhoto": "Edit",
+    "editTitle": "Edit foto",
+    "editDone": "Selesai",
+    "editCrop": "Potong",
+    "editAdjust": "Sesuaikan",
+    "editRotate": "Putar",
+    "editFlip": "Balik",
+    "editReset": "Atur ulang",
+    "aspectFree": "Bebas",
+    "aspectOriginal": "Asli",
+    "editDiscardTitle": "Buang hasil edit?",
+    "editLoadFailed": "Foto ini tidak bisa dibuka. Coba lagi.",
+    "editSaveFailed": "Hasil edit tidak bisa disimpan. Coba lagi.",
+    "adjust": {
+      "brightness": "Kecerahan",
+      "exposure": "Eksposur",
+      "contrast": "Kontras",
+      "saturation": "Saturasi",
+      "warmth": "Kehangatan"
+    }
   },
   "dish": {
     "temperature": {

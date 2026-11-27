@@ -405,7 +405,27 @@
     "inChallenge": "참여 중: {{name}}",
     "challengeOnePhoto": "챌린지는 사진 1장만 올릴 수 있어요",
     "pickHintChallenge": "챌린지에 올릴 사진 1장",
-    "cameraDenied": "요리 사진을 찍으려면 설정에서 카메라 접근을 허용해 주세요."
+    "cameraDenied": "요리 사진을 찍으려면 설정에서 카메라 접근을 허용해 주세요.",
+    "editPhoto": "편집",
+    "editTitle": "사진 편집",
+    "editDone": "완료",
+    "editCrop": "자르기",
+    "editAdjust": "조정",
+    "editRotate": "회전",
+    "editFlip": "반전",
+    "editReset": "초기화",
+    "aspectFree": "자유",
+    "aspectOriginal": "원본",
+    "editDiscardTitle": "편집한 내용을 버릴까요?",
+    "editLoadFailed": "사진을 열지 못했어요. 다시 시도해 주세요.",
+    "editSaveFailed": "편집을 저장하지 못했어요. 다시 시도해 주세요.",
+    "adjust": {
+      "brightness": "밝기",
+      "exposure": "노출",
+      "contrast": "대비",
+      "saturation": "채도",
+      "warmth": "따뜻함"
+    }
   },
   "dish": {
     "temperature": {

@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **8.1a Edit photo 추가**(Figma 없음): 8.1에서 선택한 사진을 탭 → **Edit** → 자르기(Free · Original · 1:1 · 4:5 · 16:9) · 회전(90°) · 좌우 반전 · 밝기 · 노출 · 대비 · 채도 · 따뜻함. 원본은 두고 편집본으로 업로드, 다시 열면 원본에서 지난 설정 그대로. Skia(`@shopify/react-native-skia` 2.14.0) 추가 → **새 Dev Build 필요**. 문구 `share.editPhoto · editTitle · editDone · editCrop · editAdjust · editRotate · editFlip · editReset · aspectFree · aspectOriginal · editDiscardTitle · editLoadFailed · editSaveFailed · adjust.*` 9개 언어 추가. 9.8b 오픈소스 라이선스에 React Native Skia 추가
 - **7.1 Post detail Meta**(601:12639): 캡션 Body/S → **Body/M**(fg/default), 제목 → 캡션 간격 16 → **13**
 - **4.4 Neighbors' Table**(730:11217): 내 자리(Place your dish 빈 접시 · My seat) · 이웃 + Follow · 요리사 추천("Cooks to follow …") 삭제. 내 게시물은 그날 테이블에 이웃 게시물과 함께 **올린 순서대로**. 기간 3일 → **2주**, 요리사당 1개 · 하루 9개 제한 없앰, 처음 보이는 수 = 오늘 3줄 · 지난 날 2줄 → See more. 문구 `following.placeMine · mySeat · suggest · suggestBody` 9개 언어 삭제. 04-community 4.4 · 4.4b를 실제 화면대로 다시 씀
 - **4.1 Story of the day**(1113:25926) = 오늘의 픽: 내 날씨와 같은 날씨 + 기온 ±1°C 게시물 중에서 고름(없으면 전처럼 날씨 조건 없이)

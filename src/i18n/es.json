@@ -405,7 +405,27 @@
     "inChallenge": "Participas en: {{name}}",
     "challengeOnePhoto": "Los retos solo admiten una foto",
     "pickHintChallenge": "Una foto para el reto",
-    "cameraDenied": "Permite el acceso a la cámara en Ajustes para fotografiar tu plato."
+    "cameraDenied": "Permite el acceso a la cámara en Ajustes para fotografiar tu plato.",
+    "editPhoto": "Editar",
+    "editTitle": "Editar foto",
+    "editDone": "Listo",
+    "editCrop": "Recortar",
+    "editAdjust": "Ajustar",
+    "editRotate": "Girar",
+    "editFlip": "Voltear",
+    "editReset": "Restablecer",
+    "aspectFree": "Libre",
+    "aspectOriginal": "Original",
+    "editDiscardTitle": "¿Descartar los cambios?",
+    "editLoadFailed": "No se pudo abrir esta foto. Inténtalo de nuevo.",
+    "editSaveFailed": "No se pudo guardar la edición. Inténtalo de nuevo.",
+    "adjust": {
+      "brightness": "Brillo",
+      "exposure": "Exposición",
+      "contrast": "Contraste",
+      "saturation": "Saturación",
+      "warmth": "Calidez"
+    }
   },
   "dish": {
     "temperature": {

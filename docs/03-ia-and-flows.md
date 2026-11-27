@@ -9,7 +9,7 @@ Launch      1.1 Splash → 1.1b Welcome(앱 소개, 첫 실행 1회)
 Onboarding  1.2 Sign in(Welcome) → Apple · Google(@username 자동 생성) → 1.3b Taste → 1.4 Location → 1.5 Daily pick time → Home (기존 계정은 바로 Home)
 Tab bar (4)  Home(2.x) · Community(4.x · 3.x Our area/Nearby list) · Timer(5.x) · Profile(6.x)  + FAB(탭바 줄 오른쪽 끝)
 Notifications  bell(2.x · 4.1 · 4.4 · 4.4b — 탭 화면 ScreenHeader) → 2.8 Notifications (2.8b empty)
-Global       + FAB → Share a dish (8.1 Pick photos → 8.2 Details ⇄ 8.2e Travel → 8.3 Preview → 공유, 2단계 + 미리보기)
+Global       + FAB → Share a dish (8.1 Pick photos ⇄ 8.1a Edit photo → 8.2 Details ⇄ 8.2e Travel → 8.3 Preview → 공유, 2단계 + 미리보기)
 Dish         7.1 Post detail(모든 게시물 상세, 레시피·댓글 포함) ⇄ 7.1b Ate it / 7.2 Comments sheet / 7.3 Report·block (Report · Block → 2.1 + 토스트)
              Feed Post share → 7.4 Share sheet · bookmark = 저장 토글(6.2 Saved)
 Community    탭: Explore(4.1) · Following(4.4) · Challenges

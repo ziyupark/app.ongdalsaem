@@ -402,7 +402,27 @@
     "inChallenge": "กำลังร่วม: {{name}}",
     "challengeOnePhoto": "ชาเลนจ์ลงได้แค่ 1 รูป",
     "pickHintChallenge": "รูปเดียวสำหรับชาเลนจ์",
-    "cameraDenied": "อนุญาตให้เข้าถึงกล้องในการตั้งค่าเพื่อถ่ายรูปเมนูของคุณ"
+    "cameraDenied": "อนุญาตให้เข้าถึงกล้องในการตั้งค่าเพื่อถ่ายรูปเมนูของคุณ",
+    "editPhoto": "แก้ไข",
+    "editTitle": "แก้ไขรูปภาพ",
+    "editDone": "เสร็จ",
+    "editCrop": "ครอบตัด",
+    "editAdjust": "ปรับแต่ง",
+    "editRotate": "หมุน",
+    "editFlip": "พลิก",
+    "editReset": "รีเซ็ต",
+    "aspectFree": "อิสระ",
+    "aspectOriginal": "ต้นฉบับ",
+    "editDiscardTitle": "ทิ้งการแก้ไขไหม",
+    "editLoadFailed": "เปิดรูปนี้ไม่ได้ ลองอีกครั้ง",
+    "editSaveFailed": "บันทึกการแก้ไขไม่ได้ ลองอีกครั้ง",
+    "adjust": {
+      "brightness": "ความสว่าง",
+      "exposure": "การรับแสง",
+      "contrast": "คอนทราสต์",
+      "saturation": "ความอิ่มตัวของสี",
+      "warmth": "ความอบอุ่น"
+    }
   },
   "dish": {
     "temperature": {

@@ -405,7 +405,27 @@
     "inChallenge": "Joining: {{name}}",
     "challengeOnePhoto": "Challenges take one photo only",
     "pickHintChallenge": "One photo for the challenge",
-    "cameraDenied": "Allow camera access in Settings to take a photo of your dish."
+    "cameraDenied": "Allow camera access in Settings to take a photo of your dish.",
+    "editPhoto": "Edit",
+    "editTitle": "Edit photo",
+    "editDone": "Done",
+    "editCrop": "Crop",
+    "editAdjust": "Adjust",
+    "editRotate": "Rotate",
+    "editFlip": "Flip",
+    "editReset": "Reset",
+    "aspectFree": "Free",
+    "aspectOriginal": "Original",
+    "editDiscardTitle": "Discard your edits?",
+    "editLoadFailed": "Couldn’t open this photo. Try again.",
+    "editSaveFailed": "Couldn’t save the edit. Try again.",
+    "adjust": {
+      "brightness": "Brightness",
+      "exposure": "Exposure",
+      "contrast": "Contrast",
+      "saturation": "Saturation",
+      "warmth": "Warmth"
+    }
   },
   "dish": {
     "temperature": {

@@ -68,6 +68,8 @@ function Root() {
         {/* 8.x share flow: no swipe-back mid-form (X asks before discarding). */}
         <Stack.Screen name="share/pick" options={{ animation: 'slide_from_bottom', gestureEnabled: false }} />
         <Stack.Screen name="share/details" options={{ gestureEnabled: false }} />
+        {/* 8.1a Edit photo: Cancel asks before dropping edits, so no swipe-back. */}
+        <Stack.Screen name="share/edit" options={{ animation: 'fade', gestureEnabled: false }} />
         {/* Dev only: weather mood preview, a sheet over the tabs so the backdrop stays visible. */}
         <Stack.Screen name="dev/weather" options={{ presentation: 'transparentModal', animation: 'fade', contentStyle: { backgroundColor: 'transparent' } }} />
       </Stack>

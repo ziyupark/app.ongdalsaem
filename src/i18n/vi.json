@@ -402,7 +402,27 @@
     "inChallenge": "Đang tham gia: {{name}}",
     "challengeOnePhoto": "Thử thách chỉ đăng được 1 ảnh",
     "pickHintChallenge": "Một ảnh cho thử thách",
-    "cameraDenied": "Hãy cho phép truy cập camera trong Cài đặt để chụp món ăn của bạn."
+    "cameraDenied": "Hãy cho phép truy cập camera trong Cài đặt để chụp món ăn của bạn.",
+    "editPhoto": "Sửa",
+    "editTitle": "Sửa ảnh",
+    "editDone": "Xong",
+    "editCrop": "Cắt",
+    "editAdjust": "Điều chỉnh",
+    "editRotate": "Xoay",
+    "editFlip": "Lật",
+    "editReset": "Đặt lại",
+    "aspectFree": "Tự do",
+    "aspectOriginal": "Gốc",
+    "editDiscardTitle": "Bỏ các chỉnh sửa?",
+    "editLoadFailed": "Không mở được ảnh này. Hãy thử lại.",
+    "editSaveFailed": "Không lưu được chỉnh sửa. Hãy thử lại.",
+    "adjust": {
+      "brightness": "Độ sáng",
+      "exposure": "Phơi sáng",
+      "contrast": "Độ tương phản",
+      "saturation": "Độ bão hòa",
+      "warmth": "Độ ấm"
+    }
   },
   "dish": {
     "temperature": {
