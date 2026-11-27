@@ -337,8 +337,14 @@ function Global() {
   // Bumped after blocking someone: Our area (Popular today · questions) loads again too.
   const [reload, setReload] = useState(0);
   const me = useMyId();
+  // Story of the day = today's pick for my weather (mood + temp ±1). Waits for the forecast (cached one counts).
+  const { here } = useHere();
+  const wxReady = here.status !== 'loading' || !!here.forecast;
+  const wxMood = here.forecast?.mood ?? null;
+  const wxTemp = here.forecast?.tempC ?? null;
   const load = useCallback(() => {
-      fetchStoryOfTheDay().then(async (d) => {
+      if (!wxReady) return;
+      fetchStoryOfTheDay(wxMood && wxTemp != null ? { mood: wxMood, tempC: wxTemp } : null).then(async (d) => {
         setStory(d);
         setStoryReady(true);
         if (!d) return;
@@ -352,7 +358,7 @@ function Global() {
         const marks = await fetchMyMarks(l.map((d) => d.id)).catch(() => null);
         if (marks) setSavedIds((s) => new Set([...s, ...marks.saved]));
       }).catch(() => setFailed(true));
-  }, []);
+  }, [wxReady, wxMood, wxTemp]);
   useTabFocusEffect(useCallback(() => { load(); }, [load]));
   // ⋯ → report / block (7.3). Blocking reloads every section — RLS then leaves that cook out of all of them.
   const report = useReportMenu(() => { setReload((n) => n + 1); load(); });

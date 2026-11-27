@@ -26,6 +26,7 @@
   2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 24, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
   3. 본문(1219:15437): 위아래 32, **섹션 사이 38**. 순서 = Story of the day → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
   4. **Story of the day**(좌우 20, gap 16): Display/M 26 "Story of the day"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
+    - 고르는 규칙(**오늘의 픽**): 공개 게시물 중 **내 지금 날씨와 같은 날씨 + 기온 ±1°C**(`weather_condition` = 내 무드, `temperature_c` 내 기온 −1 ~ +1). 캡션 있는 최근 2일 → 최근 30일 → 캡션 없어도 최신 60개 중 도토리 많은 순. 맞는 게시물이 없거나 날씨를 모르면(위치 꺼짐) 날씨 조건 없이 같은 순서로 고른다.
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
   5. **Popular today · Neighbourhood questions**(아래 "Our area")
   6. **Trending tags**(1113:25982, gap 16): SectionHeader "Trending tags" + ›(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(좌우 inset 20, 게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row 최대 3개(그 태그 게시물).

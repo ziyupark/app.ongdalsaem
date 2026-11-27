@@ -258,19 +258,24 @@ export async function fetchPostsByName(name: string, offset = 0, limit = 20): Pr
 }
 
 /**
- * 4.1 Story of the day — the most-acorned dish with a caption from the last 2 days; else from the last 30 days;
- * else the most-acorned of the newest dishes even without a caption (the card leaves the caption out), so the section stays.
+ * 4.1 Story of the day = today's pick for my weather: posts with the same weather (`weather_condition` = my mood) and
+ * temperature within ±1 °C of mine. Most-acorned with a caption from the last 2 days; else the last 30 days; else the
+ * newest matching dishes even without a caption. No weather (location off) or no match → the same steps without the
+ * weather filter, so the section stays.
  */
-export async function fetchStoryOfTheDay(): Promise<CardDish | null> {
-  const recent = async (days: number, captioned: boolean) => {
+export async function fetchStoryOfTheDay(wx?: { mood: WeatherMood; tempC: number } | null): Promise<CardDish | null> {
+  const recent = async (days: number, captioned: boolean, match: boolean) => {
     const since = new Date(Date.now() - days * 864e5).toISOString();
     let q = publicFoods().gte('created_at', since);
     if (captioned) q = q.neq('description', '');
+    if (match && wx) q = q.eq('weather_condition', wx.mood).gte('temperature_c', wx.tempC - 1).lte('temperature_c', wx.tempC + 1);
     const { data, error } = await q.order('created_at', { ascending: false }).limit(60);
     if (error) throw error;
     return (data as Row[]).map(toCard).filter((d) => !captioned || d.description).sort(byAcorns)[0] ?? null;
   };
-  return (await recent(2, true)) ?? (await recent(30, true)) ?? (await recent(3650, false)); // last: newest 60 dishes of any age
+  const steps = (match: boolean) => async () =>
+    (await recent(2, true, match)) ?? (await recent(30, true, match)) ?? (await recent(3650, false, match)); // last: newest 60 of any age
+  return (wx ? await steps(true)() : null) ?? (await steps(false)());
 }
 
 // ---------------------------------------------------------------------------------------------- Our area · today
