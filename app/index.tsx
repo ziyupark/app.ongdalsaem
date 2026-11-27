@@ -65,8 +65,8 @@ const LANDSCAPE = require('../assets/launch/splash-landscape.png');
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  // Box 390×650 whose bottom meets the frame bottom (844); image 188.64 % × 67.27 % at 0.01 % / 32.46 % of it.
+  // Box 390×650 whose bottom meets the frame bottom (844); image 188.64 % × 67.27 % at 0.01 % / 32.8 % of it.
   landscape: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 650, overflow: 'hidden' },
-  landscapeImage: { position: 'absolute', left: '0.01%', top: '32.46%', width: '188.64%', height: '67.27%' },
+  landscapeImage: { position: 'absolute', left: '0.01%', top: '32.8%', width: '188.64%', height: '67.27%' },
   center: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: -19 }] },
 });

@@ -6,9 +6,9 @@
 
 ## 00 Launch — [섹션 197:6524](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=197-6524)
 
-### 1.1 Splash — [14:2](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-2)
+### 1.1 Splash — [1157:10518](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1157-10518)
 - 목적: 브랜드 첫인상, 세션 확인.
-- 레이아웃: [A] 배경 Ellipse(390×390, y 215, Gradient/Sunset 큰 원 · 블러 — 옅은 선셋 빛) · [F] StatusBar · [F] **Logo(Lockup=Acorn)**: Acorn Symbol 36×46 → 워드마크 "ongdalsaem"(Wordmark, Gradient/Ink metal) → 태그라인 "A spring of daily food ideas"(Tagline fg/muted), 가운데 정렬 gap 10 — 로고 블록 790(StatusBar 아래, padding-bottom 65) 안에서 세로 가운데 · [A] Home Indicator.
+- 레이아웃(bg/default, 아래 → 위): [A] **아래 풍경**(`assets/launch/splash-landscape.png`, 390×650 상자가 화면 아래에 붙고 이미지는 그 안에서 188.64 % × 67.27 %, 위치 0.01 % / **32.8 %**) → [A] LaunchBackdrop(하늘 `photo:welcome` 390×420 Mood/clear + Scrim top 0–120 + 흰 글로 2개: 전체 폭 y 302–543 · 990 폭 y 228–617, 블러 103.3 — 1.2와 같은 컴포넌트, 1.2는 아래 글로 y 236) → [F] StatusBar → **Logo(Wordmark)** "ongdalsaem" + 10 + 태그라인 "A spring of daily food ideas"(Tagline fg/muted), 화면 가운데보다 19 위.
 - 동작: **1.2초 후 자동 이동**(프로토타입: AFTER_TIMEOUT 1.2s → 1.1b).
   - 처음 설치한 사용자 → **1.1b Welcome letter**
   - 편지를 이미 본 비로그인 사용자 → 1.2

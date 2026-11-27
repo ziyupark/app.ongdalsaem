@@ -28,7 +28,8 @@ function phi(x: number) {
  * Φ((y − y0)/σ) − Φ((y − y1)/σ). Each band = one vertical gradient over y0 − 2.5σ … y1 + 2.5σ with 13 stops of that
  * curve — an SVG Gaussian blur this large got cut off in a straight line on iOS.
  */
-const GLOWS = ([[302, 543], [236, 625]] as const).map(([y0, y1]) => {
+/** Lower glow band (990 wide, 389 tall): 1.1 Splash at y 228, 1.2 Sign in at y 236. */
+const glowsFor = (lowTop: number) => ([[302, 543], [lowTop, lowTop + 389]] as const).map(([y0, y1]) => {
   const top = y0 - 2.5 * GLOW_SIGMA;
   const h = y1 - y0 + 5 * GLOW_SIGMA;
   const locations = Array.from({ length: 13 }, (_, i) => i / 12);
@@ -38,12 +39,14 @@ const GLOWS = ([[302, 543], [236, 625]] as const).map(([y0, y1]) => {
   });
   return { top, h, locations, alphas };
 });
+const GLOWS_SPLASH = glowsFor(228);
+const GLOWS_SIGN_IN = glowsFor(236);
 
 /**
  * Launch backdrop shared by 1.1 Splash (1157:10518) and 1.2 Sign in (1207:10884), bottom → top:
  * - sky `photo:welcome` 390×420 = Mood/clear (LAUNCH_SKY) fading to bg/default, + Scrim top 0–120 (ink 18 % → 0);
- * - two soft white glows (layer blur 103.3): a full-width band y 302–543 and a 990-wide band y 236–625 (x −300),
- *   drawn as their vertical blur profile (GLOWS).
+ * - two soft white glows (layer blur 103.3): a full-width band y 302–543 and a 990-wide band y 228–617 on 1.1 / 236–625 on 1.2 (x −300),
+ *   drawn as their vertical blur profile (glowsFor).
  * Design px from the top, full width (the 390 frame stretches). The Fade layer of the frames sits under the sky
  * and is fully covered by it, so it isn't drawn.
  *
@@ -77,7 +80,7 @@ export function LaunchBackdrop({ weather }: { weather?: { mood: WeatherMood; tim
         ) : null}
         <LinearGradient colors={[withAlpha(ink, 0.18), withAlpha(ink, 0)]} style={styles.scrim} />
       </View>
-      {GLOWS.map((g, i) => (
+      {(weather ? GLOWS_SIGN_IN : GLOWS_SPLASH).map((g, i) => (
         <LinearGradient
           key={i}
           colors={g.alphas.map((a) => withAlpha(glow, a)) as unknown as readonly [string, string, ...string[]]}
