@@ -390,8 +390,8 @@ export function ProfileScreen({ userId, showFollow = true, showMessage = true }:
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  // Body under ScreenHeader (profile: title → 22 → card). Block · Tabs 1233:13801 = py 9 (pb under the hairline), then 8 → the grid.
-  header: { paddingHorizontal: space[20], paddingBottom: 9 + space[8], gap: 13 },
+  // Profile Header/Tab3 1233:12920 — Block · Tabs pb 9, then pb 10 → the grid.
+  header: { paddingHorizontal: space[20], paddingBottom: 9 + space[10], gap: 13 },
   // card → 22 → tabs (the tabs block's top padding).
   cardGroup: { gap: 22 },
   center: { alignItems: 'center', justifyContent: 'center' },

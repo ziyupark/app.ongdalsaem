@@ -153,16 +153,17 @@ type Right = 'settings' | 'notifications' | 'more' | 'none';
  * Header shared by Home · Community · Timer · Profile — Figma component "weather header" 1238:15501 (was Frame 1238:15195),
  * identical on every tab so nothing moves when
  * you switch: safe area → row 40 (logo · right button) → 22 → date · place (Overline) → 13 → weather title (Display/XL).
- * Only the space under the title belongs to the screen (12 · Home 18 · Profile 22). All its spacing lives here.
+ * Under the title: Home · Profile 20 → the Weather card (y 212 on both, 2.1 · 6.1), Community · Timer 12 → the tabs.
+ * The header and the card sit at the same place on every tab. All its spacing lives here.
  * `right`: settings / notifications (unread dot) / more (`onMore`: report · block on another cook) / an empty 40 slot.
  * `onBack` swaps the logo for a back button.
  */
 /**
- * `withWeather`: Home · Profile — title → 18 → the Weather card below (Profile: 22). Without it (Community · Timer): 12.
+ * `withWeather`: Home · Profile — title → 20 → the Weather card below. Without it (Community · Timer): 12.
  */
 export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather, profile, backBar }: {
   right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void; withWeather?: boolean;
-  /** Profile Header 126:4345 (6.1): title → 22 → the card. */
+  /** Kept for the profile screens; same spacing as Home (title → 20 → the card). */
   profile?: boolean;
   /** TopBar Type=timer (1219:18314): plain back 40 · centred Compact logo · empty 40, 52 high, px 12 — 5.1_0 from a recipe step. */
   backBar?: boolean;
@@ -241,8 +242,9 @@ const styles = StyleSheet.create({
   slotCenter: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   // Frame 1238:15195 — row → 22 → [overline → 13 → title], the same on every tab.
   titleBlock: { paddingTop: 22, gap: 13 },
-  rootWeather: { paddingBottom: 18 },
-  rootProfile: { paddingBottom: 22 },
+  // Title → 20 → the Weather card — Home and Profile alike (card at y 212 in 2.1 · 6.1).
+  rootWeather: { paddingBottom: space[20] },
+  rootProfile: { paddingBottom: space[20] },
   // fg/disabled over the blurred wash — mostly the colour, a little of the background showing through.
   frost: { opacity: 0.75 },
 });
