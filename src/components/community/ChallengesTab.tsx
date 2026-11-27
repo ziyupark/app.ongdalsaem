@@ -191,8 +191,9 @@ function ChallengesBody({ onJoinY }: { onJoinY?: (y: number) => void }) {
       ) : null}
 
       {/* Group · Coming up (826:16078) — pt 32 · gap 12: Inset (pt 22 · pb 3) header (more → all) → 168×220 Challenge Cards; Join early in place. */}
+      {/* No running challenge (4.10 No Challenge 1269:18199): Coming up is first and starts right under the tabs (no pt 32). */}
       {coming.length ? (
-        <View style={styles.section}>
+        <View style={[styles.section, !featured && styles.sectionFirst]}>
           {/* Inset 826:16079 — pt 22 · pb 3 around the header (only Coming up has it). */}
           <View style={styles.comingHead}>
             <SectionHeader title={t('challenge.comingUp')} onMore={() => router.push('/challenges')} />
@@ -386,6 +387,7 @@ const styles = StyleSheet.create({
   entry: { borderRadius: radius.md },
   section: { paddingTop: space[32], gap: space[12] },
   comingHead: { paddingTop: 22, paddingBottom: 3 },
+  sectionFirst: { paddingTop: 0 },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
   card: { width: 168, height: 220, borderRadius: radius.xl, overflow: 'hidden', padding: space[16], gap: space[6] },
   badge: { width: 36, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
