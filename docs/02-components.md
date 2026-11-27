@@ -122,7 +122,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 | City Row | 132:4683 | Selected V[Yes/No] · **City T · Country T · Temp T**(두 variant 공통) | 350×68 장소 선택 목록 한 줄: 날씨 아이콘 18(그 장소의 **현재 날씨**, stroke 1.5) → City / Country → 오른쪽 Temp. Selected=Yes = 체크 표시. 9.7 Change city(내 도시) · 8.2d Region(요리 지역)에서 사용 |
 | **Ingredients List** | [300:429](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=300-429) | Title T | 350 폭 재료 섹션: Title(Title/L "Ingredients") → gap 8 → Rows(Ingredient Row ×n, **gap 0** — 줄 구분선만). 6개 = 269px. 7.1 · 7.1b |
 | Ingredient Row | 132:4774 | 이름·양 T | 재료 한 줄 350×39: padding 8/0, 이름 Body/M ··· 양 Body/M Strong, 아래 1px border/default. 7.1(8.2a 작성 화면은 표 형식 재료 줄) |
-| Recipe Step | 132:4806 | Timer V[No/Yes] · **Number T · Text T**(두 variant 공통) | 조리 단계 한 줄(번호 원 28 + 본문). Timer=Yes = "Start 15:00 timer" 버튼 포함. 7.1(8.2a 작성 화면은 표 형식 단계 줄) |
+| Recipe Step | 132:4806 | Timer V[No/Yes] · **Number T · Text T**(두 variant 공통) | 조리 단계 한 줄(번호 원 28 → 14 → 본문 Body/M, **본문 위 4** — 첫 줄 가운데를 번호와 맞춤). Timer=Yes = "Start 15:00 timer" 버튼 포함. 7.1(8.2a 작성 화면은 표 형식 단계 줄) |
 | Feed Loader | 131:4592 | Text T | 피드 끝 스피너 + "Loading more like this…" |
 | Inline Banner | 136:5108 | Tone V[Neutral/Warning] · Text T | 아이콘 + 한 줄 안내(6.4 오프라인 = Neutral, 8.4 업로드 실패 = Warning) |
 | Toast | 12:264 | Message T | 350×42, bg/inverse, 하단 TabBar 위. 앞 아이콘 **`acorn-color` 24**(컬러 도토리, 색 바꾸지 않음). 4초 뒤 사라짐(길이 바꿀 수 있음), 전체를 누를 수 있게 할 수 있음(타이머 "— done" 토스트 → 5.1) |

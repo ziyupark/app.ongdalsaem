@@ -241,7 +241,8 @@ const styles = StyleSheet.create({
   step: { flexDirection: 'row', alignItems: 'flex-start', gap: space[14] },
   stepNo: { width: 28, height: 28, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   flex: { flex: 1 },
-  stepText: { flex: 1, gap: space[10] },
+  // Number circle 28 (centre 14) · Body/M first line 20 (centre 10) → pt 4 lines the first line up with the number.
+  stepText: { flex: 1, gap: space[10], paddingTop: space[4] },
   timerBtn: { height: 34, flexDirection: 'row', alignItems: 'center', gap: space[8], paddingHorizontal: space[14], borderRadius: radius.full },
   details: { flexDirection: 'row', alignItems: 'center', paddingVertical: space[14], borderTopWidth: 1, borderBottomWidth: 1, gap: space[12] },
   cal: { gap: space[4] },
