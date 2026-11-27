@@ -16,8 +16,6 @@ signature=— ongdalsaem のキッチンより
 cta=続ける
 note=この手紙が表示されるのは一度だけです · 設定でもう一度読めます\n› ヘルプとポリシー
 [signIn]
-title=あなたの食卓は\nどんな天気？
-body=どんな天気の日に作った料理もシェアして、次に食べるものを見つけましょう。
 legalPrefix=続行すると、
 terms=利用規約
 and=と
@@ -26,6 +24,7 @@ legalSuffix=に同意したことになります。
 apple=Appleで続ける
 google=Googleで続ける
 error=サインインがお昼寝中です — タップしてもう一度。
+weatherNow={{condition}} · {{temp}}°
 [location]
 step=ステップ 2/3
 title=天気に\n選んでもらおう。

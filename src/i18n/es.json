@@ -19,8 +19,6 @@
     "note": "Verás esta carta una sola vez · Vuelve a leerla en Ajustes\n› Ayuda y políticas"
   },
   "signIn": {
-    "title": "¿Qué tiempo hace\nen tu mesa?",
-    "body": "Comparte lo que cocinas con cualquier clima y descubre qué comer después.",
     "legalPrefix": "Al continuar, aceptas nuestros ",
     "terms": "Términos",
     "and": " y la ",
@@ -28,7 +26,8 @@
     "legalSuffix": ".",
     "apple": "Continuar con Apple",
     "google": "Continuar con Google",
-    "error": "El inicio de sesión está echando una siesta. Toca para reintentar."
+    "error": "El inicio de sesión está echando una siesta. Toca para reintentar.",
+    "weatherNow": "{{condition}} · {{temp}}°"
   },
   "location": {
     "step": "Paso 2 de 3",

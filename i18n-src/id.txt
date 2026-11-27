@@ -16,8 +16,6 @@ signature=— dari dapur ongdalsaem
 cta=Lanjutkan
 note=Surat ini hanya muncul sekali · Baca lagi di Pengaturan\n› Bantuan & kebijakan
 [signIn]
-title=Bagaimana cuaca\ndi mejamu?
-body=Bagikan masakanmu di segala cuaca — dan temukan mau makan apa selanjutnya.
 legalPrefix=Dengan melanjutkan, kamu menyetujui
 terms=Ketentuan
 and= dan
@@ -26,6 +24,7 @@ legalSuffix= kami.
 apple=Lanjutkan dengan Apple
 google=Lanjutkan dengan Google
 error=Proses masuk sedang tidur siang — ketuk untuk mencoba lagi.
+weatherNow={{condition}} · {{temp}}°
 [location]
 step=Langkah 2 dari 3
 title=Biar cuaca\nmembantumu memilih.

@@ -1,7 +1,9 @@
 // OpenWeather proxy — the API key stays on the server (secret OPENWEATHER_API_KEY, the same one
 // send-daily-recommendation uses), so it is no longer shipped inside the app.
 //
-// Request  { kind: "current" | "forecast" | "geo", lat?, lon?, city?, q?, cnt? }   (signed-in users only)
+// Request  { kind: "current" | "forecast" | "geo", lat?, lon?, city?, q?, cnt? }
+// Signed-in users: every kind. Signed out (1.2 Sign in shows the weather where you are): current · forecast by
+// coordinates only, 30 cache misses an hour per IP.
 // Response OpenWeather's own JSON for /data/2.5/weather · /data/2.5/forecast · /geo/1.0/direct
 //
 // Shared cache in public.owm_cache (coordinates rounded to 2 decimals ≈ 1 km, the same rounding the app sends):
@@ -10,6 +12,9 @@
 //
 // Deploy:  supabase functions deploy weather
 import { admin, callerId, cors, inRange, json, takeQuotas } from "../_shared/common.ts";
+
+/** The caller's IP (first x-forwarded-for hop) — the signed-out quota key. */
+const clientIp = (req: Request) => (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
 
 const KEY = Deno.env.get("OPENWEATHER_API_KEY");
 const BASE = "https://api.openweathermap.org";
@@ -20,12 +25,13 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (!KEY) return json({ error: "missing_key" }, 500);
   const uid = await callerId(req);
-  if (!uid) return json({ error: "unauthorized" }, 401);
 
   let body: Record<string, unknown>;
   try { body = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
   const kind = body.kind as Kind;
   if (!(kind in TTL)) return json({ error: "bad_request" }, 400);
+  // Signed out: only the weather at the device's own (rounded) coordinates — no city search, no city names.
+  if (!uid && (kind === "geo" || typeof body.lat !== "number" || typeof body.lon !== "number")) return json({ error: "unauthorized" }, 401);
 
   const params = new URLSearchParams();
   if (kind === "geo") {
@@ -55,7 +61,9 @@ Deno.serve(async (req) => {
 
   const ok = await takeQuotas([
     { bucket: "owm:all", window: "minute", cap: 50 },
-    { bucket: `owm:u:${uid}`, window: "hour", cap: 200 },
+    uid
+      ? { bucket: `owm:u:${uid}`, window: "hour", cap: 200 }
+      : { bucket: `owm:ip:${clientIp(req)}`, window: "hour", cap: 30 },
   ]);
   if (ok === false) return json({ error: "rate_limited" }, 429);
 

@@ -19,8 +19,6 @@
     "note": "You’ll see this letter once · Read it again in Settings\n› Help & policies"
   },
   "signIn": {
-    "title": "What’s the weather\non your table?",
-    "body": "Share what you cook in every kind of weather — and find what to eat next.",
     "legalPrefix": "By continuing, you agree to our ",
     "terms": "Terms",
     "and": " and ",
@@ -28,7 +26,8 @@
     "legalSuffix": ".",
     "apple": "Continue with Apple",
     "google": "Continue with Google",
-    "error": "Sign-in is napping — tap to try again."
+    "error": "Sign-in is napping — tap to try again.",
+    "weatherNow": "{{condition}} · {{temp}}°"
   },
   "location": {
     "step": "Step 2 of 3",

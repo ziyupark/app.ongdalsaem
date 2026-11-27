@@ -19,8 +19,6 @@
     "note": "Bạn chỉ thấy lá thư này một lần · Đọc lại trong Cài đặt\n› Trợ giúp & chính sách"
   },
   "signIn": {
-    "title": "Thời tiết trên\nbàn ăn của bạn thế nào?",
-    "body": "Chia sẻ món bạn nấu trong mọi kiểu thời tiết — và tìm món tiếp theo để ăn.",
     "legalPrefix": "Khi tiếp tục, bạn đồng ý với ",
     "terms": "Điều khoản",
     "and": " và ",
@@ -28,7 +26,8 @@
     "legalSuffix": " của chúng mình.",
     "apple": "Tiếp tục với Apple",
     "google": "Tiếp tục với Google",
-    "error": "Đăng nhập đang ngủ trưa — chạm để thử lại."
+    "error": "Đăng nhập đang ngủ trưa — chạm để thử lại.",
+    "weatherNow": "{{condition}} · {{temp}}°"
   },
   "location": {
     "step": "Bước 2/3",

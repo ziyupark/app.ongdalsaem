@@ -19,8 +19,6 @@
     "note": "Você verá esta carta só uma vez · Leia de novo em Ajustes\n› Ajuda e políticas"
   },
   "signIn": {
-    "title": "Como está o tempo\nna sua mesa?",
-    "body": "Compartilhe o que você cozinha em qualquer clima — e descubra o que comer depois.",
     "legalPrefix": "Ao continuar, você concorda com os nossos ",
     "terms": "Termos",
     "and": " e a ",
@@ -28,7 +26,8 @@
     "legalSuffix": ".",
     "apple": "Continuar com a Apple",
     "google": "Continuar com o Google",
-    "error": "O login está tirando um cochilo — toque para tentar de novo."
+    "error": "O login está tirando um cochilo — toque para tentar de novo.",
+    "weatherNow": "{{condition}} · {{temp}}°"
   },
   "location": {
     "step": "Etapa 2 de 3",

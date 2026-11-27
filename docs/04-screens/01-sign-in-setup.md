@@ -12,19 +12,20 @@
 
 **흐름 원칙**: 신규 = 1.2(Apple/Google, @username 자동 생성) → 1.3b(건너뛰기 가능) → 1.4 → 1.5(건너뛰기 가능) → 2.1. 단계 표시는 **STEP n OF 3**(1.3b = 1 · 1.4 = 2 · 1.5 = 3). 기존 사용자 = 1.2 → 2.1.
 
-### 1.2 Sign in (Welcome) — [14:67](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-67)
-- 앱을 처음 열었을 때 보는 **보편적인 시작 화면**: 위 사진, 아래 로그인 버튼 2개(Apple · Google). 이메일 · 비밀번호 입력은 없다.
+### 1.2 Sign in (Welcome) — [1207:10884](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1207-10884)
+- 앱을 처음 열었을 때 보는 **보편적인 시작 화면**: 위 날씨 헤더(지금 내 위치 날씨), 가운데 지금 날씨 3D, 아래 로그인 버튼 2개(Apple · Google). 이메일 · 비밀번호 입력은 없다.
 - 레이아웃(자유 배치, 스크롤 없음):
-  0. 프레임 배경 = bg/default(크림)
-  1. [A] 음식 사진 `photo:welcome` 390×420 + 아래 Fade(270–420, 투명 → bg/default) + 위 Scrim top(0–120, ink 45% → 0, StatusBar 가독성). 글은 사진 위가 아니라 크림 배경 위에 둔다.
-  2. StatusBar(Tone=Light)
-  3. Logo(Compact) "ongdalsaem"(x 20, y 424) → 10 → **Display/L**(다른 01 화면 제목과 같은 스타일) **"What’s the weather / on your table?"** → 8 → Body/M fg/secondary "Share what you cook in every kind of weather — and find what to eat next."(아래 끝 586)
-  4. [고정] Block · Button(y 672–800, gap 10): Caption 가운데 "By continuing, you agree to our **Terms** and **Privacy Policy**."(두 단어 Caption Strong fg/secondary, 탭 → 9.8c 문서 시트) → **Auth Button(Apple)** "Continue with Apple"(698–744) → **Auth Button(Google)** "Continue with Google"(**y 754–800**, 01의 주 버튼 자리). 이메일 버튼은 없다.
+  0. 프레임 배경 = bg/default(크림) + LaunchBackdrop(하늘 `photo:welcome` 390×420 Mood/clear → bg/default, Scrim top 0–120, 흰 글로 2개 — 1.1과 같음)
+  1. StatusBar(Tone=Dark)
+  2. **weather header**(y 54, 좌우 20, gap 22): Logo(Compact) 줄(높이 40) → Overline fg/default 대문자 **"TUE, OCT 27 · MAPO, SEOUL"**(날짜 = 앱 언어 형식 요일 · 월 · 일, 장소 = 구 · 도시) → 13 → **Weather Now** 350("Light rain · 12°" / "Mapo, Seoul · right now" / "H 14° · L 8°")
+  3. **Weather 3D**(지금 날씨의 3D 아이콘, 모르면 `clear`) 367×370, 가운데, y 221–591(헤더 아래 6 · 버튼 위 18). 작은 화면(iPhone SE)은 그 사이 공간에 맞춰 줄어든다.
+  4. [고정] Block · Button(y 609–733, Home Indicator 위 77, gap 10): **Auth Button(Apple)** "Continue with Apple" → **Auth Button(Google)** "Continue with Google" → Caption 가운데 "By continuing, you agree to our **Terms** and **Privacy Policy**."(두 단어 Caption Strong fg/secondary, 탭 → 9.8c 문서 시트). 이메일 버튼은 없다.
   5. [A] Home Indicator
+- **지금 내 위치 날씨(로그인 전)**: 화면이 열리면 위치 권한을 묻는다(시스템 창, 이미 정했으면 묻지 않음). 허용 → 기기 좌표(소수 2자리로 반올림해 전송)로 장소 이름 · 지금 날씨 · 오늘 최고/최저를 읽어 Overline 장소, Weather Now, 가운데 3D 아이콘에 보여 준다. 거부 · 위치 꺼짐 · 읽기 실패 → Overline은 날짜만, Weather Now 없음, 3D = `clear`. 로그인 전 날씨는 `weather` 함수가 **좌표로 읽는 current · forecast만**, IP당 시간 30회까지 허용한다(도시 검색 · 도시 이름 조회는 로그인 필요). 이 읽기는 저장하지 않으며, 로그인 후에는 공유 읽기(useHere)가 다시 읽는다.
 - 이동: Apple/Google → **1.3b**(첫 로그인, @username 자동 생성) 또는 2.1(기존 계정).
 - Apple·Google 버튼은 각 사 브랜드 규정(로고·문구·크기)을 따른다([07-assets-licenses](../07-assets-licenses.md)). Apple 버튼 외곽선 = 검정 1px(Auth Button 컴포넌트 값, HIG White with outline).
 - 로그인 처리(Supabase Auth): **Apple** = iOS 기본 Apple 로그인 시트 → identity token + nonce로 세션 생성(Android는 웹 로그인). Apple이 처음 한 번만 주는 이름은 계정 메타데이터에 저장해 @username 자동 생성에 쓴다. **Google** = Supabase OAuth를 앱 안 인증 창으로 열고 `ongdalsaem://auth-callback`으로 돌아와 코드 교환(PKCE).
-- 요청 중에는 누른 버튼이 흐려지고 두 버튼 모두 비활성. 실패하면 Caption 자리에 fg/destructive "Sign-in is napping — tap to try again."
+- 요청 중에는 누른 버튼이 흐려지고 두 버튼 모두 비활성. 실패하면 Caption 자리(버튼 아래)에 fg/destructive "Sign-in is napping — tap to try again."
 
 ### 1.3 Profile setup — 삭제(닉네임 기능 없음)
 - 닉네임(Display name)을 정하는 단계는 없다. **첫 로그인 때 @username을 자동으로 만든다**: Apple/Google에서 받은 이름(없으면 `cook`)을 소문자 로마자로 바꾸고(한글은 로마자 변환) 허용 문자 `a–z 0–9 . _`만 남긴 뒤 `_` + 4자리 숫자(예: Jiyu → `jiyu_4821`). 중복이면 숫자를 다시 뽑는다. 3–20자.
@@ -42,7 +43,7 @@
 
 ### 1.4 Location — [14:314](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-314)
 - 블록: StatusBar → TopBar(Inline) → "STEP 2 OF 3" + 제목 "Let the weather / help you choose." + 본문 "We use your city’s forecast to suggest what others cooked in the same weather. Only your city is shared — never your exact location."(gap 12) → 40 → **날씨 오브** 220 원(지금 날씨의 3D 날씨 아이콘 `assets/weather3d/weather3d_{mood}.png`, 없는 무드는 `clear`) → 28 → **도시 pill**(bg/default + 1px border/default, radius full, padding 12 16, gap 10): `map-pin` 20 fg/accent · "Seoul, KR"(Body/M Strong) · "· 17° Clear"(Body/S fg/muted, 상태 이름 = Weather Tag 짧은 영어) → 24 → **Why 박스**(좌우 20, bg/subtle + 1px border/default, radius lg, padding 16, gap 8): `shield-check` 20 fg/accent + Body/M Strong "Why do we need this?" / Body/S fg/secondary "For your neighborhood’s weather and places close by. We never save your exact coordinates — only your area is used." → [고정] Button Ghost L "Choose a city instead"(680–736) + Button Primary L `navigation` "Use my location"(744–800).
-- 도시 pill은 위치 권한이 이미 있으면 기기 도시, 없으면 기본 도시(Seoul)의 지금 날씨를 보여 준다.
+- 도시 pill은 위치 권한이 이미 있으면(1.2에서 허용했으면 이미 있음) 기기 도시, 없으면 기본 도시(Seoul)의 지금 날씨를 보여 준다.
 - 이동: 뒤로 → BACK · Use my location → (권한 요청) → **1.5** · Choose a city instead / 권한 거부 → **1.5**(위치 꺼짐 상태를 넘겨, 1.5 다음 Home이 2.5로 열림).
 - 개인정보: 서버에는 **도시/구 단위만** 전송(profiles.city · country · location_enabled). 좌표는 기기 안에서 도시 이름 · 날씨 조회에만 쓴다.
 
