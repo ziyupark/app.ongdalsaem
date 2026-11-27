@@ -4,11 +4,59 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **9.3b Figma 추가**([1235:9394](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1235-9394), 9.9 복제 기반) · 9.3 Danger zone에 Deactivate account 행(`pause`) 추가. 세 번째 행 문구 → "Comments & messages are hidden"(한 줄에 맞춤, `settings.deaSocial` 9개 언어 수정)
+- **9.3b Deactivate account 화면 추가**(Figma 없음, 9.9 레이아웃): 9.3 행 → 9.3b(Head · While deactivated 3행 · Deleted on 날짜 · Destructive L · Ghost L) → 확인 팝업. 비활성화 동안 프로필 · 요리 · 사진 · 댓글 · 질문 · 답변 · 메시지 · 팔로우 · 도토리 · 테이블/챌린지 참여를 다른 사람에게 숨김(migration `20261201010000_hide_deactivated_accounts.sql`, 매일 추천 푸시에서도 제외). 다시 로그인하면 "Welcome back" 팝업. 문구 `settings.deactivateTitle · deactivateBody · whileDeactivated · deaProfile · deaDishes · deaSocial · deactivateCaption · deaDeletedOn · reactivatedTitle · reactivatedBody` 9개 언어 추가
+- **9.3 Deactivate account 추가**(Figma 없음): Danger zone의 Delete account 아래 `pause` 행 → 확인 팝업(30일 뒤 자동 삭제 안내) → 비활성화 · 로그아웃 → 1.1. 30일 안에 다시 로그인하면 복구, 아니면 매일 서버가 삭제. DB `profiles.deactivated_at` · `deactivate_own_account()` · `reactivate_own_account()` · cron `purge-deactivated-accounts`(migration `20261201000000_account_deactivation.sql`), Edge Function `purge-deactivated-accounts` 추가 · 삭제 로직을 `_shared/deleteUser.ts`로 묶음. 문구 `settings.deactivateAccount · deactivateConfirmTitle · deactivateConfirmBody · deactivateFailed` 9개 언어 추가
+- **9.4 Pick time 최대 5개**(Figma 없음): 시간마다 Pick time 행, 탭 → 바꾸기 · **Remove this time**, 5개 미만이면 `plus` **Add pick time**. 시간 선택지 6 → 10개(12:00 · 15:00 · 18:00 · 20:00 추가). 푸시는 고른 시각마다 1번. `prefs.pickTime` → `pickTimes`(옛 값 자동 이전), DB `push_tokens.pick_times · last_sent_at` 추가(migration `20261130000000_daily_pick_times.sql`), send-daily-recommendation 수정. 문구 `settings.addPickTime · removePickTime` 9개 언어 추가
+- **Diet & allergies 태그 직접 추가**(Figma 없음): DIET · ALLERGIES 칩 끝에 **Add your own** → 단어 입력(1–20자, 목록당 20개) → 선택된 칩으로 저장, 탭하면 삭제 확인. 그 단어가 든 요리는 추천 · 검색에서 빠지고, 직접 넣은 알레르기는 7.1 경고에도 표시. DB `profiles.custom_diet · custom_allergies` 추가(migration `20261129000000_profile_custom_diet_tags.sql`). 문구 `diet.add.*` 9개 언어 추가. 09-settings에 Diet & allergies 화면, 06-data-model에 `DietPrefs` 추가
+- **고객 지원 메일 변경**: help@ongdalsaem.app → **app.ongdalsaem@gmail.com**(9.7 문의하기 링크 · 9.8 정보 캡션, `SUPPORT_EMAIL`)
+- **7.1 Post detail 배경**: 내 현재 날씨의 Mood wash + 날씨 모션을 상세 화면에도 표시(스크롤 시 올라가며 사라짐, 뒤로 · 작성자 줄 글자색 = wash 잉크). `ScreenWash`에 `motion` 옵션 추가(다른 푸시 화면은 그대로 그라데이션만)
+- **4.2 Tag 그리드 도토리 수정**: Dish Tile의 Acorn Tag가 눌리지 않던 문제 → 도토리 토글(내가 준 상태 기준). 같은 그리드(FoodGrid)를 쓰는 4.3 Country · 명절 · Viral · 4.4 Table · Nearby 그리드도 같이 적용
+- **4.1 Community · Explore**(1113:25908) 다시 맞춤: 본문 위아래 32 → **28**, 탭 간격 24 → **16**. SectionHeader `›`(Neighbourhood questions · Trending tags) fg/muted → **fg/default**, Special days `›` 20 → **24** fg/default(SectionHeader에 `moreColor` · `moreSize` 추가, 다른 화면은 그대로). Popular today 카드: Caption fg/muted → fg/default, ⋯ → **`chevron-right` 20**(신고·차단은 7.1). Question Card: 테두리 삭제, radius 16 → **32**, "구 · 시간" fg/muted → fg/default
+- **Food Card · Row**(12:384): 오버라인 → 제목 묶음 간격 3 → **4**, 제목 → 바이라인 0 → **3**, 북마크 20 fg/muted → **24 fg/default**, 오버라인 · 바이라인 fg/muted → fg/default(4.1 인스턴스)
+- **4.1 Community 탭**(1113:25920): 탭 글자 Body/M Strong · Body/M → **Title/M**(Outfit Medium 18/18, −0.2, 선택 · 미선택 같음). UnderlineTabs에 `labelVariant` 추가(다른 화면 탭은 그대로)
+- **7.1 Post detail**: "I made this" 버튼 삭제("I ate this"와 겹침, 문구 `dish.madeThis` 9개 언어 삭제). **More from**(601:13045): "See all" 글자 → `chevron-right` 20 아이콘(SectionHeader), Dish Tile → **Dish Tile 02**(131), 간격 16 → 8, 섹션 위아래 20 · 제목 → 줄 12
+- **8.1a Edit photo 추가**(Figma 없음): 8.1에서 선택한 사진을 탭 → **Edit** → 자르기(Free · Original · 1:1 · 4:5 · 16:9) · 회전(90°) · 좌우 반전 · 밝기 · 노출 · 대비 · 채도 · 따뜻함. 원본은 두고 편집본으로 업로드, 다시 열면 원본에서 지난 설정 그대로. Skia(`@shopify/react-native-skia` 2.14.0) 추가 → **새 Dev Build 필요**. 문구 `share.editPhoto · editTitle · editDone · editCrop · editAdjust · editRotate · editFlip · editReset · aspectFree · aspectOriginal · editDiscardTitle · editLoadFailed · editSaveFailed · adjust.*` 9개 언어 추가. 9.8b 오픈소스 라이선스에 React Native Skia 추가
+- **7.1 Post detail Meta**(601:12639): 캡션 Body/S → **Body/M**(fg/default), 제목 → 캡션 간격 16 → **13**
+- **4.4 Neighbors' Table**(730:11217): 내 자리(Place your dish 빈 접시 · My seat) · 이웃 + Follow · 요리사 추천("Cooks to follow …") 삭제. 내 게시물은 그날 테이블에 이웃 게시물과 함께 **올린 순서대로**. 기간 3일 → **2주**, 요리사당 1개 · 하루 9개 제한 없앰, 처음 보이는 수 = 오늘 3줄 · 지난 날 2줄 → See more. 문구 `following.placeMine · mySeat · suggest · suggestBody` 9개 언어 삭제. 04-community 4.4 · 4.4b를 실제 화면대로 다시 씀
+- **4.1 Story of the day**(1113:25926) = 오늘의 픽: 내 날씨와 같은 날씨 + 기온 ±1°C 게시물 중에서 고름(없으면 전처럼 날씨 조건 없이)
+- **Weather Card**(136:4716): 기온 Numeric/XL 72 → **XXL 80**(Outfit Light 80/66, −2.6 — 새 글자 스타일, 6.1 프로필 기온도 같은 스타일로 바꿈). Meal Slot 기온 → **Weather Tag**(배경 없음, 높이 24, padding 5 12 5 9, gap 5): 아이콘 14 → **18**, 기온 Body/S Strong → **Body/L**. padding 18 20 17 · gap 12 · 칸 padding 8 4 10 4 · gap 6은 그대로
+- **Body/L 글자 스타일**: 17/25 → **17/22**, **Overline** 자간 1.3 → **1**(Figma 텍스트 스타일 변경, 앱 전체 적용). 01-foundations 글자 표의 Title/M · Body/S · Caption Strong · Overline · Numeric/XL 값도 실제 토큰대로 고침
+- **Body/M 글자 스타일**: 15/22 · −0.05 → **15/20 · 0.13**(Figma 텍스트 스타일 변경, 앱 전체 Body/M에 적용)
+- **6.1 Profile 기온**(1094:24027): Numeric/XL 72 → **80**(홈 Weather Card는 72 그대로)
+- **댓글 이름 = @username**(Comment 132:4846): Avatar 32 → 40, 이름 Body/S Strong → Body/M Strong, 본문 Body/S fg/secondary → Body/M fg/default. 3.8 답변 이름도 @username
+- **닉네임 기능 삭제**: 9.2 Edit profile의 Display name 입력칸 삭제(저장도 안 함). 9.1 프로필 카드 = @username + "Edit profile"
+- **1.3 Profile setup 삭제**: 첫 로그인 때 Apple/Google 이름으로 @username 자동 생성 → 바로 1.3b. 단계 표시 STEP n OF 4 → **OF 3**(9개 언어), 문구 `profileSetup.*` 삭제. 온보딩 완료 기준 = display_name → username
+- **이름 = @username**: 게시물 · 작성자 · 차단 목록 · 저장 목록 등 이름 자리에 닉네임 대신 username
+- **Comment Composer**(287:334): Avatar 40 다시 추가, 좌우 padding 16 → 20, 입력칸 높이 48 → **42**
+- **Feed Post**(119:601 · 1219:18732): Actions · Caption 좌우 → **38**, Caption Body/M **1줄**, 캡션 없으면 숨김
+- **Question Card**(469:10124): 1px border/default 추가, radius 32 → 16, 질문 Body/L fg/secondary → Body/M fg/default, 사진 radius 12 → 32, 아래 줄 좌우 21
+- **5.1 음식 이름 박스**(1219:18385): padding 6 16 → 6 22, 폭 최대 300 → **150–322**. 길면 …로 자르지 않고 **왼쪽으로 흐른다**
+- **5.1_0 레시피 단계 타이머**(1219:18053): Start timer → 탭 전환 대신 게시물 위에 타이머 화면을 푸시(`/cook-timer`, TopBar 뒤로 + 가운데 로고). 음식 이름 = **단계 내용**(전엔 요리 이름). 뒤로 → 그 게시물 같은 스크롤 위치
+- **7.1 Action bar**: I ate this 오른쪽 타이머 버튼(Cook along) 삭제
+- **Comment Composer**(287:334): 앞의 Avatar 32 삭제, 입력칸 좌우 padding 16 → **20**, 입력칸 1px border/default(7.1 댓글 · 3.8 질문 답변 입력)
+- **Message 대화 안내**(1219:18052): 문구 → "Messages from accounts you don’t follow arrive as requests."(신고 · 차단 안내 문장 삭제), Caption 글자 → **박스**(폭 276, radius full, 0.8 border/strong, padding 6 15, Nav label fg/muted). 문구 `messages.requestNote` 9개 언어 변경
+- **Message 대화 안내 박스 사라짐**: 메시지가 없을 때만 보이고, 첫 메시지가 생기면 위로 올라가며 페이드아웃(300ms) 후 제거
+- **Feed Post Media**(119:620): 사진 카드 370×417(좌우 10) → **350×402(좌우 20)**, radius 32 그대로. 안쪽 padding 18 18 16 18 — Weather Tag 좌상단 16 → 18, Photo Counter 우하단 16 → **좌하단(left 18 · bottom 16)**
+- **Feed Post 행 여백**(119:601): Header padding 12 16 12 20 → **12 21**, Actions 좌우 20 → **21** · gap 16 → **18**, Caption 좌우 20 → **25**, 글자 Body/S 1줄 → **Body/M(줄 높이 18) 2줄**. 문서의 Header 값(Avatar 32 · Name Body/S Strong · more 20)도 실제 화면대로 40 · Body/M Strong · 24로 고침
 - **6.x 프로필 Weather card**: 날씨 줄 → 구분선 간격 14 → 12(홈 Weather Card와 같은 위치). 구분선 아래 간격 14는 그대로
 - **2.1 Nearby card**: 글자 줄 사이 3 → **8**(Figma 131:4544), 위에 Overline "Eat this nearby" 줄을 문서에 반영
 - **6.3 이번 주 한 줄**: 제목 "This week" + 날짜 범위 → **"Weekly Menu"만**(지난주 · 다음주에서도 그대로, 날짜 범위 없음). Month view는 글자 → `calendar-days` 아이콘(문서를 코드에 맞춤)
 - **6.3 Fridge memo**: 칸 선택에 Shopping memo 포함(3개, 문서를 코드에 맞춤). 고른 칸의 상자에 border/focus 2 테두리
 - **9.4 오늘의 픽 알림**: 알림을 끄면 서버 `push_tokens`의 위치(lat · lon · city · place)도 null로 지움
+- **2.1 Home**: Today’s pick(Story Card) · Nearby card(Similar Bites) 삭제 — 홈은 Weather card(끼니 슬롯) + 날씨에 맞는 피드. 오버라인 → 제목 12 → 11(오버라인 2 안쪽), 제목 → Weather card 12 → 18. 2.5(위치 꺼짐)는 안내 카드 아래 피드, 2.7 스켈레톤에서 픽 · Nearby 자리 삭제
+- **6.1 Profile**(1217:14479): 헤더 간격 홈과 같게(11 / 18), 카드 gap 14 → 12, 아바타 88 → 74(테두리 흰색 → border/default), 아이디 줄 높이 80, 상태 메시지 Body/S → Body/M, Follow · Message 버튼 → 높이 32 · radius 8 · 사이 6(Follow = bg/kick), 카드 → 탭 18 → 15, 탭 좌우 40 → 20, 탭 → 그리드 8 → 23
+- **Switch**: 시스템 스위치 → 직접 그린 51×31(iOS 26에서 설정 행의 토글이 위 · 오른쪽으로 어긋나던 문제)
+- **6.3 What you can cook now 빈 상태**(1217:15353): 안내 문구 → 점선 자리표시 카드 3장. 문구 `fridge.canCookEmpty` 9개 언어 변경
+- **4.3-1 · 4.3-2 Special days**: 4.1b → 4.3-1(전체 명절 목록). 새 **4.3-2 명절 페이지**(1219:16713, `app/holiday/[key]`) — 그날 먹는 음식 카테고리로 거르는 그리드. Festive Card → 4.3-2(전에는 태그 4.2)
+- **4.2 Tag**(826:14271): 공유 버튼 · 정렬 탭 · 정보 알약 · 끼니 필터 삭제. 제목 → 사진 카드 간격 6 → 16. 그리드 = 최신순 "LATEST · {카테고리}"
+- **질문 저장**: Explore 질문 카드 오른쪽 아래 북마크 = 질문 저장 토글. DB `question_saves` 추가(20261128000000, RLS 본인만)
+- **질문 카드 Me too · 카테고리 배지 삭제**(Explore · 3.7 목록 · 3.8 상세 · 3.x 피드)
+- **Challenges 탭 Viral Bites**(1113:25966): Explore에서 옮김 — 전체 폭 180 카드 세로 3장
+- **4.1 Community · Explore**(1113:25908): 섹션 위아래 32 · 사이 38. Story Card 400 → 420 + ⋯. Viral Bites 섹션 삭제. Popular today = 이름별 묶음 순위 → **게시물 카드**("I ATE THIS · n" 많은 순, 사진 80 · ⋯). Neighbourhood questions 카드 = 아바타 40 · Body/L · 사진 · 답변 수 · 공유(카테고리 · Me too 없음) + 빈 상태 문구. Food Card ⋯. ⋯ = 신고 · 차단(차단 후 전체 새로고침). 문구 `community.area.questionsEmpty` 9개 언어 추가
+- **8.2 Auto context**(303:403): Lucide 날씨 아이콘 22 → 3D 날씨 이미지 53, 둘째 줄 "From your photo · {when} · Tap to edit" → 시각만("Today 7:20 PM")
+- **8.2 Type**: "Travel" → **"Eating Out"**(Figma 400:9707). 문구 `share.types.travel` — en · ko(외식) · es(Comer fuera) · ja · zh-TW(外食) 변경, pt-BR · id · th · vi는 이미 '외식' 뜻이라 그대로. 저장 값은 `travel` 그대로
+- **라이트 모드 고정**: 기기 다크 모드를 따르지 않고 항상 Light. 9.1 Settings의 Appearance 행 삭제(앱 설정값 `appearance`도 없앰)
 - **지역 이름 언어**: 게시물 지역을 보는 사람의 앱 언어로 표시. DB `foods.place_names`(jsonb) 추가 — 20261127000000
 
 ## v1.8.5 — 2026-11-20 (전역 날씨 배경 · Weather Card · 타이머 · 앱 아이콘)

@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { ChefHat, ChevronRight, Globe, List, Map as MapIcon, MapPin, Plus, type LucideIcon } from '../../src/components/icons/ongdal';
+import { ChefHat, ChevronRight, Globe, List, Map as MapIcon, MapPin, Plus } from '../../src/components/icons/ongdal';
+import { WeatherIcon3D } from '../../src/components/WeatherIcon3D';
 import { MessageCircle } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,7 @@ import { photoMoment } from '../../src/lib/time';
 import { displayTemp } from '../../src/lib/prefs';
 import { hasLocationPermission, reverseGeocodeCity, type Coordinates } from '../../src/services/location';
 import { fetchCurrentWeather } from '../../src/services/weather';
-import { elevation, radius, space, text, useTheme, WEATHER_ICON, FONT_SCALE_MAX } from '../../src/theme';
+import { elevation, radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 import * as Location from 'expo-location';
 
 const MAX_DESCRIPTION = 150;
@@ -133,15 +134,14 @@ export default function ShareDetails() {
   const ctx = d.context;
   let ctxTitle: string;
   let ctxSub: string;
-  let ctxIcon: LucideIcon = MapPin;
   if (d.contextState === 'loading' || d.contextState === 'idle') {
     ctxTitle = t('share.contextLoading');
     ctxSub = t('share.contextLoadingSub');
   } else if (ctx) {
     const where = [ctx.place?.district, ctx.place?.city].filter(Boolean).join(', ');
     ctxTitle = `${t(`home.titleMood.${ctx.mood}`)} ${displayTemp(ctx.tempC)}°${where ? ` · ${where}` : ''}`;
-    ctxSub = t(ctx.from === 'photo' ? 'share.contextFromPhoto' : ctx.from === 'place' ? 'share.contextFromPlace' : 'share.contextFromDevice', { when: photoMoment(ctx.takenAt, t) });
-    ctxIcon = WEATHER_ICON[ctx.mood];
+    // Auto context 303:403 — the second line is only when ("Today 7:20 PM").
+    ctxSub = photoMoment(ctx.takenAt, t);
   } else {
     ctxTitle = t('share.contextNone');
     ctxSub = t('share.contextNoneSub');
@@ -176,7 +176,10 @@ export default function ShareDetails() {
             onLongPress={detectContext}
             style={({ pressed }) => [styles.context, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }, pressed && { opacity: 0.85 }]}
           >
-            {d.contextState === 'loading' ? <ActivityIndicator color={color('fg/muted')} /> : <Icon icon={ctxIcon} size={22} />}
+            {/* 3D weather image 53 (Weather 3D / {mood}); the same 53 slot holds the spinner / pin so the card doesn't jump. */}
+            <View style={styles.ctxArt}>
+              {d.contextState === 'loading' ? <ActivityIndicator color={color('fg/muted')} /> : ctx ? <WeatherIcon3D mood={ctx.mood} size={53} /> : <Icon icon={MapPin} size={22} />}
+            </View>
             <View style={styles.flex}>
               <Text variant="Body/M Strong" numberOfLines={1}>{ctxTitle}</Text>
               <Text variant="Caption" color="fg/muted" numberOfLines={1}>{ctxSub}</Text>
@@ -337,6 +340,7 @@ const styles = StyleSheet.create({
   failed: { gap: space[10] },
   failRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
   failThumb: { width: 72, height: 72, borderRadius: radius.lg, overflow: 'hidden' },
+  ctxArt: { width: 53, height: 53, alignItems: 'center', justifyContent: 'center' },
   context: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[14], paddingRight: space[12], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1 },
   flex: { flex: 1, gap: space[2] },
   group: { gap: space[10] },

@@ -15,3 +15,13 @@ export function loadViewShot(): typeof import('react-native-view-shot') | null {
 export function loadMaps(): typeof import('react-native-maps') | null {
   try { return require('react-native-maps'); } catch { return null; }
 }
+
+/** 8.1a Edit photo — draws with Skia (native, added after earlier dev builds). */
+export function loadPhotoEditor(): typeof import('../components/share/PhotoEditor') | null {
+  try {
+    require('@shopify/react-native-skia');
+    return require('../components/share/PhotoEditor');
+  } catch {
+    return null;
+  }
+}

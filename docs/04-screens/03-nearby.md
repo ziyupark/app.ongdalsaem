@@ -52,7 +52,7 @@ Community에 **Nearby 탭은 없다**(Explore에 합침, [04-community 4.1](04-c
 ### 3.8 Question · Kalguksu after 9 PM — [469:11388](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-11388)
 - TopBar Inline "Question". **Question Card**(사진 켬) → **4 ANSWERS**(Overline) → 답 행 ×3: 아바타 32 · 이름 Body/S Strong · 동네 · 시간 Caption · (질문자가 고른 답) **Asker’s pick** 배지(bg/done-subtle, `check` 12 fg/done + 글자 fg/default) → 답 Body/M → `thumbs-up` 16 "Helpful · 12".
 - [고정] **Comment Composer** "Answer Minji…".
-- 규칙: 답 ≤500자. 질문자는 답 하나를 Asker’s pick으로 고른다(바꿀 수 있음). Question Card의 **Me too**(`users`) = 나도 같은 게 궁금함 — 질문이 위로 올라가고 답이 달리면 나에게도 알림, 질문자에게는 알림 없음. 답의 **Helpful**(`thumbs-up`) = 이 답이 도움 됨 — 답 정렬에 쓰고 답한 사람에게 하루 1회 묶어서 알림. 정렬 = Asker’s pick → Helpful 많은 순 → 오래된 순. 7일이 지나면 새 답을 막고 피드에서 내린다(질문자에게는 계속 보임). 신고 = 7.3과 같은 흐름(대상이 질문 · 답).
+- 규칙: 답 ≤500자. 질문자는 답 하나를 Asker’s pick으로 고른다(바꿀 수 있음). 질문 카드에는 Me too · 카테고리 배지가 없다(4.1에서 뺌, DB question_me_too는 남겨 둠). 답의 **Helpful**(`thumbs-up`) = 이 답이 도움 됨 — 답 정렬에 쓰고 답한 사람에게 하루 1회 묶어서 알림. 정렬 = Asker’s pick → Helpful 많은 순 → 오래된 순. 7일이 지나면 새 답을 막고 피드에서 내린다(질문자에게는 계속 보임). 신고 = 7.3과 같은 흐름(대상이 질문 · 답).
 - 이동: 답 작성자 → 4.5 · 뒤로 → Back.
 
 ---

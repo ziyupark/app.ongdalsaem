@@ -8,7 +8,7 @@
 - 블록:
   1. **ScreenWash + ScreenHeader**(네 탭 공통 — 로고 · 오른쪽 빈 자리(벨 없음) · 날짜·위치 · 날씨 제목)
   2. **Reset all**([1094:23665](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1094-23665), 타이머가 하나라도 있을 때만): 헤더 제목 바로 아래, 왼쪽 정렬(좌우 20). 반투명 흰 알약(glass/fill — Figma 흰색 10 %) + 0.8 테두리(glass/stroke-strong — Figma 흰색 46 %), radius full, padding 2 9, Title/S fg/secondary "Reset all". 누르면 확인 창 "Reset all timers?"(Cancel / Reset all) → 모든 타이머를 처음 시간으로 되돌리고 멈춤(각 타이머의 Reset과 같음).
-  3. **Active timer**(가운데 정렬, 위 **22**): **큰 링** 220, 선 두께 **19**(12.65 × 1.5, 도넛 안쪽 반지름 0.8275)(진행 = Gradient/Dusk, 끝나면 fg/success 가득) — 가운데 시간 Numeric/Timer(Fraunces SemiBold 52/58). → 28 → **음식 이름 박스**([1089:23399](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1089-23399)): 반투명 흰 알약(glass/fill), radius full, padding 6 16, Display/Quote fg/default, 따옴표 없음, 1줄. **실제 음식 이름이 있을 때만**(Add Timer에서 입력 · 레시피의 요리 · 프리셋 이름) — 이름 없는 타이머(예: 기본 라벨 "Timer")는 박스 없이 링만(5.1-1).
+  3. **Active timer**(가운데 정렬, 위 **22**): **큰 링** 220, 선 두께 **19**(12.65 × 1.5, 도넛 안쪽 반지름 0.8275)(진행 = Gradient/Dusk, 끝나면 fg/success 가득) — 가운데 시간 Numeric/Timer(Fraunces SemiBold 52/58). → 28 → **음식 이름 박스**([1089:23399](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1089-23399)): 반투명 흰 알약(glass/fill), radius full, padding 6 22, **폭 150–322**, Display/Quote fg/default, 따옴표 없음, 1줄. 이름이 박스보다 길면 **왼쪽으로 흐른다**(끝 뒤 40 간격으로 이어 붙여 반복, 초당 32pt, 매 바퀴 시작에서 1.2초 멈춤 · Reduce Motion = …로 자름). **이름이 있을 때만**(Add Timer에서 입력 · 레시피 단계의 **단계 내용** · 프리셋 이름) — 이름 없는 타이머(예: 기본 라벨 "Timer")는 박스 없이 링만(5.1-1).
      - **링 손잡이**(코드 기준): 남은 시간 호의 움직이는 끝에 흰 점(선 두께 × 0.55) + Gradient/Dusk 빛 번짐 + 중심 쪽 가는 바늘(1.5 폭, 선 두께 × 1.1 길이). 매 프레임 카운트다운을 따라가고, 링을 끌 때는 손가락을 따라간다. 시간이 0이거나 끝나면 숨김. **마지막 10초**는 숫자가 바뀔 때마다 빛이 커졌다 작아진다(Reduce Motion이면 없음).
   4. **컨트롤**(28 아래 · 48 버튼 3개 간격 28): RoundBtn `rotate-ccw` Reset · 가운데 Primary `pause`/`play`(끝났으면 `check` — 레시피 단계 타이머면 "Back to recipe" → 그 요리 7.1, 아니면 "Done" = 타이머 삭제) · `plus` + **"15s" 칩**([1094:23662](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1094-23662) — bg/emphasis, radius full, padding 2.2 6, Tagline fg/default, + 버튼 오른쪽 위에서 위 −1 · 오른쪽 −11) = **15초 추가**(끝난 타이머는 다시 시작).
   5. **Add Timer** 버튼(Timer Button · Size=Bar 676:22600 — 350×52, bg/subtle + 1px border/default, radius full, Elevation/1 Low, `timer` 24 + Button/M fg/default) → 5.1b.
@@ -19,6 +19,11 @@
 - **큰 링 고르기**: 방금 시작한 타이머(Add Timer · 프리셋 · 레시피 단계 "Start timer" — 화면을 열기 10초 안에 시작한 것 포함)가 항상 큰 링으로 온다 → 그다음 사용자가 탭한 것 → 끝난 것 → 가장 빨리 끝나는 것.
 - **링 드래그로 시간 바꾸기**: 큰 링을 **0.35초 누르고 있다가** 링을 따라 돌리면 남은 시간이 바뀐다(5초 단위, 최대 24시간, 반시계 = 늘림). 시작할 때 진동(중간), 단계마다 선택 햅틱. 드래그 중엔 스크롤이 멈춘다. 놓으면 그 시간으로(실행 중이었으면 계속 실행).
 - 링은 프레임마다 부드럽게 줄어들고, 숫자는 초 경계에 맞춰 바뀐다.
+
+### 5.1_0 Kitchen timer · 레시피 단계에서 — [1219:18053](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1219-18053)
+- 7.1 레시피 단계의 **Start timer** → 타이머를 시작하고 **게시물 위에 5.1을 푸시**(`/cook-timer`). 탭을 바꾸지 않는다.
+- 5.1과 같은 화면, 차이: 맨 위 로고 줄 대신 **TopBar Type=timer**(높이 52, 좌우 12: `chevron-left` 22 뒤로 · 가운데 Compact 로고 · 빈 40). 음식 이름 박스 = **그 단계 내용**(길면 왼쪽으로 흐름). Mood wash는 화면 안에 그린다(날씨 모션 없음).
+- 뒤로 → **타이머를 누른 게시물로, 보던 스크롤 위치 그대로**. 끝난 타이머의 `check`(Back to recipe)도 뒤로와 같다. TabBar의 다른 탭 → 그 탭으로(게시물은 닫힘).
 
 ### 5.1b Add timer — [669:11033](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=669-11033)
 - **가운데 대화상자**(8.2c Set timer와 같은 카드: 딤 + bg/default 카드, radius xl, 최대 폭 360): Overline fg/accent "NEW TIMER" → Input "Food Name"(placeholder "food name...", 40자) → 분 : 초 칸 → 힌트 → QUICK PICK 칩 1 · 2 · 5 · 10 · 15 min → Button **"Set m:ss timer"**(0이면 비활성). 최대 99:59. "No timer" 버튼 없음.

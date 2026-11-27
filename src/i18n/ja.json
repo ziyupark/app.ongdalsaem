@@ -43,20 +43,8 @@
     "google": "Googleで続ける",
     "error": "サインインがお昼寝中です — タップしてもう一度。"
   },
-  "profileSetup": {
-    "step": "ステップ 1/4",
-    "title": "なんと\nお呼びしましょう？",
-    "label": "表示名",
-    "helper": "シェアした料理に表示されます。",
-    "handlePrefix": "ハンドルは",
-    "handleSuffix": "になります — 設定でいつでも変更できます。",
-    "missingName": "続けるには表示名を入力してください。",
-    "continue": "続ける",
-    "changePhoto": "プロフィール写真を変更",
-    "error": "保存できませんでした — 「続ける」をタップして再試行してください。"
-  },
   "location": {
-    "step": "ステップ 3/4",
+    "step": "ステップ 2/3",
     "title": "天気に\n選んでもらおう。",
     "body": "あなたの街の天気予報をもとに、同じ天気の日にほかの人が作った料理をおすすめします。共有されるのは街の名前だけ — 正確な位置は共有されません。",
     "chooseCity": "代わりに街を選ぶ",
@@ -66,7 +54,7 @@
     "whyBody": "近所の天気と近くのお店を表示するためです。正確な座標は保存せず、地域単位でのみ使います。"
   },
   "taste": {
-    "step": "ステップ 2/4",
+    "step": "ステップ 1/3",
     "title": "どんなごはんが\n好きですか？",
     "body": "いくつでも選べます。おすすめに反映します。",
     "skip": "スキップ",
@@ -98,10 +86,23 @@
       "fish": "魚",
       "soy": "大豆",
       "sesame": "ごま"
+    },
+    "add": {
+      "own": "自分で追加",
+      "dietTitle": "食事スタイルに追加",
+      "dietBody": "料理名や材料にこの言葉がある料理は、おすすめと検索から外します。",
+      "dietPlaceholder": "例：豚肉",
+      "allergyTitle": "アレルギーを追加",
+      "allergyBody": "この言葉を含む料理は外し、料理の画面でもお知らせします。",
+      "allergyPlaceholder": "例：キウイ",
+      "duplicate": "すでに追加されています。",
+      "add": "追加",
+      "removeTitle": "「{{label}}」を削除しますか？",
+      "remove": "削除"
     }
   },
   "notify": {
-    "step": "ステップ 4/4",
+    "step": "ステップ 3/3",
     "title": "毎日何時に\nおすすめを受け取りますか？",
     "body": "毎日この時間に、今日の天気に合う一品をお届けします。設定で変更できます。",
     "skip": "スキップ",
@@ -288,7 +289,7 @@
     "typeHint": "· 次の質問が変わります",
     "types": {
       "home": "手料理",
-      "travel": "おでかけ"
+      "travel": "外食"
     },
     "dishName": "料理名",
     "dishNamePlaceholder": "ひとり分のキムチチゲ",
@@ -414,7 +415,27 @@
     "inChallenge": "参加中: {{name}}",
     "challengeOnePhoto": "チャレンジは写真1枚だけ投稿できます",
     "pickHintChallenge": "チャレンジ用の写真1枚",
-    "cameraDenied": "料理を撮影するには、設定でカメラへのアクセスを許可してください。"
+    "cameraDenied": "料理を撮影するには、設定でカメラへのアクセスを許可してください。",
+    "editPhoto": "編集",
+    "editTitle": "写真を編集",
+    "editDone": "完了",
+    "editCrop": "切り取り",
+    "editAdjust": "調整",
+    "editRotate": "回転",
+    "editFlip": "反転",
+    "editReset": "リセット",
+    "aspectFree": "自由",
+    "aspectOriginal": "オリジナル",
+    "editDiscardTitle": "編集内容を破棄しますか？",
+    "editLoadFailed": "この写真を開けませんでした。もう一度お試しください。",
+    "editSaveFailed": "編集を保存できませんでした。もう一度お試しください。",
+    "adjust": {
+      "brightness": "明るさ",
+      "exposure": "露出",
+      "contrast": "コントラスト",
+      "saturation": "彩度",
+      "warmth": "暖かみ"
+    }
   },
   "dish": {
     "temperature": {
@@ -435,7 +456,6 @@
     "difficultyEasy": "かんたん",
     "difficultyMedium": "ふつう",
     "difficultyHard": "むずかしい",
-    "madeThis": "作ってみた",
     "madeBy": "作った人 {{n}}人",
     "cookedFromRecipe": "{{name}}さんのレシピで作りました",
     "allergyWarning": "アレルギー注意: {{items}}",
@@ -652,6 +672,20 @@
     "danger": "危険な操作",
     "deleteAccount": "アカウントを削除",
     "deleteNote": "プロフィール、料理、写真、コメント、どんぐり、ダイアリーが完全に削除されます。元に戻せません。",
+    "deactivateAccount": "アカウントを無効にする",
+    "deactivateConfirmTitle": "アカウントを無効にしますか？",
+    "deactivateConfirmBody": "アカウントが無効になり、ログアウトします。30日以内に再度ログインしないと、アカウントとすべてのデータが自動的に削除されます。",
+    "deactivateFailed": "アカウントを無効にできませんでした。もう一度お試しいただくか、サポートにお問い合わせください。",
+    "deactivateTitle": "少しお休みしますか？",
+    "deactivateBody": "アカウントは30日間お休みになります。まだ何も削除されません——それまでに再度ログインすれば、すべて元どおりです。",
+    "whileDeactivated": "無効にしている間",
+    "deaProfile": "プロフィールが非表示になります",
+    "deaDishes": "料理と写真が非表示になります",
+    "deaSocial": "コメントとメッセージが非表示になります",
+    "deactivateCaption": "30日以内に Apple または Google で再度ログインすると戻れます。それを過ぎると、アカウントとすべてのデータが完全に削除されます。",
+    "deaDeletedOn": "削除予定日",
+    "reactivatedTitle": "おかえりなさい",
+    "reactivatedBody": "アカウントが再び有効になりました。プロフィールと料理は以前どおり表示されます。",
     "activity": "アクティビティ",
     "nAcorns": "料理へのどんぐり",
     "nComments": "コメントと返信",
@@ -659,6 +693,8 @@
     "forYou": "あなたへ",
     "nDailyPick": "毎日の天気おすすめ",
     "pickTime": "おすすめの時間",
+    "addPickTime": "時間を追加",
+    "removePickTime": "この時間を削除",
     "nTimer": "キッチンタイマー",
     "adsEvents": "広告とイベント",
     "nAds": "特典とイベント",
@@ -843,7 +879,7 @@
     "canCook": "今ある食材で作れる料理",
     "haveCount": "食材 {{have}}/{{total}} 個あり",
     "needs": "不足: {{items}}",
-    "canCookEmpty": "食材を入れると、作れる料理を探します。",
+    "canCookEmpty": "冷蔵庫の食材で作れるレシピを探しましょう。",
     "shoppingZone": "買い物メモ",
     "moveToFridge": "購入済み → 冷蔵庫へ",
     "shoppingEmpty": "買い物メモは空です。上で買い物メモを選んで、買うものを書きましょう。"
@@ -1131,6 +1167,7 @@
       "recent": "最近",
       "posts_other": "{{count}}件の投稿",
       "topEmpty": "今日はまだ近くで料理が共有されていません。",
+      "questionsEmpty": "近くの質問はまだありません。最初に聞いてみましょう。",
       "questionsTitle": "ご近所の質問",
       "ask": "質問する",
       "locationOff": "位置情報をオンにすると、今日のご近所の食卓が見られます。"
@@ -1343,7 +1380,7 @@
     "placeholder": "{{name}}さんにメッセージ…",
     "seen": "既読",
     "yesterday": "昨日",
-    "requestNote": "フォローしていない人からのメッセージはリクエストとして届きます。··· からいつでも報告やブロックができます。",
+    "requestNote": "フォローしていないアカウントからのメッセージはリクエストとして届きます。",
     "sendFailed": "送信できませんでした。もう一度お試しください。",
     "viewProfile": "プロフィールを見る",
     "block": "ブロック",
@@ -1456,10 +1493,6 @@
     "title": "ご近所の食卓",
     "todayTable": "今日の食卓",
     "yesterdayTable": "昨日の食卓",
-    "placeMine": "料理を置く",
-    "mySeat": "わたしの席",
-    "suggest": "フォローしたい料理人",
-    "suggestBody": "フォローすると、その人の料理がここに並びます。",
     "seeMore": "もっと見る"
   },
   "questions": {

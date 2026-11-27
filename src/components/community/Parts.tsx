@@ -1,20 +1,24 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronRight, MapPin, Search, Users, X, type LucideIcon } from '../icons/ongdal';
+import { ChevronRight, MapPin, MoreHorizontal, Search, X, type LucideIcon } from '../icons/ongdal';
 import { Bookmark, MessageCircle } from '../icons/ongdal';
-import { useRef, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
 import type { CardDish, CookCard, Question, ViralItem } from '../../services/community';
-import { iconRing, radius, space, text, useTheme, withAlpha, FONT_SCALE_MAX } from '../../theme';
+import { iconRing, iconStroke, radius, space, text, useTheme, withAlpha, FONT_SCALE_MAX } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
+import { fetchMyMarks, setAcorn } from '../../services/foods';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { postPlace } from '../../services/location';
+import { myUserId } from '../../lib/supabase';
+import { reportQuestion } from '../../services/community';
+import { ReportSheet } from '../dish/ReportSheet';
 
 const FLAGS: Record<string, number> = {
   CA: require('../../../assets/flags/CA.png'), CN: require('../../../assets/flags/CN.png'), DE: require('../../../assets/flags/DE.png'), ES: require('../../../assets/flags/ES.png'),
@@ -50,9 +54,13 @@ export function countryName(code: string, lang: string) {
 
 /**
  * SectionHeader — Title/L, px 20. Title row, right end: optional Badge (pill) then, with `onMore`, a "See more" chevron
- * (ChevronRight 20 · fg/muted · 44×44 touch). `moreLabel` = its accessibility label (default "See more").
+ * (ChevronRight 20 · fg/muted by default · 44×44 touch). `moreLabel` = its accessibility label (default "See more").
  */
-export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge }: { title: string; eyebrow?: string; onMore?: () => void; moreLabel?: string; badge?: string }) {
+export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge, moreColor = 'fg/muted', moreSize = 20 }: {
+  title: string; eyebrow?: string; onMore?: () => void; moreLabel?: string; badge?: string;
+  /** Chevron override — 4.1 Explore uses fg/default (and 24 on Special days). */
+  moreColor?: 'fg/muted' | 'fg/default'; moreSize?: 20 | 24;
+}) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
@@ -69,7 +77,7 @@ export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge }: { ti
         ) : null}
         {onMore ? (
           <Pressable accessibilityRole="button" accessibilityLabel={moreLabel ?? t('following.seeMore')} hitSlop={space[12]} onPress={onMore}>
-            <Icon icon={ChevronRight} size={20} color="fg/muted" />
+            <Icon icon={ChevronRight} size={moreSize} color={moreColor} />
           </Pressable>
         ) : null}
       </View>
@@ -124,46 +132,119 @@ export function useByline() {
 /** 2-column Dish Tile grid (670:20058) — 4.2 Tag, 4.3 Country, 3.x Nearby: x20 · gap 16 · rows 20. Byline = the tile's own "Comfort · Dinner". */
 export function FoodGrid({ dishes, width, onOpen }: { dishes: CardDish[]; width: number; byline?: (d: CardDish) => string; onOpen: (d: CardDish) => void }) {
   const w = (width - space[20] * 2 - space[16]) / 2;
+  // Acorn Tag = give / take-back toggle (my marks + my changes since load, so counts move at once).
+  const [given, setGiven] = useState<Set<string>>(new Set());
+  const [delta, setDelta] = useState<Record<string, number>>({});
+  const ids = dishes.map((d) => d.id).join(',');
+  useEffect(() => {
+    if (!ids) return;
+    let alive = true;
+    fetchMyMarks(ids.split(',')).then((m) => { if (alive) { setGiven(m.given); setDelta({}); } }).catch(() => undefined);
+    return () => { alive = false; };
+  }, [ids]);
+  const givenRef = useRef(given);
+  givenRef.current = given;
   // One handler per dish id that lives across renders and always calls the latest onOpen with the latest dish,
   // so the memoized tiles don't re-render just because the parent passed a new arrow function.
   const latest = useRef({ onOpen, dishes });
   latest.current = { onOpen, dishes };
-  const handlers = useRef(new Map<string, () => void>()).current;
-  const pressOf = (id: string) => {
+  const handlers = useRef(new Map<string, { press: () => void; acorn: () => void }>()).current;
+  const handlersOf = (id: string) => {
     let f = handlers.get(id);
     if (!f) {
-      f = () => { const d = latest.current.dishes.find((x) => x.id === id); if (d) latest.current.onOpen(d); };
+      f = {
+        press: () => { const d = latest.current.dishes.find((x) => x.id === id); if (d) latest.current.onOpen(d); },
+        acorn: () => {
+          const on = !givenRef.current.has(id);
+          const apply = (sign: number) => {
+            setGiven((s) => { const n = new Set(s); if (on === sign > 0) n.add(id); else n.delete(id); return n; });
+            setDelta((d) => ({ ...d, [id]: (d[id] ?? 0) + (on ? 1 : -1) * sign }));
+          };
+          apply(1);
+          setAcorn(id, on).catch(() => apply(-1));
+        },
+      };
       handlers.set(id, f);
     }
     return f;
   };
   return (
     <View style={styles.grid}>
-      {dishes.map((d) => <DishTile key={d.id} dish={d} width={w} onPress={pressOf(d.id)} />)}
+      {dishes.map((d) => {
+        const h = handlersOf(d.id);
+        return <DishTile key={d.id} dish={d} width={w} onPress={h.press} given={given.has(d.id)} acorns={d.acorns + (delta[d.id] ?? 0)} onAcorn={h.acorn} />;
+      })}
     </View>
   );
 }
 
-/** Food Card · Row — 80 thumb r16 · Overline eyebrow · Title/S · Caption · bookmark. */
-export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress }: { dish: CardDish; eyebrow: string; byline: string; saved?: boolean; onSave?: () => void; onPress: () => void }) {
+/**
+ * Food Card · Row (12:384 · 4.1 1113:25996) — 80 thumb r16 · 14 · [Overline eyebrow → 4 → (Title/S → 3 → Caption)] ·
+ * bookmark 24 fg/default. Text fg/default (4.1 instances).
+ */
+export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress, onMore }: { dish: CardDish; eyebrow: string; byline: string; saved?: boolean; onSave?: () => void; onPress: () => void; onMore?: () => void }) {
   const { color } = useTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={dish.name} onPress={onPress} style={styles.row}>
       <Image source={{ uri: dish.photo }} style={[styles.rowThumb, { backgroundColor: color('bg/muted') }]} contentFit="cover" transition={150} />
       <View style={[styles.flex, styles.rowMeta]}>
-        <Text variant="Overline" color="fg/muted" numberOfLines={1}>{eyebrow}</Text>
-        <View>
+        <Text variant="Overline" numberOfLines={1}>{eyebrow}</Text>
+        <View style={styles.rowName}>
           <Text variant="Title/S" numberOfLines={1}>{dish.name}</Text>
-          <Text variant="Caption" color="fg/muted" numberOfLines={1}>{byline}</Text>
+          <Text variant="Caption" numberOfLines={1}>{byline}</Text>
         </View>
       </View>
       {onSave ? (
-        <Pressable accessibilityRole="button" accessibilityState={{ selected: !!saved }} hitSlop={space[8]} onPress={onSave}>
-          <Bookmark size={20} strokeWidth={1.6} absoluteStrokeWidth color={color('fg/muted')} fill={saved ? color('fg/muted') : 'none'} />
+        <Pressable accessibilityRole="button" accessibilityState={{ selected: !!saved }} hitSlop={space[10]} onPress={onSave}>
+          <Bookmark size={24} strokeWidth={iconStroke(24)} absoluteStrokeWidth color={color('fg/default')} fill={saved ? color('fg/default') : 'none'} />
         </Pressable>
       ) : null}
+      {onMore ? <MoreButton onPress={onMore} /> : null}
     </Pressable>
   );
+}
+
+/** ⋯ 20 (fg/muted) — opens the report / block sheet for someone else's post. */
+export function MoreButton({ onPress, color: tone = 'fg/muted' }: { onPress: () => void; color?: 'fg/muted' | 'fg/on-photo' }) {
+  const { t } = useTranslation();
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={t('home.more')} hitSlop={space[12]} onPress={onPress}>
+      <Icon icon={MoreHorizontal} size={20} color={tone} />
+    </Pressable>
+  );
+}
+
+/** My user id (null until known / signed out) — so ⋯ (report · block) is never offered on my own posts. */
+export function useMyId() {
+  const [id, setId] = useState<string | null>(null);
+  useEffect(() => { myUserId().then(setId).catch(() => undefined); }, []);
+  return id;
+}
+
+export type ReportTarget = { kind: 'dish' | 'question'; id: string; owner: { id: string; name: string; handle?: string | null } };
+
+/**
+ * One report / block sheet for a screen (7.3 ReportSheet): `open(target)` from any card's ⋯. Reporting a dish or a
+ * question; "Block" calls `onBlocked(ownerId)` so the screen reloads — RLS (is_blocked_between) then leaves that
+ * cook's posts and questions out of every section.
+ */
+export function useReportMenu(onBlocked: (ownerId: string) => void) {
+  const { t } = useTranslation();
+  const [target, setTarget] = useState<ReportTarget | null>(null);
+  const close = useCallback(() => setTarget(null), []);
+  const sheet = (
+    <ReportSheet
+      visible={!!target}
+      title={target?.kind === 'question' ? t('questions.reportTitle') : undefined}
+      foodId={target?.kind === 'dish' ? target.id : undefined}
+      ownerId={target?.owner.id ?? ''}
+      ownerName={target?.owner.handle ?? target?.owner.name ?? ''}
+      onClose={close}
+      onBlocked={() => { const who = target?.owner.id; setTarget(null); if (who) onBlocked(who); }}
+      onReport={target?.kind === 'question' ? (reason) => reportQuestion(target.id, target.owner.id, reason) : undefined}
+    />
+  );
+  return { open: setTarget, sheet };
 }
 
 /** Photo card with Card scrim (Country Card 280×180 r32 / Story Card 350×400). */
@@ -210,7 +291,8 @@ export function Faces({ people, size = 24 }: { people: { id: string; avatarUrl: 
 
 /** Question Card — author · place · time · category pill / body / answers · me too. */
 /** `style` overrides the card box (Explore · Our area: its shared box — no border, 2xl). `showImage`: 4:5 photo, full card width. */
-export function QuestionCard({ q, onPress, onMeToo, showImage, style }: { q: Question; onPress?: () => void; onMeToo?: () => void; showImage?: boolean; style?: StyleProp<ViewStyle> }) {
+/** Question Card — avatar · name · place · time → question → photo (showImage) → answers. No category badge or Me too (4.1). */
+export function QuestionCard({ q, onPress, showImage, style }: { q: Question; onPress?: () => void; showImage?: boolean; style?: StyleProp<ViewStyle> }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
@@ -229,9 +311,6 @@ export function QuestionCard({ q, onPress, onMeToo, showImage, style }: { q: Que
             </Text>
           </View>
         </View>
-        <View style={[styles.qCat, { backgroundColor: color('bg/accent-subtle') }]}>
-          <Text variant="Caption Strong" color="fg/accent">{t(`ask.categories.${q.category}`)}</Text>
-        </View>
       </View>
       <Text variant="Body/M">{q.body}</Text>
       {showImage && q.imageUrl ? <Image source={{ uri: q.imageUrl }} style={styles.qImage} contentFit="cover" /> : null}
@@ -240,10 +319,6 @@ export function QuestionCard({ q, onPress, onMeToo, showImage, style }: { q: Que
           <Icon icon={MessageCircle} size={16} />
           <Text variant="Caption Strong" color="fg/secondary">{t('ask.answers', { count: q.answers })}</Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityState={{ selected: q.meTooByMe }} disabled={!onMeToo || q.mine} onPress={onMeToo} hitSlop={space[8]} style={styles.qStat}>
-          <Icon icon={Users} size={16} color={q.meTooByMe ? 'fg/accent' : 'fg/default'} />
-          <Text variant="Caption Strong" color={q.meTooByMe ? 'fg/accent' : 'fg/secondary'}>{t('ask.meToo', { n: q.meToo })}</Text>
-        </Pressable>
       </View>
     </Pressable>
   );
@@ -345,14 +420,14 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', columnGap: space[16], rowGap: space[20], paddingHorizontal: space[20] },
   row: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   rowThumb: { width: 80, height: 80, borderRadius: radius.lg },
-  rowMeta: { gap: 3 },
+  rowMeta: { gap: space[4] },
+  rowName: { gap: 3 },
   photoCard: { borderRadius: radius['2xl'], overflow: 'hidden' },
   bottomScrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 120 },
   faces: { flexDirection: 'row', alignItems: 'center' },
   qCard: { borderRadius: radius.lg, borderWidth: 1, padding: space[16], gap: space[12] },
   qTop: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
   qPlace: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  qCat: { paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   qImage: { width: '100%', aspectRatio: 4 / 5, borderRadius: radius.md }, // 4:5 like the post photos
   qFoot: { flexDirection: 'row', gap: space[16] },
   qStat: { flexDirection: 'row', alignItems: 'center', gap: space[6] },

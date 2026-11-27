@@ -11,7 +11,7 @@ import { resetHere } from './useHere';
 
 /** Copies of server data and personal history — the next person on this phone must not see them. */
 const ON_SIGN_OUT = ['community.recentSearches', 'ongdalsaem.activitySeenAt'];
-/** Deleting the account also removes what was only on this phone. Device settings (appearance, language, map app,
+/** Deleting the account also removes what was only on this phone. Device settings (language, map app,
  *  running timers) stay. */
 const ON_DELETE = [...ON_SIGN_OUT, 'here.last', 'ongdalsaem.mealPlan', 'ongdalsaem.shopping', 'ongdalsaem.fridge', 'ongdalsaem.customMoods'];
 

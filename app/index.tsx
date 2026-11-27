@@ -8,7 +8,7 @@ import { LaunchBackdrop } from '../src/components/LaunchBackdrop';
 import { Logo } from '../src/components/Logo';
 import { hasSeenWelcomeLetter } from '../src/lib/flags';
 import { supabase } from '../src/lib/supabase';
-import { getMyProfile, needsProfileSetup } from '../src/services/profile';
+import { ensureHandle, getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { useTheme } from '../src/theme';
 
 const SPLASH_MS = 1200;
@@ -19,7 +19,9 @@ async function nextRoute() {
   if (data.session) {
     try {
       const profile = await getMyProfile();
-      return needsProfileSetup(profile) ? '/setup/profile' : '/home';
+      if (!needsProfileSetup(profile)) return '/home';
+      await ensureHandle();
+      return '/setup/taste';
     } catch {
       return '/home';
     }

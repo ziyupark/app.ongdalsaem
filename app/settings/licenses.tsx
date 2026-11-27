@@ -22,6 +22,7 @@ const GROUPS: { key: string; items: Item[] }[] = [
       { name: 'Expo', license: 'MIT', url: 'https://github.com/expo/expo/blob/main/LICENSE' },
       { name: 'Supabase JS', license: 'MIT', url: 'https://github.com/supabase/supabase-js/blob/master/LICENSE' },
       { name: 'React Native Reanimated', license: 'MIT', url: 'https://github.com/software-mansion/react-native-reanimated/blob/main/LICENSE' },
+      { name: 'React Native Skia', license: 'MIT', url: 'https://github.com/Shopify/react-native-skia/blob/main/LICENSE.md' },
       { name: 'React Native SVG', license: 'MIT', url: 'https://github.com/software-mansion/react-native-svg/blob/main/LICENSE' },
       { name: 'i18next', license: 'MIT', url: 'https://github.com/i18next/i18next/blob/master/LICENSE' },
       { name: 'react-native-view-shot', license: 'MIT', url: 'https://github.com/gre/react-native-view-shot/blob/master/LICENSE' },

@@ -133,6 +133,17 @@ export async function fetchByTag(tag: string, sort: Sort = 'popular', city?: str
   return list(q, sort);
 }
 
+/**
+ * Special day page (4.3 1219:16713) — newest public dishes for a holiday: tagged with it (mood tag = the holiday key, as
+ * from its Festive Card) or named after one of its foods (`foods`: names in any language, matched anywhere in the name).
+ */
+export async function fetchByHoliday(key: string, foods: string[], limit = 60) {
+  const clean = (v: string) => v.replace(/[,()*%{}]/g, ' ').trim();
+  const terms = [...new Set(foods.map(clean).filter((f) => f.length > 1))].map((f) => `name.ilike.*${f}*`);
+  const q = publicFoods().or([`mood_tags.cs.{${key.toLowerCase()}}`, ...terms].join(','));
+  return list(q, 'latest', limit);
+}
+
 /** 4.3 Country — dishes shared in that country (ISO code, e.g. 'JP'). */
 export async function fetchByCountry(code: string, sort: Sort = 'popular', mood?: WeatherMood | null) {
   let q = publicFoods().eq('country', code.toUpperCase());
@@ -247,19 +258,24 @@ export async function fetchPostsByName(name: string, offset = 0, limit = 20): Pr
 }
 
 /**
- * 4.1 Story of the day — the most-acorned dish with a caption from the last 2 days; else from the last 30 days;
- * else the most-acorned of the newest dishes even without a caption (the card leaves the caption out), so the section stays.
+ * 4.1 Story of the day = today's pick for my weather: posts with the same weather (`weather_condition` = my mood) and
+ * temperature within ±1 °C of mine. Most-acorned with a caption from the last 2 days; else the last 30 days; else the
+ * newest matching dishes even without a caption. No weather (location off) or no match → the same steps without the
+ * weather filter, so the section stays.
  */
-export async function fetchStoryOfTheDay(): Promise<CardDish | null> {
-  const recent = async (days: number, captioned: boolean) => {
+export async function fetchStoryOfTheDay(wx?: { mood: WeatherMood; tempC: number } | null): Promise<CardDish | null> {
+  const recent = async (days: number, captioned: boolean, match: boolean) => {
     const since = new Date(Date.now() - days * 864e5).toISOString();
     let q = publicFoods().gte('created_at', since);
     if (captioned) q = q.neq('description', '');
+    if (match && wx) q = q.eq('weather_condition', wx.mood).gte('temperature_c', wx.tempC - 1).lte('temperature_c', wx.tempC + 1);
     const { data, error } = await q.order('created_at', { ascending: false }).limit(60);
     if (error) throw error;
     return (data as Row[]).map(toCard).filter((d) => !captioned || d.description).sort(byAcorns)[0] ?? null;
   };
-  return (await recent(2, true)) ?? (await recent(30, true)) ?? (await recent(3650, false)); // last: newest 60 dishes of any age
+  const steps = (match: boolean) => async () =>
+    (await recent(2, true, match)) ?? (await recent(30, true, match)) ?? (await recent(3650, false, match)); // last: newest 60 of any age
+  return (wx ? await steps(true)() : null) ?? (await steps(false)());
 }
 
 // ---------------------------------------------------------------------------------------------- Our area · today
@@ -269,25 +285,30 @@ export const localMidnight = () => { const d = new Date(); d.setHours(0, 0, 0, 0
 /** Local date as 'YYYY-MM-DD'. */
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-export type TopDish = { name: string; count: number; photo: string; dishId: string };
+/** Popular today card (4.1 1219:15520): one post — photo · "I ate this" count · name · place (city) · time. */
+export type TopDish = {
+  dishId: string; name: string; photo: string; eaten: number; acorns: number; createdAt: Date;
+  city: string | null; neighborhood: string | null; placeNames: PlaceNames | null; creator: Person;
+};
 /** How far Popular today had to widen: my cells → district → city (today) → city, last 3 days → same weather, recent. */
 export type TopScope = 'area' | 'district' | 'city' | 'city3d' | 'weather';
 
 const TOP_N = 3;
+const TOP_SELECT = `${SUMMARY_SELECT}, created_at, creator_id, city, neighborhood, place_names, food_eaten_counts(count), creator:profiles!creator_id(id, display_name, username, avatar_url)`;
 
 /**
- * Our area · Popular today — public dishes grouped by name (case / spaces ignored), ranked by count (then acorns); the
- * representative is the most-acorned (then newest) dish of that name. Always tries for 3: starts with today in your
- * area cell + its neighbours (`cells`, 5-char), then tops up — skipping names already in — from today in the district →
- * today in the city → the city's last 3 days → the same weather (`mood`) over the last 7 days, anywhere. `scope` = the
- * widest step that added a name. Fewer than 3 after every step → just those.
+ * Our area · Popular today — public posts ranked by "I ate this" count (food_eaten_counts), then acorns, then newest.
+ * Always tries for 3: starts with today in your area cell + its neighbours (`cells`, 5-char), then tops up — skipping
+ * posts already in — from today in the district → today in the city → the city's last 3 days → the same weather
+ * (`mood`) over the last 7 days, anywhere. `scope` = the widest step that added a post. Fewer than 3 after every step
+ * → just those. Blocked cooks' posts never come back (foods RLS, is_blocked_between).
  */
 export async function fetchTodayTopDishes(at: { cells: string[]; district?: string | null; city?: string | null; mood?: WeatherMood | null }, excludeIds: string[] = []): Promise<{ items: TopDish[]; scope: TopScope }> {
-  // `excludeIds` (Story of the day) never shows up here — not even inside a name group.
+  // `excludeIds` (Story of the day) never shows up here.
   const skip = new Set(excludeIds);
   const daysAgo = (n: number) => new Date(Date.now() - n * 864e5).toISOString();
   const today = localMidnight().toISOString();
-  const from = (since: string) => publicFoods(`${SUMMARY_SELECT}, created_at`).gte('created_at', since);
+  const from = (since: string) => publicFoods(TOP_SELECT).gte('created_at', since);
   const steps: { load: () => any; scope: TopScope }[] = [];
   const cells = at.cells.filter((c) => /^[0-9b-hjkmnp-z]{5}$/.test(c));
   if (cells.length) steps.push({ load: () => from(today).or(cells.map((c) => `geohash6.like.${c}*`).join(',')), scope: 'area' });
@@ -298,32 +319,22 @@ export async function fetchTodayTopDishes(at: { cells: string[]; district?: stri
   }
   if (at.mood) steps.push({ load: () => from(daysAgo(7)).eq('weather_condition', at.mood!), scope: 'weather' });
 
-  const key = (name: string) => name.trim().toLowerCase().replace(/\s+/g, ' ');
   const items: TopDish[] = [];
   let scope: TopScope = 'area';
   for (const step of steps) {
     if (items.length >= TOP_N) break;
     const { data, error } = await step.load().order('created_at', { ascending: false }).limit(300);
     if (error) continue;
-    const groups = new Map<string, { count: number; acorns: number; rep: DishSummary }>();
-    for (const d of (data as Row[]).map(toSummary)) {
-      if (skip.has(d.id)) continue;
-      const k = key(d.name ?? '');
-      if (!k) continue;
-      const g = groups.get(k);
-      if (!g) groups.set(k, { count: 1, acorns: d.acorns, rep: d });
-      else {
-        g.count += 1;
-        g.acorns += d.acorns;
-        if (d.acorns > g.rep.acorns) g.rep = d; // rows are newest first, so ties keep the newest
-      }
-    }
-    const have = new Set(items.map((i) => key(i.name)));
-    const added = [...groups.entries()]
-      .filter(([k]) => !have.has(k))
-      .sort(([, a], [, b]) => b.count - a.count || b.acorns - a.acorns)
-      .slice(0, TOP_N - items.length)
-      .map(([, g]) => ({ name: g.rep.name.trim(), count: g.count, photo: g.rep.photo, dishId: g.rep.id }));
+    const have = new Set(items.map((i) => i.dishId));
+    const added = ((data ?? []) as Row[])
+      .filter((r) => !skip.has(r.id) && !have.has(r.id) && r.name)
+      .map((r): TopDish => ({
+        dishId: r.id, name: String(r.name).trim(), photo: r.image_url, eaten: countOf(r.food_eaten_counts), acorns: countOf(r.likes),
+        createdAt: new Date(r.created_at), city: r.city ?? null, neighborhood: r.neighborhood ?? null,
+        placeNames: asPlaceNames(r.place_names), creator: toPerson(r.creator, r.creator_id),
+      }))
+      .sort((a, b) => b.eaten - a.eaten || b.acorns - a.acorns || +b.createdAt - +a.createdAt)
+      .slice(0, TOP_N - items.length);
     if (added.length) { items.push(...added); scope = step.scope; }
   }
   return { items, scope };
@@ -339,69 +350,21 @@ export async function fetchFolloweeIds() {
   return (data as Row[]).map((r) => r.followee_id as string);
 }
 
-export type FollowingItem = CardDish & { fromTable: string | null };
-
-/** 4.4 Following — dishes from cooks you follow, plus the dishes posted in your tables. Pass `followees` when already loaded. */
-export async function fetchFollowingFeed(only: 'all' | 'people' | 'tables' = 'all', followees?: string[]): Promise<FollowingItem[]> {
-  const me = await uid();
-  if (!me) return [];
-  const [ids, tables] = await Promise.all([followees ?? fetchFolloweeIds(), only === 'people' ? Promise.resolve([]) : fetchMyTables()]);
-  const out = new Map<string, FollowingItem>();
-  if (only !== 'tables' && ids.length) {
-    const { data, error } = await publicFoods().in('creator_id', ids).order('created_at', { ascending: false }).limit(40);
-    if (error) throw error;
-    for (const d of (data as Row[]).map(toCard)) out.set(d.id, { ...d, fromTable: null });
-  }
-  if (only !== 'people' && tables.length) {
-    const { data, error } = await supabase
-      .from('table_posts')
-      .select(`created_at, table:topic_tables(name), food:foods!inner(${CARD_SELECT}, visibility)`)
-      .in('table_id', tables.map((t) => t.id))
-      .eq('food.visibility', 'everyone')
-      .order('created_at', { ascending: false })
-      .limit(40);
-    if (error) throw error;
-    for (const r of data as Row[]) if (r.food && !out.has(r.food.id)) out.set(r.food.id, { ...toCard(r.food), fromTable: r.table?.name ?? null });
-  }
-  return [...out.values()].filter((d) => d.creator.id !== me).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-}
-
-/** 4.4 Table · my seat — my own published dishes since `since` (any visibility), newest first. */
+/** 4.4 Table — my own published dishes since `since` (any visibility), newest first. */
 export async function fetchMyDishesSince(since: Date): Promise<CardDish[]> {
   const me = await uid();
   if (!me) return [];
   const { data, error } = await supabase.from('foods').select(CARD_SELECT).eq('creator_id', me).eq('status', 'published')
-    .gte('created_at', since.toISOString()).order('created_at', { ascending: false }).limit(20);
+    .gte('created_at', since.toISOString()).order('created_at', { ascending: false }).limit(100);
   if (error) throw error;
   return (data as Row[]).map(toCard);
 }
 
-/** 4.4b Table · no follows yet — recent popular cooks (acorns over 14 days), each with their most-liked dish. */
-export async function fetchSuggestedPlates(limit = 3, followees?: string[]): Promise<CardDish[]> {
-  const me = await uid();
-  const { data, error } = await publicFoods().gte('created_at', new Date(Date.now() - 14 * 864e5).toISOString())
-    .order('created_at', { ascending: false }).limit(200);
-  if (error) throw error;
-  const followed = new Set(followees ?? await fetchFolloweeIds());
-  const best = new Map<string, { dish: CardDish; total: number }>();
-  for (const d of (data as Row[]).map(toCard)) {
-    if (d.creator.id === me || followed.has(d.creator.id)) continue;
-    const cur = best.get(d.creator.id);
-    if (!cur) best.set(d.creator.id, { dish: d, total: d.acorns });
-    else best.set(d.creator.id, { dish: d.acorns > cur.dish.acorns ? d : cur.dish, total: cur.total + d.acorns });
-  }
-  return [...best.values()].sort((a, b) => b.total - a.total).slice(0, limit).map((b) => b.dish);
-}
-
-/** 4.4 Table · ③ — neighbours' plates per day section (max 9, one per cook). */
-const NEIGHBOR_PLATES = 9;
-
 /**
- * 4.4 Table · ③ Neighbours — public dishes since `since` from cooks you don't follow, near you: your area cell
- * (`cell`, 5-char) first, then the neighbouring cells (`cells`), then your district. Per local day: at most
- * NEIGHBOR_PLATES, one per cook (nearest range wins, then newest). Leaves out you, `exclude` (followees) and blocked cooks.
+ * 4.4 Table — neighbours' public dishes since `since`: your area cell (`cell`, 5-char), the neighbouring cells (`cells`)
+ * and your district. Every post (no per-cook or per-day cap — the table shows "See more"). Leaves out you and blocked cooks.
  */
-export async function fetchNeighborPlates(at: { cell: string | null; cells: string[]; district?: string | null; city?: string | null }, since: Date, exclude: string[]): Promise<CardDish[]> {
+export async function fetchNeighborPlates(at: { cell: string | null; cells: string[]; district?: string | null; city?: string | null }, since: Date): Promise<CardDish[]> {
   const me = await uid();
   if (!me) return [];
   const ok = (c: string | null | undefined): c is string => !!c && /^[0-9b-hjkmnp-z]{5}$/.test(c);
@@ -415,24 +378,15 @@ export async function fetchNeighborPlates(at: { cell: string | null; cells: stri
 
   const [blocked, ...pages] = await Promise.all([
     supabase.from('blocks').select('blocked_id').eq('blocker_id', me),
-    ...tiers.map((load) => load().order('created_at', { ascending: false }).limit(200)),
+    ...tiers.map((load) => load().order('created_at', { ascending: false }).limit(500)),
   ]);
-  const skip = new Set([me, ...exclude, ...((blocked.data ?? []) as Row[]).map((r) => r.blocked_id as string)]);
-  const days = new Map<string, { cooks: Set<string>; ids: Set<string>; dishes: CardDish[] }>();
+  const skip = new Set([me, ...((blocked.data ?? []) as Row[]).map((r) => r.blocked_id as string)]);
+  const out = new Map<string, CardDish>();
   for (const page of pages) {
     if (page.error) continue;
-    for (const d of (page.data as Row[]).map(toCard)) {
-      if (skip.has(d.creator.id)) continue;
-      const k = localDate(d.createdAt);
-      const day = days.get(k) ?? { cooks: new Set<string>(), ids: new Set<string>(), dishes: [] };
-      days.set(k, day);
-      if (day.dishes.length >= NEIGHBOR_PLATES || day.cooks.has(d.creator.id) || day.ids.has(d.id)) continue;
-      day.cooks.add(d.creator.id);
-      day.ids.add(d.id);
-      day.dishes.push(d);
-    }
+    for (const d of (page.data as Row[]).map(toCard)) if (!skip.has(d.creator.id) && !out.has(d.id)) out.set(d.id, d);
   }
-  return [...days.values()].flatMap((d) => d.dishes);
+  return [...out.values()];
 }
 
 export type CookCard = Person & { city: string | null; acorns: number; following: boolean; mood: WeatherMood | null; tempC: number | null };
@@ -556,6 +510,8 @@ export type QuestionCategory = (typeof QUESTION_CATEGORIES)[number];
 export type Question = {
   id: string; body: string; category: QuestionCategory; imageUrl: string | null; place: string | null;
   author: Person; answers: number; meToo: number; mine: boolean; meTooByMe: boolean; bestAnswerId: string | null; createdAt: Date;
+  /** I saved (bookmarked) it — question_saves (20261128000000). */
+  savedByMe: boolean;
   /** Weather when it was asked. */
   mood: WeatherMood | null; tempC: number | null;
   /** Set when a question came from a wider range than your area cell (Explore · Our area), e.g. "Dongjak-gu", "Seoul". */
@@ -572,17 +528,21 @@ async function decorateQuestions(rows: Row[]): Promise<Question[]> {
   if (!rows.length) return [];
   const me = await uid();
   const authorIds = [...new Set(rows.map((r) => r.author_id))];
-  const [authors, mine] = await Promise.all([
+  const ids = rows.map((r) => r.id);
+  const [authors, mine, saved] = await Promise.all([
     supabase.from('profiles').select('id, display_name, username, avatar_url').in('id', authorIds),
-    me ? supabase.from('question_me_too').select('question_id').eq('user_id', me).in('question_id', rows.map((r) => r.id)) : Promise.resolve({ data: [] as Row[] }),
+    me ? supabase.from('question_me_too').select('question_id').eq('user_id', me).in('question_id', ids) : Promise.resolve({ data: [] as Row[] }),
+    // Errors (e.g. the question_saves migration not applied yet) just mean "nothing saved".
+    me ? supabase.from('question_saves').select('question_id').eq('user_id', me).in('question_id', ids) : Promise.resolve({ data: [] as Row[] }),
   ]);
+  const savedIds = new Set(((saved.data ?? []) as Row[]).map((r) => r.question_id));
   const byId = new Map(((authors.data ?? []) as Row[]).map((p) => [p.id, toPerson(p)]));
   const meToo = new Set(((mine.data ?? []) as Row[]).map((r) => r.question_id));
   return rows.map((r) => ({
     id: r.id, body: r.body, category: r.category, imageUrl: r.image_url ?? null,
     place: r.neighborhood ?? r.city ?? r.country ?? null,
     author: byId.get(r.author_id) ?? toPerson(null, r.author_id),
-    answers: r.answer_count ?? 0, meToo: r.me_too_count ?? 0, mine: r.author_id === me, meTooByMe: meToo.has(r.id),
+    answers: r.answer_count ?? 0, meToo: r.me_too_count ?? 0, mine: r.author_id === me, meTooByMe: meToo.has(r.id), savedByMe: savedIds.has(r.id),
     bestAnswerId: r.best_answer_id ?? null, createdAt: new Date(r.created_at),
     mood: r.mood ?? null, tempC: r.temp_c == null ? null : Number(r.temp_c),
   }));
@@ -725,6 +685,15 @@ export async function fetchQuestionsPage(
 export async function deleteQuestion(id: string) {
   const { error } = await supabase.from('questions').delete().eq('id', id);
   if (error) throw error;
+}
+
+/** Save / unsave a question (4.1 Explore question card bookmark). Saving twice is not an error. */
+export async function setQuestionSaved(questionId: string, on: boolean) {
+  const me = await needUid();
+  const { error } = on
+    ? await supabase.from('question_saves').insert({ question_id: questionId, user_id: me })
+    : await supabase.from('question_saves').delete().eq('question_id', questionId).eq('user_id', me);
+  if (error && error.code !== '23505') throw error;
 }
 
 export async function setMeToo(questionId: string, on: boolean) {

@@ -59,7 +59,7 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 | **Mood Prompt** | [329:389](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=329-389) | State V[Empty/Typed] | 한 줄 기분 입력 350×48(Comment Composer 입력칸과 같은 높이·pill): `sparkles` 18 fg/accent · 텍스트 Body/M(1줄 말줄임, Empty = "How do you feel right now?" fg/muted) · Send 36 원(Empty bg/muted · Typed bg/primary, `arrow-down` 18). Typed = 1.5px border/focus. **앱에서 쓰지 않음**(홈에 기분 입력 없음) |
 | **Chip** | 6:245 | Label T · Icon I · State V[Default/Selected/Glass] · Icon V[Yes/No] | 높이 36, radius full. Selected = bg/primary + 흰 글자. 테두리 색을 바꿀 수 있음(냉장고 메모: 7일 넘은 재료 fg/accent) |
 | Tab | 6:252 | Label T · Active V[true/false] | 세그먼트/언더라인 탭. 탭 화면 · 4.2 · 4.3은 **UnderlineTabs**(§3.1c), 이 컴포넌트 모양(24×3 bg/primary)은 그 밖의 탭 줄 |
-| Switch | 6:257 | On V[true/false] | On = bg/kick 트랙 |
+| Switch | 6:253 | On V[true/false] | 51×31, 손잡이 27(안쪽 2, Elevation/4), On = bg/primary 트랙 · Off = bg/emphasis. 시스템 스위치가 아니라 직접 그림(iOS 26 시스템 스위치는 크기가 달라 행에서 어긋남) |
 | Radio | 41:515 | Selected V[true/false] | |
 | Radio Row | 132:4897 | Label T | 7.3 신고 사유 행(Radio + 텍스트) |
 | Photo Pick Cell | 132:4983 | Selected V[Yes/No] · 순번 T | 8.1 앨범 셀 129×129 |
@@ -83,11 +83,11 @@ Lucide + 커스텀 `acorn` · `acorn-color` · `heart-filled`(v1 미사용). 목
 | **Feed Post** | [119:601](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=119-601) | Name T · Meta T · Weather T · Weather icon I · Counter T · Caption T · (Like · Comment = Action Count 노출) | 홈 무한 피드용 인스타그램형 게시물. §3.3 참조 |
 | **Story Card** | 41:493 | Eyebrow T · Title T · Statement T · Byline T · Focus T · Show cook B · **Show focus B · Show byline B**(홈 2.x는 둘 다 Off) · (Weather Tag · Acorn Tag 노출) | 350×420(홈은 350×273, 4.1은 350×400으로 높이만 지정), radius 2xl 32, 세로 오토레이아웃(padding 24, space-between) 사진은 **카드 자체 fill(이미지 cover)** 로 넣는다 — 높이를 바꾼 인스턴스에서도 사진이 항상 카드 전체를 덮는다(Photo 레이어는 기본값용, 인스턴스에서는 숨김) |
 | Pick Card | 54:554 | Eyebrow T · Title T · Byline T · (Weather Tag · Acorn Tag 노출) | 350×280 사진 카드(2.5). 아래 정렬: Meta → Tags 줄 |
-| **Food Card** | 12:399 | Title T · Byline T · Type V[Grid/Row] · (Grid: Weather Tag · Acorn Tag 노출) | Grid(167×251) = Media 167×208(좌하단 Weather Tag·우하단 Acorn Tag) + **Text 블록**(세로, gap 2, **좌우 padding 20**: 제목 Title/S **1줄 말줄임** + 태그 바이라인 Caption 1줄). 텍스트는 사진 가장자리보다 20px 안쪽에서 시작한다(디자이너 지정). Row = 가로 리스트(오버라인 "DINNER · 10°" / 제목 / 바이라인) |
+| **Food Card** | 12:399 | Title T · Byline T · Type V[Grid/Row] · (Grid: Weather Tag · Acorn Tag 노출) | Grid(167×251) = Media 167×208(좌하단 Weather Tag·우하단 Acorn Tag) + **Text 블록**(세로, gap 2, **좌우 padding 20**: 제목 Title/S **1줄 말줄임** + 태그 바이라인 Caption 1줄). 텍스트는 사진 가장자리보다 20px 안쪽에서 시작한다(디자이너 지정). Row(12:384) = 가로 리스트, 썸네일 80 · gap 14: Overline "DINNER · 10°" → **4** → Title/S 제목 → **3** → Caption 바이라인, 오른쪽 `bookmark` **24 fg/default** |
 | Country Card | 12:400 | Title T · **Flag**(노출 인스턴스 Flag Tag, Country 변형) · (Weather Tag · Acorn Tag 노출) | 280×180(4.1 가로 스크롤) . 나라는 사진 위 **국기 Flag Tag**(**좌상단 x 12 · y 12 고정**, absolute — 카드 폭이 바뀌어도 위치 유지)로, 날씨·기온은 Weather Tag. Title 1줄 말줄임 |
 | Dish Tile | 128:4188 · 670:20058 | (Weather Tag · Acorn Tag **노출 인스턴스**) | **앱(코드 기준) = 670:20058 모양**: 미디어 167:208 비율(radius xl, Our area는 2xl) + 좌하단 Weather Tag · 우하단 Acorn Tag(XL, 인셋 8) → 아래 제목 Title/S 1줄 · 바이라인 Caption "Comfort · Dinner"(Our area에서 넓혀 가져온 타일은 앞에 장소 라벨). 2열 그리드(열 16 · 줄 20)로 6.1 · 4.5 · 4.2 · 4.3 · 3.1에서 쓴다. **Acorn Tag = 도토리 토글**(6.1 · 4.5: 탭하면 주고/취소, 준 상태 = 채운 도토리). 128×160 3열(4:4 radius)은 이전 6.1 디자인 |
 | Weather Card | 136:4716 | 텍스트 props(기온·상태·H/L 등) | 홈 날씨 카드 350×307, radius 2xl 32, padding 18 20 17, gap 12, 가운데 정렬: Now 블록 + 구분선 + [**Picks head**(Overline "Picks for this weather" ··· **Refresh** 32 원 아이콘 버튼: `rotate-ccw` 16만, 1px 테두리, 글자 없음, 접근성 라벨 "New picks") → 8 → Meal Slot ×4(칸 사이 2, 카드 안쪽보다 양쪽 13 넓게)] (2.1/2.2/2.3/2.6). Now 오른쪽 64 자리(136:4508) = **3D 날씨 아이콘**(원형 배경 없음). Refresh 동작 [§6.1](05-behavior.md) |
-| Meal Slot | 131:4280 | State V[Filled/Empty] · 라벨·기온 T | 홈 끼니 타임라인 칸(390 화면에서 82 폭). 세로(padding 8 4 10 4, gap 6, 가운데 정렬): 라벨(Caption Strong, 대문자 아님, **가운데 정렬, 칸 폭 채움**) → 썸네일 원 74 → 날씨 아이콘 14 + 기온. Filled = 썸네일 사진, Now 칸은 bg/muted 배경 + 선셋 링 override. Empty = 점선 원 + `+` 36 |
+| Meal Slot | 131:4280 | State V[Filled/Empty] · 라벨·기온 T | 홈 끼니 타임라인 칸(390 화면에서 82 폭). 세로(padding 8 4 10 4, gap 6, 가운데 정렬): 라벨(Caption Strong, 대문자 아님, **가운데 정렬, 칸 폭 채움**) → 썸네일 원 74 → Weather Tag(배경 없음, 높이 24, padding 5 12 5 9, gap 5, 아이콘 18 + 기온 Body/L). Filled = 썸네일 사진, Now 칸은 bg/muted 배경 + 선셋 링 override. Empty = 점선 원 + `+` 36 |
 | **Weather Now** | [363:8179](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=363-8179) | Now T · Place T · Range T | Nearby 상단 고정 줄 350: glass/surface, radius 16, padding 12 16, gap 12 — 현재 날씨 **3D 아이콘 28** · Now Body/M Strong / Place Caption · Range Caption Strong. 3.1–3.6 |
 | Nearby Card | 131:4542 | 3줄 텍스트 T, 사진 fill | 홈 "Eat this nearby" 카드(홈 전용 — 7.1 상세에는 두지 않음) |
 | Place Card | 131:4620 | 거리·이름·메뉴·도토리 수·메모 T | 2.4 식당 카드 |
@@ -132,10 +132,10 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 | 컴포넌트 | ID | Props (T=text, B=boolean, I=instance swap, V=variant) | 구현 메모 |
 |---|---|---|---|
 | **Comments Sheet** | [287:367](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=287-367) | Title T | 390×560 바텀시트, bg/default, 상단 radius 28, 세로(padding 12/20, gap 16): Handle 40×5(bg/emphasis) → Title(Title/M, "Comments · 18") → Comment 목록. 7.2에서 사용 |
-| Comment | 132:4848 | Time V[Yes/No] · 이름·시간·본문 T | 댓글 한 줄(Comments Sheet 안) |
+| Comment | 132:4848 | Time V[Yes/No] · 이름·시간·본문 T | 댓글 한 줄(Comments Sheet 안): gap 10, Avatar 40 → [**@username** Body/M Strong + 시간 Caption fg/disabled(gap 6)] → 2 → 본문 Body/M fg/default |
 | Input helper | — | — | 모든 Input 변형의 Helper 글은 **FILL + 줄바꿈**(입력칸 폭 350을 넘지 않음) |
 | Checkbox | 화면 프레임(v1 사용처 없음 — 1.3 제거) | — | 22×22, radius 4. 선택 = bg/primary + `check` 14(fg/on-primary, 1.4) · 해제 = 1.5px border/strong. 글과 위 정렬, 간격 10, 글은 FILL로 줄바꿈 |
-| **Comment Composer** | [287:334](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=287-334) | Placeholder T | 390 폭 하단 입력 바, bg/default, 위쪽 1px border/default, padding 10/16/40/16, 세로 가운데: Avatar 32 → **Field**(Search Field와 같은 규격: 높이 48, padding 0/16, gap 10, radius full, Body/M fg/muted "Say something warm…", **흰색 톤** bg/subtle + 1px border/default) → `arrow-right` 22(전송). 7.2 하단 고정 |
+| **Comment Composer** | [287:334](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=287-334) | Placeholder T | 390 폭 하단 입력 바, bg/default, 위쪽 1px border/default, padding 10/20/40/20, 세로 가운데, gap 10: Avatar 40(내 사진) → **Field**(높이 42, padding 0/20, radius full, Body/M fg/muted "Say something warm…", **흰색 톤** bg/subtle + 1px border/default) → `arrow-right` 22(전송). 7.2 하단 고정 |
 | **Notification Row** | [356:8636](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=356-8636) | Unread V[Yes/No] · Show avatar B · Show icon B · Show badge B · Show thumb B · Show action B | 알림 한 줄 390 폭, padding 12 20, gap 12, 세로 가운데: Lead 44(Avatar 40 **또는** Icon 원 40 bg/muted + 글리프 20) + 오른쪽 아래 Badge 20 원(bg/subtle, 종류 아이콘 14: `acorn-color` · `message-circle` · `send` · `user`) → Body(Text Body/S 여러 줄 · Meta: 안 읽음 점 6 fg/accent + 시간 Caption) → Thumb 44 radius 10(게시물 사진) 또는 Action(Button Primary S "Follow back"). Unread=Yes = 배경 bg/accent-subtle. 2.8 |
 
 ### 10 Weather mood
@@ -170,7 +170,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 - 글자색은 wash 위 위치(로고 12 % · 오버라인 26 % · 제목 33 %)의 밝기에 맞춘 잉크. 마지막 날씨 값은 앱을 다시 열 때도 먼저 보여 준다(기기 캐시).
 
 ### 3.1c UnderlineTabs — 코드 기준
-- X 스타일 밑줄 탭: 전체 폭 **1px border/default 선(30 % 투명)** + 선택 탭 아래 **3px fg/default 막대**(라벨 글자 폭, radius full). 탭을 바꾸면 막대가 200ms에 미끄러져 간다. 탭 높이 43(위 10 · 아래 12). 선택 = fg/default, 나머지 fg/muted(wash 위에서는 wash 잉크). 아이콘 탭도 가능(6.x 내 프로필).
+- X 스타일 밑줄 탭: 전체 폭 **1px border/default 선(30 % 투명)** + 선택 탭 아래 **3px fg/default 막대**(라벨 글자 폭, radius full). 탭을 바꾸면 막대가 200ms에 미끄러져 간다. 탭 높이 43(위 10 · 아래 12). 선택 = fg/default, 나머지 fg/muted(wash 위에서는 wash 잉크). 글자 기본 Body/M Strong(선택) · Body/M, `labelVariant`로 한 스타일 지정(4.1 Community = Title/M). 아이콘 탭도 가능(6.x 내 프로필).
 - 쓰는 곳: Community(Explore · Following · Challenges) · Profile · 4.2 · 4.3. Figma `Tab` 6:252(24×3 bg/primary 막대)는 쓰지 않는다.
 
 ### 3.2 아이콘 목록 (Lucide + custom) — Figma에 남긴 82개(화면에서 쓰는 것만)
@@ -214,14 +214,14 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 
 ### 3.3 Feed Post 상세 (390 × 652, 전체 폭)
 
-세로 스택, gap 0, padding-bottom 24. 사진은 화면 좌우 끝까지(full-bleed), 나머지 행은 좌우 패딩 20.
+세로 스택, gap 0, padding-bottom 24. 사진 카드는 좌우 20 안쪽(390 폭 → 350), Header는 좌우 21, Actions · Caption은 좌우 38.
 
 | 순서 | 레이어 | 스펙 |
 |---|---|---|
-| 1 | **Header** | 가로, padding 12 16 12 20, gap 10, 세로 가운데 정렬. Avatar 32 → Who(세로, gap 1, 남은 폭 채움): **Name** Body/S Strong fg/default(`minji.cooks`) + **Meta** Caption fg/muted(`Mapo, Seoul · 40m`) → `more-horizontal` 20px(fg/secondary). *(날씨는 헤더가 아니라 사진 위 태그로 표시)* |
-| 2 | **Media** | 390 × 440, 사진 cover, clip, **radius/xs = 4px**(네 모서리). **좌상단(16, 16) Weather Tag**(Size=XL, **Show condition = On** → "`cloud-snow` Snow −4°", §3.4). 도토리 수는 Actions에 있으므로 사진 위 Acorn Tag는 숨김, **우하단(right 16, bottom 16) Photo Counter**(`1 / 3`, 노출 인스턴스 — 인스턴스에서 Count 값을 바꾼다). 피드는 사진을 넘기는 곳이라 장수 표시를 아래(넘기는 손 쪽)에 둔다. 가로 스와이프로 여러 장(사진 수 = Counter 분모) |
-| 3 | **Actions** | 가로, padding 12 20 8 20, gap 18, 아이콘 24px fg/default. **Acorn** = `Action Count`(Type=Acorn, 누르면 Acorn given, 숫자 = 받은 도토리) → **Comment** = `Action Count`(Type=Comment, → 7.2) → **Share** `share` → (spacer) → **Save** `bookmark`(오른쪽 끝). Direct(`send`)는 숨김(DM은 4.5 Message로만 시작) |
-| 4 | **Caption block** | 세로, padding 0 20, gap 4. **Caption** Body/S fg/default, **최대 2줄 말줄임**. 해시태그 줄은 두지 않는다(요리 속성은 사진 위 Weather Tag와 7.1 태그 칩으로 보여 준다) |
+| 1 | **Header** | 가로, padding 12 21, gap 10, 세로 가운데 정렬. Avatar 40 → Who(세로, gap 1, 남은 폭 채움): **Name** Body/M Strong fg/default(`minji.cooks`) + **Meta** Caption fg/muted(`Mapo, Seoul · 40m`) → `more-horizontal` 24px(fg/secondary). *(날씨는 헤더가 아니라 사진 위 태그로 표시)* |
+| 2 | **Media** | **350 × 402**(좌우 20 안쪽), 사진 cover, clip, **radius 2xl = 32**. 안쪽 padding 18 18 16 18. **좌상단(18, 18) Weather Tag**(Size=XL, **Show condition = On** → "`cloud-snow` Snow −4°", §3.4). 도토리 수는 Actions에 있으므로 사진 위 Acorn Tag는 숨김, **좌하단(left 18, bottom 16) Photo Counter**(`1 / 3`, 노출 인스턴스 — 인스턴스에서 Count 값을 바꾼다). 피드는 사진을 넘기는 곳이라 장수 표시를 아래(넘기는 손 쪽)에 둔다. 가로 스와이프로 여러 장(사진 수 = Counter 분모) |
+| 3 | **Actions** | 가로, padding 12 38 8 38, gap 18, 아이콘 24px fg/default. **Acorn** = `Action Count`(Type=Acorn, 누르면 Acorn given, 숫자 = 받은 도토리) → **Comment** = `Action Count`(Type=Comment, → 7.2) → **Share** `share` → (spacer) → **Save** `bookmark`(오른쪽 끝). Direct(`send`)는 숨김(DM은 4.5 Message로만 시작) |
+| 4 | **Caption block** | 세로, padding 0 38. **Caption** Body/M fg/default, **1줄 말줄임**. 캡션이 없으면 블록째 숨김(1219:18732). 해시태그 줄은 두지 않는다(요리 속성은 사진 위 Weather Tag와 7.1 태그 칩으로 보여 준다) |
 
 인터랙션:
 - Media 탭 → 7.1 Post detail(상세에서도 같은 Feed Post를 Media 숨김으로 재사용해 헤더·액션·캡션이 그대로 이어진다). 더블탭 → 도토리 주기(`acorn-color` 팝 애니메이션, 숫자 +1).
@@ -249,7 +249,7 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 |---|---|
 | Dish Tile (6.1 · 4.5 · 4.2 · 4.3 · 3.1, 167:208 미디어) | 좌하단 8 / 우하단 8 |
 | Food Card Grid (3.1 · 3.5 · 3.6 · 4.2 · 4.3) | 좌하단 8 / 우하단 8 |
-| **Feed Post Media**(홈 피드 · 4.4 · 6.4b · 8.3 피드 미리보기) | **좌상단 16 / 우상단 16**(태그) · Photo Counter **우하단 16** |
+| **Feed Post Media**(홈 피드 · 4.4 · 6.4b · 8.3 피드 미리보기) | Weather Tag **좌상단 18 / 18** · Photo Counter **좌하단 left 18 · bottom 16** |
 | 상세 hero (7.x · 8.3 · 6.4b) | 좌하단 16 / 우하단 16(시트 시작선 위) · Photo Counter 우상단 |
 | Story Card (홈 2.x, 4.1) | 카드 맨 아래 Tags 줄(좌우 24, 아래 24). 그 위에 Body + Cook(Avatar 40) |
 | Pick Card (2.5) | 카드 맨 아래 Tags 줄(좌우 20, 아래 20). 그 위에 Meta |

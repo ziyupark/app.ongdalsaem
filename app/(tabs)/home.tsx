@@ -1,6 +1,5 @@
 import { router } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
-import { supabase } from '../../src/lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useWashScroll } from '../../src/lib/useWashScroll';
@@ -8,17 +7,16 @@ import { syncPush } from '../../src/lib/push';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, ScreenWash } from '../../src/components/ScreenHeader';
 import { goTab, TabBar, useTabBarScroll, useTabFocusEffect } from '../../src/components/TabBar';
-import { LocationCard, NearbyCard, PickCard } from '../../src/components/home/Cards';
+import { LocationCard } from '../../src/components/home/Cards';
 import { FeedLoader } from '../../src/components/home/FeedLoader';
 import { FeedPost, type FeedPostData } from '../../src/components/home/FeedPost';
 import { HomeSkeleton } from '../../src/components/home/HomeSkeleton';
 import { WeatherCard, type SlotView } from '../../src/components/home/WeatherCard';
 import { Toast } from '../../src/components/Toast';
 import { LoadError } from '../../src/components/LoadError';
-import { mealAt, mealTimeline, type Meal } from '../../src/lib/meals';
+import { mealTimeline, type Meal } from '../../src/lib/meals';
 import { resetShareDraft, updateShareDraft } from '../../src/lib/shareDraft';
-import { useDietPrefs } from '../../src/lib/dietPrefs';
-import { fetchPool, pickForSlot, pickToday, sameGroup, type Ctx, type PoolDish } from '../../src/services/recommend';
+import { fetchPool, pickForSlot, sameGroup, type Ctx, type PoolDish } from '../../src/services/recommend';
 import { resetOnboardingForDev, signOut } from '../../src/services/auth';
 import { fetchFeed, fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
 import { timeAgo } from '../../src/lib/time';
@@ -26,9 +24,9 @@ import { displayTemp, usePrefs } from '../../src/lib/prefs';
 import { getHere, placeLabel, useHere } from '../../src/lib/useHere';
 import { postPlaceLine } from '../../src/services/location';
 import { alertOpenSettings, locationBlocked } from '../../src/lib/permissions';
-import { fetchMyFavoriteTags, saveLocationChoice } from '../../src/services/profile';
+import { saveLocationChoice } from '../../src/services/profile';
 import { tempAt, type Forecast } from '../../src/services/weather';
-import { space, useTheme, type WeatherMood } from '../../src/theme';
+import { space } from '../../src/theme';
 
 type HomeState =
   | { kind: 'loading' }
@@ -36,8 +34,6 @@ type HomeState =
   | { kind: 'location-off'; city: string };
 
 const DEFAULT_CITY = 'Seoul';
-/** Mood wash before the weather is known (2.6 evening tone falls back to overcast). */
-const FALLBACK_MOOD: WeatherMood = 'overcast';
 
 /** Empty slot → 8.1 with that meal ticked in 8.2 (Late ≈ dinner, Dawn ≈ breakfast). */
 const shareTag = (m: Meal) => (m === 'late' ? 'dinner' : m === 'dawn' ? 'breakfast' : m);
@@ -45,19 +41,12 @@ const shareTag = (m: Meal) => (m === 'late' ? 'dinner' : m === 'dawn' ? 'breakfa
 /** 2.1 Home · 2.7 Loading · 2.5 Location off — docs/04-screens/02-home.md. Dishes come from services/recommend (§6.1–6.2). */
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const bar = useTabBarScroll();
   usePrefs(); // re-render on °C / °F change
   const [realPosts, setRealPosts] = useState<FeedPostData[]>([]);
   const [pool, setPool] = useState<PoolDish[]>([]);
-  // My user id — Today's pick leaves out my own dishes.
-  const [myId, setMyId] = useState<string | null>(null);
-  useEffect(() => { supabase.auth.getSession().then(({ data }) => setMyId(data.session?.user.id ?? null)); }, []);
-  const [favoriteTags, setFavoriteTags] = useState<string[]>([]);
-  const diet = useDietPrefs();
-  useEffect(() => { fetchMyFavoriteTags().then(setFavoriteTags).catch(() => undefined); }, []);
-  // Feed (and Today's pick pool) failed — offline / server error. With no posts on screen, the feed shows Try again.
+  // Feed (and the picks pool) failed — offline / server error. With no posts on screen, the feed shows Try again.
   const [feedFailed, setFeedFailed] = useState(false);
   const [feedAttempt, setFeedAttempt] = useState(0);
   useTabFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, [feedAttempt]));
@@ -180,30 +169,6 @@ export default function HomeScreen() {
     router.push('/share/pick');
   };
 
-  // §6.2 Today's pick — today's weather family within ±1 °C (else the closest temperature), then meal · place · acorns · freshness (the mood prompt was removed in 2.1 19:191).
-  const pick = useMemo(
-    () => pickToday(pool, { ...(f ? { mood: f.mood, tempC: f.tempC } : {}), place, meal: mealAt(now), excludeCreator: myId, favoriteTags, diet }),
-    [pool, myId, favoriteTags, diet, f, now, ready?.city, ready?.district, state.kind === 'location-off' ? state.city : ''],
-  );
-  // Today's pick acorn: whether I gave one (from my marks) + my change since load, so the count moves at once.
-  const [pickAcorn, setPickAcorn] = useState<{ id: string | null; given: boolean; delta: number }>({ id: null, given: false, delta: 0 });
-  useEffect(() => {
-    if (!pick) return;
-    let alive = true;
-    setPickAcorn({ id: pick.id, given: false, delta: 0 });
-    fetchMyMarks([pick.id]).then((m) => alive && setPickAcorn({ id: pick.id, given: m.given.has(pick.id), delta: 0 })).catch(() => undefined);
-    return () => { alive = false; };
-  }, [pick?.id]);
-  const pickMark = pickAcorn.id === pick?.id ? pickAcorn : { given: false, delta: 0 };
-  const togglePickAcorn = () => {
-    if (!pick) return;
-    const on = !pickMark.given;
-    const step = on ? 1 : -1;
-    setPickAcorn((a) => ({ ...a, given: on, delta: a.delta + step }));
-    setAcorn(pick.id, on).catch(() => setPickAcorn((a) => ({ ...a, given: !on, delta: a.delta - step })));
-  };
-  const pickByline = pick ? [pick.creator.name, postPlaceLine(pick), timeAgo(pick.createdAt, t)].filter(Boolean).join(' · ') : '';
-
   // Feed (Block · feed 123:3261 — no title / chips): posts from today's weather. Same weather family only
   // (rain · snow · clear · grey); closest first — same weather → nearer temperature → newer. Without weather: newest.
   const posts = (() => {
@@ -227,6 +192,18 @@ export default function HomeScreen() {
   const detail = f ? t('home.hiLo', { hi: displayTemp(f.hi), lo: displayTemp(f.lo) }) : t('home.retry');
   const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
+  // Block · feed 123:3261 — padding-top 40, gap 24. Under the Weather card (2.1); under the location card when location is off.
+  const feed = (
+    <View style={styles.feed}>
+      {feedFailed && !posts.length ? <LoadError onRetry={() => { setFeedFailed(false); setFeedAttempt((n) => n + 1); }} /> : null}
+      {posts.map((p) => (
+        <HomePost key={p.id} post={p} />
+      ))}
+      {posts.length >= 20 ? <FeedLoader /> : null}
+      <View style={{ height: 96 }} />
+    </View>
+  );
+
   // Transparent root: the global WeatherBackdrop (bg/default + wash + weather motion) shows through.
   return (
     <View style={styles.root}>
@@ -239,7 +216,7 @@ export default function HomeScreen() {
         scrollEnabled={state.kind !== 'loading'}
         keyboardShouldPersistTaps="handled"
       >
-        <ScreenHeader right="notifications" onLogoLongPress={devMenu} />
+        <ScreenHeader right="notifications" onLogoLongPress={devMenu} withWeather />
         {state.kind === 'loading' ? (
           <View>
             <HomeSkeleton />
@@ -249,25 +226,7 @@ export default function HomeScreen() {
             <View style={styles.px}>
               <LocationCard onChooseCity={() => router.push('/settings/city')} onAllowLocation={allowLocation} busy={allowing} />
             </View>
-            <View style={styles.pickBlock}>
-              {pick ? (
-                <PickCard
-                  headingKey="home.todaysPick"
-                  photo={{ uri: pick.photo }}
-                  title={pick.name}
-                  byline={pickByline}
-                  cookName={pick.creator.name}
-                  cookAvatar={pick.creator.avatarUrl}
-                  mood={pick.mood ?? FALLBACK_MOOD}
-                  tempC={pick.tempC ?? 0}
-                  acorns={pick.acorns + pickMark.delta}
-                  given={pickMark.given}
-                  onAcorn={togglePickAcorn}
-                  onPress={() => router.push(`/dish/${pick.id}`)}
-                />
-              ) : null}
-            </View>
-            <View style={{ height: 110 }} />
+            {feed}
           </View>
         ) : (
           <View>
@@ -285,35 +244,7 @@ export default function HomeScreen() {
                 onSlotPress={(s) => onSlot(slots.indexOf(s))}
               />
             </View>
-            <View style={styles.pickBlock}>
-              {pick ? (
-                <>
-                  <PickCard
-                    headingKey="home.todaysPick"
-                    photo={{ uri: pick.photo }}
-                    title={pick.name}
-                    byline={pickByline}
-                    cookName={pick.creator.name}
-                    cookAvatar={pick.creator.avatarUrl}
-                    mood={pick.mood ?? f?.mood ?? FALLBACK_MOOD}
-                    tempC={pick.tempC ?? f?.tempC ?? 0}
-                    acorns={pick.acorns + pickMark.delta}
-                    given={pickMark.given}
-                    onAcorn={togglePickAcorn}
-                    onPress={() => router.push(`/dish/${pick.id}`)}
-                  />
-                  <NearbyCard title={t('home.similarBites')} meta={t('home.similarBitesMeta')} onPress={() => router.push({ pathname: '/nearby', params: { dish: pick.name, photo: pick.photo } })} />
-                </>
-              ) : null}
-            </View>
-            <View style={styles.feed}>
-              {feedFailed && !posts.length ? <LoadError onRetry={() => { setFeedFailed(false); setFeedAttempt((n) => n + 1); }} /> : null}
-              {posts.map((p) => (
-                <HomePost key={p.id} post={p} />
-              ))}
-              {posts.length >= 20 ? <FeedLoader /> : null}
-              <View style={{ height: 96 }} />
-            </View>
+            {feed}
           </View>
         )}
       </ScrollView>
@@ -324,7 +255,7 @@ export default function HomeScreen() {
   );
 }
 
-/** A feed post with its handlers built from the post itself, so Home re-renders (toast, pick, weather…) skip unchanged posts. */
+/** A feed post with its handlers built from the post itself, so Home re-renders (toast, weather…) skip unchanged posts. */
 const HomePost = memo(function HomePost({ post: p }: { post: FeedPostData }) {
   return (
     <FeedPost
@@ -340,9 +271,8 @@ const HomePost = memo(function HomePost({ post: p }: { post: FeedPostData }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  // Body under ScreenHeader (its 12 bottom = the old title → card gap).
+  // Body under ScreenHeader (withWeather: its 18 bottom = title → Weather card).
   px: { paddingHorizontal: space[20] },
-  pickBlock: { paddingTop: space[16], paddingHorizontal: space[20], gap: space[16] },
   // Block · feed: padding-top 40, gap 24 between Feed Posts (each also keeps its own 24 bottom padding).
   feed: { paddingTop: space[40], gap: space[24] },
 });

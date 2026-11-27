@@ -1,14 +1,13 @@
 import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goTab } from '../../src/components/TabBar';
-import { StatusBar } from 'expo-status-bar';
-import { ChefHat, ChevronLeft, ChevronRight, Timer, Utensils } from '../../src/components/icons/ongdal';
+import { ChefHat, ChevronLeft, ChevronRight, Utensils } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '../../src/components/Button';
 import { AddToPlanSheet } from '../../src/components/profile/WeekPlan';
+import { SectionHeader } from '../../src/components/community/Parts';
 import { CommentsInline } from '../../src/components/dish/CommentsInline';
 import { DishTile } from '../../src/components/dish/DishTile';
 import { type DishViewData } from '../../src/components/dish/DishView';
@@ -16,6 +15,8 @@ import { PostView } from '../../src/components/dish/PostView';
 import { ReportSheet } from '../../src/components/dish/ReportSheet';
 import { ShareSheet } from '../../src/components/dish/ShareSheet';
 import { Icon } from '../../src/components/Icon';
+import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
+import { useWashScroll } from '../../src/lib/useWashScroll';
 import { InlineBanner } from '../../src/components/InlineBanner';
 import { Text } from '../../src/components/Text';
 import { Toast } from '../../src/components/Toast';
@@ -28,7 +29,7 @@ import {
   ateToday as fetchAteToday, deleteDish, editDraftFrom, fetchCookedFrom, fetchDish, fetchMoreFrom, fetchRecipeAuthor, fetchMyMarks, logEaten, setAcorn, setSaved, unlogEaten, type Dish, type DishSummary, type Person,
 } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
-import { iconRing, radius, space, useTheme } from '../../src/theme';
+import { radius, space, useTheme } from '../../src/theme';
 import { LoadError } from '../../src/components/LoadError';
 import { postPlaceLine } from '../../src/services/location';
 
@@ -44,6 +45,10 @@ export default function PostDetail() {
   const { color } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  // My current weather behind the post: the wash + weather motion, drawn in this (opaque, pushed) screen.
+  const wash = useWashScroll();
+  const backInk = useScreenInk(0.08);
+  const cookInk = useScreenInk(0.2);
   const [state, setState] = useState<State>({ kind: 'loading' });
   const [more, setMore] = useState<DishSummary[]>([]);
   // "I made this": who cooked from this recipe · the recipe this one was cooked from.
@@ -168,17 +173,11 @@ export default function PostDetail() {
     if (!dish) return;
     const st = dish.steps[i];
     if (!st?.timerSec) return;
-    await startTimer(st.text.length > 40 ? `${st.text.slice(0, 40)}…` : st.text, st.timerSec, {
+    // The step's text is the timer's name (5.1_0 food name). Pushed over this post, so back returns here.
+    await startTimer(st.text, st.timerSec, {
       foodId: dish.id, dishName: dish.name, step: i + 1, stepCount: dish.steps.length, next: dish.steps[i + 1]?.text,
     });
-    goTab('timer');
-  };
-
-  const cookAlong = () => {
-    if (!dish) return;
-    const first = dish.steps.findIndex((s) => !!s.timerSec);
-    if (first >= 0) return startStep(first);
-    goTab('timer');
+    router.push('/cook-timer');
   };
 
   const onMore = () => {
@@ -223,10 +222,10 @@ export default function PostDetail() {
   if (state.kind !== 'ready' || !view || !dish) {
     return (
       <View style={[styles.root, { backgroundColor: color('bg/default'), paddingTop: insets.top }]}>
-        <StatusBar style="auto" />
+        <ScreenWash wash={wash} local motion />
         <View style={styles.backRow}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[8]} onPress={() => router.back()}>
-            <Icon icon={ChevronLeft} size={24} />
+            <Icon icon={ChevronLeft} size={24} color={backInk?.strong} />
           </Pressable>
         </View>
         <View style={styles.center}>
@@ -263,14 +262,6 @@ export default function PostDetail() {
         <Text variant="Button/M" color={ate ? 'fg/accent' : 'fg/inverse'}>{t(ate ? 'dish.youAte' : 'dish.ateThis')}</Text>
         <Text variant="Body/S" color={ate ? 'fg/accent' : 'fg/inverse'} style={styles.dim}>{`· ${eaten}`}</Text>
       </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t('dish.cookAlong')}
-        onPress={cookAlong}
-        style={[styles.cook, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}
-      >
-        <Icon icon={Timer} size={22} />
-      </Pressable>
     </>
   );
 
@@ -278,19 +269,12 @@ export default function PostDetail() {
     <CommentsInline
       foodId={dish.id}
       allowComments={dish.allowComments || mine}
-      me={me ? { id: me.id, name: me.displayName ?? me.username ?? '', avatarUrl: me.avatarUrl } : null}
+      me={me ? { id: me.id, name: me.username ?? me.displayName ?? '', avatarUrl: me.avatarUrl } : null}
       dishOwnerId={dish.creator.id}
       onCountChange={onCount}
     />
   );
 
-  // "I made this" opens the share flow with this recipe's name and ingredients; the new post keeps cooked_from_id.
-  const canCookThis = !mine && dish.type === 'home' && dish.ingredients.length > 0;
-  const madeThis = () => {
-    resetShareDraft();
-    updateShareDraft({ type: 'home', name: dish.name, ingredients: dish.ingredients.map((i) => ({ name: i.name, amount: i.amount })), cookedFromId: dish.id });
-    router.push('/share/pick');
-  };
   const cookedFrom = mine && dish.cookedFromId && recipeAuthor && recipeAuthor.id !== me?.id ? (
     <Pressable accessibilityRole="link" onPress={() => router.push(`/dish/${dish.cookedFromId}`)} style={[styles.fromLink, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
       <Icon icon={ChefHat} size={18} color="fg/accent" />
@@ -298,7 +282,7 @@ export default function PostDetail() {
       <Icon icon={ChevronRight} size={18} color="fg/secondary" />
     </Pressable>
   ) : null;
-  const made = cookedBy?.cooks || canCookThis || cookedFrom ? (
+  const made = cookedBy?.cooks || cookedFrom ? (
     <View style={styles.made}>
       {cookedFrom ? <View style={styles.px}>{cookedFrom}</View> : null}
       {cookedBy?.cooks ? (
@@ -314,27 +298,22 @@ export default function PostDetail() {
           </ScrollView>
         </View>
       ) : null}
-      {canCookThis ? <View style={styles.px}><Button label={t('dish.madeThis')} icon={ChefHat} variant="Outline" size="M" onPress={madeThis} /></View> : null}
     </View>
   ) : null;
 
+  // More from <name> (601:13045) — py 20 · gap 12: SectionHeader (title + `chevron-right` 20 = See all) → Dish Tile 02 (131) row, gap 8.
   const moreFrom = more.length ? (
     <View style={styles.more}>
-      <View style={styles.moreHead}>
-        <Text variant="Title/L" style={styles.flex} numberOfLines={1}>{t('dish.moreFrom', { name: firstName })}</Text>
-        <Pressable accessibilityRole="button" onPress={openAuthor}>
-          <Text variant="Body/S Strong" color="fg/muted">{t('dish.seeAll')}</Text>
-        </Pressable>
-      </View>
+      <SectionHeader title={t('dish.moreFrom', { name: firstName })} onMore={openAuthor} moreLabel={t('dish.seeAll')} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.moreRow}>
-        {more.map((m) => <DishTile key={m.id} dish={m} width={128} onPress={() => router.push(`/dish/${m.id}`)} />)}
+        {more.map((m) => <DishTile key={m.id} dish={m} width={131} compact onPress={() => router.push(`/dish/${m.id}`)} />)}
       </ScrollView>
     </View>
   ) : null;
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <StatusBar style="auto" />
+      <ScreenWash wash={wash} local motion />
       <PostView
         dish={view}
         given={given}
@@ -352,6 +331,8 @@ export default function PostDetail() {
         comments={comments}
         more={made || moreFrom ? <>{made}{moreFrom}</> : null}
         scrollToComments={openComments === '1'}
+        onScrollY={wash.onY}
+        topInk={cookInk ? { strong: cookInk.strong, muted: cookInk.muted, secondary: cookInk.secondary } : undefined}
         banner={offline ? (
           <InlineBanner text={t('dish.offlineCopy')} />
         ) : undefined}
@@ -387,7 +368,7 @@ const styles = StyleSheet.create({
   backRow: { paddingHorizontal: space[16], paddingVertical: space[12] },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[6], paddingHorizontal: space[40] },
   flex: { flex: 1 },
-  more: { paddingTop: space[32], gap: space[8] },
+  more: { paddingVertical: space[20], gap: space[12] },
   px: { paddingHorizontal: space[20] },
   made: { paddingTop: space[32], gap: space[16] },
   madeList: { gap: space[10] },
@@ -395,9 +376,7 @@ const styles = StyleSheet.create({
   madeItem: { width: 64, alignItems: 'center', gap: space[4] },
   madePhoto: { width: 56, height: 56, borderRadius: radius.full },
   fromLink: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1 },
-  moreHead: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: space[20], gap: space[12] },
-  moreRow: { gap: space[16], paddingHorizontal: space[20] },
+  moreRow: { gap: space[8], paddingHorizontal: space[20] },
   ate: { flex: 1, height: 52, borderRadius: radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
   dim: { opacity: 0.7 },
-  cook: { width: 48, height: 48, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
 });

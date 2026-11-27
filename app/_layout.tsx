@@ -68,6 +68,8 @@ function Root() {
         {/* 8.x share flow: no swipe-back mid-form (X asks before discarding). */}
         <Stack.Screen name="share/pick" options={{ animation: 'slide_from_bottom', gestureEnabled: false }} />
         <Stack.Screen name="share/details" options={{ gestureEnabled: false }} />
+        {/* 8.1a Edit photo: Cancel asks before dropping edits, so no swipe-back. */}
+        <Stack.Screen name="share/edit" options={{ animation: 'fade', gestureEnabled: false }} />
         {/* Dev only: weather mood preview, a sheet over the tabs so the backdrop stays visible. */}
         <Stack.Screen name="dev/weather" options={{ presentation: 'transparentModal', animation: 'fade', contentStyle: { backgroundColor: 'transparent' } }} />
       </Stack>
@@ -82,7 +84,7 @@ export default function RootLayout() {
   const [coreLoaded] = useFonts(coreFontFiles);
   const [koreanLoaded] = useFonts(koreanFontFiles);
   const [prefsReady, setPrefsReady] = useState(false);
-  const { appearance, language } = usePrefs();
+  const { language } = usePrefs();
   useEffect(() => { loadPrefs().finally(() => setPrefsReady(true)); }, []);
   const loaded = coreLoaded && prefsReady && (koreanLoaded || (language ?? deviceLanguage()) !== 'ko');
   usePushSync();
@@ -94,7 +96,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider appearance={appearance}>
+        <ThemeProvider>
           <Root />
         </ThemeProvider>
       </SafeAreaProvider>

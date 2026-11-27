@@ -1,4 +1,4 @@
-import { Clock, CloudSun, Timer, Users } from '../../src/components/icons/ongdal';
+import { Clock, CloudSun, Plus, Timer, Users } from '../../src/components/icons/ongdal';
 import { MessageCircle } from '../../src/components/icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,11 +6,11 @@ import { Alert } from 'react-native';
 import { AcornIcon } from '../../src/components/AcornIcon';
 import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components/settings/Settings';
 import { Toggle } from '../../src/components/Toggle';
-import { setPrefs, usePrefs } from '../../src/lib/prefs';
+import { MAX_PICK_TIMES, setPrefs, usePrefs } from '../../src/lib/prefs';
 import { syncPush } from '../../src/lib/push';
 import { fetchAccount, updateAccount } from '../../src/services/settings';
 
-const PICK_TIMES = ['07:00', '07:30', '08:00', '09:00', '11:30', '17:30'];
+const PICK_TIMES = ['07:00', '07:30', '08:00', '09:00', '11:30', '12:00', '15:00', '17:30', '18:00', '20:00'];
 
 /** 9.4 Notifications (Figma 193:6391). Activity / For you toggles are kept on this device; Ads & events is saved to the account. */
 export default function NotificationSettings() {
@@ -47,13 +47,37 @@ export default function NotificationSettings() {
       </SettingsGroup>
       <SettingsGroup label={t('settings.forYou')}>
         <SettingsRow icon={CloudSun} label={t('settings.nDailyPick')} right={<Toggle accessibilityLabel={t('settings.nDailyPick')} value={prefs.notify.dailyPick} onValueChange={(v) => { toggle('dailyPick')(v); if (v) syncPush({ ask: true }); }} />} />
-        <SettingsRow
-          icon={Clock}
-          label={t('settings.pickTime')}
-          value={label(prefs.pickTime)}
-          disabled={!prefs.notify.dailyPick}
-          onPress={() => Alert.alert(t('settings.pickTime'), undefined, [...PICK_TIMES.map((p) => ({ text: label(p), onPress: () => setPrefs({ pickTime: p }) })), { text: t('common.cancel'), style: 'cancel' as const }])}
-        />
+        {prefs.pickTimes.map((time, i) => (
+          <SettingsRow
+            key={time}
+            icon={Clock}
+            label={t('settings.pickTime')}
+            value={label(time)}
+            disabled={!prefs.notify.dailyPick}
+            onPress={() => Alert.alert(t('settings.pickTime'), undefined, [
+              // Times already in the list aren't offered again (a time is sent once).
+              ...PICK_TIMES.filter((p) => p === time || !prefs.pickTimes.includes(p)).map((p) => ({
+                text: label(p),
+                onPress: () => setPrefs({ pickTimes: prefs.pickTimes.map((x, j) => (j === i ? p : x)) }),
+              })),
+              ...(prefs.pickTimes.length > 1
+                ? [{ text: t('settings.removePickTime'), style: 'destructive' as const, onPress: () => setPrefs({ pickTimes: prefs.pickTimes.filter((_, j) => j !== i) }) }]
+                : []),
+              { text: t('common.cancel'), style: 'cancel' as const },
+            ])}
+          />
+        ))}
+        {prefs.pickTimes.length < MAX_PICK_TIMES ? (
+          <SettingsRow
+            icon={Plus}
+            label={t('settings.addPickTime')}
+            disabled={!prefs.notify.dailyPick}
+            onPress={() => Alert.alert(t('settings.addPickTime'), undefined, [
+              ...PICK_TIMES.filter((p) => !prefs.pickTimes.includes(p)).map((p) => ({ text: label(p), onPress: () => setPrefs({ pickTimes: [...prefs.pickTimes, p] }) })),
+              { text: t('common.cancel'), style: 'cancel' as const },
+            ])}
+          />
+        ) : null}
         <SettingsRow icon={Timer} label={t('settings.nTimer')} right={<Toggle accessibilityLabel={t('settings.nTimer')} value={prefs.notify.timer} onValueChange={toggle('timer')} />} />
       </SettingsGroup>
       <SettingsGroup label={t('settings.adsEvents')} note={t('settings.adsNote')}>

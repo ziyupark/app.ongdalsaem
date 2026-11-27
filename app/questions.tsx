@@ -143,9 +143,6 @@ export default function Questions() {
     return (
       <Pressable accessibilityRole="button" onPress={() => router.push(`/question/${q.id}`)} style={styles.row}>
         <View style={styles.top}>
-          <View style={[styles.tag, { backgroundColor: color('bg/subtle') }]}>
-            <Text variant="Caption" color="fg/secondary">{t(`ask.categories.${q.category}`)}</Text>
-          </View>
           <View style={styles.flex} />
           <Pressable accessibilityRole="button" accessibilityLabel={t('home.more')} hitSlop={space[10]} onPress={() => menu(q)}>
             <Icon icon={EllipsisVertical} size={20} color="fg/muted" />
@@ -264,7 +261,6 @@ const styles = StyleSheet.create({
   divider: { height: 1 },
   row: { paddingVertical: space[16], gap: space[8] },
   top: { flexDirection: 'row', alignItems: 'center' },
-  tag: { paddingHorizontal: space[8], paddingVertical: space[2], borderRadius: radius.full },
   body: { flexDirection: 'row', alignItems: 'center', gap: space[12] }, // text (≤ 2 + 1 lines) centred on the photo
   text: { gap: space[4] },
   photo: { width: FAB_SIZE, height: FAB_SIZE, borderRadius: radius.md }, // = expanded Create FAB

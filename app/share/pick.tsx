@@ -15,6 +15,7 @@ import { Text } from '../../src/components/Text';
 import { Toast } from '../../src/components/Toast';
 import { CHALLENGE_PHOTOS, getShareDraft, resetShareDraft, updateShareDraft, useShareDraft, type DraftPhoto } from '../../src/lib/shareDraft';
 import { alertOpenSettings } from '../../src/lib/permissions';
+import { loadPhotoEditor } from '../../src/lib/optionalNative';
 import { FIXED_BUTTON_BOTTOM, radius, space, useTheme, withAlpha } from '../../src/theme';
 
 const MAX_PHOTOS = 10;
@@ -134,6 +135,7 @@ export default function PickPhotos() {
       updateShareDraft({ photos: next });
     };
     Alert.alert(t('share.photoN', { n: i + 1 }), undefined, [
+      { text: t('share.editPhoto'), onPress: () => (loadPhotoEditor() ? router.push({ pathname: '/share/edit', params: { i: String(i) } }) : Alert.alert(t('shareSheet.needsRebuild'))) },
       ...(i > 0 ? [{ text: t('share.makeCover'), onPress: () => move(0) }, { text: t('share.moveLeft'), onPress: () => move(i - 1) }] : []),
       ...(i < selected.length - 1 ? [{ text: t('share.moveRight'), onPress: () => move(i + 1) }] : []),
       { text: t('share.removePhotoOption'), style: 'destructive' as const, onPress: () => updateShareDraft({ photos: selected.filter((_, k) => k !== i) }) },
@@ -157,10 +159,11 @@ export default function PickPhotos() {
     try {
       const resolved: DraftPhoto[] = await Promise.all(
         selected.map(async (p) => {
-          if (p.id.startsWith('camera-') || p.remoteUrl) return p;
+          if (p.id.startsWith('camera-') || p.id.startsWith('remote-') || p.remoteUrl) return p;
           try {
-            const info = await MediaLibrary.getAssetInfoAsync(p.id, { shouldDownloadFromNetwork: true });
-            return { ...p, fileUri: info.localUri ?? p.uri, location: info.location ?? undefined, takenAt: info.creationTime ? new Date(info.creationTime) : p.takenAt };
+            // An edited photo (8.1a) uploads its edited file; only time and place come from the library.
+            const info = await MediaLibrary.getAssetInfoAsync(p.id, { shouldDownloadFromNetwork: !p.edit });
+            return { ...p, fileUri: p.edit ? p.fileUri : info.localUri ?? p.uri, location: info.location ?? undefined, takenAt: info.creationTime ? new Date(info.creationTime) : p.takenAt };
           } catch {
             return p;
           }

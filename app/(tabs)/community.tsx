@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Chip } from '../../src/components/Chip';
 import {
-  Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, FlagTag, ViralBadge,
+  Avatar, FoodRow, PhotoCard, SectionHeader, MoreButton, useMyId, useReportMenu,
 } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
 import { ChallengesTab } from '../../src/components/community/ChallengesTab';
@@ -23,12 +23,11 @@ import { UnderlineTabs } from '../../src/components/UnderlineTabs';
 import { Text } from '../../src/components/Text';
 import { CUSTOM_MOOD_ICON, MOOD_TAGS } from '../../src/lib/tags';
 import { timeAgo } from '../../src/lib/time';
-import { follow } from '../../src/services/activity';
 import {
-  fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay, fetchSuggestedPlates,
-  fetchViralBites, localDate, localMidnight, topTags, type CardDish, type FollowingItem, type ViralItem,
+  fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay,
+  localDate, localMidnight, topTags, type CardDish,
 } from '../../src/services/community';
-import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
+import { Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
 import { fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
 import { cellsAround } from '../../src/lib/geohash';
 import { useHere } from '../../src/lib/useHere';
@@ -226,6 +225,7 @@ export default function Community() {
           <UnderlineTabs
             ink={tabInk}
             contentStyle={styles.tabRow}
+            labelVariant="Title/M"
             value={seg}
             onChange={(k) => goTo(k)}
             progress={pos}
@@ -314,7 +314,6 @@ function HeroTitle({ k }: { k: string }) {
 function Global() {
   const { t, i18n } = useTranslation();
   const [dishes, setDishes] = useState<CardDish[] | null>(null);
-  const [viral, setViral] = useState<ViralItem[]>([]);
   const [story, setStory] = useState<CardDish | null>(null);
   // Story of the day fetched (or failed) — Popular today waits for it so the two never show the same post.
   const [storyReady, setStoryReady] = useState(false);
@@ -335,9 +334,17 @@ function Global() {
 
   // Popular dishes (and Trending tags) failed to load — offline / server error. A banner with Try again, not empty sections.
   const [failed, setFailed] = useState(false);
+  // Bumped after blocking someone: Our area (Popular today · questions) loads again too.
+  const [reload, setReload] = useState(0);
+  const me = useMyId();
+  // Story of the day = today's pick for my weather (mood + temp ±1). Waits for the forecast (cached one counts).
+  const { here } = useHere();
+  const wxReady = here.status !== 'loading' || !!here.forecast;
+  const wxMood = here.forecast?.mood ?? null;
+  const wxTemp = here.forecast?.tempC ?? null;
   const load = useCallback(() => {
-      fetchViralBites().then(setViral).catch(() => undefined);
-      fetchStoryOfTheDay().then(async (d) => {
+      if (!wxReady) return;
+      fetchStoryOfTheDay(wxMood && wxTemp != null ? { mood: wxMood, tempC: wxTemp } : null).then(async (d) => {
         setStory(d);
         setStoryReady(true);
         if (!d) return;
@@ -351,8 +358,10 @@ function Global() {
         const marks = await fetchMyMarks(l.map((d) => d.id)).catch(() => null);
         if (marks) setSavedIds((s) => new Set([...s, ...marks.saved]));
       }).catch(() => setFailed(true));
-  }, []);
+  }, [wxReady, wxMood, wxTemp]);
   useTabFocusEffect(useCallback(() => { load(); }, [load]));
+  // ⋯ → report / block (7.3). Blocking reloads every section — RLS then leaves that cook out of all of them.
+  const report = useReportMenu(() => { setReload((n) => n + 1); load(); });
   const tags = useMemo(() => (dishes ? topTags(dishes, 'moods', 6) : []), [dishes]);
   useEffect(() => { if (tags.length && (!tag || !tags.includes(tag))) setTag(tags[0]); }, [tags, tag]);
   const tagged = (dishes ?? []).filter((d) => tag && d.moods.includes(tag)).slice(0, 3);
@@ -374,18 +383,25 @@ function Global() {
       saved={saved.has(d.id)}
       onSave={() => toggleSave(d.id)}
       onPress={() => router.push(`/dish/${d.id}`)}
+      onMore={d.creator.id !== me ? () => report.open({ kind: 'dish', id: d.id, owner: d.creator }) : undefined}
     />
   );
 
-  // Explore: Story of the day → Our area → Trending Bites → Trending tags → Holidays around the world.
+  // Explore (4.1 1113:25908 · 1219:15437 — py 28, sections 38 apart): Story of the day → Popular today → Neighbourhood
+  // questions → Trending tags → Special days around the world.
   return (
-    <View>
+    <View style={styles.explore}>
       {failed && !dishes ? <LoadError onRetry={load} /> : null}
-      {/* Group 88:3081 — p22 20 0 · gap 6: SectionHeader → Story Card 350×400. */}
+      {/* Group 1113:25926 — px 20 · gap 16: title → Story Card 350×420. */}
       {story ? (
-        <View style={[styles.sectionS, styles.px, styles.storyTop]}>
+        <View style={[styles.px, styles.storyGroup]}>
           <HeroTitle k="community.story" />
-          <PhotoCard photo={story.photo} width={0} height={400} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
+          <PhotoCard photo={story.photo} width={0} height={420} label={story.name} onPress={() => router.push(`/dish/${story.id}`)} style={styles.story}>
+            {story.creator.id !== me ? (
+              <View style={styles.storyMore}>
+                <MoreButton color="fg/on-photo" onPress={() => report.open({ kind: 'dish', id: story.id, owner: story.creator })} />
+              </View>
+            ) : null}
             <View style={styles.storyFoot}>
               <View style={styles.storyBody}>
                 <View style={[styles.flex, styles.storyText]}>
@@ -413,36 +429,13 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Our area — today's table: popular today · questions + Ask (or turn location on). */}
-      <OurArea excludeId={storyReady ? story?.id ?? null : undefined} />
+      {/* Our area — Popular today · Neighbourhood questions + Ask (or turn location on). */}
+      <OurArea excludeId={storyReady ? story?.id ?? null : undefined} reload={reload} onMore={report.open} />
 
-      {/* Viral Bites 88:3078 — p42 · gap 6: header → Country Cards 280×180, gap 12. Editor picks first, then rising dishes. */}
-      {viral.length ? (
-        <View style={styles.sectionS}>
-          <SectionHeader title={t('community.viralBites')} />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-            {viral.map((v) => (
-              <PhotoCard key={v.key} photo={v.photo!} width={280} height={180} label={v.name} onPress={() => router.push({ pathname: '/viral/[name]', params: { name: v.name } })} style={styles.countryCard} scrim="bottom">
-                {/* Country Card: p14 18, content at the bottom (gap 10): Display/M name → tags; Flag Tag · Viral badge pinned at 18, 12. */}
-                <View style={styles.countryFlag}>
-                  {v.country ? <FlagTag code={v.country} /> : null}
-                  <ViralBadge item={v} />
-                </View>
-                <Text variant="Display/M" color="fg/on-photo" numberOfLines={1}>{v.name}</Text>
-                <View style={styles.tagRow}>
-                  {v.cover?.mood && v.cover.tempC != null ? <WeatherTag mood={v.cover.mood} tempC={v.cover.tempC} condition={t(`weather.${v.cover.mood}`)} /> : <View />}
-                  {v.cover ? <AcornTag count={v.cover.acorns} /> : null}
-                </View>
-              </PhotoCard>
-            ))}
-          </ScrollView>
-        </View>
-      ) : null}
-
-      {/* Trending tags 435:366 — p42 · gap 9: header → chips → up to 3 Food Cards (rows inset p4, gap 12). */}
+      {/* Group · Trending tags 1113:25982 — gap 16: header → chips → up to 3 Food Cards (rows inset p4, gap 12). */}
       {tags.length ? (
-        <View style={styles.sectionM}>
-          <SectionHeader title={t('community.trendingTags')} onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
+        <View style={styles.group16}>
+          <SectionHeader title={t('community.trendingTags')} moreColor="fg/default" onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
             {tags.map((k) => <Chip key={k} label={tagLabel(k)} icon={MOOD_TAGS.find((m) => m.key === k)?.icon ?? CUSTOM_MOOD_ICON} selected={tag === k} onPress={() => setTag(k)} />)}
           </ScrollView>
@@ -450,119 +443,86 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 398:9710 — p42 · gap 6: title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
-      <View style={styles.sectionS}>
-        <SectionHeader title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
+      {/* Group · Festive 1113:25999 — gap 16: title · chevron 24 (→ all holidays), then 168×196 Festive Cards, gap 12. */}
+      <View style={styles.group16}>
+        <SectionHeader title={t('community.festiveTitle')} moreColor="fg/default" moreSize={24} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
           {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
         </ScrollView>
       </View>
-
+      {report.sheet}
     </View>
   );
 }
 
 // ------------------------------------------------------------------------------------------------ Table (4.4)
 
-/** Plates per day before "See more" (3 rows × 3). */
-const TABLE_PLATES = 9;
+/** Plates before "See more": today 3 rows × 3, earlier days 2 rows × 3. */
+const TODAY_PLATES = 9;
+const PAST_PLATES = 6;
 
-const toPlate = (d: CardDish, label = d.name): PlateItem => ({
-  id: d.id, photo: d.photo, label, cook: { id: d.creator.id, name: d.creator.handle ?? d.creator.name, avatarUrl: d.creator.avatarUrl },
+const toPlate = (d: CardDish): PlateItem => ({
+  id: d.id, photo: d.photo, label: d.name, cook: { id: d.creator.id, name: d.creator.handle ?? d.creator.name, avatarUrl: d.creator.avatarUrl },
 });
 
-/** Days of neighbours' plates (③): today and the two days before. */
-const NEIGHBOR_DAYS = 3;
+/** Days on the table: today and the 13 days before (2 weeks). */
+const TABLE_DAYS = 14;
 
 /**
- * 4.4 Community · Table (Figma 730:11217) — "Neighbors' Table" title, then one table per local day (today · yesterday ·
- * then the date). Each table: ① my seat (today: my dish or an empty dashed plate → share flow) → ② dishes of the cooks
- * I follow → ③ neighbours I don't follow yet (area cell → neighbouring cells → district, max 9, each with "+ Follow";
- * following one moves their plates to ② at once). 4.4b (732:11288) — no follows and no neighbours: popular cooks to follow.
+ * 4.4 Community · Table (Figma 730:11217) — "Neighbors' Table" title, then one table per local day over the last 2 weeks
+ * (today always · then days with plates: yesterday · the date). Each table = my posts and neighbours' posts that day
+ * (area cell → neighbouring cells → district), in the order they were posted. No follow buttons, no empty seat.
  */
 function Following() {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const { here } = useHere();
-  const [feed, setFeed] = useState<FollowingItem[] | null>(null);
-  const [mine, setMine] = useState<CardDish[]>([]);
-  const [followees, setFollowees] = useState<number | null>(null);
+  const [mine, setMine] = useState<CardDish[] | null>(null);
   const [neighbors, setNeighbors] = useState<CardDish[]>([]);
-  const [suggest, setSuggest] = useState<CardDish[]>([]);
-  // Cooks followed on this screen (neighbour plates → ②, suggested cooks' button state) until the next load.
-  const [followed, setFollowed] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState<Set<string>>(new Set());
 
   const district = here.place?.district ?? null;
   const city = here.place?.city ?? null;
   const load = useCallback(async () => {
     if (here.status === 'loading') return;
-    try {
-      const since = localMidnight();
-      since.setDate(since.getDate() - 1);
-      const idsReq = fetchFolloweeIds();
-      const [list, ids, my] = await Promise.all([idsReq.then((f) => fetchFollowingFeed('people', f)), idsReq, fetchMyDishesSince(since)]);
-      const from = localMidnight();
-      from.setDate(from.getDate() - (NEIGHBOR_DAYS - 1));
-      const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : [];
-      const near = await fetchNeighborPlates({ cell: here.cell, cells, district, city }, from, ids).catch(() => [] as CardDish[]);
-      setFeed(list);
-      setMine(my);
-      setFollowees(ids.length);
-      setNeighbors(near);
-      setFollowed(new Set());
-      if (!ids.length && !near.length) fetchSuggestedPlates(3, ids).then(setSuggest).catch(() => undefined);
-    } catch {
-      setFeed((f) => f ?? []);
-      setFollowees((n) => n ?? 0);
-    }
+    const from = localMidnight();
+    from.setDate(from.getDate() - (TABLE_DAYS - 1));
+    const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : [];
+    const [my, near] = await Promise.all([
+      fetchMyDishesSince(from).catch(() => [] as CardDish[]),
+      fetchNeighborPlates({ cell: here.cell, cells, district, city }, from).catch(() => [] as CardDish[]),
+    ]);
+    setMine(my);
+    setNeighbors(near);
   }, [here.status, here.coords, here.cell, district, city]);
   useTabFocusEffect(useCallback(() => { load(); }, [load]));
 
   const day = (d: Date) => d.toLocaleDateString(i18n.language, { weekday: 'long', month: 'short', day: 'numeric' });
 
-  // Group by local date: today always first, yesterday when you posted then, then every day with followed or neighbour plates.
-  // ② = followed cooks (+ neighbours followed just now, newest first) · ③ = the other neighbours.
+  // Group by local date: today always first, then every day with plates, newest day first; plates oldest post first.
   const tables = useMemo(() => {
-    if (!feed) return [];
+    if (!mine) return [];
     const now = new Date();
     const y = new Date(now);
     y.setDate(y.getDate() - 1);
     const today = localDate(now);
     const yesterday = localDate(y);
-    const byDay = new Map<string, { date: Date; follows: CardDish[]; near: CardDish[] }>([[today, { date: now, follows: [], near: [] }]]);
-    if (mine.some((m) => localDate(m.createdAt) === yesterday)) byDay.set(yesterday, { date: y, follows: [], near: [] });
-    const at = (d: CardDish) => {
+    const byDay = new Map<string, { date: Date; plates: CardDish[] }>([[today, { date: now, plates: [] }]]);
+    const seen = new Set<string>();
+    for (const d of [...mine, ...neighbors]) {
+      if (seen.has(d.id)) continue;
+      seen.add(d.id);
       const k = localDate(d.createdAt);
-      if (!byDay.has(k)) byDay.set(k, { date: d.createdAt, follows: [], near: [] });
-      return byDay.get(k)!;
-    };
-    const inFeed = new Set(feed.map((d) => d.id));
-    for (const d of feed) at(d).follows.push(d);
-    for (const d of neighbors) {
-      if (inFeed.has(d.id)) continue;
-      if (followed.has(d.creator.id)) at(d).follows.push(d);
-      else at(d).near.push(d);
+      if (!byDay.has(k)) byDay.set(k, { date: d.createdAt, plates: [] });
+      byDay.get(k)!.plates.push(d);
     }
-    for (const v of byDay.values()) v.follows.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    for (const v of byDay.values()) v.plates.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
     return [...byDay.entries()]
       .sort(([a], [b]) => (a < b ? 1 : -1))
-      .map(([key, v]) => ({ key, ...v, kind: key === today ? 'today' : key === yesterday ? 'yesterday' : 'older', mine: mine.find((m) => localDate(m.createdAt) === key) ?? null }));
-  }, [feed, mine, neighbors, followed]);
+      .map(([key, v]) => ({ key, ...v, kind: key === today ? 'today' : key === yesterday ? 'yesterday' : 'older' }));
+  }, [mine, neighbors]);
 
-  const toggleFollow = async (id: string) => {
-    const on = !followed.has(id);
-    setFollowed((s) => { const n = new Set(s); if (on) n.add(id); else n.delete(id); return n; });
-    try { await follow(id, on); } catch { setFollowed((s) => { const n = new Set(s); if (on) n.delete(id); else n.add(id); return n; }); }
-  };
-
-  if (feed == null) return <ActivityIndicator color={color('fg/muted')} style={styles.loading} />;
-
-  const anyNeighbors = neighbors.length > 0;
-  const plate = (d: CardDish, onFollow?: () => void) => (
-    <Plate key={d.id} item={toPlate(d)} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)}
-      onFollow={onFollow} followLabel={onFollow ? t('cook.follow') : undefined} />
-  );
+  if (mine == null) return <ActivityIndicator color={color('fg/muted')} style={styles.loading} />;
 
   return (
     <View>
@@ -572,16 +532,10 @@ function Following() {
       </View>
       <View style={styles.tables}>
       {tables.map((tb) => {
-        const seat = tb.mine ? (
-          <Plate key="mine" item={toPlate(tb.mine, t('following.mySeat'))} tone="mine" onPress={() => router.push(`/dish/${tb.mine!.id}`)} onCook={() => router.push(`/cook/${tb.mine!.creator.id}`)} />
-        ) : tb.kind === 'today' ? (
-          <EmptySeat key="mine" label={t('following.placeMine')} onPress={() => router.push('/share/pick')} />
-        ) : null;
-        const plates = [
-          ...(seat ? [seat] : []),
-          ...tb.follows.map((d) => plate(d)),
-          ...tb.near.map((d) => plate(d, () => toggleFollow(d.creator.id))),
-        ];
+        const plates = tb.plates.map((d) => (
+          <Plate key={d.id} item={toPlate(d)} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />
+        ));
+        const max = tb.kind === 'today' ? TODAY_PLATES : PAST_PLATES;
         const all = open.has(tb.key);
         const title = tb.kind === 'today' ? t('following.todayTable') : tb.kind === 'yesterday' ? t('following.yesterdayTable') : day(tb.date);
         return (
@@ -590,24 +544,9 @@ function Following() {
             title={title}
             subtitle={tb.kind === 'older' ? undefined : day(tb.date)}
             moreLabel={t('following.seeMore')}
-            onMore={!all && plates.length > TABLE_PLATES ? () => setOpen((s) => new Set(s).add(tb.key)) : undefined}
+            onMore={!all && plates.length > max ? () => setOpen((s) => new Set(s).add(tb.key)) : undefined}
           >
-            <PlateGrid>{all ? plates : plates.slice(0, TABLE_PLATES)}</PlateGrid>
-            {tb.kind === 'today' && followees === 0 && !anyNeighbors && suggest.length ? (
-              <>
-                <View style={styles.suggestHead}>
-                  <Text variant="Title/S">{t('following.suggest')}</Text>
-                  <Text variant="Caption" color="fg/secondary">{t('following.suggestBody')}</Text>
-                </View>
-                <PlateGrid>
-                  {suggest.map((d) => (
-                    <Plate key={d.id} item={toPlate(d, d.creator.handle ?? d.creator.name)} tone="cook" onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)}>
-                      <FollowButton following={followed.has(d.creator.id)} onPress={() => toggleFollow(d.creator.id)} />
-                    </Plate>
-                  ))}
-                </PlateGrid>
-              </>
-            ) : null}
+            {plates.length ? <PlateGrid>{all ? plates : plates.slice(0, max)}</PlateGrid> : null}
           </PlateTable>
         );
       })}
@@ -622,22 +561,23 @@ const styles = StyleSheet.create({
   page: { overflow: 'hidden' },
   // Following · Tables 730:11394 — p6 20 24 under the title (title → first table = Story's title → card gap 6) · gap 24.
   tables: { paddingHorizontal: space[20], paddingTop: space[6], paddingBottom: space[24], gap: space[24] },
-  suggestHead: { gap: space[4] },
   root: { flex: 1 },
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
-  tabRow: { gap: space[24], paddingHorizontal: space[20] },
+  // Tabs 1113:25921 — gap 16, pl 20.
+  tabRow: { gap: space[16], paddingHorizontal: space[20] },
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },
   // 4.1 groups: p42 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags).
-  sectionS: { paddingTop: space[42], gap: space[6] },
-  sectionM: { paddingTop: space[42], gap: space[8] },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
-  countryCard: { paddingHorizontal: 18, paddingVertical: space[14], justifyContent: 'flex-end', gap: space[10] },
-  countryFlag: { position: 'absolute', left: 18, top: space[12], right: 18, flexDirection: 'row', alignItems: 'center', gap: space[8] },
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
   storyTop: { paddingTop: space[42] - space[20] },
+  explore: { paddingVertical: 28, gap: 38 },
+  storyGroup: { gap: space[16] },
+  group16: { gap: space[16] },
+  // ⋯ on the photo, top right (the card's p24 corner).
+  storyMore: { position: 'absolute', top: space[24], right: space[24] },
   story: { width: '100%', padding: space[24], justifyContent: 'flex-end' },
   storyFoot: { gap: space[16] },
   storyBody: { flexDirection: 'row', alignItems: 'flex-end', gap: space[16] },

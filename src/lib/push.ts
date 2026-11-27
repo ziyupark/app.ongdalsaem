@@ -1,6 +1,6 @@
 // 9.4 "Today's pick" push — client half. Registers this device's Expo push token and keeps the server copy of
-// what the daily send needs (time, time zone, rounded location, language, unit) in step with Settings.
-// The server half: supabase/functions/send-daily-recommendation (weather + one dish, at the chosen time).
+// what the daily send needs (times, time zone, rounded location, language, unit) in step with Settings.
+// The server half: supabase/functions/send-daily-recommendation (weather + one dish, at each chosen time).
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -59,7 +59,8 @@ export async function syncPush({ ask = false } = {}) {
       user_id: uid,
       token: to,
       daily_pick: true,
-      pick_time: p.pickTime,
+      pick_times: p.pickTimes,
+      pick_time: p.pickTimes[0], // kept in step for older app builds' rows
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       language: i18n.language,
       temp_unit: p.tempUnit,

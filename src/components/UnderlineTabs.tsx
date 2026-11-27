@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { radius, space, useTheme } from '../theme';
+import type { TextVariant } from '../theme/typography';
 import type { WashInk } from '../theme/washInk';
 import { Icon } from './Icon';
 import { Text } from './Text';
@@ -15,16 +16,18 @@ type Box = { x: number; w: number };
  * X-style tab row: a full-width 1 px border/default hairline at the bottom, and a 3 px fg/default bar under the
  * selected tab — as wide as its label (or icon), sitting on the same baseline — that slides to the new tab (200 ms).
  * `style` = outer (full-width) box; `contentStyle` = the row of tabs (padding / gap).
+ * `labelVariant` = one text style for every label (selected or not); default Body/M Strong (selected) / Body/M.
  * `ink` = colours over a mood wash (strong / muted instead of fg/default / fg/muted).
  * `progress` = a pager's position in tabs (0 … items.length − 1, fractional mid-swipe): the bar follows it — position and
  * width blend between the two tabs — instead of sliding on `value` changes.
  */
-export function UnderlineTabs<K extends string>({ items, value, onChange, style, contentStyle, ink, progress }: {
+export function UnderlineTabs<K extends string>({ items, value, onChange, style, contentStyle, labelVariant, ink, progress }: {
   items: UnderlineTabItem<K>[];
   value: K;
   onChange: (k: K) => void;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
+  labelVariant?: TextVariant;
   ink?: WashInk | null;
   progress?: SharedValue<number>;
 }) {
@@ -108,7 +111,7 @@ export function UnderlineTabs<K extends string>({ items, value, onChange, style,
                 {it.icon ? (
                   <Icon icon={it.icon} size={22} color={on ? strong : muted} />
                 ) : (
-                  <Text variant={on ? 'Body/M Strong' : 'Body/M'} color={on ? strong : muted}>{it.label}</Text>
+                  <Text variant={labelVariant ?? (on ? 'Body/M Strong' : 'Body/M')} color={on ? strong : muted}>{it.label}</Text>
                 )}
               </View>
             </Pressable>

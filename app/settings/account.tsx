@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Mail, Trash2 } from '../../src/components/icons/ongdal';
+import { Mail, Pause, Trash2 } from '../../src/components/icons/ongdal';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components/settings/Settings';
@@ -11,6 +11,7 @@ export default function Account() {
   const [a, setA] = useState<AccountSettings | null>(null);
   useEffect(() => { fetchAccount().then(setA).catch(() => undefined); }, []);
   const has = (p: string) => !!a?.providers.includes(p);
+
   return (
     <SettingsScreen title={t('settings.accountSecurity')}>
       <SettingsGroup label={t('settings.signIn')}>
@@ -22,6 +23,7 @@ export default function Account() {
       </SettingsGroup>
       <SettingsGroup label={t('settings.danger')} note={t('settings.deleteNote')}>
         <SettingsRow icon={Trash2} label={t('settings.deleteAccount')} destructive onPress={() => router.push('/settings/delete')} />
+        <SettingsRow icon={Pause} label={t('settings.deactivateAccount')} destructive onPress={() => router.push('/settings/deactivate')} />
       </SettingsGroup>
     </SettingsScreen>
   );

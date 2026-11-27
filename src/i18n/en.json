@@ -43,20 +43,8 @@
     "google": "Continue with Google",
     "error": "Sign-in is napping — tap to try again."
   },
-  "profileSetup": {
-    "step": "Step 1 of 4",
-    "title": "How should we\ncall you?",
-    "label": "Display name",
-    "helper": "Shown on dishes you share.",
-    "handlePrefix": "Your handle will be ",
-    "handleSuffix": " — you can change it anytime in Settings.",
-    "missingName": "Add a display name to continue.",
-    "continue": "Continue",
-    "changePhoto": "Change profile photo",
-    "error": "Didn’t save — tap Continue to retry."
-  },
   "location": {
-    "step": "Step 3 of 4",
+    "step": "Step 2 of 3",
     "title": "Let the weather\nhelp you choose.",
     "body": "We use your city’s forecast to suggest what others cooked in the same weather. Only your city is shared — never your exact location.",
     "chooseCity": "Choose a city instead",
@@ -66,7 +54,7 @@
     "whyBody": "For your neighborhood’s weather and places close by. We never save your exact coordinates — only your area is used."
   },
   "taste": {
-    "step": "Step 2 of 4",
+    "step": "Step 1 of 3",
     "title": "What kind of meal\ndo you love?",
     "body": "Pick as many as you like. We’ll lean your picks this way.",
     "skip": "Skip",
@@ -98,10 +86,23 @@
       "fish": "Fish",
       "soy": "Soy",
       "sesame": "Sesame"
+    },
+    "add": {
+      "own": "Add your own",
+      "dietTitle": "Add to your diet",
+      "dietBody": "Dishes with this word in the name or ingredients are left out of your picks and search.",
+      "dietPlaceholder": "e.g. Pork",
+      "allergyTitle": "Add an allergy",
+      "allergyBody": "We’ll leave out dishes with this word and warn you on a dish that has it.",
+      "allergyPlaceholder": "e.g. Kiwi",
+      "duplicate": "You already have this one.",
+      "add": "Add",
+      "removeTitle": "Remove “{{label}}”?",
+      "remove": "Remove"
     }
   },
   "notify": {
-    "step": "Step 4 of 4",
+    "step": "Step 3 of 3",
     "title": "When should we send\nyour daily pick?",
     "body": "One dish for today’s weather, every day at this time. You can change it in Settings.",
     "skip": "Skip",
@@ -289,7 +290,7 @@
     "typeHint": "· changes what we ask next",
     "types": {
       "home": "Home-cooked",
-      "travel": "Travel"
+      "travel": "Eating Out"
     },
     "dishName": "Dish name",
     "dishNamePlaceholder": "Kimchi jjigae for one",
@@ -417,7 +418,27 @@
     "inChallenge": "Joining: {{name}}",
     "challengeOnePhoto": "Challenges take one photo only",
     "pickHintChallenge": "One photo for the challenge",
-    "cameraDenied": "Allow camera access in Settings to take a photo of your dish."
+    "cameraDenied": "Allow camera access in Settings to take a photo of your dish.",
+    "editPhoto": "Edit",
+    "editTitle": "Edit photo",
+    "editDone": "Done",
+    "editCrop": "Crop",
+    "editAdjust": "Adjust",
+    "editRotate": "Rotate",
+    "editFlip": "Flip",
+    "editReset": "Reset",
+    "aspectFree": "Free",
+    "aspectOriginal": "Original",
+    "editDiscardTitle": "Discard your edits?",
+    "editLoadFailed": "Couldn’t open this photo. Try again.",
+    "editSaveFailed": "Couldn’t save the edit. Try again.",
+    "adjust": {
+      "brightness": "Brightness",
+      "exposure": "Exposure",
+      "contrast": "Contrast",
+      "saturation": "Saturation",
+      "warmth": "Warmth"
+    }
   },
   "dish": {
     "temperature": {
@@ -438,7 +459,6 @@
     "difficultyEasy": "Easy",
     "difficultyMedium": "Medium",
     "difficultyHard": "Hard",
-    "madeThis": "I made this",
     "madeBy": "Made by {{n}} cooks",
     "cookedFromRecipe": "Made with {{name}}’s recipe",
     "allergyWarning": "Allergy alert: {{items}}",
@@ -669,6 +689,20 @@
     "danger": "Danger zone",
     "deleteAccount": "Delete account",
     "deleteNote": "Permanently deletes your profile, dishes, photos, comments, acorns and diary. This can’t be undone.",
+    "deactivateAccount": "Deactivate account",
+    "deactivateConfirmTitle": "Deactivate your account?",
+    "deactivateConfirmBody": "Your account will be switched off and you’ll be signed out. If you don’t sign in again within 30 days, your account and everything in it will be deleted automatically.",
+    "deactivateFailed": "Couldn’t deactivate your account. Try again or contact support.",
+    "deactivateTitle": "Take a break?",
+    "deactivateBody": "Your account goes quiet for 30 days. Nothing is deleted yet — sign in again any time before then and it’s all back.",
+    "whileDeactivated": "While deactivated",
+    "deaProfile": "Your profile is hidden",
+    "deaDishes": "Your dishes and photos are hidden",
+    "deaSocial": "Comments & messages are hidden",
+    "deactivateCaption": "Sign in with Apple or Google within 30 days to come back. After that, your account and everything in it are deleted for good.",
+    "deaDeletedOn": "Deleted on",
+    "reactivatedTitle": "Welcome back",
+    "reactivatedBody": "Your account is active again. Your profile and dishes are visible as before.",
     "activity": "Activity",
     "nAcorns": "Acorns on your dishes",
     "nComments": "Comments & replies",
@@ -676,6 +710,8 @@
     "forYou": "For you",
     "nDailyPick": "Daily weather pick",
     "pickTime": "Pick time",
+    "addPickTime": "Add pick time",
+    "removePickTime": "Remove this time",
     "nTimer": "Kitchen timer",
     "adsEvents": "Ads & events",
     "nAds": "Offers & events",
@@ -851,7 +887,7 @@
     "canCook": "What you can cook now",
     "haveCount": "{{have}}/{{total}} ingredients on hand",
     "needs": "Need: {{items}}",
-    "canCookEmpty": "Add ingredients and we’ll find dishes you can make with them.",
+    "canCookEmpty": "Find recipes with what’s in your fridge.",
     "shoppingZone": "Shopping memo",
     "moveToFridge": "Bought → to the fridge",
     "shoppingEmpty": "Nothing on your shopping memo yet. Pick Shopping memo above and add what to buy."
@@ -1141,6 +1177,7 @@
       "posts_one": "{{count}} post",
       "posts_other": "{{count}} posts",
       "topEmpty": "No dishes shared nearby today yet.",
+      "questionsEmpty": "No questions nearby yet. Be the first to ask.",
       "questionsTitle": "Neighbourhood questions",
       "ask": "Ask a question",
       "locationOff": "Turn on location to see today's table in our area."
@@ -1360,7 +1397,7 @@
     "placeholder": "Message {{name}}…",
     "seen": "Seen",
     "yesterday": "Yesterday",
-    "requestNote": "Messages from cooks you don’t follow arrive as requests. Report or block from ··· anytime.",
+    "requestNote": "Messages from accounts you don’t follow arrive as requests.",
     "sendFailed": "Couldn’t send. Try again.",
     "viewProfile": "View profile",
     "block": "Block",
@@ -1477,10 +1514,6 @@
     "title": "Neighbors' Table",
     "todayTable": "Today's table",
     "yesterdayTable": "Yesterday's table",
-    "placeMine": "Place your dish",
-    "mySeat": "My seat",
-    "suggest": "Cooks to follow",
-    "suggestBody": "Follow a cook and their dishes join your table here.",
     "seeMore": "See more"
   },
   "questions": {

@@ -12,7 +12,7 @@ import { getPrefs, setPrefs } from '../../src/lib/prefs';
 import { syncPush } from '../../src/lib/push';
 import { radius, space, useTheme } from '../../src/theme';
 
-/** Wheel rows: every 30 minutes of the day, "HH:MM" (prefs.pickTime format). */
+/** Wheel rows: every 30 minutes of the day, "HH:MM" (prefs.pickTimes format). */
 const TIMES = Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`);
 const ROW = 46;
 const VISIBLE = 5;
@@ -30,13 +30,13 @@ const nearestIndex = (hhmm: string) => {
   return best;
 };
 
-/** Onboarding 4/4: daily "Today's pick" time → prefs.pickTime, then the notification permission prompt → Home. */
+/** Onboarding 4/4: daily "Today's pick" time → prefs.pickTimes (one time; more can be added in 9.4), then the notification permission prompt → Home. */
 export default function NotifyStep() {
   const insets = useSafeAreaInsets();
   const { color, scheme } = useTheme();
   const { t, i18n } = useTranslation();
   const { state } = useLocalSearchParams<{ state?: string }>();
-  const [index, setIndex] = useState(() => nearestIndex(getPrefs().pickTime));
+  const [index, setIndex] = useState(() => nearestIndex(getPrefs().pickTimes[0]));
   const [busy, setBusy] = useState(false);
   const scroller = useRef<ComponentRef<typeof ScrollView>>(null);
   const placed = useRef(false);
@@ -64,7 +64,7 @@ export default function NotifyStep() {
     if (busy) return;
     setBusy(true);
     try {
-      setPrefs({ pickTime: TIMES[index], notify: { ...getPrefs().notify, dailyPick: true } });
+      setPrefs({ pickTimes: [TIMES[index]], notify: { ...getPrefs().notify, dailyPick: true } });
       // Shows the system notification prompt (src/lib/push.ts) and saves the time with this device's token.
       await syncPush({ ask: true });
     } finally {

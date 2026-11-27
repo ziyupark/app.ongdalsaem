@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { radius, space, useTheme } from '../../theme';
+import { radius, space, useTheme, type ColorToken } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Chip } from '../Chip';
 import { Icon } from '../Icon';
@@ -39,6 +39,10 @@ type Props = {
   top?: ReactNode;
   /** Extra space under the content (8.3 fixed share bar). */
   bottomInset?: number;
+  /** Vertical scroll offset — drives the weather wash behind the screen (7.1). */
+  onScrollY?: (y: number) => void;
+  /** Inks for the back button and cook row when they sit on the weather wash (theme/washInk). */
+  topInk?: { strong: ColorToken; muted: ColorToken; secondary: ColorToken };
 };
 
 // Media 601:12860 — 370×417 on a 390 frame: 10 in from each side, radius 32.
@@ -49,7 +53,7 @@ const MEDIA_INSET = space[10];
  * 7.1 Post detail (Figma 601:12935) — Cook row → photos 370×417 r32 (Weather Tag + counter) → actions → title (Display/L) · caption
  * → tags → recipe → action bar → comments → More from.
  */
-export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onSave, onMore, onAuthor, onBack, onStartTimer, onAddedToShopping, actionBar, comments, more, scrollToComments, banner, top, bottomInset }: Props) {
+export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onSave, onMore, onAuthor, onBack, onStartTimer, onAddedToShopping, actionBar, comments, more, scrollToComments, banner, top, bottomInset, onScrollY, topInk }: Props) {
   const { width: screenW } = useWindowDimensions();
   const width = screenW - MEDIA_INSET * 2;
   const insets = useSafeAreaInsets();
@@ -70,13 +74,13 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onS
   const onPage = (e: NativeSyntheticEvent<NativeScrollEvent>) => setPage(Math.round(e.nativeEvent.contentOffset.x / width));
 
   return (
-    <ScrollView ref={scroll} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingTop: insets.top, paddingBottom: bottomInset ?? insets.bottom + space[24] }}>
+    <ScrollView ref={scroll} onScroll={onScrollY ? (e) => onScrollY(e.nativeEvent.contentOffset.y) : undefined} scrollEventThrottle={16} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingTop: insets.top, paddingBottom: bottomInset ?? insets.bottom + space[24] }}>
       {top}
       {banner ? <View style={styles.banner}>{banner}</View> : null}
       {top ? null : (
         <View style={styles.backRow}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[10]} onPress={onBack}>
-            <Icon icon={ChevronLeft} size={24} />
+            <Icon icon={ChevronLeft} size={24} color={topInk?.strong} />
           </Pressable>
         </View>
       )}
@@ -87,11 +91,11 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onS
           )}
         </Pressable>
         <Pressable onPress={onAuthor} disabled={!onAuthor} style={styles.who}>
-          <Text variant="Body/M Strong" numberOfLines={1}>{dish.authorName}</Text>
-          <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{dish.meta}</Text>
+          <Text variant="Body/M Strong" color={topInk?.strong} numberOfLines={1}>{dish.authorName}</Text>
+          <Text variant="Body/S" color={topInk?.muted ?? 'fg/muted'} numberOfLines={1}>{dish.meta}</Text>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={t('home.more')} hitSlop={space[8]} onPress={onMore}>
-          <Icon icon={MoreHorizontal} size={24} color="fg/secondary" />
+          <Icon icon={MoreHorizontal} size={24} color={topInk?.secondary ?? 'fg/secondary'} />
         </Pressable>
       </View>
 
@@ -137,7 +141,7 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onS
 
       <View style={styles.meta}>
         <View style={styles.px}><Text variant="Display/L">{dish.name}</Text></View>
-        {dish.caption ? <View style={styles.px}><Text variant="Body/S">{dish.caption}</Text></View> : null}
+        {dish.caption ? <View style={styles.px}><Text variant="Body/M">{dish.caption}</Text></View> : null}
       </View>
 
       {tags.length ? (
@@ -168,7 +172,8 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   spacer: { flex: 1 },
-  meta: { gap: space[16], paddingTop: space[8], paddingBottom: space[10] },
+  // Meta 601:12639 — title Display/L → 13 → caption Body/M fg/default (no line limit), both px 20.
+  meta: { gap: 13, paddingTop: space[8], paddingBottom: space[10] },
   px: { paddingHorizontal: space[20] },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], paddingTop: space[10], paddingHorizontal: space[20], paddingBottom: space[2] },
   actionBar: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingVertical: 28 },

@@ -6,6 +6,7 @@
 
 ### 7.1 Post detail — [20:1380](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-1380)
 사람들이 올린 게시물의 **유일한 상세 화면**. 홈 피드 게시물·Story Card·Food Card·Country Card·Dish Tile 등 모든 요리 카드가 여기로 온다(목업 데이터 = 홈 피드의 Minji 김치찌개 게시물, 구현 시 게시물 id로 내용만 바뀜). 피드 게시물을 누르면 **같은 사진·같은 태그 위치·같은 헤더·같은 캡션**이 그대로 이어지도록 Feed Post 컴포넌트를 재사용한다.
+- **배경 = 내 현재 날씨**(코드 기준): 탭과 같은 Mood wash(높이 420, 85 %) + **날씨 모션**(WeatherMoodLayer)을 이 화면 안에 그린다(푸시 화면은 투명할 수 없어 전역 WeatherBackdrop 대신 자기 wash). 스크롤하면 내용과 함께 올라가며 300pt까지 사라진다. 뒤로 · 작성자 줄 글자색 = wash 잉크(8 % · 20 % 지점). 화면이 가려지거나 앱이 백그라운드면 모션 멈춤, 날씨 값이 없으면(2.6) wash만, 위치 꺼짐 + 도시 없음이면 wash 없음. 게시물의 날씨는 사진 위 Weather Tag로만 보인다.
 - **댓글은 이 화면에 펼치지 않는다** — 댓글 아이콘을 누르면 7.2 시트로만 본다.
 - **골격**: 프레임 390×2030(내용 전체 길이) — 기기 화면 390×844에서 세로 스크롤(overflow Vertical). Top bar는 위, Action bar·Home Indicator는 **아래에 고정**(constraint Bottom). 레이어 순서 = Hero(absolute, 함께 스크롤) → Hero spacer 528 → Sheet → [고정] Top bar · Action bar · Home Indicator(numberOfFixedChildren 3). TabBar·FAB 없음(푸시 화면).
 - **Hero**(390×560, clip):
@@ -15,17 +16,17 @@
   - **Weather Tag**(좌하단, `cloud-rain` 12°) · **Acorn Tag**(우하단, 95) — 둘 다 **Size=XL(높이 28)**, 우상단 Photo Counter도 **Size=XL**(45×28), 인셋 16, 시트 시작선(y 528) 16 위(y 484).
 - **[고정] Top bar**: StatusBar(Light) + 행(x 20, y 56, 양끝 정렬): IconButton Glass M `chevron-left`(뒤로) · IconButton Glass M `more-horizontal`(→ 7.3).
 - **Sheet**(bg/default, 상단 radius 32, 위 패딩 12, Hero를 32px 덮음):
-  1. `Feed Post` 인스턴스 — **Media 숨김**, Header의 `more` 숨김(Top bar에 있음). Header "minji.cooks" / "Mapo, Seoul · 40m" → Actions(`acorn` 95 · `message-circle` 18 · `share` · `bookmark`) → Caption 전문(줄 수 제한 없음) "Old kimchi from my mom’s fridge — the sourer, the better on a rainy night." → "40 minutes ago". **이 Caption이 게시물 본문(상세 설명)이다.**
+  1. `Feed Post` 인스턴스 — **Media 숨김**, Header의 `more` 숨김(Top bar에 있음). Header "minji.cooks" / "Mapo, Seoul · 40m" → Actions(`acorn` 95 · `message-circle` 18 · `share` · `bookmark`) → **Meta**(601:12639: 제목 Display/L → 13 → 캡션 **Body/M fg/default**, 둘 다 좌우 20) — Caption 전문(줄 수 제한 없음) "Old kimchi from my mom’s fridge — the sourer, the better on a rainy night." → "40 minutes ago". **이 Caption이 게시물 본문(상세 설명)이다.**
   2. **Dish**(좌우 20, 간격 16): **태그 칩 = 게시물 값 그대로**(Weather · Temperature는 자동, Mood · Meal은 8.3에서 작성자가 고른 값), Chip(Default, **Icon=Yes**, 아이콘 18 fg/default stroke 1.5, 줄바꿈 gap 8): `cloud-rain` Rainy · `thermometer-snowflake` Cool · `heart` Cozy · `cooking-pot` Dinner (Weather · Temperature · Mood · Meal 순).
   3. Divider(border/default 1px, 위아래 28).
   4. **Ingredients** = `Ingredients List`(제목 → 재료 줄 gap 0, 줄 높이 39) ×6: Sour kimchi 1 cup · Pork belly 100 g · Tofu ½ block · Gochugaru 1 tbsp · Scallion 1 stalk · Anchovy stock 400 ml.
   5. **Steps**(Title/L) → `Recipe Step` ×3: 1 "Sauté the kimchi and pork together for 5 minutes, until the edges caramelize." 2 "Pour in the stock and gochugaru. Simmer gently." + **Timer=Yes "Start 15:00 timer"** 3 "Add tofu and scallion. One more boil, then straight to the table." 단계 안의 시간 표현을 파싱해 타이머 버튼을 자동 생성.
   6. **Details**(Steps 아래 보조 정보): 좌우 20, 위아래 1px border/default 사이 한 줄(padding 14/0, 세로 가운데): 왼쪽 Overline "CALORIES · TOTAL"(fg/muted) + Body/M Strong **"≈ 420 kcal"** · 오른쪽 Caption fg/muted "Estimated by the cook · may not be exact". 칼로리를 입력하지 않은 게시물은 이 줄을 숨긴다.
-  7. **More from Minji**: `SectionHeader`(eyebrow 숨김, action "See all") → Dish Tile 가로 스크롤 ×4(좌우 20, 간격 8). 태그 값: `cloud` 13° · 61 / `cloud-rain` 9° · 48 / `sun` 18° · 35 / `cloud-drizzle` 11° · 27 (7.1b · 7.4–7.6b 동일).
+  7. **More from Minji**([601:13045](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=601-13045), 위아래 20 · 간격 12): `SectionHeader`(eyebrow 숨김, Title/L + 오른쪽 `chevron-right` 20 fg/muted = See all, 접근성 "See all") → **Dish Tile 02**(폭 131, 사진 163) 가로 스크롤 ×4(좌우 20, 간격 8). "I made this" 버튼은 없다("I ate this"와 겹침). 태그 값: `cloud` 13° · 61 / `cloud-rain` 9° · 48 / `sun` 18° · 35 / `cloud-drizzle` 11° · 27 (7.1b · 7.4–7.6b 동일).
   8. Bottom spacer 140. 섹션 간격 32.
 - Sheet(390 폭, 위 y 528) 안의 More from Minji 줄은 폭 390 고정 + 가로 스크롤(줄이 시트를 넓히지 않음).
-- **[고정] Action bar**(화면 맨 아래, 높이 114, 그라데이션 배경): `Acorn Button` Bar Default **"I ate this · 12"**(`utensils`, FILL — 기록 버튼, 도토리 반응은 위 Feed Post Actions) + IconButton Soft L `timer`(Cook along → 5.1).
-- 이동: 뒤로 → **이전 화면(Back)** · `more` → 메뉴(**Add to meal plan** · 남의 요리 = Report → 7.3 / 내 요리 = Edit …) · 작성자(아바타·이름) / More from Minji See all → 작성자 프로필(4.5 템플릿) · 게시물 댓글 아이콘(18) → 7.2 · Start 15:00 timer / Cook along → 5.1 · **Acorn Button → 7.1b** · 하트·저장 = 그 자리에서 토글.
+- **[고정] Action bar**(화면 맨 아래, 높이 114, 그라데이션 배경): `Acorn Button` Bar Default **"I ate this · 12"**(`utensils`, FILL — 기록 버튼, 도토리 반응은 위 Feed Post Actions). 오른쪽 타이머 버튼(Cook along)은 없앴다 — 타이머는 단계의 Start timer로만.
+- 이동: 뒤로 → **이전 화면(Back)** · `more` → 메뉴(**Add to meal plan** · 남의 요리 = Report → 7.3 / 내 요리 = Edit …) · 작성자(아바타·이름) / More from Minji `chevron-right` → 작성자 프로필(4.5 템플릿) · 게시물 댓글 아이콘(18) → 7.2 · Start 15:00 timer → 5.1_0(게시물 위에 푸시, 뒤로 = 이 게시물) · **Acorn Button → 7.1b** · 하트·저장 = 그 자리에서 토글.
 - **Add to meal plan**(코드 기준, Figma 없음): BottomSheet "Add to meal plan" — Overline "DAY" 칩(Today + 6일, 요일 · 날짜) · Overline "FOR" 칩 Lunch / **Dinner**(기본) → Button "Add" → 그날 그 끼니 식단에 저장(같은 끼니는 교체) · Toast "Added to your meal plan". 6.3 이번 주 한 줄에 보인다.
 - 데이터: `Dish`([§7](../06-data-model.md)) 전체 — author, photos[], weather, acorns, comments 수, caption, tags, kcalTotal(선택), ingredients, steps, 작성자의 다른 요리 4개.
 
@@ -36,7 +37,7 @@
 - 이동: 버튼(Eaten) 다시 탭 → 7.1(기록 취소, −1) · Undo → 7.1. 햅틱 1회. 기록하면 6.3 Diary에 그 날짜로 남고, 후기(별점 없이 한 줄)를 이어서 쓸 수 있다.
 
 ### 7.2 Comments sheet — [26:537](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-537)
-- 뒤 화면 = **실제 7.1**(Hero 사진 · 시트 · Top bar · Action bar, 레이어 "Behind · 7.1 Post detail") + 딤(overlay/scrim) + 바텀시트(핸들): "Comments · 18" → Sora 12m "Made this tonight. Rain + this = perfect." / Jae 1h "The sour-kimchi tip changed everything." / Hana 3h "Saving for the next typhoon day 🌧" → [A] 하단 **Comment Composer**(Avatar 32 + 흰색 입력칸 48 "Say something warm…" + 전송 `arrow-right`). 시트 = **Comments Sheet** 컴포넌트.
+- 뒤 화면 = **실제 7.1**(Hero 사진 · 시트 · Top bar · Action bar, 레이어 "Behind · 7.1 Post detail") + 딤(overlay/scrim) + 바텀시트(핸들): "Comments · 18" → 댓글(Comment 132:4846: Avatar 40 · **@username** Body/M Strong + 시간 Caption fg/disabled → 본문 Body/M) @sora 12m "Made this tonight. Rain + this = perfect." / Jae 1h "The sour-kimchi tip changed everything." / Hana 3h "Saving for the next typhoon day 🌧" → [A] 하단 **Comment Composer**(Avatar 40 + 흰색 입력칸 42 "Say something warm…" + 전송 `arrow-right`). 시트 = **Comments Sheet** 컴포넌트.
 - 댓글을 보는 **유일한 화면**(7.1·피드의 댓글 아이콘에서 연다). 딤 탭 / 시트 드래그 다운 → 이전 화면(Back) · 전송 → 7.1.
 
 ### 7.3 Report / block — [26:595](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-595)

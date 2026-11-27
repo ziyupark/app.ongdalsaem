@@ -75,10 +75,10 @@ export function canChangeHandle(a: AccountSettings, now = new Date()) {
 
 export const HANDLE_RE = /^[a-z0-9._]{3,20}$/;
 
-/** 9.2 Save changes — name, bio, avatar, and (at most every 14 days) the @handle. */
-export async function saveProfile(a: AccountSettings, input: { displayName: string; username: string; bio: string; avatarUri?: string }) {
+/** 9.2 Save changes — bio, avatar, and (at most every 14 days) the @handle. There is no separate nickname to edit. */
+export async function saveProfile(a: AccountSettings, input: { username: string; bio: string; avatarUri?: string }) {
   const user = await uid();
-  const patch: Row = { display_name: input.displayName.trim(), bio: input.bio.trim() || null };
+  const patch: Row = { bio: input.bio.trim() || null };
   if (input.avatarUri) {
     patch.avatar_url = await uploadAvatar(user.id, input.avatarUri);
   }
@@ -112,6 +112,18 @@ export async function deleteMyAccount() {
   await clearPush();
   await supabase.auth.signOut().catch(() => undefined);
   await clearLocalUserData('deleteAccount');
+}
+
+/**
+ * 9.3 Deactivate account — marks the account (profiles.deactivated_at) and signs out. Signing in again within
+ * 30 days keeps it (auth.ts reactivate); otherwise purge-deactivated-accounts deletes it like deleteMyAccount.
+ */
+export async function deactivateMyAccount() {
+  const { error } = await supabase.rpc('deactivate_own_account');
+  if (error) throw error;
+  await clearPush();
+  await supabase.auth.signOut().catch(() => undefined);
+  await clearLocalUserData('signOut');
 }
 
 /** Every file in my folder of both photo buckets (best effort). */

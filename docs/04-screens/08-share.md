@@ -6,22 +6,41 @@
 
 2단계 + 미리보기 플로우(FAB `+`, 빈 끼니 슬롯, 3.2 CTA에서 진입). 각 단계 상단에 "Step n of 2" + 진행 표시.
 
-섹션 배치(라벨 기준): **MAIN FLOW** 8.1 → 8.2 (또는 8.2e Travel) → 8.3 · **8.2 SUB-SCREENS**(폼 순서) 8.2d → 8.2b → 8.2a → 8.2c · **STATES** 8.4 · 8.4b(각 State note 아래).
+섹션 배치(라벨 기준): **MAIN FLOW** 8.1(⇄ 8.1a Edit photo, Figma 없음) → 8.2 (또는 8.2e Travel) → 8.3 · **8.2 SUB-SCREENS**(폼 순서) 8.2d → 8.2b → 8.2a → 8.2c · **STATES** 8.4 · 8.4b(각 State note 아래).
 
 ### 8.1 Pick photos — [23:1201](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=23-1201)
 - 스크롤. 상단 행: `x` 닫기(→ 2.1) · "Step 1 of 2" · "Next" → 제목 Display/M "Pick the photos / of your dish" → **선택된 사진 가로 줄**(순서 번호 1·2·3 배지, 첫 번째 = 커버) + Camera 타일 → "Recents" + "Up to 10 photos · first one is the cover" → 앨범 그리드 3열(선택 시 번호 배지) → [A] Button Primary L "Next · 3 photos"(선택 수 표시, 0장이면 Disabled).
 - 이동: Next → 8.2. 드래그로 순서 변경.
+- 선택된 사진(위 가로 줄)을 탭하면 시스템 메뉴: **Edit**(→ 8.1a) · Make cover · Move left / Move right · Remove · Cancel.
+
+### 8.1a Edit photo — Figma 없음(앱 기본 컴포넌트로 구성)
+8.1에서 선택한 사진 한 장을 고친다. 화면 이동 Fade, 스와이프 뒤로 가기 없음. iOS는 사진 앱 편집기를 다른 앱에 열어 주지 않아 앱 안에 직접 둔다.
+- 상단 줄(높이 44, 좌우 20): **Cancel**(Body/M) · 제목 **"Edit photo"**(Title/S) · **Done**(Body/M Strong fg/accent, 저장 중 = 스피너).
+- 가운데 무대(bg/subtle, 남은 높이 전부, 사진 둘레 여백 24): 사진을 비율 그대로 맞춰 보여 준다.
+  - **Crop 탭**: 사진 전체 + 자르기 틀(흰 1px 테두리, 모서리 ㄱ자 22 · 두께 3, 틀 밖 overlay/scrim). 모서리 · 변을 끌면 크기, 안쪽을 끌면 위치(최소 64). 끄는 동안 3등분 선. 비율을 고정하면 모서리로만 크기를 바꾸고 모양을 지킨다.
+  - **Adjust 탭**: 자른 결과만 보여 준다. 슬라이더를 움직이면 바로 바뀐다.
+- `UnderlineTabs` **Crop · Adjust**(기본 Crop).
+- 도구(위 16, 줄 간격 16, 아래 = Home Indicator 또는 20):
+  - **Crop**: 비율 Chip 한 줄 — **Free**(기본) · **Original** · 1:1 · 4:5 · 16:9(고르면 사진 안 가장 큰 가운데 틀) → 버튼 줄 Outline S `rotate-ccw` **Rotate**(시계 반대 90°, 틀도 함께 돈다) · Outline S **Flip**(좌우 반전) · Ghost S **Reset**(자르기 · 회전 · 반전만 처음으로).
+  - **Adjust**: 항목 Chip 한 줄 — **Brightness · Exposure · Contrast · Saturation · Warmth**(밝기 · 노출 · 대비 · 채도 · 따뜻함) → 고른 항목 이름(Body/S Strong) ··· 값(+25 / 0 · 0이 아니면 fg/accent) + Ghost S **Reset**(조정 5개 모두 0) → 슬라이더(−100 … 100, 가운데 0 눈금, 가운데에서 값까지 bg/primary로 채움, 손잡이 24). 0 근처(±4)는 0에 붙고 햅틱.
+    - 노출 = 빛을 곱함(±1스톱) · 밝기 = 전체를 고르게 올림/내림 · 대비 = 중간 회색 기준으로 늘림/줄임 · 채도 = 같은 밝기의 회색 쪽/반대쪽 · 따뜻함 = 빨강↑ 파랑↓(또는 반대).
+- **Done**: 바뀐 게 없으면 그냥 닫힘. 편집 결과(최대 2160px JPEG)로 그 자리의 사진을 바꾸고 8.1로 돌아간다(썸네일 · 커버 · 업로드 모두 편집본). 원본 사진첩은 그대로.
+  - **다시 Edit을 열면 원본에서 지난 설정 그대로** 시작한다(편집을 겹쳐 쌓지 않음). 모두 처음으로 돌리고 Done → 원래 사진으로 돌아감.
+  - 게시물 수정(editId)에서 올라가 있던 사진을 편집하면 새 사진으로 올라가고, 이전 사진은 저장할 때 저장소에서 지운다.
+- **Cancel**: 바뀐 게 있으면 "Discard your edits?" — Keep editing · Discard. 없으면 바로 닫힘.
+- 실패: 사진을 못 열면 "Couldn’t open this photo. Try again." 후 8.1, 저장 실패면 "Couldn’t save the edit. Try again."(화면 유지).
+- 편집 화면은 Skia(네이티브)로 그린다 — 이 모듈이 없는 예전 빌드에서는 Edit을 누르면 "This needs the latest app build…" 안내만 뜬다.
 
 ### 8.2 Details — [23:1540](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=23-1540)
 공유의 **두 번째이자 마지막 단계**. 날씨·기온·지역은 사진에서 자동으로 채우고, 사용자는 요리 이름 · Meal(미리 선택됨) · Mood만 정하면 바로 공유할 수 있다. 프레임 390×1366(세로 스크롤), Confirm 버튼은 아래 고정.
 - 상단: `chevron-left`(→ 8.1) · "Step 2 of 2" · Step Progress 2칸 모두 채움 → 제목 "Tell us about it".
 - form(좌우 20, 간격 16):
-  1. **Auto context 카드**(bg/subtle, 1px border/default, radius 16, padding 12/12/12/14, gap 12): `cloud-rain` 22 → "Rainy 12° · Mapo, Seoul"(Body/M Strong) / "From your photo · Today 7:20 PM · Tap to edit"(Caption fg/muted) → `chevron-right` 20. 탭 → 8.2d.
+  1. **Auto context 카드**(bg/subtle, 1px border/default, radius 16, padding 12/12/12/14, gap 12): (303:403) **3D 날씨 이미지 53**(Weather 3D / 무드, 불러오는 중 = 스피너 · 날씨 없음 = `map-pin` 22, 같은 53 자리) → "Rainy 12° · Mapo, Seoul"(Body/M Strong) / **"Today 7:20 PM"**(Caption fg/muted, 시각만) → `chevron-right` 18. 탭 → 8.2d, 길게 누르면 날씨를 다시 찾는다.
      - **자동 채움 규칙**: 첫 사진의 촬영 시각·위치(EXIF) → 그 시각·장소의 날씨(상태·기온)와 동/구 단위 지역을 조회. EXIF가 없으면 현재 위치·시각. 위치 권한이 없으면 카드 문구 "Add where you ate it" → 8.3d에서 직접 고름.
      - 날씨 상태(Rainy 등)·기온 구간(Cool 등)은 사용자가 고르지 않는다(데이터 정확도). 장소를 바꾸면 그 장소 기준으로 다시 조회.
-  2. **Type** "· changes what we ask next"(**Segmented control**, 단일 선택, 기본 Home-cooked): **Home-cooked** · **Travel** — Dish name 바로 위에 둔다(무엇을 물을지 먼저 정하도록).
+  2. **Type** "· changes what we ask next"(**Segmented control**, 단일 선택, 기본 Home-cooked): **Home-cooked** · **Eating Out** — Dish name 바로 위에 둔다(무엇을 물을지 먼저 정하도록).
      - Home-cooked(8.2): 설명 칸 = "What makes it special?", 아래에 Recipe 묶음.
-     - Travel(→ **8.2e**): 설명 칸이 **"Where did you eat it?"**로 바뀌고 Recipe 묶음을 숨긴다(밖에서 먹은 음식이라 레시피 없음). 전환은 Smart Animate 300ms. 이미 쓴 재료·단계는 숨겨 두었다가 Home-cooked로 돌아오면 다시 보인다(Travel로 게시하면 저장하지 않음).
+     - **Eating Out**(→ **8.2e**, Figma 400:9707 · 저장 값 `travel`): 설명 칸이 **"Where did you eat it?"**로 바뀌고 Recipe 묶음을 숨긴다(밖에서 먹은 음식이라 레시피 없음). 전환은 Smart Animate 300ms. 이미 쓴 재료·단계는 숨겨 두었다가 Home-cooked로 돌아오면 다시 보인다(Travel로 게시하면 저장하지 않음).
   3. Input(Filled) **Dish name** "Kimchi jjigae for one"(필수).
   4. 텍스트영역 "What makes it special?" + 카운터 "74 / 150"(최대 150자).
   5. **Meal** "· required · pick all that fit"(**필수, 여러 개 선택**): 아이콘 칩 Breakfast · Lunch · **Dinner** · Snack · **Vegan**(`leaf`) · **Seafood**(`fish`) — 끼니(Breakfast–Snack)는 촬영 시각으로 하나를 미리 선택(05–10 Breakfast, 10–15 Lunch, 15–17 Snack, 17–22 Dinner, 그 외 Snack). Vegan · Seafood는 **식단 태그**로 끼니와 함께 고를 수 있다(예: Dinner + Vegan). 끼니가 하나 이상이어야 필수 충족. 화면 예: Dinner · Vegan 선택.

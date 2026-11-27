@@ -7,7 +7,8 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
+import i18n from '../i18n';
 import { supabase } from '../lib/supabase';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -18,6 +19,12 @@ export type SignInResult =
 
 /** Path registered in app/auth-callback.tsx — add `ongdalsaem://auth-callback` to Supabase Auth › Redirect URLs. */
 const redirectTo = Linking.createURL('auth-callback');
+
+/** Signing in again within the 30 days after 9.3 Deactivate keeps the account (clears profiles.deactivated_at). */
+async function reactivate() {
+  const { data } = await supabase.rpc('reactivate_own_account').then((r) => r, () => ({ data: null }));
+  if (data === true) Alert.alert(i18n.t('settings.reactivatedTitle'), i18n.t('settings.reactivatedBody'));
+}
 
 function nameFromMetadata(meta: Record<string, unknown> | undefined): string {
   const pick = (k: string) => (typeof meta?.[k] === 'string' ? (meta[k] as string).trim() : '');
@@ -34,6 +41,7 @@ async function signInWithOAuth(provider: 'google' | 'apple'): Promise<SignInResu
   if (!code) throw new Error(typeof queryParams?.error_description === 'string' ? queryParams.error_description : 'No auth code');
   const { data: session, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
   if (exchangeError || !session.user) throw exchangeError ?? new Error('No user');
+  await reactivate();
   return { status: 'signed-in', userId: session.user.id, suggestedName: nameFromMetadata(session.user.user_metadata) };
 }
 
@@ -60,6 +68,7 @@ export async function signInWithApple(): Promise<SignInResult> {
 
   const { data, error } = await supabase.auth.signInWithIdToken({ provider: 'apple', token: credential.identityToken, nonce: rawNonce });
   if (error || !data.user) throw error ?? new Error('No user');
+  await reactivate();
   // Keep Apple's refresh token on the server (apple-token function) so deleting the account can revoke it —
   // App Store rule 5.1.1(v). Fire and forget: signing in never waits for it.
   if (credential.authorizationCode) {
@@ -86,6 +95,7 @@ export async function signInWithDevTestAccount(): Promise<SignInResult> {
   if (!email || !password) throw new Error('Set EXPO_PUBLIC_DEV_TEST_EMAIL and EXPO_PUBLIC_DEV_TEST_PASSWORD in .env, then restart Metro.');
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error || !data.user) throw error ?? new Error('No user');
+  await reactivate();
   return { status: 'signed-in', userId: data.user.id, suggestedName: nameFromMetadata(data.user.user_metadata) };
 }
 

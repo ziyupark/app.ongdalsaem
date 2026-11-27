@@ -43,20 +43,8 @@
     "google": "使用 Google 繼續",
     "error": "登入正在打盹——點一下再試一次。"
   },
-  "profileSetup": {
-    "step": "第 1 步，共 4 步",
-    "title": "我們該\n怎麼稱呼你？",
-    "label": "顯示名稱",
-    "helper": "會顯示在你分享的料理上。",
-    "handlePrefix": "你的帳號名稱將是",
-    "handleSuffix": "——隨時可以在設定中更改。",
-    "missingName": "請輸入顯示名稱以繼續。",
-    "continue": "繼續",
-    "changePhoto": "更換大頭照",
-    "error": "沒有儲存成功——點「繼續」重試。"
-  },
   "location": {
-    "step": "第 3 步，共 4 步",
+    "step": "第 2 步，共 3 步",
     "title": "讓天氣\n幫你決定。",
     "body": "我們會用你所在城市的天氣預報，推薦別人在同樣天氣裡做的料理。只會分享你的城市——絕不分享精確位置。",
     "chooseCity": "改為選擇城市",
@@ -66,7 +54,7 @@
     "whyBody": "用來顯示你社區的天氣和附近的店。我們不會儲存你的精確座標，只以社區為單位使用。"
   },
   "taste": {
-    "step": "第 2 步，共 4 步",
+    "step": "第 1 步，共 3 步",
     "title": "你喜歡\n什麼樣的一餐？",
     "body": "想選幾個都可以，我們會反映在推薦中。",
     "skip": "略過",
@@ -98,10 +86,23 @@
       "fish": "魚",
       "soy": "黃豆",
       "sesame": "芝麻"
+    },
+    "add": {
+      "own": "自行新增",
+      "dietTitle": "新增到飲食",
+      "dietBody": "名稱或食材含有這個詞的料理，不會出現在推薦和搜尋中。",
+      "dietPlaceholder": "例如：豬肉",
+      "allergyTitle": "新增過敏",
+      "allergyBody": "我們會排除含有這個詞的料理，並在料理頁面提醒你。",
+      "allergyPlaceholder": "例如：奇異果",
+      "duplicate": "已經有這個了。",
+      "add": "新增",
+      "removeTitle": "要刪除「{{label}}」嗎？",
+      "remove": "刪除"
     }
   },
   "notify": {
-    "step": "第 4 步，共 4 步",
+    "step": "第 3 步，共 3 步",
     "title": "每天幾點\n傳送推薦給你？",
     "body": "每天這個時間，送上一道適合今天天氣的菜。可在設定中更改。",
     "skip": "略過",
@@ -288,7 +289,7 @@
     "typeHint": "· 會改變接下來的問題",
     "types": {
       "home": "自己做的",
-      "travel": "外出吃"
+      "travel": "外食"
     },
     "dishName": "料理名稱",
     "dishNamePlaceholder": "一人份泡菜鍋",
@@ -414,7 +415,27 @@
     "inChallenge": "參加中：{{name}}",
     "challengeOnePhoto": "挑戰只能上傳 1 張照片",
     "pickHintChallenge": "挑戰用的 1 張照片",
-    "cameraDenied": "請在「設定」中允許取用相機，才能拍下你的料理。"
+    "cameraDenied": "請在「設定」中允許取用相機，才能拍下你的料理。",
+    "editPhoto": "編輯",
+    "editTitle": "編輯照片",
+    "editDone": "完成",
+    "editCrop": "裁切",
+    "editAdjust": "調整",
+    "editRotate": "旋轉",
+    "editFlip": "翻轉",
+    "editReset": "重設",
+    "aspectFree": "自由",
+    "aspectOriginal": "原始",
+    "editDiscardTitle": "要捨棄編輯內容嗎？",
+    "editLoadFailed": "無法開啟這張照片，請再試一次。",
+    "editSaveFailed": "無法儲存編輯，請再試一次。",
+    "adjust": {
+      "brightness": "亮度",
+      "exposure": "曝光",
+      "contrast": "對比",
+      "saturation": "飽和度",
+      "warmth": "暖色調"
+    }
   },
   "dish": {
     "temperature": {
@@ -435,7 +456,6 @@
     "difficultyEasy": "簡單",
     "difficultyMedium": "中等",
     "difficultyHard": "困難",
-    "madeThis": "我做過了",
     "madeBy": "{{n}} 人做過",
     "cookedFromRecipe": "用 {{name}} 的食譜做的",
     "allergyWarning": "過敏注意：{{items}}",
@@ -652,6 +672,20 @@
     "danger": "危險區域",
     "deleteAccount": "刪除帳號",
     "deleteNote": "將永久刪除你的個人檔案、料理、照片、留言、橡實和日記，且無法復原。",
+    "deactivateAccount": "停用帳號",
+    "deactivateConfirmTitle": "要停用你的帳號嗎？",
+    "deactivateConfirmBody": "你的帳號將被停用並登出。如果 30 天內沒有再次登入，帳號和其中的所有資料將會自動刪除。",
+    "deactivateFailed": "無法停用你的帳號。請再試一次或聯絡客服。",
+    "deactivateTitle": "要休息一下嗎？",
+    "deactivateBody": "你的帳號會暫停 30 天。目前不會刪除任何資料——在那之前再次登入，一切都會恢復原狀。",
+    "whileDeactivated": "停用期間",
+    "deaProfile": "你的個人檔案會被隱藏",
+    "deaDishes": "你的料理和照片會被隱藏",
+    "deaSocial": "留言和訊息會被隱藏",
+    "deactivateCaption": "30 天內用 Apple 或 Google 再次登入即可回來。超過期限後，帳號和其中的所有資料將永久刪除。",
+    "deaDeletedOn": "預計刪除日",
+    "reactivatedTitle": "歡迎回來",
+    "reactivatedBody": "你的帳號已重新啟用，個人檔案和料理會像以前一樣顯示。",
     "activity": "動態",
     "nAcorns": "料理收到的橡實",
     "nComments": "留言與回覆",
@@ -659,6 +693,8 @@
     "forYou": "給你的",
     "nDailyPick": "每日天氣推薦",
     "pickTime": "推薦時間",
+    "addPickTime": "新增時間",
+    "removePickTime": "刪除這個時間",
     "nTimer": "廚房計時器",
     "adsEvents": "廣告與活動",
     "nAds": "優惠與活動",
@@ -843,7 +879,7 @@
     "canCook": "現有食材能做的料理",
     "haveCount": "已有 {{have}}/{{total}} 種食材",
     "needs": "還缺：{{items}}",
-    "canCookEmpty": "加入食材後，會幫你找出能做的料理。",
+    "canCookEmpty": "用冰箱裡的食材找食譜。",
     "shoppingZone": "購物清單",
     "moveToFridge": "已購買 → 放進冰箱",
     "shoppingEmpty": "購物清單還是空的。在上方選擇購物清單，記下要買的東西。"
@@ -1131,6 +1167,7 @@
       "recent": "最近",
       "posts_other": "{{count}} 則分享",
       "topEmpty": "今天附近還沒有人分享料理。",
+      "questionsEmpty": "附近還沒有人發問，來當第一個吧。",
       "questionsTitle": "附近的提問",
       "ask": "提問",
       "locationOff": "開啟定位，就能看到今天附近的餐桌。"
@@ -1343,7 +1380,7 @@
     "placeholder": "傳訊息給 {{name}}…",
     "seen": "已讀",
     "yesterday": "昨天",
-    "requestNote": "來自你沒有追蹤的料理者的訊息會以請求的形式送達。隨時可從 ··· 檢舉或封鎖。",
+    "requestNote": "來自你沒有追蹤的帳號的訊息會以請求的形式送達。",
     "sendFailed": "無法傳送，請再試一次。",
     "viewProfile": "查看個人檔案",
     "block": "封鎖",
@@ -1456,10 +1493,6 @@
     "title": "鄰里餐桌",
     "todayTable": "今天的餐桌",
     "yesterdayTable": "昨天的餐桌",
-    "placeMine": "放上你的料理",
-    "mySeat": "我的座位",
-    "suggest": "推薦追蹤的料理人",
-    "suggestBody": "追蹤後，對方的料理就會擺上你的餐桌。",
     "seeMore": "查看更多"
   },
   "questions": {

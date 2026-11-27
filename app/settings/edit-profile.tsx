@@ -14,7 +14,6 @@ import { isObjectionable } from '../../src/services/moderation';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
 const MAX_BIO = 80;
-const MAX_NAME = 30;
 const { lineHeight: _lh, ...areaText } = text['Body/M'];
 
 /** 9.2 Edit profile (Figma 193:6134) · 9.2b photo = system picker. */
@@ -22,7 +21,6 @@ export default function EditProfile() {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const [a, setA] = useState<AccountSettings | null>(null);
-  const [name, setName] = useState('');
   const [handle, setHandle] = useState('');
   const [bio, setBio] = useState('');
   const [photo, setPhoto] = useState<string | undefined>();
@@ -31,7 +29,7 @@ export default function EditProfile() {
 
   const [failed, setFailed] = useState(false);
   const load = useCallback(
-    () => fetchAccount().then((x) => { setA(x); setName(x.displayName); setHandle(x.username); setBio(x.bio); setFailed(false); }).catch(() => setFailed(true)),
+    () => fetchAccount().then((x) => { setA(x); setHandle(x.username); setBio(x.bio); setFailed(false); }).catch(() => setFailed(true)),
     [],
   );
   useEffect(() => { load(); }, [load]);
@@ -44,8 +42,9 @@ export default function EditProfile() {
   const handleChanged = cleanHandle !== a.username;
   const cd = canChangeHandle(a);
   const handleError = handleChanged && !HANDLE_RE.test(cleanHandle) ? t('settings.handleFormat') : handleChanged && !cd.ok ? t('settings.handleCooldown', { date: cd.nextAt?.toLocaleDateString(i18n.language) }) : undefined;
-  const dirty = name.trim() !== a.displayName || handleChanged || bio.trim() !== a.bio || !!photo;
-  const ok = name.trim().length > 0 && !handleError && dirty;
+  // No separate nickname: the @username is the name shown everywhere (comments, profile, settings).
+  const dirty = handleChanged || bio.trim() !== a.bio || !!photo;
+  const ok = cleanHandle.length > 0 && !handleError && dirty;
 
   const pick = async () => {
     const r = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.9 });
@@ -56,7 +55,7 @@ export default function EditProfile() {
     if (!ok || saving) return;
     setSaving(true);
     try {
-      await saveProfile(a, { displayName: name, username: cleanHandle, bio, avatarUri: photo });
+      await saveProfile(a, { username: cleanHandle, bio, avatarUri: photo });
       router.back();
     } catch (e) {
       const code = (e as { code?: string }).code;
@@ -69,9 +68,8 @@ export default function EditProfile() {
   return (
     <SettingsScreen title={t('settings.editProfile')} footer={<Button label={t('settings.saveChanges')} disabled={!ok} loading={saving} onPress={save} />}>
       <View style={styles.avatar}>
-        <AvatarEdit name={name} photoUri={photo ?? a.avatarUrl ?? undefined} onPress={pick} accessibilityLabel={t('settings.changePhoto')} />
+        <AvatarEdit name={cleanHandle} photoUri={photo ?? a.avatarUrl ?? undefined} onPress={pick} accessibilityLabel={t('settings.changePhoto')} />
       </View>
-      <Input label={t('settings.displayName')} value={name} onChangeText={setName} maxLength={MAX_NAME} helper={t('settings.displayNameHelper')} />
       <Input
         label={t('settings.username')}
         value={handle}

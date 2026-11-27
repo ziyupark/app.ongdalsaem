@@ -4,7 +4,7 @@
 
 ## 09 Settings — [섹션 192:6130](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=192-6130)
 
-출시에 **꼭 필요한 것만** 남긴 설정 화면 10개(9.1 · 9.2 · **9.2b** · 9.3 · 9.4 · 9.5 · **9.6** · 9.7 · 9.8 · 9.9)와 9.8 하위 화면 3개(9.8a · 9.8b · 9.8c)다. 화면이 따로 필요 없는 값(Appearance · Temperature)은 9.1에서 선택 시트로 바꾸고, 차단 목록은 9.5 안에 둔다. 모든 화면 공통 골격과 규칙:
+출시에 **꼭 필요한 것만** 남긴 설정 화면 10개(9.1 · 9.2 · **9.2b** · 9.3 · 9.4 · 9.5 · **9.6** · 9.7 · 9.8 · 9.9)와 9.8 하위 화면 3개(9.8a · 9.8b · 9.8c)다. 화면이 따로 필요 없는 값(Temperature)은 9.1에서 선택 시트로 바꾸고, 차단 목록은 9.5 안에 둔다. 모든 화면 공통 골격과 규칙:
 - **골격**: StatusBar → TopBar(Inline, 뒤로 → 9.1) → content(좌우 20, 그룹 간격 24) → Home Indicator. 세로 스크롤, TabBar·FAB 없음.
 - **그룹 패턴**: Overline 제목(fg/muted) → 박스(bg/subtle, radius lg 16, clip, 행 간격 0) 안에 행 세로 나열 → 필요 시 Caption 설명(fg/muted). 행 높이 56, 아이콘 20.
   - 박스 안 **모든 행 = 배경 bg/default, 테두리 없음**(ListRow · Radio Row · Blocked row · Lang 행 공통). 화면 배경이 bg/subtle(흰색)이라 행 배경이 박스 모양을 만든다. Radio Row 기본의 사방 테두리는 박스 안에서 끈다(둥근 모서리에서 선이 잘려 보이기 때문).
@@ -28,10 +28,10 @@
   - 위치기반서비스 이용약관, 개인정보처리방침, 마케팅 수신 약관, 오픈소스 라이선스를 제공한다.
 
 ### 9.1 Settings — [26:2](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-2)
-- TopBar "Settings" → **Profile card**: 가로, radius 16, bg/subtle, padding 14 16. 구성은 Avatar 56 + "Jiyu"(Title/S) / "@jiyu.cooks · Edit profile"(Body/S muted) + `chevron-right`. 탭 → 9.2.
+- TopBar "Settings" → **Profile card**: 가로, radius 16, bg/subtle, padding 14 16. 구성은 Avatar 56 + "@jiyu.cooks"(Title/S) / "Edit profile"(Body/S muted) + `chevron-right`. 탭 → 9.2.
 - 그룹:
   - ACCOUNT: Account & security › (9.3)
-  - PREFERENCES: Notifications › (9.4) · `moon` Appearance **Match system**(선택 시트: Match system / Light / Dark) · `thermometer` Temperature **°C**(선택 시트: °C / °F) · `globe` **Language** "English" › (9.6)
+  - PREFERENCES: Notifications › (9.4) · `thermometer` Temperature **°C**(선택 시트: °C / °F) · `globe` **Language** "English" › (9.6) · `salad` **Diet & allergies** › (값 = 식단 · 직접 넣은 식단 단어 · "Allergies: n", 없으면 "No restriction")
   - PRIVACY & SAFETY: Privacy & location › (9.5)
   - SUPPORT: Help & policies › (9.8)
   - (제목 없음) Sign out (Destructive) → 1.2
@@ -41,7 +41,7 @@
 ### 9.2 Edit profile — [193:6134](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6134)
 - 위쪽(가운데 정렬): **Avatar edit**(96) = Avatar 88 + 오른쪽 아래 **편집 배지**(Edit, 32 원, bg/primary, 2px bg/default 테두리, `camera` 16 fg/on-primary). 아바타나 배지를 탭 → **9.2b**.
 - 입력:
-  - Display name "Jiyu" — helper "Shown on dishes you share."
+  - *(닉네임 Display name 입력칸 없음 — 앱 어디서나 @username이 이름이다)*
   - Username "@jiyu.cooks"(가입 때 자동 생성된 `jiyu_4821`을 사용자가 바꾼 예) — helper "ongdalsaem.app/@jiyu.cooks · changeable once every 30 days". 입력 중 실시간 중복 확인, 중복·허용 외 문자면 Error 상태. **30일에 1회만 변경**, 제한 중에는 Disabled + helper에 다음 변경 가능 날짜 표시. 바꾼 뒤 예전 handle은 14일간 예약(다른 사람이 못 씀).
   - Bio "Cooking for one, mostly when it rains." — helper "38 / 80"
 - Button Primary L "Save changes": 변경이 없으면 Disabled. 저장하면 9.1로 돌아간다.
@@ -57,10 +57,22 @@
   - 캡션: "Use any connected account to sign in. Keep at least one sign-in method." 마지막 남은 방법은 해제할 수 없다.
 - DANGER ZONE: **Delete account**(Destructive) → 9.9
   - 캡션: "Permanently deletes your profile, dishes, photos, comments, acorns and diary. This can’t be undone."
+- DANGER ZONE: **Deactivate account**(Destructive, `pause`) — Delete account 아래 → 9.3b
+
+### 9.3b Deactivate account — [1235:9394](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1235-9394)
+- 골격 = 9.9: TopBar "Deactivate account" · Head(Display/M **Take a break?** · Body/M fg/secondary "Your account goes quiet for 30 days. Nothing is deleted yet — sign in again any time before then and it’s all back.") · 그룹 · 버튼, 간격 24
+- WHILE DEACTIVATED(누를 수 없는 행): `user` Your profile is hidden · `image` Your dishes and photos are hidden · `message-circle` Comments & messages are hidden
+  - 캡션: "Sign in with Apple or Google within 30 days to come back. After that, your account and everything in it are deleted for good."
+- 그룹(라벨 없음): `clock` **Deleted on**(화살표 없음) · 값 = 오늘 + 30일(앱 언어 날짜, 예 "December 27, 2026")
+- Destructive L **Deactivate account** → 확인 팝업 "Deactivate your account?" / "Your account will be switched off and you’ll be signed out. If you don’t sign in again within 30 days, your account and everything in it will be deleted automatically." · Cancel · **Deactivate account** → `deactivate_own_account()` → 로그아웃 → 1.1 Splash
+- Ghost L **Keep my account** → 9.3
+- 비활성화 동안 다른 사람에게는 프로필(6.1 → 없는 계정 상태) · 요리 · 사진 · 댓글 · 질문 · 답변 · 메시지 대화 · 팔로우 · 도토리 · 테이블/챌린지 참여가 보이지 않고, 매일 추천 푸시에도 안 나온다(차단과 같은 방식)
+- 30일 안에 다시 로그인 → `reactivate_own_account()` → 팝업 "Welcome back" / "Your account is active again. Your profile and dishes are visible as before." → 모두 그대로. 30일이 지나면 서버가 9.9 삭제와 똑같이 지운다(purge-deactivated-accounts, 매일 1번)
 
 ### 9.4 Notifications — [193:6391](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6391)
 - ACTIVITY(Switch): Acorns on your dishes **on** · Comments & replies **on** · New followers **on**
 - FOR YOU: Daily weather pick **on** · Pick time **7:30 AM**(Value, 시간 선택 시트) · Kitchen timer **on**
+  - Pick time은 **최대 5개**(Figma에는 1개만): 시간마다 Pick time 행 1개(시각 순). 행 탭 → 시간 선택 시트(이미 고른 시간은 빼고) + 2개 이상이면 **Remove this time**(Destructive). 5개 미만이면 마지막에 `plus` **Add pick time** 행 → 시간 선택 시트. 시트 시간 = 7:00 · 7:30 · 8:00 · 9:00 · 11:30 · 12:00 · 15:00 · 17:30 · 18:00 · 20:00. Daily weather pick이 꺼지면 모두 비활성.
 - 광고 · 이벤트 알림은 v1에 없다(ADS & EVENTS 그룹 숨김). 나중에 추가하면 옵트인 · 야간 별도 동의 · "(광고)" 표시 · 2년 재확인([99-removed-in-v1](99-removed-in-v1.md) 9.9e).
 - OS 알림이 꺼져 있으면 맨 위에 Inline Banner(Neutral) "Notifications are off in system settings · Turn on"을 표시한다.
 
@@ -91,6 +103,13 @@
 - 언어를 바꾸면 앱 문구가 즉시 바뀐다(재시작 없음, `i18next` + `expo-localization`). 사용자가 쓴 글(요리 이름·설명·직접 만든 무드)은 번역하지 않는다.
 - 출시 1차 언어: English · Korean. 나머지는 번역이 준비된 언어만 목록에 보인다.
 
+### Diet & allergies (코드 기준, Figma 없음)
+- 9.1 Diet & allergies 행에서 연다(온보딩 Taste 다음 단계와 같은 폼). 누를 때마다 바로 저장.
+- **DIET**: Chip "No restriction" · Vegetarian · Vegan · Pescatarian(하나만) + 직접 넣은 단어 + **Add your own**(Chip · Add, `plus`). "No restriction"을 누르면 식단과 직접 넣은 식단 단어를 모두 지운다.
+- **ALLERGIES**: 9개 알레르기 Chip(여러 개) + 직접 넣은 단어 + **Add your own**.
+- **Add your own** → 다이얼로그(8.2b Add your mood와 같은 카드): `plus` 배지 · 제목/설명 · 입력칸(1–20자, 카운터) · 이미 있는 항목(고정 항목 이름 포함, 대소문자 무시)이면 "You already have this one." · Cancel / Add. 넣은 단어는 선택된 Chip으로 보이고, 탭하면 "Remove “…”?" 확인 후 지운다. 목록당 최대 20개.
+- 직접 넣은 단어가 요리 이름이나 재료에 있으면 추천 · 검색에서 뺀다. 직접 넣은 알레르기는 7.1 알레르기 경고에도 그 단어 그대로 나온다.
+
 ### 9.7 Choose city — [26:248](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-248)
 - **위치를 끈 사용자 전용**(2.5 "Choose city"에서만 진입). 위치가 켜져 있으면 날씨는 항상 현재 위치 기준이라 이 화면을 쓰지 않는다.
 - TopBar(Inline) "Choose city" → Search Field "Bus" → "Use current location"(`navigation`) → City Row 목록(도시 / 국가 / 현재 기온):
@@ -103,14 +122,14 @@
 - **HELP**: **Help center**(`compass`) → 9.8c · Contact support(`mail`) → **9.8a** · Community guidelines(`users`) → 9.8c
 - **LEGAL**: Terms of service · Privacy policy · Location-based service terms → **9.8c**(문서 시트) · Open-source licenses → **9.8b**(Marketing consent terms 행은 숨김 — 광고 없음)
 - **ABOUT**: **A letter from us**(`acorn`) → **1.1b** Welcome(앱 소개) 다시 보기 · Version **1.0.0 (100) · latest**(누르지 않음, 새 버전이 있을 때만 "Update available" → 스토어)
-  - 캡션: "ongdalsaem · help@ongdalsaem.app · Weather data by OpenWeather · Fonts: Fraunces, Outfit, Noto Sans KR (OFL) · Icons: Lucide (ISC)". 사업자로 등록하면 이 줄에 실제 사업자등록번호를 추가한다(자리표시자 번호는 쓰지 않음).
+  - 캡션: "ongdalsaem · app.ongdalsaem@gmail.com · Weather data by OpenWeather · Fonts: Fraunces, Outfit, Noto Sans KR (OFL) · Icons: Lucide (ISC)". 사업자로 등록하면 이 줄에 실제 사업자등록번호를 추가한다(자리표시자 번호는 쓰지 않음).
 - 문서 종류별 여는 방식: 긴 문서(약관 · 개인정보 · 위치 약관 · 가이드라인 · 도움말) = **웹뷰 시트**(호스팅한 웹 문서, expo-web-browser), 앱 데이터가 필요한 것(문의 · 라이선스 · 마케팅 동의) = 네이티브 푸시 화면.
 
 ### 9.8a Contact support — [497:10459](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=497-10459)
 - 푸시(TopBar Inline "Contact support"). **What’s it about?** Chip 한 줄: **Bug**(Selected) · Account · Report · Other(1개 필수, DB topic = bug · account · report_content · other).
 - 메시지 칸(bg/default, focus 테두리 1.5, radius 16, Body/M, 5–1000자) + 아래 줄 **Screenshot**(`image`, 선택 1장) ··· "92 / 1000".
 - 안내 박스(bg/accent-subtle, `alert-circle`): "We’ll attach app version 1.0.0 (100), iOS 18.2 and English to help us fix it. We reply to minji@example.com within 3 days." — 버전 · OS · 언어는 자동으로 붙는다. 답장 주소 = 로그인 이메일.
-- 링크 "Or email help@ongdalsaem.app"(`mail`, fg/accent) → 메일 앱(mailto, 제목에 버전 · 기기 자동 입력).
+- 링크 "Or email app.ongdalsaem@gmail.com"(`mail`, fg/accent) → 메일 앱(mailto, 제목에 버전 · 기기 자동 입력).
 - [고정] Button Primary L **Send**(y 744) → Back + Toast "Thanks — we’ll reply by email within 3 days." 입력 전에는 Disabled.
 - DB `support_tickets`(본인만 보내기 · 읽기, 처리 완료 후 3년 보관).
 

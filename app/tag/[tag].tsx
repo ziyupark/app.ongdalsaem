@@ -1,31 +1,27 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import * as Linking from 'expo-linking';
 import { TrendingUp } from '../../src/components/icons/ongdal';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, Share, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CategoryRow, CollectionTop, InfoRow, MealSheet, tagCategories } from '../../src/components/community/CollectionParts';
+import { CategoryRow, CollectionTop, tagCategories } from '../../src/components/community/CollectionParts';
 import { EmptyState, FoodGrid } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
 import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
 import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
-import { UnderlineTabs } from '../../src/components/UnderlineTabs';
-import { displayTemp } from '../../src/lib/prefs';
-import { useHere } from '../../src/lib/useHere';
 import { useWashScroll } from '../../src/lib/useWashScroll';
-import { fetchByTag, topTags, type CardDish } from '../../src/services/community';
-import { space, useTheme, WEATHER_ICON } from '../../src/theme';
+import { fetchByTag, type CardDish } from '../../src/services/community';
+import { space, useTheme } from '../../src/theme';
 
-type Sort = 'latest' | 'popular' | 'weather';
 /** Expanded TabBar height (12:182) — same bottom room as 4.1. */
 const TAB_BAR_H = 110;
 
 /**
- * 4.2 Tag · #Comfort (v2 826:14271) — mood wash · TopBar Overlay (back · share) → #Tag (Display/XL, always English) →
- * headline (Display/M) over a carousel of 400-high photo cards (gap 6) → Latest / Popular / By weather → info pill
- * (my weather · count) + meal filter → round categories (co-used tags) → Overline → dish grid → TabBar.
+ * 4.2 Tag · #Comfort (v2 826:14271) — mood wash · TopBar Overlay (back only) → #Tag (Display/XL, always English) →
+ * Group p22 · gap 16: headline (Display/M) over a carousel of 400-high photo cards (the tag's most popular, gap 6) →
+ * 18 → round categories (co-used tags; tap filters the grid, tap again clears) → 32 → Overline "LATEST · {category}" →
+ * 12 → dish grid (newest first) → TabBar. No sort tabs, info pill or meal filter (not in the design).
  */
 export default function TagScreen() {
   const { tag } = useLocalSearchParams<{ tag: string }>();
@@ -33,51 +29,36 @@ export default function TagScreen() {
   const { t, i18n } = useTranslation();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const { here } = useHere();
   const bar = useTabBarScroll();
   const wash = useWashScroll();
   const titleInk = useScreenInk(0.36);
   const headInk = useScreenInk(0.5);
   const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
-  const [sort, setSort] = useState<Sort>('latest');
   const [all, setAll] = useState<CardDish[] | null>(null);
   const [latest, setLatest] = useState<CardDish[] | null>(null);
   const [category, setCategory] = useState<string | null>(null);
-  const [meal, setMeal] = useState<string | null>(null);
-  const [sheet, setSheet] = useState(false);
   const key = String(tag ?? '').toLowerCase();
   const tagLabel = (k: string) => (i18n.exists(`share.moods.${k}`) ? t(`share.moods.${k}`) : k);
   const label = tagLabel(key);
   // The big #Tag title always shows the English name (like the tab titles); screen readers get the local one.
   const enLabel = i18n.exists(`share.moods.${key}`) ? en(`share.moods.${key}`) : key;
   const headline = i18n.exists(`tag.headlines.${key}`) ? t(`tag.headlines.${key}`) : t('tag.overline', { tag: label });
-  const myMood = here.forecast?.mood ?? null;
 
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => { fetchByTag(key, 'popular').then(setAll).catch(() => setFailed(true)); }, [key, attempt]);
-  useEffect(() => {
-    if (sort !== 'latest' || latest) return;
-    fetchByTag(key, 'latest').then(setLatest).catch(() => setFailed(true));
-  }, [sort, key, latest, attempt]);
+  useEffect(() => { fetchByTag(key, 'latest').then(setLatest).catch(() => setFailed(true)); }, [key, attempt]);
   const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
-  const base = sort === 'latest' ? latest : sort === 'weather' ? (all ? all.filter((d) => myMood != null && d.mood === myMood) : null) : all;
-  const list = base?.filter((d) => (!category || d.moods.includes(category)) && (!meal || d.meals.includes(meal))) ?? null;
+  const list = latest?.filter((d) => !category || d.moods.includes(category)) ?? null;
   const categories = useMemo(() => tagCategories(all ?? [], tagLabel, key), [all, key, i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
-  const meals = all ? topTags(all, 'meals') : [];
-  const tabs = [{ key: 'latest' as const, label: t('tag.latest') }, { key: 'popular' as const, label: t('tag.popular') }, { key: 'weather' as const, label: t('tag.byWeather') }];
-  const sectionTitle = [tabs.find((x) => x.key === sort)?.label, category ? tagLabel(category) : null].filter(Boolean).join(' · ');
+  const sectionTitle = [t('tag.latest'), category ? tagLabel(category) : null].filter(Boolean).join(' · ');
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     bar.onY(e.nativeEvent.contentOffset.y);
     wash.onY(e.nativeEvent.contentOffset.y);
   };
   const onTab = (k: TabKey) => goTab(k);
-  const shareTag = () => {
-    const link = Linking.createURL(`/tag/${encodeURIComponent(key)}`);
-    Share.share({ message: `#${label} — ${link}`, url: link }).catch(() => undefined);
-  };
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
@@ -88,7 +69,7 @@ export default function TagScreen() {
           width={width}
           onOpen={(d) => router.push(`/dish/${d.id}`)}
           onBack={() => router.back()}
-          onShare={shareTag}
+          headGap={space[16]}
           title={`#${enLabel}`}
           titleLabel={`#${label}`}
           headline={headline}
@@ -96,22 +77,9 @@ export default function TagScreen() {
           headInk={headInk?.strong}
         />
 
-        {/* Block · Tabs — p12 top. */}
-        <View style={styles.tabs}>
-          <UnderlineTabs contentStyle={styles.tabRow} value={sort} onChange={setSort} items={tabs} />
-        </View>
-
-        {/* Group — p18 top · gap 18: info row → categories. */}
+        {/* Group · Our area 826:14291 — p18 top: round categories. */}
         <View style={styles.filters}>
-        <InfoRow
-          icon={myMood ? WEATHER_ICON[myMood] : undefined}
-          weather={here.forecast ? t('tag.myWeather', { weather: t(`weather.${here.forecast.mood}`), temp: displayTemp(here.forecast.tempC) }) : null}
-          count={t('tag.count', { count: all?.length ?? 0 })}
-          onFilter={() => setSheet(true)}
-          filtered={meal != null}
-        />
-
-        <CategoryRow items={categories} value={category} onChange={setCategory} />
+          <CategoryRow items={categories} value={category} onChange={setCategory} />
         </View>
 
         <View style={styles.section}>
@@ -124,17 +92,14 @@ export default function TagScreen() {
         </View>
       </ScrollView>
       <TabBar active="community" progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
-      <MealSheet visible={sheet} onClose={() => setSheet(false)} meals={meals} value={meal} onChange={setMeal} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  tabs: { paddingTop: space[12] },
-  filters: { paddingTop: space[16] + space[2], gap: space[16] + space[2] },
+  filters: { paddingTop: space[16] + space[2] },
   px: { paddingHorizontal: space[20] },
-  tabRow: { gap: space[24], paddingHorizontal: space[20] },
   section: { paddingTop: space[32], gap: space[12] },
   loading: { marginTop: space[40] },
 });

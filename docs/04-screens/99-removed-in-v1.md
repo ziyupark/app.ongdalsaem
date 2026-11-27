@@ -141,3 +141,7 @@ DB 테이블 중 messages · message_threads · collections · collection_items�
 - **PUSH & EMAIL**(ListRow Switch): **Ads & events**(On) · **Night-time ads · 9 PM–8 AM**(Off, Ads & events가 켜져 있어야 켤 수 있음)
 - 캡션: "You agreed on Nov 5, 2026. We’ll confirm your choice every 2 years and tell you within 14 days whenever it changes. Same setting as Notifications › Ads & events."
 - 기본값은 둘 다 꺼짐(옵트인). 바꿀 때마다 Toast "Ads turned on · Nov 5, 2026"(날짜 포함). DB profiles.marketing_ads · marketing_night_ads · marketing_consented_at + marketing_consent_log.
+
+
+### 1.3 Profile setup — [14:260](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=14-260)
+- 닉네임(Display name) 입력 + 프로필 사진 + handle 미리보기 단계. 닉네임 기능을 빼면서 삭제했다 — @username은 첫 로그인 때 자동 생성, 사진 · username 변경은 9.2.

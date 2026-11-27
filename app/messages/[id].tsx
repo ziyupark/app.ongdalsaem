@@ -4,6 +4,8 @@ import { ArrowRight, ChevronRight, MoreHorizontal } from '../../src/components/i
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
@@ -104,7 +106,7 @@ export default function ThreadScreen() {
         contentContainerStyle={styles.body}
         onContentSizeChange={() => list.current?.scrollToEnd({ animated: false })}
         keyboardShouldPersistTaps="handled"
-        ListFooterComponent={<Text variant="Caption" color="fg/muted" style={styles.note}>{t('messages.requestNote')}</Text>}
+        ListFooterComponent={<RequestNote started={msgs.length > 0} label={t('messages.requestNote')} />}
         renderItem={({ item, index }) => {
           const prev = msgs[index - 1];
           const showDay = !prev || prev.createdAt.toDateString() !== item.createdAt.toDateString();
@@ -126,7 +128,7 @@ export default function ThreadScreen() {
         }}
       />
       <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom, space[10]), borderTopColor: color('border/default') }]}>
-        <Avatar url={me?.avatarUrl ?? null} name={me?.displayName ?? ''} size={32} />
+        <Avatar url={me?.avatarUrl ?? null} name={me?.username ?? me?.displayName ?? ''} size={32} />
         <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
           <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
             value={draft}
@@ -195,6 +197,27 @@ function DishCard({ id, fallback }: { id: string; fallback: string }) {
   );
 }
 
+/** Request note 1219:18051 — only before the chat starts. On the first message it slides up and fades out, then unmounts. */
+function RequestNote({ started, label }: { started: boolean; label: string }) {
+  const { color } = useTheme();
+  const reduce = useReducedMotion();
+  // Opened on a chat that already has messages → never shown.
+  const [shown, setShown] = useState(!started);
+  const p = useSharedValue(started ? 0 : 1);
+  useEffect(() => {
+    if (!started || !shown) return;
+    if (reduce) { setShown(false); return; }
+    p.value = withTiming(0, { duration: 300, easing: Easing.out(Easing.cubic) }, (done) => { if (done) scheduleOnRN(setShown, false); });
+  }, [started, shown, reduce, p]);
+  const anim = useAnimatedStyle(() => ({ opacity: p.value, transform: [{ translateY: (p.value - 1) * 16 }] }));
+  if (!shown) return null;
+  return (
+    <Animated.View style={[styles.note, { borderColor: color('border/strong') }, anim]}>
+      <Text variant="Nav label" color="fg/muted" style={styles.noteText}>{label}</Text>
+    </Animated.View>
+  );
+}
+
 const styles = StyleSheet.create({
   root: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
@@ -206,7 +229,9 @@ const styles = StyleSheet.create({
   theirs: { alignSelf: 'flex-start', alignItems: 'flex-start' },
   bubbleCol: { gap: space[6] },
   bubble: { borderRadius: radius.xl, paddingHorizontal: space[14], paddingVertical: space[12] },
-  note: { textAlign: 'center', marginTop: space[8] },
+  // Request note 1219:18051 — pill 276 wide, 0.8 border/strong, padding 6 15
+  note: { alignSelf: 'center', width: 276, marginTop: space[8], paddingVertical: space[6], paddingHorizontal: 15, borderWidth: 0.8, borderRadius: radius.full },
+  noteText: { textAlign: 'center' },
   dish: { width: 240, flexDirection: 'row', alignItems: 'center', gap: space[10], padding: space[8], borderRadius: radius.lg, borderWidth: 1 },
   dishThumb: { width: 48, height: 48, borderRadius: radius.md, overflow: 'hidden' },
   composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingTop: space[10], borderTopWidth: 1 },

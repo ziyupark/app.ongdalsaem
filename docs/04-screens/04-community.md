@@ -7,7 +7,7 @@
 **탭 구성**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following · Challenges** 3개. 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 동네 내용은 Explore의 "Our area" 섹션으로 옮김. Explore에는 검색창이 없다). Figma 4.1 · 4.4 · Challenges 프레임이 이 구성이다(공통 헤더 + 밑줄 탭).
 
 섹션 안 배치(라벨 기준, 화면 종류별):
-- **MAIN** — 4.1 Community · Explore(탭 화면) · 4.1 Community · Challenges(탭 화면) · 4.1b Holidays around the world. Following(4.4)은 04b.
+- **MAIN** — 4.1 Community · Explore(탭 화면) · 4.1 Community · Challenges(탭 화면) · 4.3-1 / 4.3-2 Special days around the world. Following(4.4)은 04b.
 - **TEMPLATES** — 4.2 Tag · #Comfort · 4.3 Country · Japan. **앱은 v2 디자인**(Figma "4.2 Tag · #Comfort (v2)" [718:11114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11114) · "4.3 Country · Japan (v2)" [718:11248](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11248)). 명절 페이지(Halloween · Christmas …)도 **4.2 태그 템플릿**에 그 명절 태그를 넣은 것이다. 같은 종류의 다른 페이지(#Spicy, #Vegan, Italy …)는 **이 템플릿에 데이터만 바꿔** 쓴다.
 
 두 템플릿은 같은 뼈대(`CollectionParts`)를 쓰고 탭과 데이터만 다르다:
@@ -19,55 +19,60 @@
 | 정보 알약의 날씨 | 내 날씨 | 고른 도시(All이면 1위 도시)의 날씨 |
 | 그리드 순서 | 탭 기준 | 인기순, 지금 그 도시 날씨와 같은 요리 먼저 |
 
-### 4.1 Community · Explore — [19:818](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-818)
+### 4.1 Community · Explore — [1113:25908](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1113-25908)
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
-  1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3)
-  2. **UnderlineTabs**: **Explore**(active) · Following · Challenges(좌우 20, 탭 간격 24). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
-  3. **Story of the day**(p32 20 0, gap 6): SectionHeader "Story of the day" → Story Card 350×400(PhotoCard): 위 줄 Title/L "{요리}, {이름}’s way"(1줄) · `chevron-right` 20(gap 8) → 아래 Statement 캡션(3줄) + Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag(상태 글자 포함) · Acorn Tag. 탭 → 7.1.
+  1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash + 날씨 모션 · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3 — Community는 오버라인 → 12 → 제목 → 12)
+  2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 **16**, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
+  3. 본문(1219:15437): 위아래 **28**, **섹션 사이 38**. 순서 = Story of the day → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
+  4. **Story of the day**(좌우 20, gap 16): Display/M 26 "Story of the day"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
+    - 고르는 규칙(**오늘의 픽**): 공개 게시물 중 **내 지금 날씨와 같은 날씨 + 기온 ±1°C**(`weather_condition` = 내 무드, `temperature_c` 내 기온 −1 ~ +1). 캡션 있는 최근 2일 → 최근 30일 → 캡션 없어도 최신 60개 중 도토리 많은 순. 맞는 게시물이 없거나 날씨를 모르면(위치 꺼짐) 날씨 조건 없이 같은 순서로 고른다.
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
-  4. **Our area — Today’s table in our area**(아래 별도 설명: 오늘 인기 · 동네 질문)
-  5. **Trending Bites**(p32, gap 6): SectionHeader "Trending Bites" → **Country Card** 280×180 가로 스크롤(gap 12): Flag Tag(18, 12) · 아래로 몰아서 Display/M 요리 이름 → Weather Tag · Acorn Tag, 아래 120pt 잉크 70 % 페이드. 탭 → **4.3**(그 나라).
-     - 데이터: 최근 14일(없으면 60일) 나라별 도토리 최다 게시물, 도토리순 최대 8개.
-  6. **Festive tables / Holidays around the world**(p32, gap 6): SectionHeader(Overline "FESTIVE TABLES" + 제목 + 오른쪽 `chevron-right` 더보기 → **4.1b**) → **Festive Card** 168×196 가로 스크롤(gap 12), **가까운 명절 8개**. 카드 → 그 명절 태그의 **4.2**.
-  7. **Trending tags**(p32, gap 8): SectionHeader "Trending tags" + "See all"(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row ×2(그 태그 게시물).
-  8. **Explore Together**(p32, gap 8): SectionHeader "Explore Together" + "See all"(5개 이상일 때, 누르면 같은 자리에서 20개까지 펼침) → 칩 **All** · 풍경(Forest · Sea · Lake · Mountain · Countryside · City) → Food Card Row ×4. 풍경 칩은 이 섹션만 거른다.
-  9. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
-- Food Card Row: 썸네일 · Overline "끼니 · 기온°" · 제목 · "핸들 · 도시 · 시간" · 북마크(저장 토글).
-- 순서는 항상 Story → Our area → Trending Bites → Holidays → Trending tags → Explore Together(데이터가 비어도 섹션 순서가 바뀌지 않도록 넓혀서 채움).
+  5. **Popular today · Neighbourhood questions**(아래 "Our area")
+  6. **Trending tags**(1113:25982, gap 16): SectionHeader "Trending tags" + ›(20, fg/default → 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(좌우 inset 20, 게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row 최대 3개(그 태그 게시물).
+  7. **Special days around the world**(1113:25999, gap 16): 제목(Title/L) + ›(**24**, fg/default → **4.3-1** 전체 목록) → **Festive Card** 168×196 가로 스크롤(gap 12, 좌우 inset 20), **가까운 명절 8개**. 카드 → 그 명절의 **4.3-2**.
+  8. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
+- Food Card Row(12:384): 썸네일 80 radius 16 · 14 · [Overline "끼니 · 기온°" → 4 → (Title/S 제목 → 3 → Caption "핸들 · 도시 · 시간")] · `bookmark` **24 fg/default**(저장 토글, 채움 = 저장됨) · **⋯**(남의 글일 때 → 신고·차단). 글자는 모두 fg/default.
+- **⋯ 메뉴**(Story · Question · Food Card): 7.3 ReportSheet — 신고(게시물 / 질문) · "{이름} 차단". 내 글에는 ⋯가 없다. 차단하면 화면 전체를 다시 불러오고, 차단한 사람의 글·질문은 RLS(`is_blocked_between`)로 모든 섹션에서 빠진다.
+- 상태: Popular today · 질문은 불러오는 동안 스피너, 실패·없음이면 안내 문구(무한 로딩 없음). 게시물 목록이 실패하면 맨 위 LoadError(Try again).
+- 위치 표시는 시 · 구까지(동 이름은 쓰지 않음).
 
-#### 4.1 Our area — Today’s table in our area(4.1 프레임 안 "Group · Our area")
-- 위치가 켜져 있을 때(p32 위, 좌우 20):
-  1. 헤더: Title/M "Today’s table in our area" + Caption fg/muted "{동(없으면 도시)} · {날씨} {기온}°"
-  2. 블록들(위 16, 블록 사이 24, 블록 안 10):
-     - **Popular today**(Title/S + 오른쪽 Caption "Based on {범위}" — 넓혀서 가져왔을 때만): ListCard에 1–3위 행(순위 숫자 Title/S fg/accent · 썸네일 48 radius md · 요리 이름 · "{n} posts"). 탭 → 그 대표 게시물 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
-       - 규칙: 오늘 0시(현지) 이후 공개 게시물을 **요리 이름으로 묶어**(대소문자·공백 무시) 개수순(같으면 도토리 합) 상위 3개. 대표 게시물 = 그 이름 중 도토리 최다(같으면 최신). 범위: 내 칸(geohash 5자리)과 주변 칸 → 이름이 0–1개면 같은 구 → 같은 도시.
-     - **Neighbourhood questions**(Title/S): **Question Card**(radius 2xl) 3–5개 → Outline M `message-circle` **"Ask a question"** → 3.7. 카드 → 3.8, Me too = 그 자리 토글.
-       - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다(최대 5). 넓혀서 가져온 질문에는 그 범위(구 · 도시 · 질문 장소) 라벨이 붙는다.
+#### 4.1 Our area — Popular today · Neighbourhood questions(4.1 1219:15435 · 1219:15436)
+- 위치가 켜져 있을 때(두 섹션 사이 38):
+  - **Popular today**(1113:25935, gap 12): SectionHeader "Popular today" + 오른쪽 범위 배지(구 · 도시 · "도시 · Last 3 days" · "날씨 · Recent") → 카드 최대 3개(gap 12).
+    - 카드(1219:15534): bg/subtle, radius 2xl, padding 8 16, 최소 높이 108, gap 10 — 사진 80 radius lg → [알약 overlay/scrim "I ATE THIS ・ {n}"(Overline · Body/S Strong, fg/on-photo) → 5 → (왼쪽 9 안쪽, gap 2) Body/M Strong 요리 이름 · Caption **fg/default** "도시 · 시간"] → `chevron-right` **20 fg/default**(⋯ 없음 — 신고·차단은 7.1에서). 탭 → 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
+    - 규칙: 공개 **게시물 단위**로 "I ate this" 수(`food_eaten_counts`) 많은 순 → 도토리 → 최신. 범위: 오늘 내 칸(geohash 5자리)과 주변 칸 → 오늘 같은 구 → 오늘 같은 도시 → 도시 최근 3일 → 같은 날씨 최근 7일 순으로 3개까지 채운다. Story of the day 게시물은 뺀다.
+  - **Neighbourhood questions**(1113:25960, gap 16): SectionHeader + ›(20, fg/default → 3.7 목록) → Question Card 최대 3개(gap 14) → Outline M `message-circle` **"Ask a question"**. 없으면 Body/S fg/muted "No questions nearby yet. Be the first to ask."
+    - Explore Question Card(469:10124): bg/subtle, **테두리 없음**, radius **2xl(32)**, padding 16, gap 16 — Avatar 40 · Body/S Strong 이름 · Caption **fg/default** "구(또는 넓힌 범위) · 시간" · ⋯(남의 질문일 때) → Body/M fg/default 질문 → 사진(있을 때, 318:395 비율, radius 32) → 좌우 21 안쪽에 [`message-circle` 24 + 답변 수 · 12 · `share` 24(시스템 공유: 질문 + 링크)] ··· **`bookmark` 24 = 질문 저장 토글**(채움 = 저장됨, 바로 바뀌고 실패하면 되돌림, DB question_saves). 카테고리 배지 · Me too는 없다(질문 카드 어디에도 없음 — 3.7 목록 · 3.8 상세 포함). 카드 → 3.8.
+    - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다. 넓혀서 가져온 질문에는 그 범위(구 · 도시) 라벨이 붙는다.
 - 위치가 꺼져 있으면: 카드(bg/subtle + border/default, radius 2xl, padding 20, 가운데) `map-pin` 22 fg/secondary · Body/M fg/secondary "Turn on location to see today’s table in our area." · Button M "Allow location"(권한 요청 → 도시 저장).
 
-### 4.1b Holidays around the world — [724:11491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=724-11491)
-- 4.1 Festive 섹션의 더보기(`chevron-right`, 접근성 "See all holidays")에서 연다. 푸시, TopBar(Inline) "Holidays around the world"(뒤로).
-- 본문(좌우 20, 위 12, gap 12): Overline fg/accent "FESTIVE TABLES" → **Festive Card 2열 그리드**(gap 12, 카드 비율 168:196). **모든 명절 46개**를 다음 날짜가 가까운 순으로.
-- 카드 → 그 명절 태그의 4.2.
+### 4.3-1 Special days around the world — [724:11491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=724-11491)
+- 4.1 Special days 섹션의 더보기(`chevron-right`, 접근성 "See all holidays")에서 연다. 푸시, TopBar(Inline) "Special days around the world"(뒤로).
+- 본문(좌우 20, 위 12): **Festive Card 2열 그리드**(gap 12, 카드 비율 168:196). **모든 명절 46개**를 다음 날짜가 가까운 순으로.
+- 카드 → **4.3-2** 그 명절 페이지.
 
-### Festive Card(4.1 · 4.1b 공통)
+### 4.3-2 Special days around the world · {명절} — [1219:16713](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1219-16713)
+- 4.3-1의 카드, 4.1 Special days 카드에서 연다(`app/holiday/[key]`). 4.2 Tag와 같은 틀.
+- 블록: TopBar · Overlay(뒤로만) → **#명절** Display/XL(항상 영어, 예 "#Chuseok") → Group(위 22 · gap 16): Display/M "Special days around the world" → 사진 카드 350×400 가로 스크롤(그 명절 요리 중 도토리 1–3위) → 18 → **동그란 카테고리 = 그날 먹는 음식**(`community.holidays.<key>.food`를 나눈 것, 예 Songpyeon · Jeon · Galbi-jjim; 사진 = 그 음식 이름이 들어간 최신 게시물, 없으면 bg/muted 원) — 탭하면 그 음식으로 그리드를 거르고 다시 탭하면 해제 → 32 → Overline "LATEST · {음식}" → Dish Tile 2열 그리드(최신순) → TabBar.
+- 데이터: 공개 게시물 중 **명절 태그가 붙었거나**(무드 태그 = 명절 키) **이름에 그 음식(내 언어 · 영어)이 들어간** 것, 최신 60개. 비면 EmptyState, 실패 = LoadError.
+
+### Festive Card(4.1 · 4.3-1 공통)
 - 168×196, radius xl(24), padding 16, gap 6. 배경 = 그 명절 **음식 사진**(`assets/holidays/food/`, 600×800) + 아래로 overlay/scrim-strong 그라데이션(35 %부터).
 - 위 왼쪽 **배지 36 원**(glass/surface): 그 명절 나라 국기 20×14(radius 3), 세계 공통 명절(새해 등)은 `globe` 18. (Figma 카드 배지는 아직 아이콘 — 앱 기준은 국기)
 - 아래로 몰아서: Overline fg/on-photo-secondary 날짜 "OCT 31"(오늘 · 내일이면 "· TODAY" / "· TOMORROW") → Title/M fg/on-photo 명절 이름 → Caption fg/on-photo-secondary 대표 음식(1줄).
 - 명절 46개 목록·국기·사진은 `src/lib/holidays.ts`, 날짜(2026–2035)는 `src/lib/holidayDates.ts`(`npm run holidays:dates`로 생성: 음력 · 절기 · 부활절 · 요일 규칙 · 달 기준 명절 · 마타리키 법정일). 이름 · 음식은 9개 언어.
 
-### 4.2 Tag · #Comfort (v2) — [718:11114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11114)
-- **태그 페이지 템플릿**(#Spicy · #Vegan · 명절 태그 … 모두 이 화면). 세로 스크롤, 블록 사이 20.
+### 4.2 Tag · #Comfort (v2) — [826:14271](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=826-14271)
+- **태그 페이지 템플릿**(#Spicy · #Vegan · 명절 태그 … 모두 이 화면). 세로 스크롤, 화면 무드 wash 위.
 - 블록:
-  1. **히어로**: 넘겨 보는 사진 390×420(인기 게시물 1–3위, 탭 → 7.1) + 아래쪽 페이지 점(활성 16×6 fg/on-photo · 나머지 6×6 fg/on-photo-tertiary, gap 6) + 왼쪽 위 **유리 뒤로 버튼**(GlassIconButton 40, 안전 영역 + 6, 왼쪽 12).
-  2. **제목 카드**(좌우 20, 사진 아래쪽에 40 겹침): bg/accent-subtle, radius xl — 위 padding 20 · gap 8: Overline fg/accent **"COMFORT FOOD"**(= "{태그} food") → Display/M 제목(`tag.headlines.<태그>`, 없으면 "#태그") → 아래 **띠** bg/inverse · padding 12 20 · Caption Strong fg/inverse "most shared on rainy days"(이 태그가 가장 많이 공유된 날씨, 없으면 요리 수).
-  3. **UnderlineTabs**: **Latest**(기본) · Popular · **By weather**(좌우 20, gap 24). By weather = 지금 **내 날씨와 같은 날씨**에 올라온 게시물만.
-  4. **정보 알약 줄**(좌우 20, gap 8): 알약(높이 40, bg/subtle + 1px border/default, radius full, 좌우 16, gap 12) = [날씨 아이콘 16 + Caption Strong "My weather · Rain 10°"] · 세로선 1×14 border/default · Caption fg/secondary "128 dishes" → 오른쪽 **원형 필터 버튼**(IconButton Soft 40, `list`, 접근성 "Filter") — 끼니 필터가 켜져 있으면 점 표시.
-  5. **동그란 카테고리**(가로 스크롤, 좌우 20, gap 16): 사진 64 원 + Caption 라벨(gap 8). 이 태그 게시물에 함께 많이 붙은 무드 태그 최대 6개(지금 태그 제외), 사진 = 그 태그 첫 게시물. 선택 = 2px fg/accent 테두리 + 라벨 fg/accent. 탭하면 같은 화면에서 그리드를 거르고, 다시 탭하면 해제.
-  6. **섹션 제목** Overline fg/muted "{탭} · {카테고리}"(대문자) → **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20). 비면 EmptyState "No #{tag} dishes here yet" / "Share one and it shows up here."
-  7. TabBar(Community active, CreateFAB) — 바닥 여백 110 + 24.
-- **끼니 필터 시트**(필터 버튼): BottomSheet "Filter by meal" — Chip "All meals" + 목록에 있는 끼니(Breakfast · Lunch · Dinner · Snack …). 고르면 닫히고 그리드를 거른다.
+  1. **TopBar · Overlay**(높이 52, 좌우 12): 왼쪽 **뒤로**(IconButton Soft 40)만. 공유 버튼 없음.
+  2. **#태그** Display/XL(항상 영어, 읽기는 내 언어) — padding 22 20 12.
+  3. **Group**(위 22 · gap 16): Display/M 한 줄 제목(`tag.headlines.<태그>`, 없으면 "{태그}") → **사진 카드 350×400 가로 스크롤**(gap 6, 좌우 20, 넘김 = 카드 한 장씩) — 이 태그 **인기 게시물 1–3위**, 사진만(아래 잉크 scrim). 탭 → 7.1.
+  4. 18 → **동그란 카테고리**(가로 스크롤, 좌우 20, gap 16): 사진 64 원 + Caption 라벨(gap 8). 이 태그 게시물에 함께 많이 붙은 무드 태그 최대 6개(지금 태그 제외), 사진 = 그 태그 첫 게시물. 선택 = 2px fg/accent 테두리 + 라벨 fg/accent. 탭하면 같은 화면에서 그리드를 거르고, 다시 탭하면 해제.
+  5. 32 → Overline fg/muted **"LATEST · {카테고리}"**(카테고리를 고르지 않았으면 "LATEST") → 12 → **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20) — **최신순**. Acorn Tag = 도토리 토글(내가 준 상태 기준, 누르면 숫자가 바로 바뀜). 비면 EmptyState "No #{tag} dishes here yet" / "Share one and it shows up here." 불러오기 실패 = LoadError(Try again).
+  6. TabBar(Community active, CreateFAB) — 바닥 여백 110 + 24.
+- 정렬 탭(Latest · Popular · By weather) · 정보 알약(내 날씨 · 요리 수) · 끼니 필터 시트는 없다.
 - 이동: 사진 · 타일 → 7.1 · 뒤로 → BACK · TabBar.
 - **명절 태그**도 같은 화면이다(명절 날짜 헤더 · CELEBRATED IN 칩은 없다).
 
@@ -87,25 +92,16 @@
 
 팔로우한 사람과 관련된 화면 묶음(Following 탭 · 요리사 프로필 · 요리사 목록 · 메시지 4.11).
 
-### 4.4 Community · Following — [183:5713](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=183-5713)
+### 4.4 Community · Following · Neighbors' Table — [730:11217](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=730-11217)
 - 4.1과 같은 상단(ScreenHeader + 탭 Explore · **Following** · Challenges). 세로 스크롤.
-- Block · following feed:
-  - SectionHeader "From people and tables you follow"(Eyebrow 없음)
-  - **Your tables** 줄(좌우 20, 아래 16, gap 8, 가로 스크롤): 내가 들어간 테이블 pill(사진 24 원 + `#SoloMeals` Caption Strong, bg/subtle + border/default, radius 999) ×N → 마지막 **Browse tables**(`plus` 16, border/strong) → 4.7.
-  - **Feed filter** 칩 줄(좌우 20, 아래 16, gap 8): **All**(Selected, 기본) · People · Tables. All = 팔로우한 사람 + 들어간 테이블 게시물, People = 팔로우한 사람만, Tables = 들어간 테이블 게시물만. 칩은 같은 화면에서 바뀐다(마지막 선택을 기억). Tables를 골랐는데 들어간 테이블이 없으면 **4.4c**.
-  - 테이블에서 온 게시물 위에 **Table source** 줄(좌우 20, 아래 8): `utensils` 14 fg/muted + "from #SoloMeals"(Caption Strong fg/muted) → 4.8b. 팔로우한 사람이 테이블에 올린 글은 사람 글로 한 번만 나오고 source 줄을 붙인다.
-  - 섞는 규칙: 시간순, 단 같은 테이블 글이 3개 이상 연달아 나오지 않게 뒤로 미룬다. **Suggested for you**는 게시물 5개 뒤에(목업은 2개 뒤).
-  - **Feed Post ×2**([§3.3](../02-components.md)):
-    - aoi.sapporo · Sapporo · 20m · ramen1 · `cloud-snow` −4° · 도토리 108 · 💬21 · "Miso butter corn ramen at 11 PM. The snow can wait."
-    - hana.kitchen · Suyeong, Busan · 2h · bibimguksu · `sun` 22° · 도토리 54 · 💬7
-  - SectionHeader "Suggested for you" / See all(게시물 5개 뒤)
-  - **Cook card ×3** 가로(각 FILL, radius 24, bg/subtle + border/default, padding 16 8 14): Avatar 56(이니셜) → 이름 Body/S Strong → 설명 Caption(1줄 말줄임) → Button Outline S "Follow"(FILL). 데이터: kenji.eats (Otaru · ramen), luca.cucina (Rome · pasta), sol.mx (Oaxaca · street food)
-  - Tab bar spacer 96
-- 이동: Explore → 4.1 · Challenges → 4.9 탭 · 테이블 pill → **4.8b** · Browse tables → **4.7** · "From people and tables you follow" 헤더 → **4.6** · 게시물 헤더 → 4.5 · 사진 → 7.1 · 댓글 → 7.2 · Suggested "See all" → **4.6** · Cook card 아바타 → 4.5 · Follow → 그 자리에서 "Following"(Secondary)으로 바뀜 · 아무도 팔로우하지 않으면 **4.4b**.
-
-### 4.4b State · Following is empty — [352:7679](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=352-7679)
-- 4.5와 같은 상단(Following active). 피드 대신 빈 상태: 72 원 bg/muted + `users` 30 → "Your table is empty"(Title/L) → "Follow cooks whose food fits your weather — their dishes will show up here."(Body/S) → Button Primary M **Find cooks** → 4.6.
-- 그 아래 "Suggested for you" Cook card ×3(4.5와 같음, See all → 4.6).
+- 제목 Display/M "Neighbors' Table"(Story of the day와 같은 자리 · 스타일) → 6 → 날짜별 **Table** 카드(좌우 20, 사이 24).
+- **기간 = 최근 2주**(오늘 포함 14일). 오늘 테이블은 항상 맨 위, 그 아래는 게시물이 있는 날만 최신 날짜 순. 제목 = Today's table / Yesterday's table / 날짜.
+- **Table**(730:11437 — bg/subtle, radius 24, padding 16, gap 16): 제목 Title/M + Caption 날짜 → 접시 3열(gap 16) → 넘치면 **See more**(Caption Strong).
+  - 접시 = 그날 **내 게시물 + 이웃 게시물**(내 칸 geohash 5자리 · 주변 칸 · 같은 구), **올린 순서대로**(먼저 올린 것이 앞). 한 요리사가 여러 개 올리면 모두 나온다. 차단한 요리사는 빠진다.
+  - 처음에 오늘은 **3줄(9개)**, 지난 날은 **2줄(6개)**까지 보이고, See more → 그 테이블 전체.
+  - 접시(Plate): 둥근 사진 + bg/default 테두리 6 + Elevation/1, 오른쪽 아래 요리사 Avatar 24, 아래 Caption fg/secondary 요리 이름 1줄.
+  - **내 자리(Place your dish 빈 접시) · + Follow · 요리사 추천("Cooks to follow")은 없다.**
+- 이동: 접시 → 7.1 · 아바타 → 4.5.
 
 ### 4.4c State · No tables yet — [486:11553](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=486-11553)
 - 4.5에서 **Tables** 칩을 골랐는데 들어간 테이블이 없을 때. 4.4 상단 + Feed filter(Tables Selected) 아래 빈 상태: 72 원 bg/subtle + `utensils` 30 → "No tables yet"(Title/L) → "Join a table to see dishes about cooking for one, rainy days and more — right here."(Body/S, 가운데) → Button Primary M **Browse tables** → 4.7.
@@ -135,7 +131,7 @@
 ### 4.11 Messages — 받은 대화함 · 대화(코드 기준, Figma 4.11 [352:9114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=352-9114)는 99 Removed 섹션)
 - **들어가는 곳**: 다른 요리사 프로필(4.5)의 **Message**뿐이다. 받은 대화함(`/messages`) 화면은 코드에 있지만 **여는 버튼이 지금 화면에 없다**. 요리 보내기 시트(7.5 Send to)는 파일만 남아 있고 어디서도 열지 않는다(게시물 Actions에 `send` 없음).
 - **받은 대화함**: TopBar(Inline) "Messages" → 묶음(Overline + ListCard) **CONVERSATIONS** → **REQUESTS**(+ Caption "Requests are from cooks you don’t follow. Reply to accept — they can’t see that you read it until then."). 행 = Avatar 44 · 핸들(안 읽으면 Strong) + 오른쪽 시간 · 미리보기 1줄(요리 공유는 "Shared a dish", 내가 먼저 보내고 답이 없으면 "Waiting for a reply") · 안 읽은 수 배지(fg/accent 원 + fg/inverse 숫자). 당겨서 새로고침. 비면 EmptyState "No messages yet" / "Send a dish to someone you follow, or message a cook from their profile."
-- **대화**: TopBar(Inline) 상대 이름 + 오른쪽 ··· (View profile · **Block** — 차단하면 대화를 닫음). 날짜 구분(Today · Yesterday · 날짜) → 말풍선(내 것 = 오른쪽 bg/primary + fg/on-primary, 상대 = 왼쪽 bg/subtle) + 시간 Caption(내 마지막 메시지에 "· Seen"). 요리 링크는 요리 카드("Open dish" → 7.1)로 보인다. 맨 아래 안내 "Messages from cooks you don’t follow arrive as requests. Report or block from ··· anytime." → [고정] 입력 pill "Message {name}…" + 보내기. 실시간으로 새 메시지를 받고, 열면 읽음 처리.
+- **대화**: TopBar(Inline) 상대 이름 + 오른쪽 ··· (View profile · **Block** — 차단하면 대화를 닫음). 날짜 구분(Today · Yesterday · 날짜) → 말풍선(내 것 = 오른쪽 bg/primary + fg/on-primary, 상대 = 왼쪽 bg/subtle) + 시간 Caption(내 마지막 메시지에 "· Seen"). 요리 링크는 요리 카드("Open dish" → 7.1)로 보인다. 맨 아래 안내 박스(Figma 1219:18051 — 폭 276, radius full, 0.8 border/strong, padding 6 15, Nav label fg/muted 가운데) "Messages from accounts you don’t follow arrive as requests." — **대화가 시작되기 전(메시지 0개)에만** 보이고, 첫 메시지가 오가면 위로 16 올라가며 사라진다(300ms, Reduce Motion = 바로 숨김). 메시지가 있는 대화를 열면 처음부터 없다 → [고정] 입력 pill "Message {name}…" + 보내기. 실시간으로 새 메시지를 받고, 열면 읽음 처리.
 - 규칙: 상대가 나를 팔로우하지 않으면 상대 쪽에서는 **요청**으로 받는다. 받는 사람 범위는 9.5 Privacy의 **Who can message you** 설정을 따른다. 보내기 실패 시 "Couldn’t send. Try again."(입력 내용 복구).
 
 ---
@@ -157,6 +153,7 @@
   3. **Top entries** + See all(→ 4.10): 그 챌린지 인증 사진 그리드.
   4. **Coming up** + See all(→ **4.9**): 가로 카드(남은 기간 대문자 · Join / Join early / Joined).
   5. **Recently ended**: 끝난 챌린지 행(흐리게, "Ended {date} · {n} entries").
+  - 맨 아래 **Viral Bites**(Figma 1113:25966, 위 32 · gap 6): SectionHeader "Viral Bites" → Country Card **전체 폭 × 180** 세로로 최대 3장(gap 12, r32, padding 14 18, 아래 120 잉크 페이드) — 위 Flag Tag(18, 12) + Viral badge(62, 12: "🔥 +n% this week" bg/kick · "✦ Editor’s pick" bg/inverse) · 아래 Display/M 요리 이름 → Weather Tag · Acorn Tag. 탭 → 4.7. 편집자 픽 먼저, 그다음 뜨는 요리. 없거나 실패하면 섹션을 숨긴다(챌린지가 없어도 보임). 모아 보는 목록 화면이 없어 제목 옆 ›는 두지 않는다.
   6. **How it works**: Join("Shows up on Home") · Cook(그 챌린지 규칙) · Post(#태그) + Caption "Challenges are made by ongdalsaem and last 3–14 days. Post one public dish with the tag while it runs."
 - 챌린지가 없으면 EmptyState `flag` "No challenges right now".
 

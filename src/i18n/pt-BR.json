@@ -43,20 +43,8 @@
     "google": "Continuar com o Google",
     "error": "O login está tirando um cochilo — toque para tentar de novo."
   },
-  "profileSetup": {
-    "step": "Etapa 1 de 4",
-    "title": "Como devemos\nchamar você?",
-    "label": "Nome de exibição",
-    "helper": "Aparece nos pratos que você compartilha.",
-    "handlePrefix": "Seu usuário será ",
-    "handleSuffix": " — você pode mudar quando quiser em Ajustes.",
-    "missingName": "Adicione um nome de exibição para continuar.",
-    "continue": "Continuar",
-    "changePhoto": "Mudar foto do perfil",
-    "error": "Não salvou — toque em Continuar para tentar de novo."
-  },
   "location": {
-    "step": "Etapa 3 de 4",
+    "step": "Etapa 2 de 3",
     "title": "Deixe o clima\najudar você a escolher.",
     "body": "Usamos a previsão da sua cidade para sugerir o que outras pessoas cozinharam no mesmo clima. Só a sua cidade é compartilhada — nunca a sua localização exata.",
     "chooseCity": "Escolher uma cidade",
@@ -66,7 +54,7 @@
     "whyBody": "Para o clima do seu bairro e lugares por perto. Nunca salvamos suas coordenadas exatas — usamos só a sua região."
   },
   "taste": {
-    "step": "Etapa 2 de 4",
+    "step": "Etapa 1 de 3",
     "title": "Que tipo de refeição\nvocê ama?",
     "body": "Escolha quantas quiser. Vamos levar seu gosto em conta.",
     "skip": "Pular",
@@ -98,10 +86,23 @@
       "fish": "Peixe",
       "soy": "Soja",
       "sesame": "Gergelim"
+    },
+    "add": {
+      "own": "Adicionar outro",
+      "dietTitle": "Adicionar à sua dieta",
+      "dietBody": "Pratos com essa palavra no nome ou nos ingredientes ficam fora das sugestões e da busca.",
+      "dietPlaceholder": "Ex.: Porco",
+      "allergyTitle": "Adicionar alergia",
+      "allergyBody": "Vamos deixar de fora pratos com essa palavra e avisar você nos pratos que a tiverem.",
+      "allergyPlaceholder": "Ex.: Kiwi",
+      "duplicate": "Você já tem esse.",
+      "add": "Adicionar",
+      "removeTitle": "Remover “{{label}}”?",
+      "remove": "Remover"
     }
   },
   "notify": {
-    "step": "Etapa 4 de 4",
+    "step": "Etapa 3 de 3",
     "title": "Que horas enviamos\nsua sugestão diária?",
     "body": "Um prato para o clima de hoje, todo dia neste horário. Você pode mudar em Ajustes.",
     "skip": "Pular",
@@ -417,7 +418,27 @@
     "inChallenge": "Participando de: {{name}}",
     "challengeOnePhoto": "Desafios aceitam só uma foto",
     "pickHintChallenge": "Uma foto para o desafio",
-    "cameraDenied": "Permita o acesso à câmera nos Ajustes para fotografar seu prato."
+    "cameraDenied": "Permita o acesso à câmera nos Ajustes para fotografar seu prato.",
+    "editPhoto": "Editar",
+    "editTitle": "Editar foto",
+    "editDone": "Concluir",
+    "editCrop": "Cortar",
+    "editAdjust": "Ajustar",
+    "editRotate": "Girar",
+    "editFlip": "Espelhar",
+    "editReset": "Redefinir",
+    "aspectFree": "Livre",
+    "aspectOriginal": "Original",
+    "editDiscardTitle": "Descartar as alterações?",
+    "editLoadFailed": "Não foi possível abrir esta foto. Tente de novo.",
+    "editSaveFailed": "Não foi possível salvar a edição. Tente de novo.",
+    "adjust": {
+      "brightness": "Brilho",
+      "exposure": "Exposição",
+      "contrast": "Contraste",
+      "saturation": "Saturação",
+      "warmth": "Calor"
+    }
   },
   "dish": {
     "temperature": {
@@ -438,7 +459,6 @@
     "difficultyEasy": "Fácil",
     "difficultyMedium": "Média",
     "difficultyHard": "Difícil",
-    "madeThis": "Eu fiz este",
     "madeBy": "Feito por {{n}} pessoas",
     "cookedFromRecipe": "Feito com a receita de {{name}}",
     "allergyWarning": "Alerta de alergia: {{items}}",
@@ -657,6 +677,20 @@
     "danger": "Zona de perigo",
     "deleteAccount": "Excluir conta",
     "deleteNote": "Exclui para sempre seu perfil, pratos, fotos, comentários, bolotas e diário. Isso não pode ser desfeito.",
+    "deactivateAccount": "Desativar conta",
+    "deactivateConfirmTitle": "Desativar sua conta?",
+    "deactivateConfirmBody": "Sua conta será desativada e você sairá dela. Se não entrar de novo em 30 dias, sua conta e tudo nela serão excluídos automaticamente.",
+    "deactivateFailed": "Não foi possível desativar sua conta. Tente de novo ou fale com o suporte.",
+    "deactivateTitle": "Dar um tempo?",
+    "deactivateBody": "Sua conta fica em pausa por 30 dias. Nada é excluído ainda — entre de novo antes disso e tudo volta.",
+    "whileDeactivated": "Enquanto estiver desativada",
+    "deaProfile": "Seu perfil fica oculto",
+    "deaDishes": "Seus pratos e fotos ficam ocultos",
+    "deaSocial": "Comentários e mensagens ficam ocultos",
+    "deactivateCaption": "Entre com Apple ou Google em até 30 dias para voltar. Depois disso, sua conta e tudo nela serão excluídos para sempre.",
+    "deaDeletedOn": "Exclusão em",
+    "reactivatedTitle": "Que bom te ver de novo",
+    "reactivatedBody": "Sua conta está ativa de novo. Seu perfil e seus pratos aparecem como antes.",
     "activity": "Atividade",
     "nAcorns": "Bolotas nos seus pratos",
     "nComments": "Comentários e respostas",
@@ -664,6 +698,8 @@
     "forYou": "Para você",
     "nDailyPick": "Sugestão diária do clima",
     "pickTime": "Horário da sugestão",
+    "addPickTime": "Adicionar horário",
+    "removePickTime": "Remover este horário",
     "nTimer": "Timer de cozinha",
     "adsEvents": "Anúncios e eventos",
     "nAds": "Ofertas e eventos",
@@ -851,7 +887,7 @@
     "canCook": "O que dá para cozinhar agora",
     "haveCount": "{{have}}/{{total}} ingredientes em casa",
     "needs": "Falta: {{items}}",
-    "canCookEmpty": "Adicione ingredientes e mostramos pratos que você pode fazer.",
+    "canCookEmpty": "Encontre receitas com o que tem na geladeira.",
     "shoppingZone": "Lista de compras",
     "moveToFridge": "Comprado → para a geladeira",
     "shoppingEmpty": "Sua lista de compras está vazia. Escolha Lista de compras acima e adicione o que comprar."
@@ -1141,6 +1177,7 @@
       "posts_one": "{{count}} publicação",
       "posts_other": "{{count}} publicações",
       "topEmpty": "Ainda não compartilharam pratos perto de você hoje.",
+      "questionsEmpty": "Ainda não há perguntas por perto. Seja o primeiro a perguntar.",
       "questionsTitle": "Perguntas do bairro",
       "ask": "Fazer uma pergunta",
       "locationOff": "Ative a localização para ver a mesa de hoje no seu bairro."
@@ -1360,7 +1397,7 @@
     "placeholder": "Mensagem para {{name}}…",
     "seen": "Visto",
     "yesterday": "Ontem",
-    "requestNote": "Mensagens de pessoas que você não segue chegam como solicitações. Denuncie ou bloqueie em ··· quando quiser.",
+    "requestNote": "Mensagens de contas que você não segue chegam como solicitações.",
     "sendFailed": "Não foi possível enviar. Tente de novo.",
     "viewProfile": "Ver perfil",
     "block": "Bloquear",
@@ -1477,10 +1514,6 @@
     "title": "A mesa da vizinhança",
     "todayTable": "A mesa de hoje",
     "yesterdayTable": "A mesa de ontem",
-    "placeMine": "Coloque seu prato",
-    "mySeat": "Meu lugar",
-    "suggest": "Cozinheiros para seguir",
-    "suggestBody": "Siga um cozinheiro e os pratos dele chegam à sua mesa aqui.",
     "seeMore": "Ver mais"
   },
   "questions": {

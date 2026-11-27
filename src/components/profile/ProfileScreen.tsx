@@ -11,7 +11,6 @@ import { DishTile } from '../dish/DishTile';
 import { ReportSheet } from '../dish/ReportSheet';
 import { DiaryView } from './DiaryView';
 import { SavedView } from './SavedView';
-import { Icon } from '../Icon';
 import { InlineBanner } from '../InlineBanner';
 import { LoadError } from '../LoadError';
 import { goTab, TabBar, useTabBarScroll, useTabFocusEffect, type TabKey } from '../TabBar';
@@ -136,7 +135,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
       const { data: f } = await supabase.from('follows').select('followee_id').eq('follower_id', me).eq('followee_id', id).maybeSingle();
       setFollowing(!!f);
     }
-    return { id: data.id, displayName: data.display_name || data.username, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: true };
+    return { id: data.id, displayName: data.username || data.display_name, username: data.username, avatarUrl: data.avatar_url, city: data.city, bio: data.bio ?? null, locationEnabled: true };
   };
   const [missing, setMissing] = useState(false);
   // 7.3 Report / block a cook (their name, @handle, photo or status line) — the same sheet as a dish report.
@@ -226,7 +225,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   // 6.1 Profile 657:16468 — ScreenHeader (shared with Home · Community · Timer) → [card → 12 → tabs] → 20 → grid.
   const header = (
     <>
-    <ScreenHeader right={isMe ? 'settings' : userId && !missing ? 'more' : 'none'} onMore={() => setReportOpen(true)} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
+    <ScreenHeader withWeather right={isMe ? 'settings' : userId && !missing ? 'more' : 'none'} onMore={() => setReportOpen(true)} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
     <View style={styles.header}>
       {/* Frame 10 — card → 12 → tabs. */}
       <View style={styles.cardGroup}>
@@ -237,7 +236,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         <View style={styles.nowRow}>
           <View style={styles.nowMain}>
             <View style={styles.tempBox}>
-              <Text variant="Numeric/XL" style={styles.tabular}>{now ? `${displayTemp(now.tempC)}°` : '--°'}</Text>
+              <Text variant="XXL 80" style={styles.tabular}>{now ? `${displayTemp(now.tempC)}°` : '--°'}</Text>
             </View>
             <View style={styles.nowText}>
               <Text variant="Title/M" numberOfLines={1}>{now ? t(`home.condition.${now.mood}`) : t('home.noWeather')}</Text>
@@ -252,9 +251,9 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
         <View style={styles.idRow}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('profile.changePhoto')} onPress={pickAvatar} disabled={!me || !isMe}>
-            <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle'), borderColor: color('static/white') }]}>
+            <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle'), borderColor: color('border/default') }]}>
               {me?.avatarUrl ? <Image source={{ uri: me.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} /> : (
-                <Text variant="Display/M" color="fg/accent">{(me?.displayName ?? '').slice(0, 1).toUpperCase()}</Text>
+                <Text variant="Display/M" color="fg/accent">{(me?.username ?? me?.displayName ?? '').slice(0, 1).toUpperCase()}</Text>
               )}
               {avatarBusy ? <View style={[StyleSheet.absoluteFill, styles.center, { backgroundColor: color('overlay/scrim') }]}><ActivityIndicator color={color('static/white')} /></View> : null}
             </View>
@@ -270,17 +269,22 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         </View>
         {isMe ? (
           <Pressable accessibilityRole="button" accessibilityLabel={t('profile.editStatus')} onPress={openBio} disabled={!me} style={styles.bioRow}>
-            {me?.bio ? <Text variant="Body/S" color="fg/secondary" style={styles.flex1}>{me.bio}</Text> : (
-              <Text variant="Body/S" color="fg/muted" style={styles.flex1}>{t('profile.addStatus')}</Text>
+            {me?.bio ? <Text variant="Body/M" color="fg/secondary" style={styles.flex1}>{me.bio}</Text> : (
+              <Text variant="Body/M" color="fg/muted" style={styles.flex1}>{t('profile.addStatus')}</Text>
             )}
           </Pressable>
         ) : me?.bio ? (
-          <Text variant="Body/S" color="fg/secondary">{me.bio}</Text>
+          <Text variant="Body/M" color="fg/secondary">{me.bio}</Text>
         ) : null}
         {isMe || !me ? null : (
           <View style={styles.btns}>
-            <View style={styles.flex1}><Button label={t(following ? 'cook.following' : 'cook.follow')} variant={following ? 'Secondary' : 'Primary'} size="M" onPress={toggleFollow} /></View>
-            <View style={styles.flex1}><Button label={t('cook.message')} variant="Outline" size="M" onPress={message} /></View>
+            {/* 1217:15137 — two 32-high buttons, gap 6: Follow = bg/kick + white (Following = bg/muted), Message = bg/muted + fg/muted. */}
+            <Pressable accessibilityRole="button" accessibilityState={{ selected: following }} onPress={toggleFollow} style={({ pressed }) => [styles.btn, { backgroundColor: color(following ? 'bg/muted' : 'bg/kick') }, pressed && styles.pressed]}>
+              <Text variant="Button/M" color={following ? 'fg/default' : 'static/white'} numberOfLines={1}>{t(following ? 'cook.following' : 'cook.follow')}</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" onPress={message} style={({ pressed }) => [styles.btn, { backgroundColor: color('bg/muted') }, pressed && styles.pressed]}>
+              <Text variant="Button/M" color="fg/muted" numberOfLines={1}>{t('cook.message')}</Text>
+            </Pressable>
           </View>
         )}
       </View>
@@ -343,7 +347,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         <ReportSheet
           visible={reportOpen}
           ownerId={userId}
-          ownerName={me?.displayName ?? ''}
+          ownerName={me?.username ?? me?.displayName ?? ''}
           title={t('report.userTitle')}
           onClose={() => setReportOpen(false)}
           onBlocked={() => (router.canGoBack() ? router.back() : router.replace('/community'))}
@@ -373,33 +377,35 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  // Body under ScreenHeader: p20 · gap 13 · 8 between the tabs and the first Dish Tiles (Figma 16, tightened on request).
-  header: { paddingHorizontal: space[20], paddingBottom: space[8], gap: 13 },
-  // Profile Header 126:4345 — card → 18 → tabs.
-  cardGroup: { gap: 18 },
+  // Body under ScreenHeader (withWeather: title → 18 → card). Tabs block 1217:14666 = py 15, then 8 → the grid.
+  header: { paddingHorizontal: space[20], paddingBottom: 15 + space[8], gap: 13 },
+  // card → 15 → tabs (the tabs block's top padding).
+  cardGroup: { gap: 15 },
   center: { alignItems: 'center', justifyContent: 'center' },
   bioRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[8] },
-  btns: { flexDirection: 'row', gap: space[10] },
+  btns: { flexDirection: 'row', gap: space[6] },
+  btn: { flex: 1, height: 32, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center', paddingHorizontal: space[10] },
+  pressed: { opacity: 0.85 },
   bioField: { borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: space[16], paddingTop: space[12], paddingBottom: space[8], gap: space[4] },
   bioInput: { minHeight: 72, textAlignVertical: 'top', padding: 0 },
   count: { alignSelf: 'flex-end' },
-  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden' },
+  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[12], overflow: 'hidden' },
   nowRow: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
   tempBox: { paddingHorizontal: space[8], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
-  // Same line position as the Home Weather Card: 12 under the Now row (the card's gap is 14 — only the space below the line).
-  divider: { height: 1, marginTop: space[12] - space[14] },
+  divider: { height: 1 },
   tabular: { fontVariant: ['tabular-nums'] },
-  idRow: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
-  avatar: { width: 88, height: 88, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  // Row 1217:14591 — 80 high, avatar 74 · 16 · name.
+  idRow: { height: 80, flexDirection: 'row', alignItems: 'center', gap: space[16] },
+  avatar: { width: 74, height: 74, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   // name 614:13916 — fixed 105 tall, centred, gap 11, 80 % opacity.
   name: { flex: 1, minWidth: 97, height: 105, gap: 11, justifyContent: 'center', opacity: 0.8 },
   acorns: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[8], paddingVertical: space[6], borderRadius: radius.full, alignSelf: 'flex-start' },
-  // Full screen width (cancels the header's p20) so the hairline runs edge to edge; tabs keep their x (20 + 20).
+  // Full screen width (cancels the header's p20) so the hairline runs edge to edge; Tabs 1217:14666 = px 20, gap 28.
   tabs: { marginHorizontal: -space[20] },
-  tabRow: { gap: 28, paddingHorizontal: space[40] },
+  tabRow: { gap: 28, paddingHorizontal: space[20] },
   flex1: { flex: 1 },
   grid: { paddingBottom: 96 + space[24] },
   loading: { marginTop: space[40] },

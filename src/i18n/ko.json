@@ -43,20 +43,8 @@
     "google": "Google로 계속하기",
     "error": "로그인이 잠시 쉬고 있어요 — 다시 눌러 주세요."
   },
-  "profileSetup": {
-    "step": "1 / 4단계",
-    "title": "어떻게\n불러 드릴까요?",
-    "label": "표시 이름",
-    "helper": "내가 나눈 요리에 보여요.",
-    "handlePrefix": "내 핸들은 ",
-    "handleSuffix": "(으)로 정해져요 — 설정에서 언제든 바꿀 수 있어요.",
-    "missingName": "계속하려면 표시 이름을 입력해 주세요.",
-    "continue": "계속",
-    "changePhoto": "프로필 사진 바꾸기",
-    "error": "저장되지 않았어요 — 계속을 다시 눌러 주세요."
-  },
   "location": {
-    "step": "3 / 4단계",
+    "step": "2 / 3단계",
     "title": "날씨가 고르는 걸\n도와줄게요.",
     "body": "내 도시의 날씨로, 같은 날씨에 다른 사람들이 만든 요리를 추천해요. 도시만 공유되고 정확한 위치는 절대 공유되지 않아요.",
     "chooseCity": "도시 직접 고르기",
@@ -66,7 +54,7 @@
     "whyBody": "동네 날씨와 근처 가게를 보여 드리기 위해서예요. 정확한 좌표는 저장하지 않고 동네 단위로만 사용해요."
   },
   "taste": {
-    "step": "2 / 4단계",
+    "step": "1 / 3단계",
     "title": "어떤 한 끼를\n좋아하세요?",
     "body": "마음에 드는 걸 모두 골라 주세요. 추천에 반영할게요.",
     "skip": "건너뛰기",
@@ -98,10 +86,23 @@
       "fish": "생선",
       "soy": "대두",
       "sesame": "참깨"
+    },
+    "add": {
+      "own": "직접 추가",
+      "dietTitle": "식단에 추가",
+      "dietBody": "이 단어가 요리 이름이나 재료에 있으면 추천과 검색에서 빼 드려요.",
+      "dietPlaceholder": "예: 돼지고기",
+      "allergyTitle": "알레르기 추가",
+      "allergyBody": "이 단어가 든 요리는 빼고, 요리 화면에서도 알려 드려요.",
+      "allergyPlaceholder": "예: 키위",
+      "duplicate": "이미 있는 항목이에요.",
+      "add": "추가",
+      "removeTitle": "“{{label}}”을(를) 삭제할까요?",
+      "remove": "삭제"
     }
   },
   "notify": {
-    "step": "4 / 4단계",
+    "step": "3 / 3단계",
     "title": "매일 몇 시에\n추천을 받을까요?",
     "body": "매일 이 시간에 오늘 날씨에 맞는 한 끼를 보내 드려요. 설정에서 바꿀 수 있어요.",
     "skip": "건너뛰기",
@@ -289,7 +290,7 @@
     "typeHint": "· 다음 질문이 달라져요",
     "types": {
       "home": "집밥",
-      "travel": "여행"
+      "travel": "외식"
     },
     "dishName": "요리 이름",
     "dishNamePlaceholder": "혼자 먹는 김치찌개",
@@ -417,7 +418,27 @@
     "inChallenge": "참여 중: {{name}}",
     "challengeOnePhoto": "챌린지는 사진 1장만 올릴 수 있어요",
     "pickHintChallenge": "챌린지에 올릴 사진 1장",
-    "cameraDenied": "요리 사진을 찍으려면 설정에서 카메라 접근을 허용해 주세요."
+    "cameraDenied": "요리 사진을 찍으려면 설정에서 카메라 접근을 허용해 주세요.",
+    "editPhoto": "편집",
+    "editTitle": "사진 편집",
+    "editDone": "완료",
+    "editCrop": "자르기",
+    "editAdjust": "조정",
+    "editRotate": "회전",
+    "editFlip": "반전",
+    "editReset": "초기화",
+    "aspectFree": "자유",
+    "aspectOriginal": "원본",
+    "editDiscardTitle": "편집한 내용을 버릴까요?",
+    "editLoadFailed": "사진을 열지 못했어요. 다시 시도해 주세요.",
+    "editSaveFailed": "편집을 저장하지 못했어요. 다시 시도해 주세요.",
+    "adjust": {
+      "brightness": "밝기",
+      "exposure": "노출",
+      "contrast": "대비",
+      "saturation": "채도",
+      "warmth": "따뜻함"
+    }
   },
   "dish": {
     "temperature": {
@@ -438,7 +459,6 @@
     "difficultyEasy": "쉬움",
     "difficultyMedium": "보통",
     "difficultyHard": "어려움",
-    "madeThis": "만들어 봤어요",
     "madeBy": "만들어 본 사람 {{n}}명",
     "cookedFromRecipe": "{{name}}님의 레시피로 만들었어요",
     "allergyWarning": "알레르기 주의: {{items}}",
@@ -669,6 +689,20 @@
     "danger": "위험 구역",
     "deleteAccount": "계정 삭제",
     "deleteNote": "프로필, 요리, 사진, 댓글, 도토리, 다이어리가 영구 삭제돼요. 되돌릴 수 없어요.",
+    "deactivateAccount": "계정 비활성화",
+    "deactivateConfirmTitle": "계정을 비활성화할까요?",
+    "deactivateConfirmBody": "계정이 비활성화되고 로그아웃돼요. 30일 안에 다시 로그인하지 않으면 계정과 모든 데이터가 자동으로 삭제돼요.",
+    "deactivateFailed": "계정을 비활성화하지 못했어요. 다시 시도하거나 문의해주세요.",
+    "deactivateTitle": "잠시 쉬어갈까요?",
+    "deactivateBody": "30일 동안 계정이 조용히 쉬어요. 아직 아무것도 지워지지 않아요 — 그 전에 다시 로그인하면 모두 그대로 돌아와요.",
+    "whileDeactivated": "비활성화하면",
+    "deaProfile": "프로필이 숨겨져요",
+    "deaDishes": "요리와 사진이 숨겨져요",
+    "deaSocial": "댓글과 메시지가 숨겨져요",
+    "deactivateCaption": "30일 안에 Apple 또는 Google로 다시 로그인하면 돌아올 수 있어요. 그 뒤에는 계정과 모든 데이터가 영구 삭제돼요.",
+    "deaDeletedOn": "삭제 예정일",
+    "reactivatedTitle": "다시 오셨네요",
+    "reactivatedBody": "계정이 다시 활성화됐어요. 프로필과 요리가 전처럼 보여요.",
     "activity": "활동",
     "nAcorns": "내 요리에 받은 도토리",
     "nComments": "댓글 및 답글",
@@ -676,6 +710,8 @@
     "forYou": "추천",
     "nDailyPick": "오늘의 날씨 추천",
     "pickTime": "추천 시간",
+    "addPickTime": "추천 시간 추가",
+    "removePickTime": "이 시간 삭제",
     "nTimer": "키친 타이머",
     "adsEvents": "광고 및 이벤트",
     "nAds": "혜택·이벤트 소식",
@@ -851,7 +887,7 @@
     "canCook": "지금 재료로 만들 수 있는 요리",
     "haveCount": "재료 {{have}}/{{total}}개 있음",
     "needs": "부족: {{items}}",
-    "canCookEmpty": "재료를 넣으면 만들 수 있는 요리를 찾아 드려요.",
+    "canCookEmpty": "냉장고 속 재료로 만들 수 있는 레시피를 찾아보세요.",
     "shoppingZone": "장보기 메모",
     "moveToFridge": "구매 완료 → 냉장고로",
     "shoppingEmpty": "장보기 메모가 비어 있어요. 위에서 장보기 메모를 고르고 살 재료를 적어 보세요."
@@ -1141,6 +1177,7 @@
       "posts_one": "{{count}}번 올라왔어요",
       "posts_other": "{{count}}번 올라왔어요",
       "topEmpty": "오늘 근처에 올라온 요리가 아직 없어요.",
+      "questionsEmpty": "아직 근처에 올라온 질문이 없어요. 처음으로 물어보세요.",
       "questionsTitle": "동네 질문",
       "ask": "질문하기",
       "locationOff": "위치를 켜면 우리 동네 식탁을 볼 수 있어요"
@@ -1360,7 +1397,7 @@
     "placeholder": "{{name}}에게 메시지…",
     "seen": "읽음",
     "yesterday": "어제",
-    "requestNote": "팔로우하지 않는 요리사의 메시지는 요청으로 와요. ···에서 언제든 신고하거나 차단할 수 있어요.",
+    "requestNote": "팔로우하지 않는 계정의 메시지는 요청으로 와요.",
     "sendFailed": "보내지 못했어요. 다시 시도해 주세요.",
     "viewProfile": "프로필 보기",
     "block": "차단",
@@ -1477,10 +1514,6 @@
     "title": "우리 동네 식탁",
     "todayTable": "오늘의 식탁",
     "yesterdayTable": "어제의 식탁",
-    "placeMine": "내 음식 놓기",
-    "mySeat": "내 자리",
-    "suggest": "이런 요리사를 팔로우해 보세요",
-    "suggestBody": "팔로우하면 그 사람의 식탁이 여기에 차려져요",
     "seeMore": "더 보기"
   },
   "questions": {

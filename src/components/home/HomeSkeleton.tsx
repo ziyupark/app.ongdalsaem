@@ -12,7 +12,7 @@ function Bone({ style, t }: { style: ViewStyle; t: SharedValue<number> }) {
   return <Animated.View style={[style, anim]} />;
 }
 
-/** 2.7 State · Loading 76:2961 — Home's body (weather card → pick → feed) at 2.1's positions, under the real header and wash. */
+/** 2.7 State · Loading 76:2961 — Home's body (weather card → feed) at 2.1's positions, under the real header and wash. */
 export function HomeSkeleton() {
   const { color } = useTheme();
   const t = useSharedValue(0);
@@ -41,17 +41,6 @@ export function HomeSkeleton() {
                 <Bone t={t} style={{ width: 28, height: 10, borderRadius: radius.full }} />
               </View>
             ))}
-          </View>
-        </View>
-      </View>
-      <View style={styles.pick}>
-        <Bone t={t} style={{ height: 273, borderRadius: radius['2xl'] }} />
-        <View style={[styles.nearby, card]}>
-          <Bone t={t} style={{ width: 72, height: 72, borderRadius: radius.lg }} />
-          <View style={{ gap: space[8] }}>
-            <Bone t={t} style={{ width: 90, height: 10, borderRadius: radius.full }} />
-            <Bone t={t} style={{ width: 180, height: 16, borderRadius: radius.sm }} />
-            <Bone t={t} style={{ width: 130, height: 12, borderRadius: radius.full }} />
           </View>
         </View>
       </View>
@@ -85,8 +74,6 @@ const styles = StyleSheet.create({
   divider: { height: 1 },
   slots: { flexDirection: 'row', justifyContent: 'space-between' },
   slot: { alignItems: 'center', gap: space[8] },
-  pick: { paddingTop: space[16], paddingHorizontal: space[20], gap: space[16] },
-  nearby: { flexDirection: 'row', alignItems: 'center', gap: space[14], padding: space[14], borderRadius: radius['2xl'], borderWidth: 1 },
   feed: { paddingTop: space[40], gap: space[14] },
   feedHeader: { paddingLeft: space[20], gap: space[8] },
   chips: { flexDirection: 'row', gap: space[8], paddingLeft: space[20] },

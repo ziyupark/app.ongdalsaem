@@ -8,6 +8,7 @@ import { Button } from '../../src/components/Button';
 import { DietForm } from '../../src/components/settings/DietForm';
 import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
+import { hasDietPrefs, NO_DIET } from '../../src/lib/allergens';
 import { saveDietPrefs, type DietPrefs } from '../../src/lib/dietPrefs';
 import { space, useTheme } from '../../src/theme';
 
@@ -16,14 +17,14 @@ export default function DietStep() {
   const insets = useSafeAreaInsets();
   const { color, scheme } = useTheme();
   const { t } = useTranslation();
-  const [value, setValue] = useState<DietPrefs>({ diet: null, allergies: [] });
+  const [value, setValue] = useState<DietPrefs>(NO_DIET);
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
 
   const next = () => router.push('/setup/location');
   const submit = async () => {
     if (saving) return;
-    if (!value.diet && !value.allergies.length) { next(); return; }
+    if (!hasDietPrefs(value)) { next(); return; }
     setSaving(true);
     setFailed(false);
     try {

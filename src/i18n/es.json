@@ -43,20 +43,8 @@
     "google": "Continuar con Google",
     "error": "El inicio de sesión está echando una siesta. Toca para reintentar."
   },
-  "profileSetup": {
-    "step": "Paso 1 de 4",
-    "title": "¿Cómo\nte llamamos?",
-    "label": "Nombre visible",
-    "helper": "Aparece en los platos que compartes.",
-    "handlePrefix": "Tu usuario será ",
-    "handleSuffix": ". Puedes cambiarlo cuando quieras en Ajustes.",
-    "missingName": "Añade un nombre visible para continuar.",
-    "continue": "Continuar",
-    "changePhoto": "Cambiar foto de perfil",
-    "error": "No se guardó. Toca Continuar para reintentar."
-  },
   "location": {
-    "step": "Paso 3 de 4",
+    "step": "Paso 2 de 3",
     "title": "Deja que el clima\nte ayude a elegir.",
     "body": "Usamos el pronóstico de tu ciudad para sugerirte lo que otros cocinaron con el mismo clima. Solo se comparte tu ciudad, nunca tu ubicación exacta.",
     "chooseCity": "Elegir una ciudad",
@@ -66,7 +54,7 @@
     "whyBody": "Para el clima de tu barrio y los lugares cercanos. Nunca guardamos tus coordenadas exactas: solo usamos tu zona."
   },
   "taste": {
-    "step": "Paso 2 de 4",
+    "step": "Paso 1 de 3",
     "title": "¿Qué comidas\nte gustan?",
     "body": "Elige todas las que quieras. Tendremos en cuenta tus gustos.",
     "skip": "Omitir",
@@ -98,10 +86,23 @@
       "fish": "Pescado",
       "soy": "Soja",
       "sesame": "Sésamo"
+    },
+    "add": {
+      "own": "Añadir otro",
+      "dietTitle": "Añadir a tu dieta",
+      "dietBody": "Dejaremos fuera de tus recomendaciones y búsquedas los platos con esta palabra en el nombre o los ingredientes.",
+      "dietPlaceholder": "p. ej., Cerdo",
+      "allergyTitle": "Añadir una alergia",
+      "allergyBody": "Dejaremos fuera los platos con esta palabra y te avisaremos en los que la tengan.",
+      "allergyPlaceholder": "p. ej., Kiwi",
+      "duplicate": "Ya lo tienes.",
+      "add": "Añadir",
+      "removeTitle": "¿Quitar «{{label}}»?",
+      "remove": "Quitar"
     }
   },
   "notify": {
-    "step": "Paso 4 de 4",
+    "step": "Paso 3 de 3",
     "title": "¿A qué hora te enviamos\ntu sugerencia diaria?",
     "body": "Un plato para el clima de hoy, cada día a esta hora. Puedes cambiarlo en Ajustes.",
     "skip": "Omitir",
@@ -289,7 +290,7 @@
     "typeHint": "· cambia lo que preguntamos después",
     "types": {
       "home": "Casero",
-      "travel": "De viaje"
+      "travel": "Comer fuera"
     },
     "dishName": "Nombre del plato",
     "dishNamePlaceholder": "Kimchi jjigae para uno",
@@ -417,7 +418,27 @@
     "inChallenge": "Participas en: {{name}}",
     "challengeOnePhoto": "Los retos solo admiten una foto",
     "pickHintChallenge": "Una foto para el reto",
-    "cameraDenied": "Permite el acceso a la cámara en Ajustes para fotografiar tu plato."
+    "cameraDenied": "Permite el acceso a la cámara en Ajustes para fotografiar tu plato.",
+    "editPhoto": "Editar",
+    "editTitle": "Editar foto",
+    "editDone": "Listo",
+    "editCrop": "Recortar",
+    "editAdjust": "Ajustar",
+    "editRotate": "Girar",
+    "editFlip": "Voltear",
+    "editReset": "Restablecer",
+    "aspectFree": "Libre",
+    "aspectOriginal": "Original",
+    "editDiscardTitle": "¿Descartar los cambios?",
+    "editLoadFailed": "No se pudo abrir esta foto. Inténtalo de nuevo.",
+    "editSaveFailed": "No se pudo guardar la edición. Inténtalo de nuevo.",
+    "adjust": {
+      "brightness": "Brillo",
+      "exposure": "Exposición",
+      "contrast": "Contraste",
+      "saturation": "Saturación",
+      "warmth": "Calidez"
+    }
   },
   "dish": {
     "temperature": {
@@ -438,7 +459,6 @@
     "difficultyEasy": "Fácil",
     "difficultyMedium": "Media",
     "difficultyHard": "Difícil",
-    "madeThis": "Lo preparé",
     "madeBy": "Lo prepararon {{n}} cocineros",
     "cookedFromRecipe": "Hecho con la receta de {{name}}",
     "allergyWarning": "Alerta de alergia: {{items}}",
@@ -657,6 +677,20 @@
     "danger": "Zona de peligro",
     "deleteAccount": "Eliminar cuenta",
     "deleteNote": "Elimina para siempre tu perfil, platos, fotos, comentarios, bellotas y diario. No se puede deshacer.",
+    "deactivateAccount": "Desactivar cuenta",
+    "deactivateConfirmTitle": "¿Desactivar tu cuenta?",
+    "deactivateConfirmBody": "Tu cuenta se desactivará y se cerrará la sesión. Si no vuelves a iniciar sesión en 30 días, tu cuenta y todo su contenido se eliminarán automáticamente.",
+    "deactivateFailed": "No se pudo desactivar tu cuenta. Inténtalo de nuevo o contacta con soporte.",
+    "deactivateTitle": "¿Tomarte un descanso?",
+    "deactivateBody": "Tu cuenta queda en pausa durante 30 días. Aún no se borra nada: inicia sesión antes de esa fecha y todo volverá.",
+    "whileDeactivated": "Mientras esté desactivada",
+    "deaProfile": "Tu perfil queda oculto",
+    "deaDishes": "Tus platos y fotos quedan ocultos",
+    "deaSocial": "Comentarios y mensajes quedan ocultos",
+    "deactivateCaption": "Inicia sesión con Apple o Google en 30 días para volver. Después, tu cuenta y todo su contenido se eliminarán para siempre.",
+    "deaDeletedOn": "Se eliminará el",
+    "reactivatedTitle": "Bienvenido de nuevo",
+    "reactivatedBody": "Tu cuenta vuelve a estar activa. Tu perfil y tus platos se ven como antes.",
     "activity": "Actividad",
     "nAcorns": "Bellotas en tus platos",
     "nComments": "Comentarios y respuestas",
@@ -664,6 +698,8 @@
     "forYou": "Para ti",
     "nDailyPick": "Idea diaria según el clima",
     "pickTime": "Hora de la idea",
+    "addPickTime": "Añadir hora",
+    "removePickTime": "Quitar esta hora",
     "nTimer": "Temporizador de cocina",
     "adsEvents": "Anuncios y eventos",
     "nAds": "Ofertas y eventos",
@@ -851,7 +887,7 @@
     "canCook": "Lo que puedes cocinar ahora",
     "haveCount": "Tienes {{have}}/{{total}} ingredientes",
     "needs": "Falta: {{items}}",
-    "canCookEmpty": "Añade ingredientes y te mostraremos platos que puedes preparar.",
+    "canCookEmpty": "Encuentra recetas con lo que tienes en la nevera.",
     "shoppingZone": "Lista de compras",
     "moveToFridge": "Comprado → a la nevera",
     "shoppingEmpty": "Tu lista de compras está vacía. Elige Lista de compras arriba y añade lo que necesitas."
@@ -1141,6 +1177,7 @@
       "posts_one": "{{count}} publicación",
       "posts_other": "{{count}} publicaciones",
       "topEmpty": "Aún no se han compartido platos cerca hoy.",
+      "questionsEmpty": "Aún no hay preguntas cerca. Sé el primero en preguntar.",
       "questionsTitle": "Preguntas del barrio",
       "ask": "Hacer una pregunta",
       "locationOff": "Activa la ubicación para ver la mesa de hoy en tu barrio."
@@ -1360,7 +1397,7 @@
     "placeholder": "Escribe a {{name}}…",
     "seen": "Visto",
     "yesterday": "Ayer",
-    "requestNote": "Los mensajes de cocineros que no sigues llegan como solicitudes. Denuncia o bloquea desde ··· cuando quieras.",
+    "requestNote": "Los mensajes de cuentas que no sigues llegan como solicitudes.",
     "sendFailed": "No se pudo enviar. Inténtalo de nuevo.",
     "viewProfile": "Ver perfil",
     "block": "Bloquear",
@@ -1477,10 +1514,6 @@
     "title": "La mesa del barrio",
     "todayTable": "La mesa de hoy",
     "yesterdayTable": "La mesa de ayer",
-    "placeMine": "Pon tu plato",
-    "mySeat": "Mi sitio",
-    "suggest": "Cocineros para seguir",
-    "suggestBody": "Sigue a un cocinero y sus platos llegarán a tu mesa.",
     "seeMore": "Ver más"
   },
   "questions": {

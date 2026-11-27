@@ -1,9 +1,9 @@
 import { router, useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Bell, ChevronLeft, MoreHorizontal, Settings } from './icons/ongdal';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDevWeather } from '../lib/devWeather';
@@ -12,12 +12,14 @@ import { placeLabel, useHere } from '../lib/useHere';
 import { hasUnread } from '../services/activity';
 import { washScrollY } from '../lib/weatherBackdrop';
 import type { WashScroll } from '../lib/useWashScroll';
-import { space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
+import { FX_TIMING, space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
 import { bwOn, useWashInk, washOpacity } from '../theme/washInk';
+import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import { Logo } from './Logo';
 import { MoodGradient } from './MoodGradient';
 import { Text } from './Text';
+import { WeatherMoodLayer } from './WeatherMoodLayer';
 
 /** Wash height — the same on Home · Community · Timer · Profile. */
 const WASH_HEIGHT = 420;
@@ -58,9 +60,11 @@ export function useScreenInk(at: number) {
  * Status bar ink for the wash + the wash itself. On the four tabs the wash (and its weather motion) is the global
  * WeatherBackdrop behind the transparent screen — this only feeds it this screen's scroll offset while focused, so
  * the wash moves up with the content and fades out. `local` (a pushed screen, e.g. another cook's profile): the
- * screen is opaque, so it draws a still wash of its own that scrolls with `wash.style`.
+ * screen is opaque, so it draws a still wash of its own that scrolls with `wash.style`. `motion` (with `local`, e.g.
+ * 7.1 Post detail): that wash also carries my weather's motion (WeatherMoodLayer) — paused while the screen is not
+ * focused or the app is in the background, hidden when there is no weather reading (2.6).
  */
-export function ScreenWash({ wash, local = false }: { wash: WashScroll; local?: boolean }) {
+export function ScreenWash({ wash, local = false, motion = false }: { wash: WashScroll; local?: boolean; motion?: boolean }) {
   const { scheme } = useTheme();
   const { on, mood } = useScreenWeather();
   const logoInk = useWashInk(on ? mood : null, 0.12, WASH_OPACITY);
@@ -79,9 +83,36 @@ export function ScreenWash({ wash, local = false }: { wash: WashScroll; local?: 
       {local && on ? (
         <Animated.View pointerEvents="none" style={[styles.wash, wash.style]}>
           <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
+          {motion ? <LocalMotion /> : null}
         </Animated.View>
       ) : null}
     </>
+  );
+}
+
+/** Weather motion inside a pushed screen's own wash — runs only while that screen is focused and the app is active. */
+function LocalMotion() {
+  const { width } = useWindowDimensions();
+  const { mood, forecast, dev } = useScreenWeather();
+  const fxMood = dev?.mood ?? forecast?.mood ?? null;
+  const timeOfDay = dev?.timeOfDay ?? timeOfDayFor(mood, new Date());
+  const [focused, setFocused] = useState(false);
+  useFocusEffect(useCallback(() => { setFocused(true); return () => setFocused(false); }, []));
+  const [active, setActive] = useState(AppState.currentState !== 'background');
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (st) => setActive(st === 'active'));
+    return () => sub.remove();
+  }, []);
+  if (!fxMood) return null;
+  return (
+    <WeatherMoodLayer
+      mood={fxMood}
+      timeOfDay={timeOfDay}
+      running={focused && active}
+      width={width}
+      height={WASH_HEIGHT}
+      delay={FX_TIMING.startDelay}
+    />
   );
 }
 
@@ -93,7 +124,15 @@ type Right = 'settings' | 'notifications' | 'more' | 'none';
  * `right`: settings / notifications (unread dot) / more (`onMore`: report · block on another cook) / an empty 40 slot.
  * `onBack` swaps the logo for a back button.
  */
-export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void }) {
+/**
+ * `withWeather`: Block · title & weather (2.1 Home 88:3025 · 6.1 Profile 1217:14479) — overline 2 in from the title,
+ * overline → 11 → title, title → 18 → the Weather card below. Without it (Community · Timer): 12 / 12.
+ */
+export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather, backBar }: {
+  right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void; withWeather?: boolean;
+  /** TopBar Type=timer (1219:18314): plain back 40 · centred Compact logo · empty 40, 52 high, px 12 — 5.1_0 from a recipe step. */
+  backBar?: boolean;
+}) {
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -114,7 +153,16 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right
   const part = dayPart(now);
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top }]}>
+    <View style={[styles.root, withWeather && styles.rootWeather, { paddingTop: insets.top }]}>
+      {backBar && onBack ? (
+        <View style={styles.bar}>
+          <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[4]} onPress={onBack} style={styles.slotCenter}>
+            <Icon icon={ChevronLeft} size={22} />
+          </Pressable>
+          <Logo lockup="Compact" tone={logoInk?.light ? 'light' : 'ink'} />
+          <View style={styles.slot} />
+        </View>
+      ) : (
       <View style={styles.row}>
         {onBack ? (
           <IconButton icon={ChevronLeft} accessibilityLabel={t('common.back')} onPress={onBack} />
@@ -133,10 +181,11 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right
           <View style={styles.slot} />
         )}
       </View>
-      <View style={styles.titleBlock}>
+      )}
+      <View style={[styles.titleBlock, withWeather && styles.titleBlockWeather]}>
         {off ? (
           <>
-            <Text variant="Overline" color="fg/muted">{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
+            <Text variant="Overline" color="fg/muted" style={withWeather && styles.overlineWeather}>{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
             <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${t('home.locationOff.titleA')}${t('home.locationOff.titleB')}`} numberOfLines={1} adjustsFontSizeToFit>
               {en('home.locationOff.titleA')}
               <Text variant="Display/XL" color="fg/disabled">{en('home.locationOff.titleB')}</Text>
@@ -144,7 +193,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress }: { right
           </>
         ) : (
           <>
-            <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
+            <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))} style={withWeather && styles.overlineWeather}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
             <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
               {f ? `${en(`home.titleMood.${mood}`)} ` : ''}
               <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{en(`home.dayPart.${part}`)}</Text>
@@ -161,5 +210,11 @@ const styles = StyleSheet.create({
   root: { paddingHorizontal: space[20], paddingBottom: space[12] },
   row: { height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   slot: { width: 40, height: 40 },
+  // 52 high, px 12 → 8 outside the header's 20 side padding.
+  bar: { height: 52, marginHorizontal: -space[8], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  slotCenter: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   titleBlock: { paddingTop: space[20], gap: space[12] },
+  rootWeather: { paddingBottom: 18 },
+  titleBlockWeather: { gap: 11 },
+  overlineWeather: { paddingLeft: space[2] },
 });

@@ -2,6 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSyncExternalStore } from 'react';
 import type { Place } from '../services/location';
+import type { EditSource, PhotoEdit } from './photoEdit';
 import type { WeatherMood } from '../theme';
 
 export type DraftPhoto = {
@@ -17,6 +18,11 @@ export type DraftPhoto = {
   location?: { latitude: number; longitude: number };
   /** Edit mode: a photo already on the post (public URL) — kept as is, never re-uploaded. */
   remoteUrl?: string;
+  /**
+   * 8.1a Edit photo: `uri` / `fileUri` then point at the edited JPEG. `source` = the upright photo the edit is drawn
+   * from, `params` = the edit (re-opening starts from them), `original` = the photo's fields before editing.
+   */
+  edit?: { source: EditSource; params: PhotoEdit; original: Pick<DraftPhoto, 'uri' | 'fileUri' | 'width' | 'height' | 'remoteUrl'> };
 };
 
 type DraftContext = {

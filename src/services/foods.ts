@@ -74,7 +74,7 @@ const asMood = (v: unknown): WeatherMood | null => (typeof v === 'string' && (WE
 export const countOf = (v: unknown) => (Array.isArray(v) && v[0] && typeof v[0].count === 'number' ? v[0].count : 0);
 export const toPerson = (p: Row | null | undefined, fallbackId = ''): Person => ({
   id: p?.id ?? fallbackId,
-  name: p?.display_name || p?.username || '—',
+  name: p?.username || p?.display_name || '—', // no nickname: the @username is the name
   handle: p?.username ?? null,
   avatarUrl: p?.avatar_url ?? null,
 });
@@ -607,7 +607,7 @@ export async function fetchSavedDishes(): Promise<SavedDish[]> {
       ...toSummary(r.food),
       saveId: r.id,
       savedAt: new Date(r.created_at),
-      cook: r.food.creator?.display_name || r.food.creator?.username || '—',
+      cook: r.food.creator?.username || r.food.creator?.display_name || '—',
       collectionIds: ((r.collection_items ?? []) as Row[]).map((c) => c.collection_id as string),
     }));
 }

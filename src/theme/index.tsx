@@ -1,6 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
-import { useColorScheme } from 'react-native';
-import { dark, light, type ColorToken, type Palette } from './colors';
+import { light, type ColorToken, type Palette } from './colors';
 
 export * from './colors';
 export * from './layout';
@@ -16,14 +15,12 @@ type Theme = { scheme: Scheme; color: (token: ColorToken) => string; palette: Pa
 
 const ThemeContext = createContext<Theme | null>(null);
 
-/** appearance: 'system' | 'light' | 'dark' (9.1 Appearance sheet). */
-export function ThemeProvider({ appearance = 'system', children }: { appearance?: 'system' | Scheme; children: ReactNode }) {
-  const system = useColorScheme();
-  const scheme: Scheme = appearance === 'system' ? (system === 'dark' ? 'dark' : 'light') : appearance;
-  const value = useMemo<Theme>(() => {
-    const palette = scheme === 'dark' ? dark : light;
-    return { scheme, palette, color: (t) => palette[t] };
-  }, [scheme]);
+/**
+ * Light mode only: the app ignores the device's dark mode (app.json userInterfaceStyle "light" keeps the system UI
+ * — alerts, keyboard, pickers — light too). The dark palette stays in colors.ts but is not used.
+ */
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const value = useMemo<Theme>(() => ({ scheme: 'light', palette: light, color: (t) => light[t] }), []);
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 

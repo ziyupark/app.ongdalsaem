@@ -1,7 +1,7 @@
 import * as Application from 'expo-application';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
-import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Map as MapIcon, Moon, Salad, Thermometer } from '../../src/components/icons/ongdal';
+import { Bell, BookOpen, ChevronRight, Eye, Globe, Lock, LogOut, Map as MapIcon, Salad, Thermometer } from '../../src/components/icons/ongdal';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
@@ -10,7 +10,7 @@ import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components
 import { Text } from '../../src/components/Text';
 import { useDietPrefs } from '../../src/lib/dietPrefs';
 import { getSavedMapApp, installedMapApps, MAP_APP_LABEL, setSavedMapApp, type MapAppId } from '../../src/lib/mapApps';
-import { setPrefs, usePrefs, type Appearance } from '../../src/lib/prefs';
+import { setPrefs, usePrefs } from '../../src/lib/prefs';
 import { signOut } from '../../src/services/auth';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { radius, space, useTheme } from '../../src/theme';
@@ -25,11 +25,6 @@ export default function Settings() {
   const [mapApp, setMapApp] = useState<MapAppId | null>(null);
   useFocusEffect(useCallback(() => { getMyProfile().then(setMe).catch(() => undefined); getSavedMapApp().then(setMapApp); }, []));
 
-  const pickAppearance = () =>
-    Alert.alert(t('settings.appearance'), undefined, [
-      ...(['system', 'light', 'dark'] as Appearance[]).map((a) => ({ text: t(`settings.appearanceOptions.${a}`), onPress: () => setPrefs({ appearance: a }) })),
-      { text: t('common.cancel'), style: 'cancel' as const },
-    ]);
   const pickUnit = () =>
     Alert.alert(t('settings.temperature'), undefined, [
       { text: '°C', onPress: () => setPrefs({ tempUnit: 'C' }) },
@@ -59,12 +54,12 @@ export default function Settings() {
       <Pressable accessibilityRole="button" onPress={() => router.push('/settings/edit-profile')} style={({ pressed }) => [styles.card, { backgroundColor: color('bg/subtle') }, pressed && { opacity: 0.85 }]}>
         <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle') }]}>
           {me?.avatarUrl ? <Image source={{ uri: me.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" /> : (
-            <Text variant="Title/L" color="fg/accent">{(me?.displayName ?? ' ').slice(0, 1).toUpperCase()}</Text>
+            <Text variant="Title/L" color="fg/accent">{(me?.username ?? me?.displayName ?? ' ').slice(0, 1).toUpperCase()}</Text>
           )}
         </View>
         <View style={styles.flex}>
-          <Text variant="Title/S" numberOfLines={1}>{me?.displayName ?? ' '}</Text>
-          <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{`${me?.username ? `@${me.username} · ` : ''}${t('settings.editProfile')}`}</Text>
+          <Text variant="Title/S" numberOfLines={1}>{me?.username ? `@${me.username}` : me?.displayName ?? ' '}</Text>
+          <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{t('settings.editProfile')}</Text>
         </View>
         <Icon icon={ChevronRight} size={18} />
       </Pressable>
@@ -74,13 +69,12 @@ export default function Settings() {
       </SettingsGroup>
       <SettingsGroup label={t('settings.preferences')}>
         <SettingsRow icon={Bell} label={t('settings.notifications')} onPress={() => router.push('/settings/notifications')} />
-        <SettingsRow icon={Moon} label={t('settings.appearance')} value={t(`settings.appearanceOptions.${prefs.appearance}`)} onPress={pickAppearance} />
         <SettingsRow icon={Thermometer} label={t('settings.temperature')} value={prefs.tempUnit === 'F' ? '°F' : '°C'} onPress={pickUnit} />
         <SettingsRow icon={Globe} label={t('settings.language')} value={t(`settings.languages.${prefs.language ?? 'device'}`)} onPress={() => router.push('/settings/language')} />
         <SettingsRow
           icon={Salad}
           label={t('diet.title')}
-          value={[diet.diet ? t(`diet.diets.${diet.diet}`) : null, diet.allergies.length ? t('diet.allergyCount', { n: diet.allergies.length }) : null].filter(Boolean).join(' · ') || t('diet.none')}
+          value={[diet.diet ? t(`diet.diets.${diet.diet}`) : null, ...diet.customDiet, diet.allergies.length + diet.customAllergies.length ? t('diet.allergyCount', { n: diet.allergies.length + diet.customAllergies.length }) : null].filter(Boolean).join(' · ') || t('diet.none')}
           onPress={() => router.push('/settings/diet')}
         />
         <SettingsRow icon={MapIcon} label={t('settings.mapApp')} value={mapApp ? t(MAP_APP_LABEL[mapApp]) : t('mapApps.ask')} onPress={pickMapApp} />
