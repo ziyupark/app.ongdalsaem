@@ -1,5 +1,5 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ArrowRight, Check, MoreHorizontal, ThumbsUp } from '../../src/components/icons/ongdal';
+import { ArrowRight, MoreHorizontal } from '../../src/components/icons/ongdal';
 import { MessageCircle } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
 import { timeAgo } from '../../src/lib/time';
 import {
-  addAnswer, deleteAnswer, deleteQuestion, fetchAnswers, fetchQuestion, setBestAnswer, setHelpful, type Answer, type Question,
+  addAnswer, deleteAnswer, deleteQuestion, fetchAnswers, fetchQuestion, type Answer, type Question,
 } from '../../src/services/community';
 import { isObjectionable, reportAnswer } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
@@ -22,7 +22,10 @@ import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 const MAX = 500;
 const { lineHeight: _lh, ...field } = text['Body/M'];
 
-/** 3.8 Question (469:11388) — question card · answers (asker's pick first, Helpful) · composer. */
+/**
+ * 3.8 Question (469:11388) — question card → answers as Comments (132:4846: avatar 40 · name Body/M Strong · time Caption
+ * fg/disabled → body Body/M), oldest first → composer. 3.8b (1242:10038): no answers = one centred Body/S fg/muted line.
+ */
 export default function QuestionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { color } = useTheme();
@@ -59,13 +62,6 @@ export default function QuestionScreen() {
   }
   if (q === undefined) return <View style={[styles.center, { backgroundColor: color('bg/default') }]}><ActivityIndicator color={color('fg/muted')} /></View>;
 
-  const sorted = q ? [...answers].sort((a, b) => (a.id === q.bestAnswerId ? -1 : b.id === q.bestAnswerId ? 1 : 0)) : answers;
-
-  const helpful = async (a: Answer) => {
-    const on = !a.helpfulByMe;
-    setAnswers((l) => l.map((x) => (x.id === a.id ? { ...x, helpfulByMe: on, helpful: x.helpful + (on ? 1 : -1) } : x)));
-    try { await setHelpful(a.id, on); } catch { setAnswers((l) => l.map((x) => (x.id === a.id ? a : x))); }
-  };
   const send = async () => {
     if (!q || !draft.trim() || sending) return;
     setSending(true);
@@ -82,10 +78,6 @@ export default function QuestionScreen() {
   const answerMenu = (a: Answer) => {
     if (!q) return;
     const opts: { text: string; style?: 'cancel' | 'destructive'; onPress?: () => void }[] = [{ text: t('common.cancel'), style: 'cancel' }];
-    if (q.mine && a.author.id !== me?.id) {
-      const picked = q.bestAnswerId === a.id;
-      opts.push({ text: t(picked ? 'ask.unpick' : 'ask.pick'), onPress: async () => { try { await setBestAnswer(q.id, picked ? null : a.id); setQ({ ...q, bestAnswerId: picked ? null : a.id }); } catch { Alert.alert(t('settings.saveFailed')); } } });
-    }
     if (a.author.id === me?.id) opts.push({ text: t('dish.delete'), style: 'destructive', onPress: async () => { try { await deleteAnswer(a.id); load(); } catch { Alert.alert(t('settings.saveFailed')); } } });
     else opts.push({ text: t('report.send'), style: 'destructive', onPress: () => setReporting(a) });
     Alert.alert(a.author.handle ?? a.author.name, undefined, opts);
@@ -113,29 +105,18 @@ export default function QuestionScreen() {
         <>
           <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
             <QuestionCard q={q} showImage />
-            <Text variant="Overline" color="fg/muted">{t('ask.answersOverline', { count: answers.length })}</Text>
-            {sorted.length ? sorted.map((a) => (
+            {answers.length ? answers.map((a) => (
               <Pressable key={a.id} onLongPress={() => answerMenu(a)} delayLongPress={350} style={styles.answer}>
-                <Avatar url={a.author.avatarUrl} name={a.author.name} size={32} />
+                <Avatar url={a.author.avatarUrl} name={a.author.handle ?? a.author.name} size={40} />
                 <View style={styles.flex}>
                   <View style={styles.aHead}>
-                    <Text variant="Body/S Strong">{a.author.handle ? `@${a.author.handle}` : a.author.name}</Text>
-                    <Text variant="Caption" color="fg/muted" numberOfLines={1} style={styles.shrink}>{[a.place, timeAgo(a.createdAt, t)].filter(Boolean).join(' · ')}</Text>
-                    {q.bestAnswerId === a.id ? (
-                      <View style={[styles.pick, { backgroundColor: color('bg/done-subtle') }]}>
-                        <Icon icon={Check} size={12} color="fg/done" />
-                        <Text variant="Caption Strong">{t('ask.askersPick')}</Text>
-                      </View>
-                    ) : null}
+                    <Text variant="Body/M Strong" numberOfLines={1} style={styles.shrink}>{a.author.handle ?? a.author.name}</Text>
+                    <Text variant="Caption" color="fg/disabled">{timeAgo(a.createdAt, t)}</Text>
                   </View>
                   <Text variant="Body/M">{a.body}</Text>
-                  <Pressable accessibilityRole="button" accessibilityState={{ selected: a.helpfulByMe }} disabled={a.author.id === me?.id} onPress={() => helpful(a)} hitSlop={space[6]} style={styles.helpful}>
-                    <Icon icon={ThumbsUp} size={16} color={a.helpfulByMe ? 'fg/accent' : 'fg/default'} />
-                    <Text variant="Caption Strong" color={a.helpfulByMe ? 'fg/accent' : 'fg/secondary'}>{t('ask.helpful', { n: a.helpful })}</Text>
-                  </Pressable>
                 </View>
               </Pressable>
-            )) : <Text variant="Body/S" color="fg/muted">{t('ask.noAnswers')}</Text>}
+            )) : <Text variant="Body/S" color="fg/muted" style={styles.empty}>{t('ask.noAnswers')}</Text>}
           </ScrollView>
           <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom + space[6], 40), borderTopColor: color('border/default') }]}>
             <Avatar url={me?.avatarUrl ?? null} name={me?.username ?? me?.displayName ?? ''} size={40} />
@@ -172,15 +153,15 @@ export default function QuestionScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  flex: { flex: 1, gap: space[4] },
+  flex: { flex: 1, gap: space[2] },
   shrink: { flexShrink: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   more: { position: 'absolute', right: space[16], top: 15 },
   body: { paddingHorizontal: space[20], paddingTop: space[12], paddingBottom: space[24], gap: space[16] },
-  answer: { flexDirection: 'row', gap: space[12] },
-  aHead: { flexDirection: 'row', alignItems: 'center', gap: space[6], flexWrap: 'wrap' },
-  pick: { flexDirection: 'row', alignItems: 'center', gap: space[4], paddingLeft: space[6], paddingRight: space[8], paddingVertical: space[2], borderRadius: radius.full },
-  helpful: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', paddingTop: space[2] },
+  // Comment 132:4846 — avatar 40 · 10 · [name · 6 · time] → 2 → body.
+  answer: { flexDirection: 'row', alignItems: 'flex-start', gap: space[10] },
+  aHead: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
+  empty: { textAlign: 'center' },
   composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingTop: space[10], borderTopWidth: 1 }, // Comment Composer 287:334
   field: { flex: 1, minHeight: 42, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' },
   input: { paddingVertical: 11, maxHeight: 120 },

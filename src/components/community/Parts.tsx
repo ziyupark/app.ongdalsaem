@@ -314,10 +314,11 @@ export function QuestionCard({ q, onPress, showImage, style }: { q: Question; on
       </View>
       <Text variant="Body/M">{q.body}</Text>
       {showImage && q.imageUrl ? <Image source={{ uri: q.imageUrl }} style={styles.qImage} contentFit="cover" /> : null}
+      {/* Action Count 288:7681 (3.8 card 1242:10017) — message-circle 24 · count Body/S Strong fg/default, gap 6. */}
       <View style={styles.qFoot}>
-        <View style={styles.qStat}>
-          <Icon icon={MessageCircle} size={16} />
-          <Text variant="Caption Strong" color="fg/secondary">{t('ask.answers', { count: q.answers })}</Text>
+        <View style={styles.qStat} accessible accessibilityLabel={t('ask.answers', { count: q.answers })}>
+          <Icon icon={MessageCircle} size={24} />
+          <Text variant="Body/S Strong">{String(q.answers)}</Text>
         </View>
       </View>
     </Pressable>
