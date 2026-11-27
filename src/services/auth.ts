@@ -35,6 +35,9 @@ async function signInWithOAuth(provider: 'google' | 'apple'): Promise<SignInResu
   const { data, error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo, skipBrowserRedirect: true } });
   if (error || !data.url) throw error ?? new Error('No OAuth URL');
   const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+  // Dev only: "dismiss" right after a sign-in usually means Supabase didn't send the browser back to `redirectTo`
+  // (missing from Auth › URL Configuration › Redirect URLs, so it went to the Site URL instead).
+  if (__DEV__) console.log('[sign-in]', provider, 'browser', result.type, '· redirectTo', redirectTo);
   if (result.type !== 'success') return { status: 'cancelled' };
   const { queryParams } = Linking.parse(result.url);
   const code = typeof queryParams?.code === 'string' ? queryParams.code : undefined;

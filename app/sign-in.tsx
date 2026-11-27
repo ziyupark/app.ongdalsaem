@@ -90,9 +90,11 @@ export default function SignIn() {
   const run = async (provider: Provider) => {
     setBusy(provider);
     setFailed(false);
+    if (__DEV__) console.log('[sign-in] start', provider);
     try {
       const result: SignInResult =
         provider === 'Apple' ? await signInWithApple() : provider === 'Google' ? await signInWithGoogle() : await signInWithDevTestAccount();
+      if (__DEV__) console.log('[sign-in] result', provider, result.status);
       if (result.status === 'cancelled') return;
       const profile = await getMyProfile();
       // New account: automatic @username, then onboarding from Taste (no nickname step).
