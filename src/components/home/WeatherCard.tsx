@@ -133,6 +133,8 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
       onPress={onPress}
       style={styles.slot}
     >
+      {/* 1257:17291 — label → 6 → thumb; the Weather Tag follows right under it (no gap). */}
+      <View style={styles.slotTop}>
       <Text variant="Caption Strong" color={active ? 'fg/default' : 'fg/muted'} numberOfLines={1} style={styles.slotLabel}>{label}</Text>
       {empty ? (
         <View style={[styles.thumb, styles.emptyThumb, { backgroundColor: color('bg/muted'), borderColor: color('border/strong') }]}>
@@ -143,6 +145,7 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
           <Image source={slot.photo!} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
         </View>
       )}
+      </View>
       <View style={styles.slotTemp}>
         <Icon icon={WEATHER_ICON[slot.mood ?? 'overcast']} size={18} />
         <Text variant="Body/L" style={styles.tabular}>{slot.tempC === undefined ? '--°' : `${temp(slot.tempC)}°`}</Text>
@@ -170,12 +173,13 @@ const styles = StyleSheet.create({
   // The timeline is the card's full width minus 8 a side, so it overhangs the content box by 20 + 1 (border) − 8 = 13.
   timeline: { flexDirection: 'row', gap: space[2], marginHorizontal: -(space[20] + 1 - space[8]) },
   highlight: { position: 'absolute', left: 0, top: 0, bottom: 0, borderRadius: radius.xl },
-  slot: { flex: 1, alignItems: 'center', gap: space[6], paddingTop: space[8], paddingBottom: space[10], paddingHorizontal: space[4], borderRadius: radius.xl },
+  // Meal Slot 131:4278 — height hugs: pt 8 · [label → 6 → thumb] · Weather Tag · pb 10 (8 + 95 + 32 + 10 = 145).
+  slot: { flex: 1, alignItems: 'center', paddingTop: space[8], paddingBottom: space[10], borderRadius: radius.xl },
+  slotTop: { alignSelf: 'stretch', alignItems: 'center', gap: space[6] },
   slotLabel: { alignSelf: 'stretch', textAlign: 'center' },
   thumb: { width: 74, height: 74, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   emptyThumb: { borderWidth: 1, borderStyle: 'dashed' },
-  // Weather Tag 1231:11417 (no fill) — 24 high, padding 5 12 5 9, gap 5, icon 18 · Body/L fg/default.
-  // Body/L's 22 line (25 in Korean) is taller than the tag, so nothing clips here: the digits draw past the 24 box.
-  slotTemp: { height: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 5, paddingLeft: 9, paddingRight: space[12], borderRadius: radius.full },
+  // Weather Tag 1231:11417 (no fill) — height hugs (5 + Body/L 22 + 5 = 32), padding 5 12 5 9, gap 5, icon 18 · Body/L fg/default.
+  slotTemp: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 5, paddingLeft: 9, paddingRight: space[12], borderRadius: radius.full },
   tabular: { fontVariant: ['tabular-nums'] },
 });

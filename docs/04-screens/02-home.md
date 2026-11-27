@@ -18,7 +18,7 @@
    - **Picks head**: Overline fg/muted "Picks for this weather" ··· **Refresh** 아이콘 버튼(`rotate-ccw` 32 원, 글자 없음). 탭할 때마다 같은 날씨·기온·무드에 맞는 **다른 요리**로 네 슬롯을 다시 채운다([§6.1](../05-behavior.md)).
    - **Meal timeline**: 4개 슬롯 가로 배치 — 이전 끼니 · **Now** · 다음 · 그다음. 각 슬롯 = 끼니 라벨 + 썸네일 원 + 예보 기온. Now 슬롯은 **선셋 그라데이션 링**.
      - **네 칸은 항상 같은 폭**: 타임라인은 카드 안쪽 폭(308)보다 **양쪽 13씩 넓다**(카드 바깥 가장자리에서 8 안쪽, 칸이 카드 가장자리에서 9). 칸 사이 2 → 390 화면에서 칸당 82(`flex: 1 1 0`). 라벨 길이와 관계없이 폭이 같고, 라벨은 칸 가운데 정렬.
-     - 칸(Meal Slot): padding 8 4 10 4, gap 6 — 라벨 Caption Strong(대문자 아님) → 썸네일 원 **74** → **Weather Tag**(배경 없음, 높이 24, padding 5 12 5 9, gap 5: 날씨 아이콘 18 + 기온 Body/L fg/default).
+     - 칸(Meal Slot 131:4278): 높이 hug, padding 8 0 10 — [라벨 Caption Strong(대문자 아님) → 6 → 썸네일 원 **74**] → 0 → **Weather Tag**(배경 없음, 높이 hug 32, padding 5 12 5 9, gap 5: 날씨 아이콘 18 + 기온 Body/L fg/default).
    - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` 36 → 8.1.
    - Mood Prompt(기분 입력)는 홈에 없다.
 5. **Block · feed — 피드** (Weather card 아래, 전체 폭, padding-top 40, 게시물 사이 24) — 홈의 중심은 **날씨에 맞는 요리 추천**(Weather card의 끼니 슬롯 + 이 피드). Today’s pick 카드 · Nearby card(Similar Bites)는 없다(2.1 19:191에서 뺌):
