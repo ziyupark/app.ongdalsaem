@@ -5,7 +5,7 @@
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
 - **6.3 Weekly Menu 헤더**: Month view `calendar-days` 아이콘을 오른쪽 화살표 옆 → **제목 바로 오른쪽**(gap 8)으로(11/13 요청 반영). 화살표는 오른쪽 끝 그대로. Figma 6.3(747:11057)은 아직 "Month view" 글자
-- **Fridge 칸 선택 Shopping memo 2줄**(956:12335): "Shopping / memo" Button/M 15/20(행간 20), 가운데 정렬. 9개 언어 `fridge.shoppingZoneTwoLine` 추가
+- **Fridge 칸 선택 Shopping memo 2줄**(956:12335): "Shopping / memo" Button/M 15, 행간 **16**(이 칸만), 가운데 정렬. 9개 언어 `fridge.shoppingZoneTwoLine` 추가
 - **홈 Weather card · Meal Slot 간격**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716) · [131:4280](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=131-4280)): 카드 아래 padding 17 → **14**. 칸 안 라벨 → 썸네일 6 → **7**, 썸네일 → Weather Tag 0 → **3**(칸 높이 145 → 149, 카드 307 → 308)
 - **Feed Post · 홈 피드 padding**([119:601](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=119-601) · [123:3261](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=123-3261)): Feed Post 아래 padding 24 → **18**. Block · feed 위 padding 40 → **24**, 게시물 사이 gap 24 → **0**(게시물 간 간격 48 → 18)
 - **Display/M = 24 확정**: Today’s Pick 제목도 24(Figma 1238:16790의 26 덮어쓰기 제거 — 스타일 Display/M 24/29 그대로). 앱 코드는 이미 24

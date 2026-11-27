@@ -46,7 +46,7 @@
 
 ### 6.3 Fridge memo(Diary 탭 아래) — 코드 기준, Figma 없음
 - **기기에만 저장**(서버에 올리지 않음).
-- Title/M "Fridge" → **칸 선택** 3개(높이 48, radius input 20): **Fridge** · **Freezer** · **Shopping memo**(선택 = bg/inverse + fg/inverse, 아니면 bg/subtle + border/default). 글자 Button/M 15/20 가운데 정렬 — Shopping memo만 **2줄**("Shopping / memo", 행간 20 → 40, 키 `fridge.shoppingZoneTwoLine`).
+- Title/M "Fridge" → **칸 선택** 3개(높이 48, radius input 20): **Fridge** · **Freezer** · **Shopping memo**(선택 = bg/inverse + fg/inverse, 아니면 bg/subtle + border/default). 글자 Button/M 15/20 가운데 정렬 — Shopping memo만 **2줄**("Shopping / memo", 행간 **16** → 32, 키 `fridge.shoppingZoneTwoLine`).
   - 고른 칸의 **상자가 강조**된다: 상자 테두리 2 border/focus(다이어리 오늘 칸과 같음). 고르지 않은 상자는 투명 테두리 2라 크기 · 안쪽 위치는 같다(테두리 2 + padding 14 = 16).
 - **입력 줄**(높이 48): Input "Add an ingredient" + Button M "Add" → 고른 칸(Shopping memo면 장보기 목록)에 추가.
 - **칸별 상자** Fridge / Freezer: 재료 칩. 넣은 지 **7일이 넘으면 칩 테두리 fg/accent**. 칩 탭 → "Remove {name}?" 확인 후 삭제. 비었으면 "Nothing in the fridge yet. Add what you just put in."

@@ -183,8 +183,8 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
               onPress={() => setZone(z)}
               style={[styles.zone, on ? { backgroundColor: color('bg/inverse') } : { backgroundColor: color('bg/subtle'), borderWidth: 1, borderColor: color('border/default') }]}
             >
-              {/* Zone · Shopping memo 956:12335: two lines (Button/M 15/20 → 40 in the 48 box), centred. */}
-              <Text variant="Button/M" color={on ? 'fg/inverse' : 'fg/default'} numberOfLines={z === 'shopping' ? 2 : 1} style={styles.zoneLabel}>
+              {/* Zone · Shopping memo 956:12335: two lines, Button/M with line height 16 (→ 32 in the 48 box), centred. */}
+              <Text variant="Button/M" color={on ? 'fg/inverse' : 'fg/default'} numberOfLines={z === 'shopping' ? 2 : 1} style={[styles.zoneLabel, z === 'shopping' && styles.zoneLabelTwoLine]}>
                 {z === 'shopping' ? t('fridge.shoppingZoneTwoLine') : zoneLabel(z)}
               </Text>
             </Pressable>
@@ -308,6 +308,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: space[8] },
   flex: { flex: 1 },
   zoneLabel: { textAlign: 'center' },
+  zoneLabelTwoLine: { lineHeight: 16, marginTop: 0, marginBottom: 0 },
   zone: { flex: 1, height: ROW, borderRadius: radius.input, alignItems: 'center', justifyContent: 'center' },
   addBtn: { height: ROW, borderRadius: radius.input },
   // 2 ring (always there, transparent when not picked) + 14 padding = the same 16 inset as before.
