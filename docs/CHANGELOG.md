@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **네 탭 공통 헤더 위치 통일**([1238:15195](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-15195)): 로고 줄 → 오버라인 → 제목 간격을 홈 · 프로필 · 커뮤니티 · 타이머 모두 **22 / 13**으로(전: 홈 20 / 11 · 프로필 22 / 22 · 커뮤니티 · 타이머 20 / 12). 홈 · 프로필 오버라인의 2 안쪽 들여쓰기 삭제. 제목 아래 간격(홈 18 · 프로필 22 · 나머지 12)은 그대로
 - **3.8 Question Figma를 앱에 맞춤**([469:11388](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-11388)): 질문 카드를 상세용으로 분리(아바타 32 · `map-pin` 위치 · gap 12 · 사진 radius 12 · "N answers" 줄, 공유 · 북마크 삭제 — Explore Question Card 컴포넌트는 그대로), 답 이름 = @아이디. **3.8b State · No answers yet**(1242:10038) 추가
 - **Question Card 아래 줄**([469:10124](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-10124)): 답변 수 · 공유 · 북마크 줄 좌우 21 → **0**(Explore · Our area 질문 카드)
 - **Weather Card 끼니 칸 기온 잘림 수정**: Weather Tag(높이 24)가 넘치는 부분을 잘라 Body/L 기온(특히 한국어 글꼴)의 아래가 잘리던 문제 → 자르지 않음(크기 · 위치 그대로)

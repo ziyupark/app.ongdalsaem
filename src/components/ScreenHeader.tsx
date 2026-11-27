@@ -119,18 +119,18 @@ function LocalMotion() {
 type Right = 'settings' | 'notifications' | 'more' | 'none';
 
 /**
- * Header shared by Home · Community · Timer · Profile (Home 2.1): safe area → row 40 (logo · right button) → 20 →
- * date · place (Overline) → 12 → weather title (Display/XL) → 12. All its spacing lives here — screens add none.
+ * Header shared by Home · Community · Timer · Profile — Frame 1238:15195, identical on every tab so nothing moves when
+ * you switch: safe area → row 40 (logo · right button) → 22 → date · place (Overline) → 13 → weather title (Display/XL).
+ * Only the space under the title belongs to the screen (12 · Home 18 · Profile 22). All its spacing lives here.
  * `right`: settings / notifications (unread dot) / more (`onMore`: report · block on another cook) / an empty 40 slot.
  * `onBack` swaps the logo for a back button.
  */
 /**
- * `withWeather`: Block · title & weather (2.1 Home 88:3025 · 6.1 Profile 1217:14479) — overline 2 in from the title,
- * overline → 11 → title, title → 18 → the Weather card below. Without it (Community · Timer): 12 / 12.
+ * `withWeather`: Home · Profile — title → 18 → the Weather card below (Profile: 22). Without it (Community · Timer): 12.
  */
 export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather, profile, backBar }: {
   right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void; withWeather?: boolean;
-  /** Profile Header 126:4345 (6.1): logo row → 22 → overline → 22 → title → 22 → the card (gap 22 throughout). */
+  /** Profile Header 126:4345 (6.1): title → 22 → the card. */
   profile?: boolean;
   /** TopBar Type=timer (1219:18314): plain back 40 · centred Compact logo · empty 40, 52 high, px 12 — 5.1_0 from a recipe step. */
   backBar?: boolean;
@@ -184,10 +184,10 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
         )}
       </View>
       )}
-      <View style={[styles.titleBlock, withWeather && styles.titleBlockWeather, profile && styles.titleBlockProfile]}>
+      <View style={styles.titleBlock}>
         {off ? (
           <>
-            <Text variant="Overline" color="fg/muted" style={withWeather && styles.overlineWeather}>{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
+            <Text variant="Overline" color="fg/muted">{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
             <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${t('home.locationOff.titleA')}${t('home.locationOff.titleB')}`} numberOfLines={1} adjustsFontSizeToFit>
               {en('home.locationOff.titleA')}
               <Text variant="Display/XL" color="fg/disabled">{en('home.locationOff.titleB')}</Text>
@@ -195,7 +195,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
           </>
         ) : (
           <>
-            <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))} style={withWeather && styles.overlineWeather}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
+            <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
             <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
               {f ? `${en(`home.titleMood.${mood}`)} ` : ''}
               <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{en(`home.dayPart.${part}`)}</Text>
@@ -215,10 +215,8 @@ const styles = StyleSheet.create({
   // 52 high, px 12 → 8 outside the header's 20 side padding.
   bar: { height: 52, marginHorizontal: -space[8], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   slotCenter: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  titleBlock: { paddingTop: space[20], gap: space[12] },
+  // Frame 1238:15195 — row → 22 → [overline → 13 → title], the same on every tab.
+  titleBlock: { paddingTop: 22, gap: 13 },
   rootWeather: { paddingBottom: 18 },
-  titleBlockWeather: { gap: 11 },
   rootProfile: { paddingBottom: 22 },
-  titleBlockProfile: { paddingTop: 22, gap: 22 },
-  overlineWeather: { paddingLeft: space[2] },
 });
