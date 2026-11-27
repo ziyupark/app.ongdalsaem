@@ -165,7 +165,10 @@ Deno.serve(async (req) => {
     .gte("created_at", since)
     .order("created_at", { ascending: false })
     .limit(300);
-  const pool: PoolDish[] = (foods ?? []).map((f: Record<string, unknown>) => ({
+  // 9.3 Deactivated cooks are hidden from everyone (20261201010000) — never push their dishes either.
+  const { data: off } = await supabase.from("profiles").select("id").not("deactivated_at", "is", null);
+  const deactivated = new Set((off ?? []).map((p: { id: string }) => p.id));
+  const pool: PoolDish[] = (foods ?? []).filter((f: Record<string, unknown>) => !deactivated.has(f.creator_id as string)).map((f: Record<string, unknown>) => ({
     id: f.id as string,
     name: f.name as string,
     mood: (typeof f.weather_condition === "string" && f.weather_condition in GROUP ? f.weather_condition : null) as Mood | null,

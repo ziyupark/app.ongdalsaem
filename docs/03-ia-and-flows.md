@@ -24,7 +24,7 @@ Community    탭: Explore(4.1) · Following(4.4) · Challenges
                                ├ 4.3 Country (v2, Trending Bites 카드에서)
                                ├ 4.2 Tag (v2: #Comfort · #Spicy · #Vegan … · 명절 태그도 같은 화면)
                                └ Story cook → 4.5
-Settings     6.1 ⚙ → 9.1 Settings ─ 9.2 Edit profile ─ 9.2b Choose a photo · 9.3 Account & security ─ 9.9 Delete account · (Deactivate → 1.1)
+Settings     6.1 ⚙ → 9.1 Settings ─ 9.2 Edit profile ─ 9.2b Choose a photo · 9.3 Account & security ─ 9.9 Delete account · 9.3b Deactivate account
                                · 9.4 Notifications · 9.6 Language · 9.5 Privacy & location(차단 목록 포함) · 9.8 Help & policies
                                └ 9.8 ─ 9.8a Contact · 9.8b Licenses · 9.8c Document sheet · A letter → 1.1b(앱 소개 다시 보기)
              2.5 Location off → 9.7 Choose city
@@ -121,7 +121,8 @@ Figma 페이지 구성:
 | 9.1 | Privacy & location / Help & policies / Sign out | 9.5 / 9.8 / 1.2 |
 | 9.2 | Avatar · 편집 배지 / Save changes | 9.2b / 9.1 |
 | 9.2b | Cancel / Use photo | Back / Back(9.2) |
-| 9.3 | Delete account / Deactivate account | 9.9 / (확인 팝업 → 1.1) |
+| 9.3 | Delete account / Deactivate account | 9.9 / 9.3b |
+| 9.3b | Deactivate account(확인 팝업) / Keep my account | 1.1 / 9.3 |
 | 9.9 | Delete account / Keep my account | 1.1 / 9.3 |
 | 9.2–9.6 · 9.8 · 9.8a · 9.8b · 9.9 | 뒤로 | Back |
 | 9.7 | 도시 선택 / 뒤로 | 2.x(해당 도시 홈) / 2.5 |

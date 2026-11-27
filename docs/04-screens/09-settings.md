@@ -57,9 +57,17 @@
   - 캡션: "Use any connected account to sign in. Keep at least one sign-in method." 마지막 남은 방법은 해제할 수 없다.
 - DANGER ZONE: **Delete account**(Destructive) → 9.9
   - 캡션: "Permanently deletes your profile, dishes, photos, comments, acorns and diary. This can’t be undone."
-- DANGER ZONE: **Deactivate account**(Destructive, `pause`, Figma 없음) — Delete account 아래
-  - 탭 → 확인 팝업 "Deactivate your account?" / "Your account will be switched off and you’ll be signed out. If you don’t sign in again within 30 days, your account and everything in it will be deleted automatically." · Cancel · **Deactivate account**
-  - 확인 → `deactivate_own_account()`(profiles.deactivated_at = 지금) → 로그아웃 → 1.1 Splash. 30일 안에 다시 로그인하면 비활성화가 풀린다(`reactivate_own_account()`), 아니면 서버가 9.9 삭제와 똑같이 지운다(purge-deactivated-accounts, 매일 1번)
+- DANGER ZONE: **Deactivate account**(Destructive, `pause`) — Delete account 아래 → 9.3b
+
+### 9.3b Deactivate account (Figma 없음 — 9.9 레이아웃 그대로)
+- 골격 = 9.9: TopBar "Deactivate account" · Head(Display/M **Take a break?** · Body/M fg/secondary "Your account goes quiet for 30 days. Nothing is deleted yet — sign in again any time before then and it’s all back.") · 그룹 · 버튼, 간격 24
+- WHILE DEACTIVATED(누를 수 없는 행): `user` Your profile is hidden · `image` Your dishes and photos are hidden · `message-circle` Comments, messages & follows are hidden
+  - 캡션: "Sign in with Apple or Google within 30 days to come back. After that, your account and everything in it are deleted for good."
+- 그룹(라벨 없음): `clock` **Deleted on** · 값 = 오늘 + 30일(앱 언어 날짜, 예 "December 27, 2026")
+- Destructive L **Deactivate account** → 확인 팝업 "Deactivate your account?" / "Your account will be switched off and you’ll be signed out. If you don’t sign in again within 30 days, your account and everything in it will be deleted automatically." · Cancel · **Deactivate account** → `deactivate_own_account()` → 로그아웃 → 1.1 Splash
+- Ghost L **Keep my account** → 9.3
+- 비활성화 동안 다른 사람에게는 프로필(6.1 → 없는 계정 상태) · 요리 · 사진 · 댓글 · 질문 · 답변 · 메시지 대화 · 팔로우 · 도토리 · 테이블/챌린지 참여가 보이지 않고, 매일 추천 푸시에도 안 나온다(차단과 같은 방식)
+- 30일 안에 다시 로그인 → `reactivate_own_account()` → 팝업 "Welcome back" / "Your account is active again. Your profile and dishes are visible as before." → 모두 그대로. 30일이 지나면 서버가 9.9 삭제와 똑같이 지운다(purge-deactivated-accounts, 매일 1번)
 
 ### 9.4 Notifications — [193:6391](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6391)
 - ACTIVITY(Switch): Acorns on your dishes **on** · Comments & replies **on** · New followers **on**

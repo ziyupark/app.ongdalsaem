@@ -7,7 +7,8 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
+import i18n from '../i18n';
 import { supabase } from '../lib/supabase';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -21,7 +22,8 @@ const redirectTo = Linking.createURL('auth-callback');
 
 /** Signing in again within the 30 days after 9.3 Deactivate keeps the account (clears profiles.deactivated_at). */
 async function reactivate() {
-  await supabase.rpc('reactivate_own_account').then(() => undefined, () => undefined);
+  const { data } = await supabase.rpc('reactivate_own_account').then((r) => r, () => ({ data: null }));
+  if (data === true) Alert.alert(i18n.t('settings.reactivatedTitle'), i18n.t('settings.reactivatedBody'));
 }
 
 function nameFromMetadata(meta: Record<string, unknown> | undefined): string {
