@@ -350,69 +350,21 @@ export async function fetchFolloweeIds() {
   return (data as Row[]).map((r) => r.followee_id as string);
 }
 
-export type FollowingItem = CardDish & { fromTable: string | null };
-
-/** 4.4 Following — dishes from cooks you follow, plus the dishes posted in your tables. Pass `followees` when already loaded. */
-export async function fetchFollowingFeed(only: 'all' | 'people' | 'tables' = 'all', followees?: string[]): Promise<FollowingItem[]> {
-  const me = await uid();
-  if (!me) return [];
-  const [ids, tables] = await Promise.all([followees ?? fetchFolloweeIds(), only === 'people' ? Promise.resolve([]) : fetchMyTables()]);
-  const out = new Map<string, FollowingItem>();
-  if (only !== 'tables' && ids.length) {
-    const { data, error } = await publicFoods().in('creator_id', ids).order('created_at', { ascending: false }).limit(40);
-    if (error) throw error;
-    for (const d of (data as Row[]).map(toCard)) out.set(d.id, { ...d, fromTable: null });
-  }
-  if (only !== 'people' && tables.length) {
-    const { data, error } = await supabase
-      .from('table_posts')
-      .select(`created_at, table:topic_tables(name), food:foods!inner(${CARD_SELECT}, visibility)`)
-      .in('table_id', tables.map((t) => t.id))
-      .eq('food.visibility', 'everyone')
-      .order('created_at', { ascending: false })
-      .limit(40);
-    if (error) throw error;
-    for (const r of data as Row[]) if (r.food && !out.has(r.food.id)) out.set(r.food.id, { ...toCard(r.food), fromTable: r.table?.name ?? null });
-  }
-  return [...out.values()].filter((d) => d.creator.id !== me).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-}
-
-/** 4.4 Table · my seat — my own published dishes since `since` (any visibility), newest first. */
+/** 4.4 Table — my own published dishes since `since` (any visibility), newest first. */
 export async function fetchMyDishesSince(since: Date): Promise<CardDish[]> {
   const me = await uid();
   if (!me) return [];
   const { data, error } = await supabase.from('foods').select(CARD_SELECT).eq('creator_id', me).eq('status', 'published')
-    .gte('created_at', since.toISOString()).order('created_at', { ascending: false }).limit(20);
+    .gte('created_at', since.toISOString()).order('created_at', { ascending: false }).limit(100);
   if (error) throw error;
   return (data as Row[]).map(toCard);
 }
 
-/** 4.4b Table · no follows yet — recent popular cooks (acorns over 14 days), each with their most-liked dish. */
-export async function fetchSuggestedPlates(limit = 3, followees?: string[]): Promise<CardDish[]> {
-  const me = await uid();
-  const { data, error } = await publicFoods().gte('created_at', new Date(Date.now() - 14 * 864e5).toISOString())
-    .order('created_at', { ascending: false }).limit(200);
-  if (error) throw error;
-  const followed = new Set(followees ?? await fetchFolloweeIds());
-  const best = new Map<string, { dish: CardDish; total: number }>();
-  for (const d of (data as Row[]).map(toCard)) {
-    if (d.creator.id === me || followed.has(d.creator.id)) continue;
-    const cur = best.get(d.creator.id);
-    if (!cur) best.set(d.creator.id, { dish: d, total: d.acorns });
-    else best.set(d.creator.id, { dish: d.acorns > cur.dish.acorns ? d : cur.dish, total: cur.total + d.acorns });
-  }
-  return [...best.values()].sort((a, b) => b.total - a.total).slice(0, limit).map((b) => b.dish);
-}
-
-/** 4.4 Table · ③ — neighbours' plates per day section (max 9, one per cook). */
-const NEIGHBOR_PLATES = 9;
-
 /**
- * 4.4 Table · ③ Neighbours — public dishes since `since` from cooks you don't follow, near you: your area cell
- * (`cell`, 5-char) first, then the neighbouring cells (`cells`), then your district. Per local day: at most
- * NEIGHBOR_PLATES, one per cook (nearest range wins, then newest). Leaves out you, `exclude` (followees) and blocked cooks.
+ * 4.4 Table — neighbours' public dishes since `since`: your area cell (`cell`, 5-char), the neighbouring cells (`cells`)
+ * and your district. Every post (no per-cook or per-day cap — the table shows "See more"). Leaves out you and blocked cooks.
  */
-export async function fetchNeighborPlates(at: { cell: string | null; cells: string[]; district?: string | null; city?: string | null }, since: Date, exclude: string[]): Promise<CardDish[]> {
+export async function fetchNeighborPlates(at: { cell: string | null; cells: string[]; district?: string | null; city?: string | null }, since: Date): Promise<CardDish[]> {
   const me = await uid();
   if (!me) return [];
   const ok = (c: string | null | undefined): c is string => !!c && /^[0-9b-hjkmnp-z]{5}$/.test(c);
@@ -426,24 +378,15 @@ export async function fetchNeighborPlates(at: { cell: string | null; cells: stri
 
   const [blocked, ...pages] = await Promise.all([
     supabase.from('blocks').select('blocked_id').eq('blocker_id', me),
-    ...tiers.map((load) => load().order('created_at', { ascending: false }).limit(200)),
+    ...tiers.map((load) => load().order('created_at', { ascending: false }).limit(500)),
   ]);
-  const skip = new Set([me, ...exclude, ...((blocked.data ?? []) as Row[]).map((r) => r.blocked_id as string)]);
-  const days = new Map<string, { cooks: Set<string>; ids: Set<string>; dishes: CardDish[] }>();
+  const skip = new Set([me, ...((blocked.data ?? []) as Row[]).map((r) => r.blocked_id as string)]);
+  const out = new Map<string, CardDish>();
   for (const page of pages) {
     if (page.error) continue;
-    for (const d of (page.data as Row[]).map(toCard)) {
-      if (skip.has(d.creator.id)) continue;
-      const k = localDate(d.createdAt);
-      const day = days.get(k) ?? { cooks: new Set<string>(), ids: new Set<string>(), dishes: [] };
-      days.set(k, day);
-      if (day.dishes.length >= NEIGHBOR_PLATES || day.cooks.has(d.creator.id) || day.ids.has(d.id)) continue;
-      day.cooks.add(d.creator.id);
-      day.ids.add(d.id);
-      day.dishes.push(d);
-    }
+    for (const d of (page.data as Row[]).map(toCard)) if (!skip.has(d.creator.id) && !out.has(d.id)) out.set(d.id, d);
   }
-  return [...days.values()].flatMap((d) => d.dishes);
+  return [...out.values()];
 }
 
 export type CookCard = Person & { city: string | null; acorns: number; following: boolean; mood: WeatherMood | null; tempC: number | null };

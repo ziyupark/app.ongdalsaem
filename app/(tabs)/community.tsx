@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Chip } from '../../src/components/Chip';
 import {
-  Avatar, FoodRow, FollowButton, PhotoCard, SectionHeader, MoreButton, useMyId, useReportMenu,
+  Avatar, FoodRow, PhotoCard, SectionHeader, MoreButton, useMyId, useReportMenu,
 } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
 import { ChallengesTab } from '../../src/components/community/ChallengesTab';
@@ -23,12 +23,11 @@ import { UnderlineTabs } from '../../src/components/UnderlineTabs';
 import { Text } from '../../src/components/Text';
 import { CUSTOM_MOOD_ICON, MOOD_TAGS } from '../../src/lib/tags';
 import { timeAgo } from '../../src/lib/time';
-import { follow } from '../../src/services/activity';
 import {
-  fetchFolloweeIds, fetchFollowingFeed, fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay, fetchSuggestedPlates,
-  localDate, localMidnight, topTags, type CardDish, type FollowingItem,
+  fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay,
+  localDate, localMidnight, topTags, type CardDish,
 } from '../../src/services/community';
-import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
+import { Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
 import { fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
 import { cellsAround } from '../../src/lib/geohash';
 import { useHere } from '../../src/lib/useHere';
@@ -457,105 +456,72 @@ function Global() {
 
 // ------------------------------------------------------------------------------------------------ Table (4.4)
 
-/** Plates per day before "See more" (3 rows × 3). */
-const TABLE_PLATES = 9;
+/** Plates before "See more": today 3 rows × 3, earlier days 2 rows × 3. */
+const TODAY_PLATES = 9;
+const PAST_PLATES = 6;
 
-const toPlate = (d: CardDish, label = d.name): PlateItem => ({
-  id: d.id, photo: d.photo, label, cook: { id: d.creator.id, name: d.creator.handle ?? d.creator.name, avatarUrl: d.creator.avatarUrl },
+const toPlate = (d: CardDish): PlateItem => ({
+  id: d.id, photo: d.photo, label: d.name, cook: { id: d.creator.id, name: d.creator.handle ?? d.creator.name, avatarUrl: d.creator.avatarUrl },
 });
 
-/** Days of neighbours' plates (③): today and the two days before. */
-const NEIGHBOR_DAYS = 3;
+/** Days on the table: today and the 13 days before (2 weeks). */
+const TABLE_DAYS = 14;
 
 /**
- * 4.4 Community · Table (Figma 730:11217) — "Neighbors' Table" title, then one table per local day (today · yesterday ·
- * then the date). Each table: ① my seat (today: my dish or an empty dashed plate → share flow) → ② dishes of the cooks
- * I follow → ③ neighbours I don't follow yet (area cell → neighbouring cells → district, max 9, each with "+ Follow";
- * following one moves their plates to ② at once). 4.4b (732:11288) — no follows and no neighbours: popular cooks to follow.
+ * 4.4 Community · Table (Figma 730:11217) — "Neighbors' Table" title, then one table per local day over the last 2 weeks
+ * (today always · then days with plates: yesterday · the date). Each table = my posts and neighbours' posts that day
+ * (area cell → neighbouring cells → district), in the order they were posted. No follow buttons, no empty seat.
  */
 function Following() {
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
   const { here } = useHere();
-  const [feed, setFeed] = useState<FollowingItem[] | null>(null);
-  const [mine, setMine] = useState<CardDish[]>([]);
-  const [followees, setFollowees] = useState<number | null>(null);
+  const [mine, setMine] = useState<CardDish[] | null>(null);
   const [neighbors, setNeighbors] = useState<CardDish[]>([]);
-  const [suggest, setSuggest] = useState<CardDish[]>([]);
-  // Cooks followed on this screen (neighbour plates → ②, suggested cooks' button state) until the next load.
-  const [followed, setFollowed] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState<Set<string>>(new Set());
 
   const district = here.place?.district ?? null;
   const city = here.place?.city ?? null;
   const load = useCallback(async () => {
     if (here.status === 'loading') return;
-    try {
-      const since = localMidnight();
-      since.setDate(since.getDate() - 1);
-      const idsReq = fetchFolloweeIds();
-      const [list, ids, my] = await Promise.all([idsReq.then((f) => fetchFollowingFeed('people', f)), idsReq, fetchMyDishesSince(since)]);
-      const from = localMidnight();
-      from.setDate(from.getDate() - (NEIGHBOR_DAYS - 1));
-      const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : [];
-      const near = await fetchNeighborPlates({ cell: here.cell, cells, district, city }, from, ids).catch(() => [] as CardDish[]);
-      setFeed(list);
-      setMine(my);
-      setFollowees(ids.length);
-      setNeighbors(near);
-      setFollowed(new Set());
-      if (!ids.length && !near.length) fetchSuggestedPlates(3, ids).then(setSuggest).catch(() => undefined);
-    } catch {
-      setFeed((f) => f ?? []);
-      setFollowees((n) => n ?? 0);
-    }
+    const from = localMidnight();
+    from.setDate(from.getDate() - (TABLE_DAYS - 1));
+    const cells = here.coords ? cellsAround(here.coords.latitude, here.coords.longitude, 5) : [];
+    const [my, near] = await Promise.all([
+      fetchMyDishesSince(from).catch(() => [] as CardDish[]),
+      fetchNeighborPlates({ cell: here.cell, cells, district, city }, from).catch(() => [] as CardDish[]),
+    ]);
+    setMine(my);
+    setNeighbors(near);
   }, [here.status, here.coords, here.cell, district, city]);
   useTabFocusEffect(useCallback(() => { load(); }, [load]));
 
   const day = (d: Date) => d.toLocaleDateString(i18n.language, { weekday: 'long', month: 'short', day: 'numeric' });
 
-  // Group by local date: today always first, yesterday when you posted then, then every day with followed or neighbour plates.
-  // ② = followed cooks (+ neighbours followed just now, newest first) · ③ = the other neighbours.
+  // Group by local date: today always first, then every day with plates, newest day first; plates oldest post first.
   const tables = useMemo(() => {
-    if (!feed) return [];
+    if (!mine) return [];
     const now = new Date();
     const y = new Date(now);
     y.setDate(y.getDate() - 1);
     const today = localDate(now);
     const yesterday = localDate(y);
-    const byDay = new Map<string, { date: Date; follows: CardDish[]; near: CardDish[] }>([[today, { date: now, follows: [], near: [] }]]);
-    if (mine.some((m) => localDate(m.createdAt) === yesterday)) byDay.set(yesterday, { date: y, follows: [], near: [] });
-    const at = (d: CardDish) => {
+    const byDay = new Map<string, { date: Date; plates: CardDish[] }>([[today, { date: now, plates: [] }]]);
+    const seen = new Set<string>();
+    for (const d of [...mine, ...neighbors]) {
+      if (seen.has(d.id)) continue;
+      seen.add(d.id);
       const k = localDate(d.createdAt);
-      if (!byDay.has(k)) byDay.set(k, { date: d.createdAt, follows: [], near: [] });
-      return byDay.get(k)!;
-    };
-    const inFeed = new Set(feed.map((d) => d.id));
-    for (const d of feed) at(d).follows.push(d);
-    for (const d of neighbors) {
-      if (inFeed.has(d.id)) continue;
-      if (followed.has(d.creator.id)) at(d).follows.push(d);
-      else at(d).near.push(d);
+      if (!byDay.has(k)) byDay.set(k, { date: d.createdAt, plates: [] });
+      byDay.get(k)!.plates.push(d);
     }
-    for (const v of byDay.values()) v.follows.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    for (const v of byDay.values()) v.plates.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
     return [...byDay.entries()]
       .sort(([a], [b]) => (a < b ? 1 : -1))
-      .map(([key, v]) => ({ key, ...v, kind: key === today ? 'today' : key === yesterday ? 'yesterday' : 'older', mine: mine.find((m) => localDate(m.createdAt) === key) ?? null }));
-  }, [feed, mine, neighbors, followed]);
+      .map(([key, v]) => ({ key, ...v, kind: key === today ? 'today' : key === yesterday ? 'yesterday' : 'older' }));
+  }, [mine, neighbors]);
 
-  const toggleFollow = async (id: string) => {
-    const on = !followed.has(id);
-    setFollowed((s) => { const n = new Set(s); if (on) n.add(id); else n.delete(id); return n; });
-    try { await follow(id, on); } catch { setFollowed((s) => { const n = new Set(s); if (on) n.delete(id); else n.add(id); return n; }); }
-  };
-
-  if (feed == null) return <ActivityIndicator color={color('fg/muted')} style={styles.loading} />;
-
-  const anyNeighbors = neighbors.length > 0;
-  const plate = (d: CardDish, onFollow?: () => void) => (
-    <Plate key={d.id} item={toPlate(d)} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)}
-      onFollow={onFollow} followLabel={onFollow ? t('cook.follow') : undefined} />
-  );
+  if (mine == null) return <ActivityIndicator color={color('fg/muted')} style={styles.loading} />;
 
   return (
     <View>
@@ -565,16 +531,10 @@ function Following() {
       </View>
       <View style={styles.tables}>
       {tables.map((tb) => {
-        const seat = tb.mine ? (
-          <Plate key="mine" item={toPlate(tb.mine, t('following.mySeat'))} tone="mine" onPress={() => router.push(`/dish/${tb.mine!.id}`)} onCook={() => router.push(`/cook/${tb.mine!.creator.id}`)} />
-        ) : tb.kind === 'today' ? (
-          <EmptySeat key="mine" label={t('following.placeMine')} onPress={() => router.push('/share/pick')} />
-        ) : null;
-        const plates = [
-          ...(seat ? [seat] : []),
-          ...tb.follows.map((d) => plate(d)),
-          ...tb.near.map((d) => plate(d, () => toggleFollow(d.creator.id))),
-        ];
+        const plates = tb.plates.map((d) => (
+          <Plate key={d.id} item={toPlate(d)} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />
+        ));
+        const max = tb.kind === 'today' ? TODAY_PLATES : PAST_PLATES;
         const all = open.has(tb.key);
         const title = tb.kind === 'today' ? t('following.todayTable') : tb.kind === 'yesterday' ? t('following.yesterdayTable') : day(tb.date);
         return (
@@ -583,24 +543,9 @@ function Following() {
             title={title}
             subtitle={tb.kind === 'older' ? undefined : day(tb.date)}
             moreLabel={t('following.seeMore')}
-            onMore={!all && plates.length > TABLE_PLATES ? () => setOpen((s) => new Set(s).add(tb.key)) : undefined}
+            onMore={!all && plates.length > max ? () => setOpen((s) => new Set(s).add(tb.key)) : undefined}
           >
-            <PlateGrid>{all ? plates : plates.slice(0, TABLE_PLATES)}</PlateGrid>
-            {tb.kind === 'today' && followees === 0 && !anyNeighbors && suggest.length ? (
-              <>
-                <View style={styles.suggestHead}>
-                  <Text variant="Title/S">{t('following.suggest')}</Text>
-                  <Text variant="Caption" color="fg/secondary">{t('following.suggestBody')}</Text>
-                </View>
-                <PlateGrid>
-                  {suggest.map((d) => (
-                    <Plate key={d.id} item={toPlate(d, d.creator.handle ?? d.creator.name)} tone="cook" onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)}>
-                      <FollowButton following={followed.has(d.creator.id)} onPress={() => toggleFollow(d.creator.id)} />
-                    </Plate>
-                  ))}
-                </PlateGrid>
-              </>
-            ) : null}
+            {plates.length ? <PlateGrid>{all ? plates : plates.slice(0, max)}</PlateGrid> : null}
           </PlateTable>
         );
       })}
@@ -615,7 +560,6 @@ const styles = StyleSheet.create({
   page: { overflow: 'hidden' },
   // Following · Tables 730:11394 — p6 20 24 under the title (title → first table = Story's title → card gap 6) · gap 24.
   tables: { paddingHorizontal: space[20], paddingTop: space[6], paddingBottom: space[24], gap: space[24] },
-  suggestHead: { gap: space[4] },
   root: { flex: 1 },
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },

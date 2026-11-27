@@ -1212,10 +1212,6 @@ edit=Editar
 title=La mesa del barrio
 todayTable=La mesa de hoy
 yesterdayTable=La mesa de ayer
-placeMine=Pon tu plato
-mySeat=Mi sitio
-suggest=Cocineros para seguir
-suggestBody=Sigue a un cocinero y sus platos llegarán a tu mesa.
 seeMore=Ver más
 [questions]
 search=Buscar preguntas

@@ -1,9 +1,7 @@
 import { Image } from 'expo-image';
-import { Plus } from '../icons/ongdal';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { elevation, radius, space, useTheme } from '../../theme';
-import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { Avatar } from './Parts';
 
@@ -54,15 +52,8 @@ export function PlateGrid({ children }: { children: ReactNode[] }) {
   );
 }
 
-/**
- * Plate — round photo with a bg/default rim (6) + Elevation/1 Low, cook avatar 24 at the bottom-right, 1-line label.
- * `onFollow` (neighbour plate): a small "+ Follow" pill beside the avatar — bg/primary, Caption Strong fg/on-primary, h24.
- */
-export function Plate({ item, tone = 'dish', onPress, onCook, onFollow, followLabel, children }: {
-  /** dish = Caption fg/secondary · mine = Caption Strong fg/accent ("My seat") · cook = Caption Strong fg/default (suggested cook). */
-  item: PlateItem; tone?: 'dish' | 'mine' | 'cook'; onPress: () => void; onCook: () => void;
-  onFollow?: () => void; followLabel?: string; children?: ReactNode;
-}) {
+/** Plate — round photo with a bg/default rim (6) + Elevation/1 Low, cook avatar 24 at the bottom-right, 1-line Caption label. */
+export function Plate({ item, onPress, onCook }: { item: PlateItem; onPress: () => void; onCook: () => void }) {
   const { color } = useTheme();
   return (
     <View style={styles.cellInner}>
@@ -72,37 +63,14 @@ export function Plate({ item, tone = 'dish', onPress, onCook, onFollow, followLa
           <Image source={{ uri: item.photo }} style={styles.photo} contentFit="cover" contentPosition="center" transition={150} recyclingKey={item.id} />
         </Pressable>
         <View style={styles.badgeRow} pointerEvents="box-none">
-          {onFollow && followLabel ? (
-            <Pressable accessibilityRole="button" accessibilityLabel={`${followLabel}, ${item.cook.name}`} onPress={onFollow} hitSlop={space[4]}
-              style={[styles.follow, { borderColor: color('bg/default'), backgroundColor: color('bg/primary') }]}>
-              <Icon icon={Plus} size={12} color="fg/on-primary" />
-              <Text variant="Caption Strong" color="fg/on-primary" numberOfLines={1} style={styles.followText}>{followLabel}</Text>
-            </Pressable>
-          ) : null}
           <Pressable accessibilityRole="button" accessibilityLabel={item.cook.name} onPress={onCook} hitSlop={space[6]}
             style={[styles.badge, { borderColor: color('bg/default'), backgroundColor: color('bg/default') }]}>
             <Avatar url={item.cook.avatarUrl} name={item.cook.name} size={BADGE} />
           </Pressable>
         </View>
       </View>
-      <Text variant={tone === 'dish' ? 'Caption' : 'Caption Strong'} color={tone === 'dish' ? 'fg/secondary' : tone === 'mine' ? 'fg/accent' : 'fg/default'} numberOfLines={1} style={styles.label}>{item.label}</Text>
-      {children}
+      <Text variant="Caption" color="fg/secondary" numberOfLines={1} style={styles.label}>{item.label}</Text>
     </View>
-  );
-}
-
-/** My seat · Empty — dashed border/default circle with plus (fg/accent), "Place your dish" in Caption Strong fg/accent. */
-export function EmptySeat({ label, onPress }: { label: string; onPress: () => void }) {
-  const { color } = useTheme();
-  return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={styles.cellInner}>
-      <View style={styles.plateBox}>
-        <View style={[styles.dashed, { borderColor: color('border/default') }]}>
-          <Icon icon={Plus} size={24} color="fg/accent" />
-        </View>
-      </View>
-      <Text variant="Caption Strong" color="fg/accent" numberOfLines={1} style={styles.label}>{label}</Text>
-    </Pressable>
   );
 }
 
@@ -117,17 +85,11 @@ const styles = StyleSheet.create({
   plateBox: { width: '100%', maxWidth: PLATE, aspectRatio: 1 },
   plate: { flex: 1, borderRadius: radius.full, padding: RIM },
   photo: { flex: 1, borderRadius: radius.full },
-  // Avatar (+ Follow pill on its left) pinned to the plate's bottom-right; the pill shrinks to fit the plate width.
+  // Avatar pinned to the plate's bottom-right.
   badgeRow: {
     position: 'absolute', left: -BADGE_RING, right: -BADGE_RING, bottom: -BADGE_RING,
     flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: space[2],
   },
   badge: { borderWidth: BADGE_RING, borderRadius: radius.full, overflow: 'hidden' },
-  follow: {
-    flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: space[2], height: BADGE + BADGE_RING * 2,
-    paddingHorizontal: space[8], borderWidth: BADGE_RING, borderRadius: radius.full,
-  },
-  followText: { flexShrink: 1 },
-  dashed: { flex: 1, borderRadius: radius.full, borderWidth: 2, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
   label: { alignSelf: 'stretch', textAlign: 'center' },
 });

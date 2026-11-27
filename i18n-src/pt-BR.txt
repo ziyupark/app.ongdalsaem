@@ -1212,10 +1212,6 @@ edit=Editar
 title=A mesa da vizinhança
 todayTable=A mesa de hoje
 yesterdayTable=A mesa de ontem
-placeMine=Coloque seu prato
-mySeat=Meu lugar
-suggest=Cozinheiros para seguir
-suggestBody=Siga um cozinheiro e os pratos dele chegam à sua mesa aqui.
 seeMore=Ver mais
 [questions]
 search=Buscar perguntas

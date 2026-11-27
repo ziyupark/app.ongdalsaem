@@ -92,25 +92,16 @@
 
 팔로우한 사람과 관련된 화면 묶음(Following 탭 · 요리사 프로필 · 요리사 목록 · 메시지 4.11).
 
-### 4.4 Community · Following — [183:5713](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=183-5713)
+### 4.4 Community · Following · Neighbors' Table — [730:11217](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=730-11217)
 - 4.1과 같은 상단(ScreenHeader + 탭 Explore · **Following** · Challenges). 세로 스크롤.
-- Block · following feed:
-  - SectionHeader "From people and tables you follow"(Eyebrow 없음)
-  - **Your tables** 줄(좌우 20, 아래 16, gap 8, 가로 스크롤): 내가 들어간 테이블 pill(사진 24 원 + `#SoloMeals` Caption Strong, bg/subtle + border/default, radius 999) ×N → 마지막 **Browse tables**(`plus` 16, border/strong) → 4.7.
-  - **Feed filter** 칩 줄(좌우 20, 아래 16, gap 8): **All**(Selected, 기본) · People · Tables. All = 팔로우한 사람 + 들어간 테이블 게시물, People = 팔로우한 사람만, Tables = 들어간 테이블 게시물만. 칩은 같은 화면에서 바뀐다(마지막 선택을 기억). Tables를 골랐는데 들어간 테이블이 없으면 **4.4c**.
-  - 테이블에서 온 게시물 위에 **Table source** 줄(좌우 20, 아래 8): `utensils` 14 fg/muted + "from #SoloMeals"(Caption Strong fg/muted) → 4.8b. 팔로우한 사람이 테이블에 올린 글은 사람 글로 한 번만 나오고 source 줄을 붙인다.
-  - 섞는 규칙: 시간순, 단 같은 테이블 글이 3개 이상 연달아 나오지 않게 뒤로 미룬다. **Suggested for you**는 게시물 5개 뒤에(목업은 2개 뒤).
-  - **Feed Post ×2**([§3.3](../02-components.md)):
-    - aoi.sapporo · Sapporo · 20m · ramen1 · `cloud-snow` −4° · 도토리 108 · 💬21 · "Miso butter corn ramen at 11 PM. The snow can wait."
-    - hana.kitchen · Suyeong, Busan · 2h · bibimguksu · `sun` 22° · 도토리 54 · 💬7
-  - SectionHeader "Suggested for you" / See all(게시물 5개 뒤)
-  - **Cook card ×3** 가로(각 FILL, radius 24, bg/subtle + border/default, padding 16 8 14): Avatar 56(이니셜) → 이름 Body/S Strong → 설명 Caption(1줄 말줄임) → Button Outline S "Follow"(FILL). 데이터: kenji.eats (Otaru · ramen), luca.cucina (Rome · pasta), sol.mx (Oaxaca · street food)
-  - Tab bar spacer 96
-- 이동: Explore → 4.1 · Challenges → 4.9 탭 · 테이블 pill → **4.8b** · Browse tables → **4.7** · "From people and tables you follow" 헤더 → **4.6** · 게시물 헤더 → 4.5 · 사진 → 7.1 · 댓글 → 7.2 · Suggested "See all" → **4.6** · Cook card 아바타 → 4.5 · Follow → 그 자리에서 "Following"(Secondary)으로 바뀜 · 아무도 팔로우하지 않으면 **4.4b**.
-
-### 4.4b State · Following is empty — [352:7679](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=352-7679)
-- 4.5와 같은 상단(Following active). 피드 대신 빈 상태: 72 원 bg/muted + `users` 30 → "Your table is empty"(Title/L) → "Follow cooks whose food fits your weather — their dishes will show up here."(Body/S) → Button Primary M **Find cooks** → 4.6.
-- 그 아래 "Suggested for you" Cook card ×3(4.5와 같음, See all → 4.6).
+- 제목 Display/M "Neighbors' Table"(Story of the day와 같은 자리 · 스타일) → 6 → 날짜별 **Table** 카드(좌우 20, 사이 24).
+- **기간 = 최근 2주**(오늘 포함 14일). 오늘 테이블은 항상 맨 위, 그 아래는 게시물이 있는 날만 최신 날짜 순. 제목 = Today's table / Yesterday's table / 날짜.
+- **Table**(730:11437 — bg/subtle, radius 24, padding 16, gap 16): 제목 Title/M + Caption 날짜 → 접시 3열(gap 16) → 넘치면 **See more**(Caption Strong).
+  - 접시 = 그날 **내 게시물 + 이웃 게시물**(내 칸 geohash 5자리 · 주변 칸 · 같은 구), **올린 순서대로**(먼저 올린 것이 앞). 한 요리사가 여러 개 올리면 모두 나온다. 차단한 요리사는 빠진다.
+  - 처음에 오늘은 **3줄(9개)**, 지난 날은 **2줄(6개)**까지 보이고, See more → 그 테이블 전체.
+  - 접시(Plate): 둥근 사진 + bg/default 테두리 6 + Elevation/1, 오른쪽 아래 요리사 Avatar 24, 아래 Caption fg/secondary 요리 이름 1줄.
+  - **내 자리(Place your dish 빈 접시) · + Follow · 요리사 추천("Cooks to follow")은 없다.**
+- 이동: 접시 → 7.1 · 아바타 → 4.5.
 
 ### 4.4c State · No tables yet — [486:11553](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=486-11553)
 - 4.5에서 **Tables** 칩을 골랐는데 들어간 테이블이 없을 때. 4.4 상단 + Feed filter(Tables Selected) 아래 빈 상태: 72 원 bg/subtle + `utensils` 30 → "No tables yet"(Title/L) → "Join a table to see dishes about cooking for one, rainy days and more — right here."(Body/S, 가운데) → Button Primary M **Browse tables** → 4.7.
