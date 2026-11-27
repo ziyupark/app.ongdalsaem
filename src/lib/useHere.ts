@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { getMyProfile } from '../services/profile';
+import { supabase } from './supabase';
 import { hasLocationPermission, requestDeviceLocation, reverseGeocodeCity, type Coordinates, type Place } from '../services/location';
 import { fetchForecast, type Forecast } from '../services/weather';
 import { geohash } from './geohash';
@@ -25,6 +26,8 @@ const TTL = 10 * 60_000;
 let current: Here = { status: 'loading', coords: null, place: null, forecast: null, cell: null };
 let loadedAt = 0;
 let inflight: Promise<boolean> | null = null;
+/** Bumped on sign-in / sign-out: a read started for the previous account (or signed out) is thrown away. */
+let gen = 0;
 const subs = new Set<(h: Here) => void>();
 const EMPTY: Here = { status: 'loading', coords: null, place: null, forecast: null, cell: null };
 
@@ -33,6 +36,7 @@ const EMPTY: Here = { status: 'loading', coords: null, place: null, forecast: nu
  * again for whoever signs in. Not stored (here.last is removed separately).
  */
 export function resetHere() {
+  gen++;
   current = EMPTY;
   loadedAt = 0;
   inflight = null;
@@ -58,29 +62,55 @@ AsyncStorage.getItem(LAST_KEY)
   })
   .catch(() => undefined);
 
-async function read(ask: boolean): Promise<boolean> {
+/** `retry`: the weather couldn't be read (no session yet, offline, server error) — don't keep the empty result for 10 min. */
+type ReadResult = { ok: boolean; retry: boolean };
+
+async function read(ask: boolean, g: number): Promise<ReadResult> {
+  // The weather function needs a signed-in user (401 otherwise): signed out, skip it — sign-in reads again.
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { ok: false, retry: true };
   const me = await getMyProfile().catch(() => null);
   // A city picked in 9.7 turns location off for the app even when the OS permission is still granted.
   const allowed = ask || (me?.locationEnabled !== false && (await hasLocationPermission()));
   const coords = allowed ? await requestDeviceLocation() : null;
   if (coords) {
     const [place, forecast] = await Promise.all([reverseGeocodeCity(coords).catch(() => null), fetchForecast(coords).catch(() => null)]);
+    if (g !== gen) return { ok: false, retry: false };
     publish({ status: 'ready', coords, place, forecast, cell: geohash(coords.latitude, coords.longitude) });
-    return true;
+    return { ok: true, retry: !forecast };
   }
   const forecast = me?.city ? await fetchForecast({ city: me.city }).catch(() => null) : null;
+  if (g !== gen) return { ok: false, retry: false };
   publish({ status: 'off', coords: null, place: me?.city ? { city: me.city } : null, forecast, cell: null });
-  return false;
+  return { ok: false, retry: !!me?.city && !forecast };
 }
 
 function load({ ask = false, force = false } = {}): Promise<boolean> {
   if (inflight && !ask) return inflight;
   if (!ask && !force && loadedAt && Date.now() - loadedAt < TTL) return Promise.resolve(current.status === 'ready');
-  inflight = read(ask)
-    .then((ok) => { loadedAt = Date.now(); return ok; })
-    .finally(() => { inflight = null; });
-  return inflight;
+  const g = gen;
+  const p: Promise<boolean> = read(ask, g)
+    .then((r) => { if (g === gen) loadedAt = r.retry ? 0 : Date.now(); return r.ok; })
+    .finally(() => { if (inflight === p) inflight = null; });
+  inflight = p;
+  return p;
 }
+
+// First sign-in, or signing in again after signing out: read the weather right away for this account instead of
+// waiting for the next screen or the 10-minute timer (a read made while signed out got nothing — 401).
+let who: string | null = null;
+supabase.auth.onAuthStateChange((event, session) => {
+  const id = session?.user.id ?? null;
+  if (id === who) return;
+  const first = who === null && event === 'INITIAL_SESSION';
+  who = id;
+  if (!id) { resetHere(); return; }
+  if (first) return; // app launch with a stored session: the screens' own first read covers it
+  gen++;
+  loadedAt = 0;
+  inflight = null;
+  if (subs.size) load({ force: true });
+});
 
 // Screens stay mounted (Home is a tab), so mounting alone isn't enough: re-read when the app comes back to the
 // foreground and every TTL while it's open — both still respect the TTL, so this never fetches more than once per 10 min.

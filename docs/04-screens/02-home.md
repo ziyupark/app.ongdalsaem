@@ -94,6 +94,7 @@
 - 노트: 홈과 **같은 화면 구조**를 유지하고, 날씨 대신 **지금 시간(끼니) + 내 취향**(도토리·저장·다이어리 기록)으로 추천. 날씨 카드를 탭하면 다시 불러온다.
 - 차이점만:
   - 오버라인 "Tue, Oct 27 · Mapo, Seoul · 6:40 PM", 제목 "Dinner time".
+  - 날씨 읽기: 로그인 전에는 날씨를 읽지 않고(날씨 서버는 로그인한 사용자만 받음), **처음 로그인 · 로그아웃 후 다시 로그인하는 순간 바로** 다시 읽는다. 읽기에 실패하면 10분 캐시에 두지 않고 다음 화면에서 다시 시도한다.
   - **Weather card는 2.1과 같은 규격**(350×308, Now 줄 높이 68): 큰 숫자 "--°" · 상태 "No weather yet" · 보조 "Tap ↻ to retry" · 오른쪽 `cloud`(fg/muted). Picks head = "Picks for your taste" + Refresh(탭 → 날씨 다시 불러오기).
   - 슬롯 라벨 아래 숫자 = 시간(Lunch 12:30 · Now 7:00 · Late 10:00 · Dawn 7:30).
   - Story: "Kimchi jjigae — you gave stews 12 acorns this month".

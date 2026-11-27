@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **로그인하면 날씨를 바로 읽기**(2.6 "No weather yet"이 남던 문제): 로그인 전 읽기는 건너뛰고(401), 처음 로그인 · 다시 로그인 시 즉시 다시 읽음. 실패한 읽기는 10분 캐시에 남기지 않음(`src/lib/useHere.ts`)
 - **6.3 Weekly Menu 헤더**: Month view `calendar-days` 아이콘을 오른쪽 화살표 옆 → **제목 바로 오른쪽**(gap 8)으로(11/13 요청 반영). 화살표는 오른쪽 끝 그대로. Figma 6.3(747:11057)은 아직 "Month view" 글자
 - **Fridge 칸 선택 Shopping memo 2줄**(956:12335): "Shopping / memo" Button/M 15, 행간 **16**(이 칸만), 가운데 정렬. 9개 언어 `fridge.shoppingZoneTwoLine` 추가
 - **홈 Weather card · Meal Slot 간격**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716) · [131:4280](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=131-4280)): 카드 아래 padding 17 → **14**. 칸 안 라벨 → 썸네일 6 → **7**, 썸네일 → Weather Tag 0 → **3**(칸 높이 145 → 149, 카드 307 → 308)
