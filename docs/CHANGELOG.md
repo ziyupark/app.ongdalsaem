@@ -4,6 +4,9 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **4.4 Neighbors' Table 내 자리 다시 추가**([730:11217](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=730-11217)): 테이블 맨 앞에 내 게시물 = **"My seat"**(Caption Strong fg/accent), 오늘 올린 게 없으면 **"Place your dish"** 점선 빈 접시(→ 8.1). 문구 `following.placeMine · mySeat` 9개 언어 다시 추가. 테이블 헤더: 제목 아래 Caption → **양 끝 정렬 + 날짜 알약**(0.6 fg/disabled 테두리, padding 3 8), 헤더 padding 3 6. 제목 → 첫 테이블 6 → **15**
+- **6.x 프로필 헤더**(Profile Header [126:4345](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=126-4345)): 로고 줄 → 오버라인 → 제목 → 카드 간격 20 / 11 / 18 → **22 / 22 / 22**(ScreenHeader `profile`, 홈 · 커뮤니티는 그대로). 카드 gap 12 → **14**, 아바타 74 → **88**(테두리 border/default → 흰색 bg/subtle), 아이디 줄 높이 80 고정 삭제(이름 칸 105), 상태 메시지 Body/M → **Body/S**. 탭 구분선 화면 끝까지 → **좌우 20 안쪽**, 카드 → 탭 22 → **22 + 9**
+- **Display/M 글자 스타일**: 26/29 → **24/29**(−0.45 그대로, Figma 텍스트 스타일, 앱 전체 적용)
 - **5.1 큰 링 시간 위치**(mid 20:799 · 1219:18081): 시간 칸 폭 152 → **178**, 자동 글자 축소(adjustsFontSizeToFit) 삭제. 줄어든 글자가 58 줄 안에서 아래로 붙어 링 가운데보다 낮게 보이던 문제. 1시간 이상은 칸을 넓혀 가운데 기준 0.7배
 - **7.1 Post detail 작성자 줄 · 사진 · 액션**(1219:18732 · 601:12935, 홈 Feed Post와 같은 규격): Avatar 48 → **40**, 줄 padding 12 16/14 → **12 21**, gap 12 → 10, 위치·시간 Body/S → **Caption**, 더보기 fg/secondary → **fg/default**. 사진 370×417(좌우 10) → **350×402(좌우 20)**, Weather Tag 20 · 16 → **18 · 18**, Photo Counter 오른쪽 아래 → **왼쪽 아래(18 · 16)**. Actions 좌우 20 → **38**. Actions → 제목 8 → **24**. 구분선 → Ingredients 28 → **20**, Ingredients → Steps 32 → **30**
 - **6.x 프로필 탭**(Block · Tabs 1233:12327): 순서 Dishes → Saved → Diary를 **Dishes → Diary → Saved**로 바꿈. 탭 글자 Body/M Strong · Body/M → **Title/M**(선택 · 미선택 같음), 탭 사이 28 → **16**, 카드 → 탭 15 → **22**, 구분선 → 그리드 15 + 8 → **9 + 8**

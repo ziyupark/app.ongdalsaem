@@ -222,10 +222,10 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const nowDetail = now ? t('home.hiLo', { hi: displayTemp(now.hi), lo: displayTemp(now.lo) }) : t('home.retry');
   const nowUntil = now?.until ? t('home.untilLine', { time: now.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
-  // 6.1 Profile 657:16468 — ScreenHeader (shared with Home · Community · Timer) → [card → 22 → tabs] → 9 → 8 → grid.
+  // 6.1 Profile Header 126:4345 — ScreenHeader (gap 22) → [card → 22 → Block · Tabs (py 9, hairline)] → 8 → grid.
   const header = (
     <>
-    <ScreenHeader withWeather right={isMe ? 'settings' : userId && !missing ? 'more' : 'none'} onMore={() => setReportOpen(true)} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
+    <ScreenHeader withWeather profile right={isMe ? 'settings' : userId && !missing ? 'more' : 'none'} onMore={() => setReportOpen(true)} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
     <View style={styles.header}>
       {/* Frame 10 — card → 22 → tabs. */}
       <View style={styles.cardGroup}>
@@ -251,7 +251,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
         <View style={styles.idRow}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('profile.changePhoto')} onPress={pickAvatar} disabled={!me || !isMe}>
-            <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle'), borderColor: color('border/default') }]}>
+            <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle'), borderColor: color('bg/subtle') }]}>
               {me?.avatarUrl ? <Image source={{ uri: me.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} /> : (
                 <Text variant="Display/M" color="fg/accent">{(me?.username ?? me?.displayName ?? '').slice(0, 1).toUpperCase()}</Text>
               )}
@@ -269,12 +269,12 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         </View>
         {isMe ? (
           <Pressable accessibilityRole="button" accessibilityLabel={t('profile.editStatus')} onPress={openBio} disabled={!me} style={styles.bioRow}>
-            {me?.bio ? <Text variant="Body/M" color="fg/secondary" style={styles.flex1}>{me.bio}</Text> : (
-              <Text variant="Body/M" color="fg/muted" style={styles.flex1}>{t('profile.addStatus')}</Text>
+            {me?.bio ? <Text variant="Body/S" color="fg/secondary" style={styles.flex1}>{me.bio}</Text> : (
+              <Text variant="Body/S" color="fg/muted" style={styles.flex1}>{t('profile.addStatus')}</Text>
             )}
           </Pressable>
         ) : me?.bio ? (
-          <Text variant="Body/M" color="fg/secondary">{me.bio}</Text>
+          <Text variant="Body/S" color="fg/secondary">{me.bio}</Text>
         ) : null}
         {isMe || !me ? null : (
           <View style={styles.btns}>
@@ -378,7 +378,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  // Body under ScreenHeader (withWeather: title → 18 → card). Block · Tabs 1233:12327 = pt 22 · pb 9 (under the hairline), then 8 → the grid.
+  // Body under ScreenHeader (profile: title → 22 → card). Block · Tabs 1233:13801 = py 9 (pb under the hairline), then 8 → the grid.
   header: { paddingHorizontal: space[20], paddingBottom: 9 + space[8], gap: 13 },
   // card → 22 → tabs (the tabs block's top padding).
   cardGroup: { gap: 22 },
@@ -390,7 +390,8 @@ const styles = StyleSheet.create({
   bioField: { borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: space[16], paddingTop: space[12], paddingBottom: space[8], gap: space[4] },
   bioInput: { minHeight: 72, textAlignVertical: 'top', padding: 0 },
   count: { alignSelf: 'flex-end' },
-  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[12], overflow: 'hidden' },
+  // Weather card 614:13895 — padding 18 20, gap 14.
+  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden' },
   nowRow: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
   tempBox: { paddingHorizontal: space[8], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
@@ -398,15 +399,15 @@ const styles = StyleSheet.create({
   details: { gap: space[2] },
   divider: { height: 1 },
   tabular: { fontVariant: ['tabular-nums'] },
-  // Row 1217:14591 — 80 high, avatar 74 · 16 · name.
-  idRow: { height: 80, flexDirection: 'row', alignItems: 'center', gap: space[16] },
-  avatar: { width: 74, height: 74, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  // Row 614:13914 — avatar 88 (1.2 white border) · 16 · name (105 tall).
+  idRow: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
+  avatar: { width: 88, height: 88, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   // name 614:13916 — fixed 105 tall, centred, gap 11, 80 % opacity.
   name: { flex: 1, minWidth: 97, height: 105, gap: 11, justifyContent: 'center', opacity: 0.8 },
   acorns: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[8], paddingVertical: space[6], borderRadius: radius.full, alignSelf: 'flex-start' },
-  // Full screen width (cancels the header's p20) so the hairline runs edge to edge; Tabs 1233:12328 = pl 20, gap 16.
-  tabs: { marginHorizontal: -space[20] },
-  tabRow: { gap: space[16], paddingHorizontal: space[20] },
+  // Block · Tabs 1233:13801 — inside the header's p20 (hairline 350 wide, border/default 30 %), pt 9; Tabs gap 16.
+  tabs: { paddingTop: 9 },
+  tabRow: { gap: space[16] },
   flex1: { flex: 1 },
   grid: { paddingBottom: 96 + space[24] },
   loading: { marginTop: space[40] },

@@ -1256,6 +1256,8 @@ edit=Editar
 title=La mesa del barrio
 todayTable=La mesa de hoy
 yesterdayTable=La mesa de ayer
+placeMine=Pon tu plato
+mySeat=Mi sitio
 seeMore=Ver más
 [questions]
 search=Buscar preguntas

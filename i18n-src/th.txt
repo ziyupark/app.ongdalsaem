@@ -1237,6 +1237,8 @@ edit=แก้ไข
 title=โต๊ะอาหารเพื่อนบ้าน
 todayTable=โต๊ะอาหารวันนี้
 yesterdayTable=โต๊ะอาหารเมื่อวาน
+placeMine=วางจานของคุณ
+mySeat=ที่นั่งของฉัน
 seeMore=ดูเพิ่มเติม
 [questions]
 search=ค้นหาคำถาม

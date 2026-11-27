@@ -1237,6 +1237,8 @@ edit=Edit
 title=Meja Tetangga
 todayTable=Meja hari ini
 yesterdayTable=Meja kemarin
+placeMine=Taruh hidanganmu
+mySeat=Kursiku
 seeMore=Lihat lebih banyak
 [questions]
 search=Cari pertanyaan

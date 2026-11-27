@@ -161,7 +161,7 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 |---|---|---|---|---|
 | Display/XL | Fraunces Bold | 46 / 49 | −1.5 | 홈 대제목 |
 | Display/L | Fraunces Bold | 34 / 37 | −0.9 | |
-| Display/M | Fraunces SemiBold | 26 / 29 | −0.45 | 화면 타이틀(온보딩, 공유) |
+| Display/M | Fraunces SemiBold | 24 / 29 | −0.45 | 화면 타이틀(온보딩, 공유) |
 | Display/Quote | Fraunces SemiBold | 22 / 29 | −0.5 | 인용/스토리, 5.1 음식 이름 박스 |
 | Title/L | Outfit Medium | 22 / 27 | −0.35 | |
 | Title/M | Outfit Medium | 18 / 18 | −0.2 | 카드 제목 |

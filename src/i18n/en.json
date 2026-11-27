@@ -1514,6 +1514,8 @@
     "title": "Neighbors' Table",
     "todayTable": "Today's table",
     "yesterdayTable": "Yesterday's table",
+    "placeMine": "Place your dish",
+    "mySeat": "My seat",
     "seeMore": "See more"
   },
   "questions": {

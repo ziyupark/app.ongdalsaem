@@ -1,7 +1,9 @@
 import { Image } from 'expo-image';
+import { Plus } from '../icons/ongdal';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { elevation, radius, space, useTheme } from '../../theme';
+import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { Avatar } from './Parts';
 
@@ -12,10 +14,13 @@ const PLATE = 95;
 const RIM = 6;
 const BADGE = 24;
 const BADGE_RING = 2;
+/** My seat · Empty 730:11397 — the dashed plate, exported from Figma (95 × 95 @2x). */
+const DASHED_SEAT = require('../../../assets/table/dashed-seat.png');
 
 /**
  * Table · <day> (Figma 4.4 Community · Table 730:11437) — bg/subtle card r24 · p16 · gap 16:
- * header (Title/M + Caption) → 3-column grid of round plates (gap 16) → optional "See more" (Caption Strong).
+ * Header 730:11438 (p 3 6, space-between: Title/M · date pill — 0.6 fg/disabled border, p 3 8, Caption fg/secondary)
+ * → 3-column grid of round plates (gap 16) → optional "See more" (Caption Strong).
  */
 export function PlateTable({ title, subtitle, children, onMore, moreLabel }: {
   title: string; subtitle?: string; children: ReactNode; onMore?: () => void; moreLabel?: string;
@@ -24,8 +29,12 @@ export function PlateTable({ title, subtitle, children, onMore, moreLabel }: {
   return (
     <View style={[styles.table, { backgroundColor: color('bg/subtle') }]}>
       <View style={styles.header}>
-        <Text variant="Title/M" numberOfLines={1}>{title}</Text>
-        {subtitle ? <Text variant="Caption" color="fg/secondary" numberOfLines={1}>{subtitle}</Text> : null}
+        <Text variant="Title/M" numberOfLines={1} style={styles.title}>{title}</Text>
+        {subtitle ? (
+          <View style={[styles.datePill, { borderColor: color('fg/disabled') }]}>
+            <Text variant="Caption" color="fg/secondary" numberOfLines={1}>{subtitle}</Text>
+          </View>
+        ) : null}
       </View>
       {children}
       {onMore && moreLabel ? (
@@ -52,8 +61,11 @@ export function PlateGrid({ children }: { children: ReactNode[] }) {
   );
 }
 
-/** Plate — round photo with a bg/default rim (6) + Elevation/1 Low, cook avatar 24 at the bottom-right, 1-line Caption label. */
-export function Plate({ item, onPress, onCook }: { item: PlateItem; onPress: () => void; onCook: () => void }) {
+/**
+ * Plate — round photo with a bg/default rim (6) + Elevation/1 Low, cook avatar 24 at the bottom-right, 1-line label.
+ * `mine` = My seat · Filled 1233:11754: label "My seat" in Caption Strong fg/accent (others Caption fg/secondary).
+ */
+export function Plate({ item, mine, onPress, onCook }: { item: PlateItem; mine?: boolean; onPress: () => void; onCook: () => void }) {
   const { color } = useTheme();
   return (
     <View style={styles.cellInner}>
@@ -69,14 +81,31 @@ export function Plate({ item, onPress, onCook }: { item: PlateItem; onPress: () 
           </Pressable>
         </View>
       </View>
-      <Text variant="Caption" color="fg/secondary" numberOfLines={1} style={styles.label}>{item.label}</Text>
+      <Text variant={mine ? 'Caption Strong' : 'Caption'} color={mine ? 'fg/accent' : 'fg/secondary'} numberOfLines={1} style={styles.label}>{item.label}</Text>
     </View>
+  );
+}
+
+/** My seat · Empty 730:11395 — dashed plate with `plus` 24 (fg/accent) in the middle, "Place your dish" Caption Strong fg/accent. */
+export function EmptySeat({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={styles.cellInner}>
+      <View style={styles.plateBox}>
+        <Image source={DASHED_SEAT} style={StyleSheet.absoluteFill} contentFit="contain" />
+        <View style={[StyleSheet.absoluteFill, styles.seatPlus]}>
+          <Icon icon={Plus} size={24} color="fg/accent" />
+        </View>
+      </View>
+      <Text variant="Caption Strong" color="fg/accent" numberOfLines={1} style={styles.label}>{label}</Text>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   table: { borderRadius: radius.xl, padding: space[16], gap: space[16] },
-  header: { gap: space[2] },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[8], paddingHorizontal: space[6], paddingVertical: 3 },
+  title: { flexShrink: 1 },
+  datePill: { borderWidth: 0.6, borderRadius: radius.full, paddingHorizontal: space[8], paddingVertical: 3 },
   more: { alignSelf: 'center' },
   grid: { gap: space[16] },
   row: { flexDirection: 'row', gap: space[16] },
@@ -91,5 +120,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: space[2],
   },
   badge: { borderWidth: BADGE_RING, borderRadius: radius.full, overflow: 'hidden' },
+  seatPlus: { alignItems: 'center', justifyContent: 'center' },
   label: { alignSelf: 'stretch', textAlign: 'center' },
 });

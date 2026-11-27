@@ -1237,6 +1237,8 @@ edit=編輯
 title=鄰里餐桌
 todayTable=今天的餐桌
 yesterdayTable=昨天的餐桌
+placeMine=放上你的料理
+mySeat=我的座位
 seeMore=查看更多
 [questions]
 search=搜尋問題

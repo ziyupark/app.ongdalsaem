@@ -38,7 +38,7 @@ export const FONT_METRICS: Record<string, { ascent: number; descent: number }> =
 export const text = {
   'Display/XL': t('Fraunces-Bold', 46, 49, -1.5),
   'Display/L': t('Fraunces-Bold', 34, 37, -0.9),
-  'Display/M': t('Fraunces-SemiBold', 26, 29, -0.45),
+  'Display/M': t('Fraunces-SemiBold', 24, 29, -0.45),
   'Display/Quote': t('Fraunces-SemiBold', 22, 29, -0.5),
   'Title/L': t('Outfit-Medium', 22, 27, -0.35),
   'Title/M': t('Outfit-Medium', 18, 18, -0.2),

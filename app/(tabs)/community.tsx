@@ -27,7 +27,7 @@ import {
   fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay,
   localDate, localMidnight, topTags, type CardDish,
 } from '../../src/services/community';
-import { Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
+import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
 import { fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
 import { cellsAround } from '../../src/lib/geohash';
 import { useHere } from '../../src/lib/useHere';
@@ -461,8 +461,8 @@ function Global() {
 const TODAY_PLATES = 9;
 const PAST_PLATES = 6;
 
-const toPlate = (d: CardDish): PlateItem => ({
-  id: d.id, photo: d.photo, label: d.name, cook: { id: d.creator.id, name: d.creator.handle ?? d.creator.name, avatarUrl: d.creator.avatarUrl },
+const toPlate = (d: CardDish, label = d.name): PlateItem => ({
+  id: d.id, photo: d.photo, label, cook: { id: d.creator.id, name: d.creator.handle ?? d.creator.name, avatarUrl: d.creator.avatarUrl },
 });
 
 /** Days on the table: today and the 13 days before (2 weeks). */
@@ -470,8 +470,9 @@ const TABLE_DAYS = 14;
 
 /**
  * 4.4 Community · Table (Figma 730:11217) — "Neighbors' Table" title, then one table per local day over the last 2 weeks
- * (today always · then days with plates: yesterday · the date). Each table = my posts and neighbours' posts that day
- * (area cell → neighbouring cells → district), in the order they were posted. No follow buttons, no empty seat.
+ * (today always · then days with plates: yesterday · the date). Each table = my seat first — my posts that day as
+ * "My seat" (1233:11754), or today with none the dashed "Place your dish" seat (730:11395 → share flow) — then
+ * neighbours' posts (area cell → neighbouring cells → district), in the order they were posted. No follow buttons.
  */
 function Following() {
   const { color } = useTheme();
@@ -507,16 +508,18 @@ function Following() {
     y.setDate(y.getDate() - 1);
     const today = localDate(now);
     const yesterday = localDate(y);
-    const byDay = new Map<string, { date: Date; plates: CardDish[] }>([[today, { date: now, plates: [] }]]);
+    const byDay = new Map<string, { date: Date; mine: CardDish[]; plates: CardDish[] }>([[today, { date: now, mine: [], plates: [] }]]);
     const seen = new Set<string>();
+    const myIds = new Set(mine.map((d) => d.id));
     for (const d of [...mine, ...neighbors]) {
       if (seen.has(d.id)) continue;
       seen.add(d.id);
       const k = localDate(d.createdAt);
-      if (!byDay.has(k)) byDay.set(k, { date: d.createdAt, plates: [] });
-      byDay.get(k)!.plates.push(d);
+      if (!byDay.has(k)) byDay.set(k, { date: d.createdAt, mine: [], plates: [] });
+      byDay.get(k)![myIds.has(d.id) ? 'mine' : 'plates'].push(d);
     }
-    for (const v of byDay.values()) v.plates.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    const byTime = (a: CardDish, b: CardDish) => a.createdAt.getTime() - b.createdAt.getTime();
+    for (const v of byDay.values()) { v.mine.sort(byTime); v.plates.sort(byTime); }
     return [...byDay.entries()]
       .sort(([a], [b]) => (a < b ? 1 : -1))
       .map(([key, v]) => ({ key, ...v, kind: key === today ? 'today' : key === yesterday ? 'yesterday' : 'older' }));
@@ -532,9 +535,14 @@ function Following() {
       </View>
       <View style={styles.tables}>
       {tables.map((tb) => {
-        const plates = tb.plates.map((d) => (
+        const seat = tb.mine.length
+          ? tb.mine.map((d) => (
+            <Plate key={d.id} mine item={toPlate(d, t('following.mySeat'))} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />
+          ))
+          : tb.kind === 'today' ? [<EmptySeat key="seat" label={t('following.placeMine')} onPress={() => router.push('/share/pick')} />] : [];
+        const plates = [...seat, ...tb.plates.map((d) => (
           <Plate key={d.id} item={toPlate(d)} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />
-        ));
+        ))];
         const max = tb.kind === 'today' ? TODAY_PLATES : PAST_PLATES;
         const all = open.has(tb.key);
         const title = tb.kind === 'today' ? t('following.todayTable') : tb.kind === 'yesterday' ? t('following.yesterdayTable') : day(tb.date);
@@ -560,7 +568,8 @@ const styles = StyleSheet.create({
   pagerRow: { alignItems: 'flex-start' },
   page: { overflow: 'hidden' },
   // Following · Tables 730:11394 — p6 20 24 under the title (title → first table = Story's title → card gap 6) · gap 24.
-  tables: { paddingHorizontal: space[20], paddingTop: space[6], paddingBottom: space[24], gap: space[24] },
+  // Group 1010:20672 — title (pb 3) → 6 → Following · Tables 730:11394 (pt 6, p 20, pb 24, gap 24): title → first table 15.
+  tables: { paddingHorizontal: space[20], paddingTop: 3 + space[6] + space[6], paddingBottom: space[24], gap: space[24] },
   root: { flex: 1 },
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },

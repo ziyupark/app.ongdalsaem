@@ -128,8 +128,10 @@ type Right = 'settings' | 'notifications' | 'more' | 'none';
  * `withWeather`: Block · title & weather (2.1 Home 88:3025 · 6.1 Profile 1217:14479) — overline 2 in from the title,
  * overline → 11 → title, title → 18 → the Weather card below. Without it (Community · Timer): 12 / 12.
  */
-export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather, backBar }: {
+export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeather, profile, backBar }: {
   right: Right; onBack?: () => void; onMore?: () => void; onLogoLongPress?: () => void; withWeather?: boolean;
+  /** Profile Header 126:4345 (6.1): logo row → 22 → overline → 22 → title → 22 → the card (gap 22 throughout). */
+  profile?: boolean;
   /** TopBar Type=timer (1219:18314): plain back 40 · centred Compact logo · empty 40, 52 high, px 12 — 5.1_0 from a recipe step. */
   backBar?: boolean;
 }) {
@@ -153,7 +155,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
   const part = dayPart(now);
 
   return (
-    <View style={[styles.root, withWeather && styles.rootWeather, { paddingTop: insets.top }]}>
+    <View style={[styles.root, withWeather && styles.rootWeather, profile && styles.rootProfile, { paddingTop: insets.top }]}>
       {backBar && onBack ? (
         <View style={styles.bar}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[4]} onPress={onBack} style={styles.slotCenter}>
@@ -182,7 +184,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
         )}
       </View>
       )}
-      <View style={[styles.titleBlock, withWeather && styles.titleBlockWeather]}>
+      <View style={[styles.titleBlock, withWeather && styles.titleBlockWeather, profile && styles.titleBlockProfile]}>
         {off ? (
           <>
             <Text variant="Overline" color="fg/muted" style={withWeather && styles.overlineWeather}>{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
@@ -216,5 +218,7 @@ const styles = StyleSheet.create({
   titleBlock: { paddingTop: space[20], gap: space[12] },
   rootWeather: { paddingBottom: 18 },
   titleBlockWeather: { gap: 11 },
+  rootProfile: { paddingBottom: 22 },
+  titleBlockProfile: { paddingTop: 22, gap: 22 },
   overlineWeather: { paddingLeft: space[2] },
 });
