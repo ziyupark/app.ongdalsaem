@@ -11,7 +11,7 @@
    - 헤더 행(높이 40): 좌 Logo(Compact) "ongdalsaem"(길게 누르면 개발용 메뉴), 우 IconButton(Soft, M) `bell`(알림 → **2.8**, 안 읽은 알림이 있으면 6px 점). *Map 버튼 없음.*
    - **22** → **날짜·위치 오버라인**: "Tue, Oct 27 · Mapo, Seoul"(제목과 같은 왼쪽 선).
    - **13** → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
-   - 글자색은 wash 위치별 잉크(로고 12 % · 오버라인 26 % · 제목 33 % 지점의 밝기)에 맞춘다.
+   - 글자색은 **fg/default 고정**(날씨 · 배경과 상관없이). 제목 둘째 단어(시간대)는 fg/disabled 톤의 **반투명 유리** — 글자 안으로 뒤 wash가 흐리게 비친다(블러 24 + fg/disabled 75 %). 로고만 wash 밝기에 맞춘 잉크.
 4. **Weather card**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716) — glass/surface + blur, 1px bg/subtle 테두리, Elevation/3, radius 2xl 32, 350×307, padding 위 18 · 좌우 20 · 아래 17, gap 12, 가운데 정렬):
    - 큰 기온 XXL 80 "12°"(padding 위 0 · 좌우 8 · 아래 2) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → **3D 날씨 아이콘 64**(우측, 원형 배경 없음 — [§2.4](../01-foundations.md)). 날씨가 없으면 bg/muted 원 + `cloud`.
    - 구분선 → 12 → [**Picks head** → 8 → **Meal timeline**](한 묶음).

@@ -167,7 +167,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
   - 2.6(날씨 없음)은 wash만 두고 모션은 숨기고 멈춘다. 앱이 백그라운드에 가면 멈추고, 돌아오면 페이드 없이 이어진다.
 - **ScreenWash**(각 탭 화면): 지금 탭의 스크롤 위치를 WeatherBackdrop에 넘겨, wash가 내용과 함께 올라가며 300pt에서 사라지게 한다. StatusBar 글자색도 wash 밝기에 맞춘다. 자체 wash가 있는 푸시 화면(다른 요리사 프로필 · Challenge · Tag · Country)은 움직임 없는 wash를 따로 그린다.
 - **ScreenHeader**(좌우 20, 아래 12): 안전 영역 → 행 40(왼쪽 Logo Compact — 다른 요리사 프로필은 뒤로 버튼 / 오른쪽 `bell`(Home · Community, 안 읽음 점) · `settings`(내 프로필) · 빈 40(Timer · 다른 요리사)) → **22** → Overline 날짜 · 위치 → **13** → Display/XL 날씨 제목(네 탭 모두 같은 위치 · 1238:15195; 제목 아래는 화면별 12 · 홈 18 · 프로필 22)("Rainy " + fg/disabled 톤 "evening", 한 줄 맞춤). 위치 꺼짐 = "Location off · showing {city}" / "Hello there".
-- 글자색은 wash 위 위치(로고 12 % · 오버라인 26 % · 제목 33 %)의 밝기에 맞춘 잉크. 마지막 날씨 값은 앱을 다시 열 때도 먼저 보여 준다(기기 캐시).
+- 글자색은 **고정**: 오버라인 · 제목 fg/default, 제목 둘째 단어("evening")는 **반투명 유리** — 글자 모양 안에서 뒤 wash를 흐리게(블러 24) 비추고 fg/disabled 75 %를 덮는다(MaskedView + BlurView). 로고만 wash 위치(12 %)의 밝기에 맞춘 잉크. 마지막 날씨 값은 앱을 다시 열 때도 먼저 보여 준다(기기 캐시).
 
 ### 3.1c UnderlineTabs — 코드 기준
 - X 스타일 밑줄 탭: 전체 폭 **1px border/default 선(30 % 투명)** + 선택 탭 아래 **3px fg/default 막대**(라벨 글자 폭, radius full). 탭을 바꾸면 막대가 200ms에 미끄러져 간다. 탭 높이 43(위 10 · 아래 12). 선택 = fg/default, 나머지 fg/muted(wash 위에서는 wash 잉크). 글자 기본 Body/M Strong(선택) · Body/M, `labelVariant`로 한 스타일 지정(4.1 Community = Title/M). 아이콘 탭도 가능(6.x 내 프로필).

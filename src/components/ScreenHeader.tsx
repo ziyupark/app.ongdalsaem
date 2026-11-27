@@ -1,9 +1,11 @@
+import MaskedViewBase from '@react-native-masked-view/masked-view';
+import { BlurView } from 'expo-blur';
 import { router, useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Bell, ChevronLeft, MoreHorizontal, Settings } from './icons/ongdal';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppState, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, useWindowDimensions, View, type ViewProps } from 'react-native';
 import Animated, { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDevWeather } from '../lib/devWeather';
@@ -13,7 +15,7 @@ import { hasUnread } from '../services/activity';
 import { washScrollY } from '../lib/weatherBackdrop';
 import type { WashScroll } from '../lib/useWashScroll';
 import { FX_TIMING, space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
-import { bwOn, useWashInk, washOpacity } from '../theme/washInk';
+import { useWashInk, washOpacity } from '../theme/washInk';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import { Logo } from './Logo';
@@ -116,6 +118,35 @@ function LocalMotion() {
   );
 }
 
+/**
+ * Weather title (Display/XL, one line, shrinks to fit): "Rainy " fg/default + "evening" — the second word is frosted
+ * glass: inside its glyphs the wash behind is blurred and tinted fg/disabled, so the background shows through softly.
+ * Two copies of the same line share one layout: the mask (only the second word opaque) cuts a BlurView + tint, and the
+ * visible copy draws the first word with the second left transparent.
+ */
+/** The package's class typings predate React 19's JSX types — same props, typed as a function component. */
+const MaskedView = MaskedViewBase as unknown as (p: ViewProps & { maskElement: React.ReactElement }) => React.ReactElement;
+
+function WeatherTitle({ a, b, label }: { a: string; b: string; label: string }) {
+  const { color } = useTheme();
+  const line = (first: object, second: object) => (
+    <Text variant="Display/XL" numberOfLines={1} adjustsFontSizeToFit style={first}>
+      {a}
+      <Text variant="Display/XL" style={second}>{b}</Text>
+    </Text>
+  );
+  const clear = { color: 'transparent' };
+  return (
+    <View accessible accessibilityRole="header" accessibilityLabel={label}>
+      <MaskedView style={StyleSheet.absoluteFill} maskElement={line(clear, { color: color('fg/default') })}>
+        <BlurView intensity={24} tint="light" style={StyleSheet.absoluteFill} />
+        <View style={[StyleSheet.absoluteFill, styles.frost, { backgroundColor: color('fg/disabled') }]} />
+      </MaskedView>
+      {line({ color: color('fg/default') }, clear)}
+    </View>
+  );
+}
+
 type Right = 'settings' | 'notifications' | 'more' | 'none';
 
 /**
@@ -140,8 +171,6 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
   const { t, i18n } = useTranslation();
   const { forecast: f, on, mood, place, off, here } = useScreenWeather();
   const logoInk = useWashInk(on ? mood : null, 0.12, WASH_OPACITY);
-  const overInk = useWashInk(on ? mood : null, 0.26, WASH_OPACITY);
-  const titleInk = useWashInk(on ? mood : null, 0.33, WASH_OPACITY);
   const [unread, setUnread] = useState(false);
   useFocusEffect(useCallback(() => {
     if (right === 'notifications') hasUnread().then(setUnread).catch(() => undefined);
@@ -187,19 +216,13 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
       <View style={styles.titleBlock}>
         {off ? (
           <>
-            <Text variant="Overline" color="fg/muted">{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
-            <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${t('home.locationOff.titleA')}${t('home.locationOff.titleB')}`} numberOfLines={1} adjustsFontSizeToFit>
-              {en('home.locationOff.titleA')}
-              <Text variant="Display/XL" color="fg/disabled">{en('home.locationOff.titleB')}</Text>
-            </Text>
+            <Text variant="Overline">{t('home.locationOff.overline', { city: city || 'Seoul' })}</Text>
+            <WeatherTitle a={en('home.locationOff.titleA')} b={en('home.locationOff.titleB')} label={`${t('home.locationOff.titleA')}${t('home.locationOff.titleB')}`} />
           </>
         ) : (
           <>
-            <Text variant="Overline" color={overInk?.bw ?? bwOn(color('bg/default'))}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
-            <Text variant="Display/XL" accessibilityRole="header" accessibilityLabel={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} numberOfLines={1} adjustsFontSizeToFit color={titleInk?.strong ?? 'fg/default'}>
-              {f ? `${en(`home.titleMood.${mood}`)} ` : ''}
-              <Text variant="Display/XL" color={titleInk?.disabled ?? 'fg/disabled'}>{en(`home.dayPart.${part}`)}</Text>
-            </Text>
+            <Text variant="Overline">{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
+            <WeatherTitle a={f ? `${en(`home.titleMood.${mood}`)} ` : ''} b={en(`home.dayPart.${part}`)} label={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} />
           </>
         )}
       </View>
@@ -219,4 +242,6 @@ const styles = StyleSheet.create({
   titleBlock: { paddingTop: 22, gap: 13 },
   rootWeather: { paddingBottom: 18 },
   rootProfile: { paddingBottom: 22 },
+  // fg/disabled over the blurred wash — mostly the colour, a little of the background showing through.
+  frost: { opacity: 0.75 },
 });
