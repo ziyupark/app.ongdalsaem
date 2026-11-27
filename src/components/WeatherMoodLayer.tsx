@@ -9,7 +9,7 @@ import Svg, { Defs, Ellipse, Path, RadialGradient, Stop } from 'react-native-svg
 import { scheduleOnRN } from 'react-native-worklets';
 import {
   FX_CAP, FX_COLOR, FX_FADE_FROM, FX_TIMING, weatherFxFor, withAlpha,
-  type FlakeFx, type GlowFx, type GustFx, type PuffFx, type RainFx, type TimeOfDay, type TwinkleFx, type WeatherMood,
+  type FlakeFx, type GlowFx, type GustFx, type PuffFx, type RainFx, type TimeOfDay, type TwinkleFx, type WeatherFxSpec, type WeatherMood,
 } from '../theme';
 
 type Props = {
@@ -23,6 +23,11 @@ type Props = {
   height: number;
   /** ms before the very first effect fades in (cold start: after the wash). */
   delay?: number;
+  /**
+   * Particle multiplier (default 1): rain, snow, sleet pellets, motes, stars and wind lines — and their caps — ×density.
+   * Clouds / fog banks and the sun glow aren't particles and stay as they are. 1.2 Sign in uses 3.
+   */
+  density?: number;
 };
 
 type Layer = { key: string; mood: WeatherMood; timeOfDay: TimeOfDay; leaving: boolean; delay: number };
@@ -39,7 +44,7 @@ type Layer = { key: string; mood: WeatherMood; timeOfDay: TimeOfDay; leaving: bo
  * - Mood change: old effect fades out 800 ms, new fades in 1200 ms. That and the cold start are the only fades here.
  * - Reduce Motion: the clock never runs — one still frame, and no lightning at all.
  */
-export const WeatherMoodLayer = memo(function WeatherMoodLayer({ mood, timeOfDay, running, width, height, delay = 0 }: Props) {
+export const WeatherMoodLayer = memo(function WeatherMoodLayer({ mood, timeOfDay, running, width, height, delay = 0, density = 1 }: Props) {
   const reduce = useReducedMotion();
   const clock = useSharedValue(0);
   const frame = useFrameCallback((f) => {
@@ -67,7 +72,7 @@ export const WeatherMoodLayer = memo(function WeatherMoodLayer({ mood, timeOfDay
     <View pointerEvents="none" style={[styles.box, { width, height }]}>
       {layers.map((l) => (
         <Fade key={l.key} leaving={l.leaving} delay={l.delay} onGone={gone} id={l.key}>
-          <Effect mood={l.mood} timeOfDay={l.timeOfDay} w={width} h={height} clock={clock} still={reduce} />
+          <Effect mood={l.mood} timeOfDay={l.timeOfDay} w={width} h={height} clock={clock} still={reduce} density={density} />
         </Fade>
       ))}
     </View>
@@ -91,19 +96,30 @@ function Fade({ id, leaving, delay, onGone, children }: { id: string; leaving: b
 
 type Clock = SharedValue<number>;
 
-const Effect = memo(function Effect({ mood, timeOfDay, w, h, clock, still }: { mood: WeatherMood; timeOfDay: TimeOfDay; w: number; h: number; clock: Clock; still: boolean }) {
-  const { spec, dim } = useMemo(() => weatherFxFor(mood, timeOfDay), [mood, timeOfDay]);
+/** Particle counts ×k (rounded); everything else unchanged. */
+function denser(spec: WeatherFxSpec, k: number): WeatherFxSpec {
+  if (k === 1) return spec;
+  const n = <T extends { count: number }>(fx?: T) => (fx ? { ...fx, count: Math.round(fx.count * k) } : undefined);
+  return { ...spec, rain: n(spec.rain), flakes: n(spec.flakes), pellets: n(spec.pellets), motes: n(spec.motes), twinkle: n(spec.twinkle), gusts: n(spec.gusts) };
+}
+
+const Effect = memo(function Effect({ mood, timeOfDay, w, h, clock, still, density }: { mood: WeatherMood; timeOfDay: TimeOfDay; w: number; h: number; clock: Clock; still: boolean; density: number }) {
+  const { spec, dim } = useMemo(() => {
+    const fx = weatherFxFor(mood, timeOfDay);
+    return { spec: denser(fx.spec, density), dim: fx.dim };
+  }, [mood, timeOfDay, density]);
+  const cap = { rain: FX_CAP.rain * density, snow: FX_CAP.snow * density, other: FX_CAP.other * density };
   const seed = mood.length;
   return (
     <>
       {spec.glow ? <Glow spec={spec.glow} w={w} h={h} clock={clock} /> : null}
       {spec.puffs ? <Puffs spec={spec.puffs} w={w} h={h} seed={seed} dim={dim} clock={clock} /> : null}
-      {spec.twinkle ? <Twinkles spec={spec.twinkle} w={w} h={h} clock={clock} /> : null}
-      {spec.motes ? <Flakes spec={spec.motes} w={w} h={h} seed={13} dim={dim} clock={clock} cap={FX_CAP.other} /> : null}
-      {spec.rain ? <Rain spec={spec.rain} w={w} h={h} dim={dim} clock={clock} /> : null}
-      {spec.pellets ? <Flakes spec={spec.pellets} w={w} h={h} seed={7} dim={dim} clock={clock} cap={FX_CAP.other} /> : null}
-      {spec.flakes ? <Flakes spec={spec.flakes} w={w} h={h} seed={3} dim={dim} clock={clock} cap={mood === 'dust' ? FX_CAP.other : FX_CAP.snow} /> : null}
-      {spec.gusts ? <Gusts spec={spec.gusts} w={w} h={h} dim={dim} clock={clock} /> : null}
+      {spec.twinkle ? <Twinkles spec={spec.twinkle} w={w} h={h} clock={clock} cap={cap.other} /> : null}
+      {spec.motes ? <Flakes spec={spec.motes} w={w} h={h} seed={13} dim={dim} clock={clock} cap={cap.other} /> : null}
+      {spec.rain ? <Rain spec={spec.rain} w={w} h={h} dim={dim} clock={clock} cap={cap.rain} /> : null}
+      {spec.pellets ? <Flakes spec={spec.pellets} w={w} h={h} seed={7} dim={dim} clock={clock} cap={cap.other} /> : null}
+      {spec.flakes ? <Flakes spec={spec.flakes} w={w} h={h} seed={3} dim={dim} clock={clock} cap={mood === 'dust' ? cap.other : cap.snow} /> : null}
+      {spec.gusts ? <Gusts spec={spec.gusts} w={w} h={h} dim={dim} clock={clock} cap={cap.other} /> : null}
       {spec.bolt && !still ? <Lightning every={spec.bolt.every} w={w} h={h} dim={dim} clock={clock} /> : null}
     </>
   );
@@ -158,10 +174,10 @@ function SoftEllipse({ w, h, color, alpha, core = 0.6 }: { w: number; h: number;
 
 // ── rain ───────────────────────────────────────────────────────────────────
 
-function Rain({ spec, w, h, dim, clock }: { spec: RainFx; w: number; h: number; dim: number; clock: Clock }) {
+function Rain({ spec, w, h, dim, clock, cap }: { spec: RainFx; w: number; h: number; dim: number; clock: Clock; cap: number }) {
   const drops = useMemo(() => {
     const r = rng(11);
-    return Array.from({ length: Math.min(spec.count, FX_CAP.rain) }, () => ({
+    return Array.from({ length: Math.min(spec.count, cap) }, () => ({
       x: r() * (w + spec.slant * h) - spec.slant * h,
       len: between(r, spec.len), dur: between(r, spec.dur), a: between(r, spec.alpha) * dim, phase: r(),
     }));
@@ -227,10 +243,10 @@ function Flake({ x, size, dur, a, phase, wobble, offset, sway, h, drift, color, 
 
 // ── stars / frost glints ───────────────────────────────────────────────────
 
-function Twinkles({ spec, w, h, clock }: { spec: TwinkleFx; w: number; h: number; clock: Clock }) {
+function Twinkles({ spec, w, h, clock, cap }: { spec: TwinkleFx; w: number; h: number; clock: Clock; cap: number }) {
   const stars = useMemo(() => {
     const r = rng(5);
-    return Array.from({ length: Math.min(spec.count, FX_CAP.other) }, () => ({ x: r() * w, y: r() * h * spec.band, size: between(r, spec.size), period: between(r, spec.period), phase: r() }));
+    return Array.from({ length: Math.min(spec.count, cap) }, () => ({ x: r() * w, y: r() * h * spec.band, size: between(r, spec.size), period: between(r, spec.period), phase: r() }));
   }, [spec, w, h]);
   return <>{stars.map((s, i) => <Star key={i} {...s} alpha={spec.alpha} color={spec.color} clock={clock} />)}</>;
 }
@@ -289,10 +305,10 @@ function Glow({ spec, w, h, clock }: { spec: GlowFx; w: number; h: number; clock
 
 // ── wind ───────────────────────────────────────────────────────────────────
 
-function Gusts({ spec, w, h, dim, clock }: { spec: GustFx; w: number; h: number; dim: number; clock: Clock }) {
+function Gusts({ spec, w, h, dim, clock, cap }: { spec: GustFx; w: number; h: number; dim: number; clock: Clock; cap: number }) {
   const gusts = useMemo(() => {
     const r = rng(9);
-    return Array.from({ length: Math.min(spec.count, FX_CAP.other) }, () => {
+    return Array.from({ length: Math.min(spec.count, cap) }, () => {
       const y = (0.05 + r() * 0.5) * h;
       return { y, gw: between(r, spec.w), dur: between(r, spec.dur), phase: r(), rest: 0.6 + r() * 1.2, alpha: spec.alpha * dim * maskAt(y / h) };
     });
