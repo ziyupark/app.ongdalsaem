@@ -12,11 +12,11 @@
   3. **아이디 줄**(높이 80): 아바타 **74**(1.2 테두리 border/default, 사진 없으면 bg/accent-subtle + 첫 글자 Display/M fg/accent; 내 프로필은 탭 → 사진 바꾸기) + 16 + [Display/M 이름 → 2 → Body/S fg/muted "@username"] → 11 → **도토리 칩**(bg/muted, 채운 도토리 16 + Caption Strong **"Total acorns {n}"**) — 받은 도토리 합계.
   4. **상태 메시지**(**Body/M** fg/secondary). 내 프로필은 눌러서 고침("Add a status message" fg/muted 자리표시) → BottomSheet "Status message"(입력칸 + 글자 수).
   5. 다른 요리사만(1217:15137): 높이 32 · radius sm 8 · 사이 6 버튼 두 개(반씩) — **Follow**(bg/kick + 흰 Button/M, 팔로우 중이면 bg/muted + fg/default "Following") · **Message**(bg/muted + fg/muted Button/M) → 4.11.
-- 15 → **UnderlineTabs**(Tabs 1217:14666 — 위아래 15, 좌우 20, 탭 사이 28). 내 프로필 = **글자 탭** "Dishes {n}" · "Saved" · "Diary"(순서 Dishes → Saved → Diary). 다른 요리사 = "Dishes {n}" 하나.
+- 22 → **UnderlineTabs**([Block · Tabs 1233:12327](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1233-12327) — 위 22, 탭 높이 43, 왼쪽 20, 탭 사이 16, 구분선 아래 9). 글자 **Title/M**(Outfit Medium 18/18, −0.2, 선택 fg/default · 미선택 fg/muted). 내 프로필 = **글자 탭** "Dishes {n}" · "Diary" · "Saved"(순서 Dishes → Diary → Saved). 다른 요리사 = "Dishes {n}" 하나.
 - 오프라인이면 탭 아래 bg/inverse 띠(`wifi-off` + Body/S Strong fg/inverse "You’re offline — saved dishes still open.").
 
 ### 6.1 Profile · Dishes — [20:974](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-974) · 코드 기준
-- 탭 아래 15 + **8** → **Dish Tile 2열 그리드**(좌우 20, 열 16, 줄 20). 세로 스크롤, TabBar.
+- 탭 아래 9 + **8** → **Dish Tile 2열 그리드**([1217:15197](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1217-15197))(좌우 20, 열 16, 줄 20). 세로 스크롤, TabBar.
 - 타일 = 사진(167:208 비율) + Weather Tag · **Acorn Tag** + 제목 · 바이라인.
 - **Acorn Tag = 도토리 토글**(내 요리 · 다른 요리사 요리 모두): 탭하면 주고 다시 탭하면 취소, 준 상태는 채운 도토리. 숫자는 바로 바뀌고 실패하면 되돌린다. 내 프로필이면 위 "Total acorns"도 같이 바뀐다.
 - 비었으면 Body/M 안내 + (내 프로필) Outline M "Share a dish" → 8.1.

@@ -34,17 +34,17 @@ import { radius, space, text, useTheme, type Weather3DKey, type WeatherMood, FON
 const GAP = 16;
 const ROW_GAP = 20;
 const { lineHeight: _lh, ...bioField } = text['Body/M'];
-// Profile Header 126:4345 tab order.
-const TABS: ProfileTab[] = ['dishes', 'saved', 'diary'];
+// Block · Tabs 1233:12327 tab order.
+const TABS: ProfileTab[] = ['dishes', 'diary', 'saved'];
 const OTHER_TABS: ProfileTab[] = ['dishes'];
 
 type Now = { mood: WeatherMood; icon?: Weather3DKey; tempC: number; hi: number; lo: number; until?: Date };
 
 /**
- * 6.1 Profile · Dishes (Figma 657:16468) — Profile Header + 2-column Dish Tiles (670:20058). Saved / Diary share the grid.
+ * 6.1 Profile · Dishes (Figma 657:16468) — Profile Header + 2-column Dish Tiles (670:20058). Diary / Saved share the grid.
  * `userId` (another cook, opened from a post, the community or messages): same layout — the wash, title and weather card
  * are always *my* weather and place; avatar, name, status, acorns and dishes are theirs, with Follow / Message instead of
- * editing. Their Saved and Diary stay private, so only Dishes is shown.
+ * editing. Their Diary and Saved stay private, so only Dishes is shown.
  */
 export function ProfileScreen({ userId }: { userId?: string }) {
   const isMe = !userId;
@@ -222,12 +222,12 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const nowDetail = now ? t('home.hiLo', { hi: displayTemp(now.hi), lo: displayTemp(now.lo) }) : t('home.retry');
   const nowUntil = now?.until ? t('home.untilLine', { time: now.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
-  // 6.1 Profile 657:16468 — ScreenHeader (shared with Home · Community · Timer) → [card → 12 → tabs] → 20 → grid.
+  // 6.1 Profile 657:16468 — ScreenHeader (shared with Home · Community · Timer) → [card → 22 → tabs] → 9 → 8 → grid.
   const header = (
     <>
     <ScreenHeader withWeather right={isMe ? 'settings' : userId && !missing ? 'more' : 'none'} onMore={() => setReportOpen(true)} onBack={isMe ? undefined : () => (router.canGoBack() ? router.back() : router.replace('/community'))} />
     <View style={styles.header}>
-      {/* Frame 10 — card → 12 → tabs. */}
+      {/* Frame 10 — card → 22 → tabs. */}
       <View style={styles.cardGroup}>
       <View style={[styles.card, { borderColor: color('bg/subtle') }]}>
         {/* Weather card 614:13895 — glass/surface fill only (no blur, no shadow). */}
@@ -288,10 +288,11 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           </View>
         )}
       </View>
-      {/* Text tabs (126:4345): "Dishes 48" · "Saved" · "Diary" — the same on my profile and another cook's. */}
+      {/* Block · Tabs 1233:12327: "Dishes 48" · "Diary" · "Saved" (Title/M, fg/default · fg/muted). Another cook's = Dishes only. */}
       <UnderlineTabs
         style={styles.tabs}
         contentStyle={styles.tabRow}
+        labelVariant="Title/M"
         value={tab}
         onChange={setTab}
         items={tabs.map((k) => ({
@@ -377,10 +378,10 @@ export function ProfileScreen({ userId }: { userId?: string }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  // Body under ScreenHeader (withWeather: title → 18 → card). Tabs block 1217:14666 = py 15, then 8 → the grid.
-  header: { paddingHorizontal: space[20], paddingBottom: 15 + space[8], gap: 13 },
-  // card → 15 → tabs (the tabs block's top padding).
-  cardGroup: { gap: 15 },
+  // Body under ScreenHeader (withWeather: title → 18 → card). Block · Tabs 1233:12327 = pt 22 · pb 9 (under the hairline), then 8 → the grid.
+  header: { paddingHorizontal: space[20], paddingBottom: 9 + space[8], gap: 13 },
+  // card → 22 → tabs (the tabs block's top padding).
+  cardGroup: { gap: 22 },
   center: { alignItems: 'center', justifyContent: 'center' },
   bioRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[8] },
   btns: { flexDirection: 'row', gap: space[6] },
@@ -403,9 +404,9 @@ const styles = StyleSheet.create({
   // name 614:13916 — fixed 105 tall, centred, gap 11, 80 % opacity.
   name: { flex: 1, minWidth: 97, height: 105, gap: 11, justifyContent: 'center', opacity: 0.8 },
   acorns: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[8], paddingVertical: space[6], borderRadius: radius.full, alignSelf: 'flex-start' },
-  // Full screen width (cancels the header's p20) so the hairline runs edge to edge; Tabs 1217:14666 = px 20, gap 28.
+  // Full screen width (cancels the header's p20) so the hairline runs edge to edge; Tabs 1233:12328 = pl 20, gap 16.
   tabs: { marginHorizontal: -space[20] },
-  tabRow: { gap: 28, paddingHorizontal: space[20] },
+  tabRow: { gap: space[16], paddingHorizontal: space[20] },
   flex1: { flex: 1 },
   grid: { paddingBottom: 96 + space[24] },
   loading: { marginTop: space[40] },

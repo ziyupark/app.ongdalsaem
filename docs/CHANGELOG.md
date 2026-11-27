@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **6.x 프로필 탭**(Block · Tabs 1233:12327): 순서 Dishes → Saved → Diary를 **Dishes → Diary → Saved**로 바꿈. 탭 글자 Body/M Strong · Body/M → **Title/M**(선택 · 미선택 같음), 탭 사이 28 → **16**, 카드 → 탭 15 → **22**, 구분선 → 그리드 15 + 8 → **9 + 8**
 - **4.5 다른 요리사 프로필 · 상단 더보기**: `more-horizontal` 버튼을 아이콘만 남김(흰 원 채움 · 테두리 · 그림자 삭제, 탭 영역 40 유지). IconButton에 `bare` 옵션 추가(다른 화면은 그대로)
 - **9.3b Figma 추가**([1235:9394](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1235-9394), 9.9 복제 기반) · 9.3 Danger zone에 Deactivate account 행(`pause`) 추가. 세 번째 행 문구 → "Comments & messages are hidden"(한 줄에 맞춤, `settings.deaSocial` 9개 언어 수정)
 - **9.3b Deactivate account 화면 추가**(Figma 없음, 9.9 레이아웃): 9.3 행 → 9.3b(Head · While deactivated 3행 · Deleted on 날짜 · Destructive L · Ghost L) → 확인 팝업. 비활성화 동안 프로필 · 요리 · 사진 · 댓글 · 질문 · 답변 · 메시지 · 팔로우 · 도토리 · 테이블/챌린지 참여를 다른 사람에게 숨김(migration `20261201010000_hide_deactivated_accounts.sql`, 매일 추천 푸시에서도 제외). 다시 로그인하면 "Welcome back" 팝업. 문구 `settings.deactivateTitle · deactivateBody · whileDeactivated · deaProfile · deaDishes · deaSocial · deactivateCaption · deaDeletedOn · reactivatedTitle · reactivatedBody` 9개 언어 추가
