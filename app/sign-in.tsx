@@ -4,11 +4,12 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { AppState, Linking, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuthButton } from '../src/components/AuthButton';
 import { Button } from '../src/components/Button';
 import { Logo } from '../src/components/Logo';
+import { Navigation } from '../src/components/icons/ongdal';
 import { LaunchBackdrop } from '../src/components/LaunchBackdrop';
 import { Text } from '../src/components/Text';
 import { timeOfDayFor } from '../src/components/ScreenHeader';
@@ -39,28 +40,38 @@ const ACTIONS_H = 124;
 /** Logo row 40 + 22 + Overline 14 + Weather card · small 95. */
 const HEADER_H = 171;
 
-type Reading = { place: Place | null; forecast: Forecast } | null;
+type Reading = { place: Place | null; forecast: Forecast };
+type WeatherHere = { status: 'loading' | 'ready' | 'denied' | 'failed'; reading: Reading | null };
 
 /**
  * Weather where you are, before sign-in: asks for location (the system prompt; already decided → no prompt), then the
- * rounded coordinates go to the weather function (signed-out reads allowed for coordinates only). Denied or offline
- * → null (date only, the card stays empty).
+ * rounded coordinates go to the weather function (signed-out reads allowed for coordinates only).
+ * - denied: no permission or location services off → "Turn on location" (iOS Settings). Coming back to the app reads again.
+ * - failed: located, but the weather couldn't be read (offline, server) → the card stays empty.
  */
-function useWeatherHere() {
-  const [reading, setReading] = useState<Reading | undefined>(undefined);
+function useWeatherHere(): WeatherHere {
+  const [state, setState] = useState<WeatherHere>({ status: 'loading', reading: null });
+  const [tries, setTries] = useState(0);
   useEffect(() => {
     let alive = true;
-    (async () => {
+    (async (): Promise<WeatherHere> => {
       const coords = await requestDeviceLocation();
-      if (!coords) return null;
+      if (!coords) return { status: 'denied', reading: null };
       const [place, forecast] = await Promise.all([reverseGeocodeCity(coords).catch(() => null), fetchForecast(coords).catch(() => null)]);
-      return forecast ? { place, forecast } : null;
+      return forecast ? { status: 'ready', reading: { place, forecast } } : { status: 'failed', reading: null };
     })()
-      .catch(() => null)
-      .then((r) => { if (alive) setReading(r); });
+      .catch((): WeatherHere => ({ status: 'failed', reading: null }))
+      .then((r) => { if (alive) setState(r); });
     return () => { alive = false; };
-  }, []);
-  return reading;
+  }, [tries]);
+  // Back from Settings (or any return to the app) while location was off → read again.
+  const denied = state.status === 'denied';
+  useEffect(() => {
+    if (!denied) return;
+    const sub = AppState.addEventListener('change', (st) => { if (st === 'active') setTries((n) => n + 1); });
+    return () => sub.remove();
+  }, [denied]);
+  return state;
 }
 
 /** 1.2 Sign in — 1207:10884. Weather sky + motion + glows (LaunchBackdrop) · landscape · weather header (Logo · date · place · temp card) · Weather 3D of now · Apple · Google · legal caption. */
@@ -94,7 +105,7 @@ export default function SignIn() {
     }
   };
 
-  const reading = useWeatherHere();
+  const { status, reading } = useWeatherHere();
   const f = reading?.forecast;
   const temp = useTemp();
   const lang = i18n.language;
@@ -132,18 +143,26 @@ export default function SignIn() {
         </View>
         <View style={styles.center}>
           <Text variant="Overline" numberOfLines={1}>{(where ? `${date} · ${where}` : date).toUpperCase()}</Text>
-          {/* Weather card · small 1268:17827 — the space stays while loading / without weather, so nothing jumps. */}
-          <View style={[styles.card, { opacity: f ? 1 : 0 }]} accessible={!!f} accessibilityLabel={f ? [`${temp(f.tempC)}°`, t(`home.condition.${f.mood}`), t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) }), until].filter(Boolean).join(', ') : undefined}>
-            <View style={styles.tempBox}>
-              <Text variant="Numeric/XL" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
-            </View>
-            <View style={styles.condition}>
-              <Text variant="Title/M" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : ' '}</Text>
-              <View style={styles.details}>
-                <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{f ? t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) }) : ' '}</Text>
-                {until ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{until}</Text> : null}
+          {/* Weather card · small 1268:17827 — the space stays while loading / without weather, so nothing jumps.
+              Location off → "Turn on location" (Button Outline M, navigation) in its place → iOS Settings. */}
+          <View style={styles.cardSlot}>
+            <View pointerEvents="none" style={[styles.card, { opacity: f ? 1 : 0 }]} accessible={!!f} accessibilityLabel={f ? [`${temp(f.tempC)}°`, t(`home.condition.${f.mood}`), t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) }), until].filter(Boolean).join(', ') : undefined}>
+              <View style={styles.tempBox}>
+                <Text variant="Numeric/XL" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
+              </View>
+              <View style={styles.condition}>
+                <Text variant="Title/M" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : ' '}</Text>
+                <View style={styles.details}>
+                  <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{f ? t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) }) : ' '}</Text>
+                  {until ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{until}</Text> : null}
+                </View>
               </View>
             </View>
+            {status === 'denied' ? (
+              <View style={[StyleSheet.absoluteFill, styles.turnOn]}>
+                <Button label={t('ask.turnOn')} icon={Navigation} variant="Outline" size="M" onPress={() => Linking.openSettings().catch(() => undefined)} />
+              </View>
+            ) : null}
           </View>
         </View>
       </View>
@@ -201,6 +220,8 @@ const styles = StyleSheet.create({
   tempBox: { paddingHorizontal: space[8], paddingTop: 1, paddingBottom: space[4], alignItems: 'center', justifyContent: 'center' },
   tabular: { fontVariant: ['tabular-nums'] },
   condition: { gap: space[6] },
+  cardSlot: { alignSelf: 'stretch', alignItems: 'center' },
+  turnOn: { alignItems: 'center', justifyContent: 'center' },
   details: { gap: space[2] },
   hero: { position: 'absolute' },
   actions: { position: 'absolute', left: space[20], right: space[20], gap: space[10] },
