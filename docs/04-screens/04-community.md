@@ -70,7 +70,7 @@
   2. **#태그** Display/XL(항상 영어, 읽기는 내 언어) — padding 22 20 12.
   3. **Group**(위 22 · gap 16): Display/M 한 줄 제목(`tag.headlines.<태그>`, 없으면 "{태그}") → **사진 카드 350×400 가로 스크롤**(gap 6, 좌우 20, 넘김 = 카드 한 장씩) — 이 태그 **인기 게시물 1–3위**, 사진만(아래 잉크 scrim). 탭 → 7.1.
   4. 18 → **동그란 카테고리**(가로 스크롤, 좌우 20, gap 16): 사진 64 원 + Caption 라벨(gap 8). 이 태그 게시물에 함께 많이 붙은 무드 태그 최대 6개(지금 태그 제외), 사진 = 그 태그 첫 게시물. 선택 = 2px fg/accent 테두리 + 라벨 fg/accent. 탭하면 같은 화면에서 그리드를 거르고, 다시 탭하면 해제.
-  5. 32 → Overline fg/muted **"LATEST · {카테고리}"**(카테고리를 고르지 않았으면 "LATEST") → 12 → **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20) — **최신순**. 비면 EmptyState "No #{tag} dishes here yet" / "Share one and it shows up here." 불러오기 실패 = LoadError(Try again).
+  5. 32 → Overline fg/muted **"LATEST · {카테고리}"**(카테고리를 고르지 않았으면 "LATEST") → 12 → **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20) — **최신순**. Acorn Tag = 도토리 토글(내가 준 상태 기준, 누르면 숫자가 바로 바뀜). 비면 EmptyState "No #{tag} dishes here yet" / "Share one and it shows up here." 불러오기 실패 = LoadError(Try again).
   6. TabBar(Community active, CreateFAB) — 바닥 여백 110 + 24.
 - 정렬 탭(Latest · Popular · By weather) · 정보 알약(내 날씨 · 요리 수) · 끼니 필터 시트는 없다.
 - 이동: 사진 · 타일 → 7.1 · 뒤로 → BACK · TabBar.

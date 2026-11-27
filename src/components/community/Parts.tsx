@@ -12,6 +12,7 @@ import { iconRing, iconStroke, radius, space, text, useTheme, withAlpha, FONT_SC
 import { AcornIcon } from '../AcornIcon';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
+import { fetchMyMarks, setAcorn } from '../../services/foods';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { postPlace } from '../../services/location';
@@ -131,22 +132,48 @@ export function useByline() {
 /** 2-column Dish Tile grid (670:20058) — 4.2 Tag, 4.3 Country, 3.x Nearby: x20 · gap 16 · rows 20. Byline = the tile's own "Comfort · Dinner". */
 export function FoodGrid({ dishes, width, onOpen }: { dishes: CardDish[]; width: number; byline?: (d: CardDish) => string; onOpen: (d: CardDish) => void }) {
   const w = (width - space[20] * 2 - space[16]) / 2;
+  // Acorn Tag = give / take-back toggle (my marks + my changes since load, so counts move at once).
+  const [given, setGiven] = useState<Set<string>>(new Set());
+  const [delta, setDelta] = useState<Record<string, number>>({});
+  const ids = dishes.map((d) => d.id).join(',');
+  useEffect(() => {
+    if (!ids) return;
+    let alive = true;
+    fetchMyMarks(ids.split(',')).then((m) => { if (alive) { setGiven(m.given); setDelta({}); } }).catch(() => undefined);
+    return () => { alive = false; };
+  }, [ids]);
+  const givenRef = useRef(given);
+  givenRef.current = given;
   // One handler per dish id that lives across renders and always calls the latest onOpen with the latest dish,
   // so the memoized tiles don't re-render just because the parent passed a new arrow function.
   const latest = useRef({ onOpen, dishes });
   latest.current = { onOpen, dishes };
-  const handlers = useRef(new Map<string, () => void>()).current;
-  const pressOf = (id: string) => {
+  const handlers = useRef(new Map<string, { press: () => void; acorn: () => void }>()).current;
+  const handlersOf = (id: string) => {
     let f = handlers.get(id);
     if (!f) {
-      f = () => { const d = latest.current.dishes.find((x) => x.id === id); if (d) latest.current.onOpen(d); };
+      f = {
+        press: () => { const d = latest.current.dishes.find((x) => x.id === id); if (d) latest.current.onOpen(d); },
+        acorn: () => {
+          const on = !givenRef.current.has(id);
+          const apply = (sign: number) => {
+            setGiven((s) => { const n = new Set(s); if (on === sign > 0) n.add(id); else n.delete(id); return n; });
+            setDelta((d) => ({ ...d, [id]: (d[id] ?? 0) + (on ? 1 : -1) * sign }));
+          };
+          apply(1);
+          setAcorn(id, on).catch(() => apply(-1));
+        },
+      };
       handlers.set(id, f);
     }
     return f;
   };
   return (
     <View style={styles.grid}>
-      {dishes.map((d) => <DishTile key={d.id} dish={d} width={w} onPress={pressOf(d.id)} />)}
+      {dishes.map((d) => {
+        const h = handlersOf(d.id);
+        return <DishTile key={d.id} dish={d} width={w} onPress={h.press} given={given.has(d.id)} acorns={d.acorns + (delta[d.id] ?? 0)} onAcorn={h.acorn} />;
+      })}
     </View>
   );
 }
