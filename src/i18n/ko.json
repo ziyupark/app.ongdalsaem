@@ -446,7 +446,6 @@
     "difficultyEasy": "쉬움",
     "difficultyMedium": "보통",
     "difficultyHard": "어려움",
-    "madeThis": "만들어 봤어요",
     "madeBy": "만들어 본 사람 {{n}}명",
     "cookedFromRecipe": "{{name}}님의 레시피로 만들었어요",
     "allergyWarning": "알레르기 주의: {{items}}",

@@ -443,7 +443,6 @@
     "difficultyEasy": "Dễ",
     "difficultyMedium": "Vừa",
     "difficultyHard": "Khó",
-    "madeThis": "Tôi đã nấu thử",
     "madeBy": "{{n}} người đã nấu",
     "cookedFromRecipe": "Nấu theo công thức của {{name}}",
     "allergyWarning": "Cảnh báo dị ứng: {{items}}",

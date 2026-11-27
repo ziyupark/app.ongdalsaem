@@ -347,7 +347,6 @@ minutesPlus={{n}}分以上
 difficultyEasy=かんたん
 difficultyMedium=ふつう
 difficultyHard=むずかしい
-madeThis=作ってみた
 madeBy=作った人 {{n}}人
 cookedFromRecipe={{name}}さんのレシピで作りました
 allergyWarning=アレルギー注意: {{items}}

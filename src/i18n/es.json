@@ -446,7 +446,6 @@
     "difficultyEasy": "Fácil",
     "difficultyMedium": "Media",
     "difficultyHard": "Difícil",
-    "madeThis": "Lo preparé",
     "madeBy": "Lo prepararon {{n}} cocineros",
     "cookedFromRecipe": "Hecho con la receta de {{name}}",
     "allergyWarning": "Alerta de alergia: {{items}}",

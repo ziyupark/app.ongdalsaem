@@ -347,7 +347,6 @@ minutesPlus={{n}}+ นาที
 difficultyEasy=ง่าย
 difficultyMedium=ปานกลาง
 difficultyHard=ยาก
-madeThis=ฉันลองทำแล้ว
 madeBy=มีคนลองทำ {{n}} คน
 cookedFromRecipe=ทำตามสูตรของ {{name}}
 allergyWarning=ระวังภูมิแพ้: {{items}}

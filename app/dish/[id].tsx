@@ -7,8 +7,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '../../src/components/Button';
 import { AddToPlanSheet } from '../../src/components/profile/WeekPlan';
+import { SectionHeader } from '../../src/components/community/Parts';
 import { CommentsInline } from '../../src/components/dish/CommentsInline';
 import { DishTile } from '../../src/components/dish/DishTile';
 import { type DishViewData } from '../../src/components/dish/DishView';
@@ -270,13 +270,6 @@ export default function PostDetail() {
     />
   );
 
-  // "I made this" opens the share flow with this recipe's name and ingredients; the new post keeps cooked_from_id.
-  const canCookThis = !mine && dish.type === 'home' && dish.ingredients.length > 0;
-  const madeThis = () => {
-    resetShareDraft();
-    updateShareDraft({ type: 'home', name: dish.name, ingredients: dish.ingredients.map((i) => ({ name: i.name, amount: i.amount })), cookedFromId: dish.id });
-    router.push('/share/pick');
-  };
   const cookedFrom = mine && dish.cookedFromId && recipeAuthor && recipeAuthor.id !== me?.id ? (
     <Pressable accessibilityRole="link" onPress={() => router.push(`/dish/${dish.cookedFromId}`)} style={[styles.fromLink, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
       <Icon icon={ChefHat} size={18} color="fg/accent" />
@@ -284,7 +277,7 @@ export default function PostDetail() {
       <Icon icon={ChevronRight} size={18} color="fg/secondary" />
     </Pressable>
   ) : null;
-  const made = cookedBy?.cooks || canCookThis || cookedFrom ? (
+  const made = cookedBy?.cooks || cookedFrom ? (
     <View style={styles.made}>
       {cookedFrom ? <View style={styles.px}>{cookedFrom}</View> : null}
       {cookedBy?.cooks ? (
@@ -300,20 +293,15 @@ export default function PostDetail() {
           </ScrollView>
         </View>
       ) : null}
-      {canCookThis ? <View style={styles.px}><Button label={t('dish.madeThis')} icon={ChefHat} variant="Outline" size="M" onPress={madeThis} /></View> : null}
     </View>
   ) : null;
 
+  // More from <name> (601:13045) — py 20 · gap 12: SectionHeader (title + `chevron-right` 20 = See all) → Dish Tile 02 (131) row, gap 8.
   const moreFrom = more.length ? (
     <View style={styles.more}>
-      <View style={styles.moreHead}>
-        <Text variant="Title/L" style={styles.flex} numberOfLines={1}>{t('dish.moreFrom', { name: firstName })}</Text>
-        <Pressable accessibilityRole="button" onPress={openAuthor}>
-          <Text variant="Body/S Strong" color="fg/muted">{t('dish.seeAll')}</Text>
-        </Pressable>
-      </View>
+      <SectionHeader title={t('dish.moreFrom', { name: firstName })} onMore={openAuthor} moreLabel={t('dish.seeAll')} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.moreRow}>
-        {more.map((m) => <DishTile key={m.id} dish={m} width={128} onPress={() => router.push(`/dish/${m.id}`)} />)}
+        {more.map((m) => <DishTile key={m.id} dish={m} width={131} compact onPress={() => router.push(`/dish/${m.id}`)} />)}
       </ScrollView>
     </View>
   ) : null;
@@ -373,7 +361,7 @@ const styles = StyleSheet.create({
   backRow: { paddingHorizontal: space[16], paddingVertical: space[12] },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[6], paddingHorizontal: space[40] },
   flex: { flex: 1 },
-  more: { paddingTop: space[32], gap: space[8] },
+  more: { paddingVertical: space[20], gap: space[12] },
   px: { paddingHorizontal: space[20] },
   made: { paddingTop: space[32], gap: space[16] },
   madeList: { gap: space[10] },
@@ -381,8 +369,7 @@ const styles = StyleSheet.create({
   madeItem: { width: 64, alignItems: 'center', gap: space[4] },
   madePhoto: { width: 56, height: 56, borderRadius: radius.full },
   fromLink: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.lg, borderWidth: 1 },
-  moreHead: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: space[20], gap: space[12] },
-  moreRow: { gap: space[16], paddingHorizontal: space[20] },
+  moreRow: { gap: space[8], paddingHorizontal: space[20] },
   ate: { flex: 1, height: 52, borderRadius: radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8] },
   dim: { opacity: 0.7 },
 });

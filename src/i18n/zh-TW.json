@@ -443,7 +443,6 @@
     "difficultyEasy": "簡單",
     "difficultyMedium": "中等",
     "difficultyHard": "困難",
-    "madeThis": "我做過了",
     "madeBy": "{{n}} 人做過",
     "cookedFromRecipe": "用 {{name}} 的食譜做的",
     "allergyWarning": "過敏注意：{{items}}",

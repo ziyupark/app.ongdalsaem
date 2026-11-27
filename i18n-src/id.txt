@@ -347,7 +347,6 @@ minutesPlus={{n}}+ mnt
 difficultyEasy=Mudah
 difficultyMedium=Sedang
 difficultyHard=Sulit
-madeThis=Saya sudah coba
 madeBy=Dibuat oleh {{n}} orang
 cookedFromRecipe=Dibuat dengan resep {{name}}
 allergyWarning=Awas alergi: {{items}}
