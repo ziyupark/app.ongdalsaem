@@ -530,7 +530,8 @@ const styles = StyleSheet.create({
   qWho: { flex: 1, gap: 3 },
   // Figma 318×395 at 390 wide — kept as a ratio so it scales with the card on SE / Pro Max.
   qPhoto: { width: '100%', aspectRatio: 318 / 395, borderRadius: radius['2xl'] },
-  qFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 21 },
+  // Actions 1219:15934 — no side padding: comment · share at the card's content edge, bookmark at the right edge.
+  qFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   qLeft: { flexDirection: 'row', alignItems: 'center', gap: space[12] },
   qCount: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
 });

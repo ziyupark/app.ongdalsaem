@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **Question Card 아래 줄**([469:10124](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-10124)): 답변 수 · 공유 · 북마크 줄 좌우 21 → **0**(Explore · Our area 질문 카드)
 - **Weather Card 끼니 칸 기온 잘림 수정**: Weather Tag(높이 24)가 넘치는 부분을 잘라 Body/L 기온(특히 한국어 글꼴)의 아래가 잘리던 문제 → 자르지 않음(크기 · 위치 그대로)
 - **4.5 다른 요리사 카드 Follow · Message 불린**([1233:14208](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1233-14208)): `ProfileScreen`에 `showFollow` · `showMessage` 추가. 켜면 아이디 줄 87 → 12 → 상태 메시지 → 14 → 버튼(radius 8 → **9.6**, 사이 6 → **6.6**), 둘 다 끄면 126:4345 카드. 7.1 게시물 → 작성자 프로필은 버튼 숨김(`?actions=0`)
 - **Weather Card**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716)): gap 12 → **14**, Now 줄 padding **3 0 4** 추가, 기온 padding 0 8 2 8 → **0 6 2 2**, 기온 → 상태 4 → **0**, Now main → 3D 아이콘 14 → **2**, Picks head 높이 **32**
