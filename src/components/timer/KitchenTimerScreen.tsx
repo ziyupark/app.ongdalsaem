@@ -218,7 +218,7 @@ export function KitchenTimerScreen({ onBack }: { onBack?: () => void } = {}) {
           >
             {/* mid 20:799 — the time, centred. 5.2 finished (676:22872): 00:00 in fg/success → 25 → Overline "DONE" (fg/muted). */}
             <View style={[styles.mid, done && styles.midDone]}>
-              <Text variant="Numeric/Timer" color={done ? 'fg/success' : 'fg/default'} numberOfLines={1} adjustsFontSizeToFit style={[styles.tabular, styles.time]}>{fmt(left)}</Text>
+              <Text variant="Numeric/Timer" color={done ? 'fg/success' : 'fg/default'} numberOfLines={1} style={[styles.tabular, left >= 3600 && styles.timeHours]}>{fmt(left)}</Text>
               {done ? <Text variant="Overline" color="fg/muted">{t('timer.doneBadge')}</Text> : null}
             </View>
           </TimerRing>
@@ -374,12 +374,14 @@ function RoundBtn({ icon, label, onPress, primary, disabled }: { icon: typeof Pl
 const styles = StyleSheet.create({
   root: { flex: 1 },
   active: { alignItems: 'center', paddingHorizontal: space[20] },
-  // Inner circle is 220 − 2×19 ≈ 182 wide; Fraunces 52 with +2 tracking is ~142 for 00:00, so 152 leaves side room.
-  mid: { alignItems: 'center', width: 152 },
+  // mid 20:799 — 178 wide (inner circle 220 − 2×19 ≈ 182). Fraunces 52 +2 has no tabular digits: MM:SS is 148–165,
+  // so it fits without shrinking (adjustsFontSizeToFit shrank the glyphs inside the 58 line, dropping them below centre).
+  mid: { alignItems: 'center', width: 178 },
   // 5.2 mid 676:22872 — time → 25 → "DONE" (+22 below), its box top 76 in the 220 ring: centred box (119 high, top 50.5)
   // moved down 25.5, so the time sits 8 higher than when running.
   midDone: { gap: 25, paddingBottom: 22, transform: [{ translateY: 25.5 }] },
-  time: { paddingHorizontal: space[4] },
+  // H:MM:SS (up to 10:00:00 ≈ 245): laid out wider and scaled around its centre, so it stays centred in the ring.
+  timeHours: { width: 250, textAlign: 'center', transform: [{ scale: 0.7 }] },
   tabular: { fontVariant: ['tabular-nums'] },
   // Food name 1219:18385 — glass pill (white 10 % in Figma → glass/fill, white 12 %), padding 6 22, width 150–322,
   // Display/Quote; 28 under the ring. A name longer than the pill scrolls to the left (MarqueeText).

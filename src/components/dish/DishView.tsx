@@ -183,7 +183,7 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
               </View>
             ) : null}
             {dish.steps.length ? (
-              <View style={[styles.section, styles.steps, dish.ingredients.length ? styles.gap32 : null]}>
+              <View style={[styles.section, styles.steps, dish.ingredients.length ? styles.afterIngredients : null]}>
                 <Text variant="Title/L">{t('dish.steps')}</Text>
                 {dish.steps.map((s, i) => (
                   <View key={i} style={styles.step}>
@@ -221,11 +221,13 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
 }
 
 const styles = StyleSheet.create({
-  dividerRow: { paddingHorizontal: space[20], paddingVertical: 28 },
+  // Tags (pb 30) → Divider row → Ingredients (pt 20) — 601:12663 · 601:12665.
+  dividerRow: { paddingHorizontal: space[20], paddingTop: 28, paddingBottom: space[20] },
   divider: { height: 1 },
   section: { paddingHorizontal: space[20], gap: space[8] },
   steps: { gap: space[14] },
   gap32: { marginTop: space[32] },
+  afterIngredients: { marginTop: 30 }, // Ingredients 601:12665 padding-bottom 30 → Steps
   warnRow: { paddingBottom: space[16] },
   warn: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', paddingHorizontal: space[10], paddingVertical: space[4], borderRadius: radius.full },
   shop: { paddingTop: space[12], gap: space[6] },

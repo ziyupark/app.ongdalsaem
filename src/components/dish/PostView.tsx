@@ -46,11 +46,11 @@ type Props = {
 };
 
 // Media 601:12860 — 370×417 on a 390 frame: 10 in from each side, radius 32.
-const MEDIA_HEIGHT = 417;
-const MEDIA_INSET = space[10];
+const MEDIA_HEIGHT = 402;
+const MEDIA_INSET = space[20];
 
 /**
- * 7.1 Post detail (Figma 601:12935) — Cook row → photos 370×417 r32 (Weather Tag + counter) → actions → title (Display/L) · caption
+ * 7.1 Post detail (Figma 601:12935) — Cook row → photos 350×402 r32 (Weather Tag + counter) → actions → title (Display/L) · caption
  * → tags → recipe → action bar → comments → More from.
  */
 export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onSave, onMore, onAuthor, onBack, onStartTimer, onAddedToShopping, actionBar, comments, more, scrollToComments, banner, top, bottomInset, onScrollY, topInk }: Props) {
@@ -87,15 +87,15 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onS
       <View style={styles.cook}>
         <Pressable onPress={onAuthor} disabled={!onAuthor} style={[styles.avatar, { backgroundColor: color('bg/accent-subtle') }]}>
           {dish.authorAvatar ? <Image source={dish.authorAvatar} style={StyleSheet.absoluteFill} contentFit="cover" /> : (
-            <Text variant="Body/M Strong" color="fg/accent">{dish.authorName.slice(0, 1).toUpperCase()}</Text>
+            <Text variant="Caption Strong" color="fg/accent">{dish.authorName.slice(0, 1).toUpperCase()}</Text>
           )}
         </Pressable>
         <Pressable onPress={onAuthor} disabled={!onAuthor} style={styles.who}>
           <Text variant="Body/M Strong" color={topInk?.strong} numberOfLines={1}>{dish.authorName}</Text>
-          <Text variant="Body/S" color={topInk?.muted ?? 'fg/muted'} numberOfLines={1}>{dish.meta}</Text>
+          <Text variant="Caption" color={topInk?.muted ?? 'fg/muted'} numberOfLines={1}>{dish.meta}</Text>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={t('home.more')} hitSlop={space[8]} onPress={onMore}>
-          <Icon icon={MoreHorizontal} size={24} color={topInk?.secondary ?? 'fg/secondary'} />
+          <Icon icon={MoreHorizontal} size={24} color={topInk?.strong} />
         </Pressable>
       </View>
 
@@ -115,7 +115,7 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onS
           </View>
         ) : null}
         {total > 1 ? (
-          <View pointerEvents="none" style={styles.counterBR}>
+          <View pointerEvents="none" style={styles.counterBL}>
             <PhotoCounter label={t('home.photoCount', { n: page + 1, total })} />
           </View>
         ) : null}
@@ -161,19 +161,21 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onS
 
 const styles = StyleSheet.create({
   banner: { paddingTop: space[16], paddingHorizontal: space[20], paddingBottom: space[4] },
-  cook: { flexDirection: 'row', alignItems: 'center', gap: space[12], paddingLeft: space[16], paddingRight: space[14], paddingVertical: space[12] },
+  // Header 1219:18732 (Feed Post 119:602) — padding 12 21, gap 10: Avatar 40 · name Body/M Strong / meta Caption · more 24.
+  cook: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: 21, paddingVertical: space[12] },
   /** Back sits on its own row above the author avatar; the chevron glyph is optically aligned to the avatar's left edge. */
   backRow: { height: 44, justifyContent: 'center', paddingLeft: space[12] },
-  avatar: { width: 48, height: 48, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  who: { flex: 1, gap: space[2] },
+  avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  who: { flex: 1, gap: 1 }, // Who — gap 1 (Figma component value)
   media: { marginHorizontal: MEDIA_INSET, borderRadius: radius['2xl'], overflow: 'hidden' },
-  tagTL: { position: 'absolute', left: space[20], top: space[16] },
-  counterBR: { position: 'absolute', right: space[16], bottom: space[16] },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
+  // Media 119:620 — 350×402 (20 in from each side), radius 32, padding 18 18 16 18: Weather Tag top-left, counter bottom-left.
+  tagTL: { position: 'absolute', left: 18, top: 18 },
+  counterBL: { position: 'absolute', left: 18, bottom: space[16] },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: 38 }, // Actions 119:623 — padding 12 38 8
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   spacer: { flex: 1 },
-  // Meta 601:12639 — title Display/L → 13 → caption Body/M fg/default (no line limit), both px 20.
-  meta: { gap: 13, paddingTop: space[8], paddingBottom: space[10] },
+  // Feed Post padding-bottom 24 → Meta 601:12639 — title Display/L → 13 → caption Body/M fg/default (no line limit), both px 20 → 10.
+  meta: { gap: 13, paddingTop: space[24], paddingBottom: space[10] },
   px: { paddingHorizontal: space[20] },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], paddingTop: space[10], paddingHorizontal: space[20], paddingBottom: space[2] },
   actionBar: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingVertical: 28 },

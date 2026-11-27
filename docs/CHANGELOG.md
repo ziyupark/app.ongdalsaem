@@ -4,6 +4,8 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **5.1 큰 링 시간 위치**(mid 20:799 · 1219:18081): 시간 칸 폭 152 → **178**, 자동 글자 축소(adjustsFontSizeToFit) 삭제. 줄어든 글자가 58 줄 안에서 아래로 붙어 링 가운데보다 낮게 보이던 문제. 1시간 이상은 칸을 넓혀 가운데 기준 0.7배
+- **7.1 Post detail 작성자 줄 · 사진 · 액션**(1219:18732 · 601:12935, 홈 Feed Post와 같은 규격): Avatar 48 → **40**, 줄 padding 12 16/14 → **12 21**, gap 12 → 10, 위치·시간 Body/S → **Caption**, 더보기 fg/secondary → **fg/default**. 사진 370×417(좌우 10) → **350×402(좌우 20)**, Weather Tag 20 · 16 → **18 · 18**, Photo Counter 오른쪽 아래 → **왼쪽 아래(18 · 16)**. Actions 좌우 20 → **38**. Actions → 제목 8 → **24**. 구분선 → Ingredients 28 → **20**, Ingredients → Steps 32 → **30**
 - **6.x 프로필 탭**(Block · Tabs 1233:12327): 순서 Dishes → Saved → Diary를 **Dishes → Diary → Saved**로 바꿈. 탭 글자 Body/M Strong · Body/M → **Title/M**(선택 · 미선택 같음), 탭 사이 28 → **16**, 카드 → 탭 15 → **22**, 구분선 → 그리드 15 + 8 → **9 + 8**
 - **4.5 다른 요리사 프로필 · 상단 더보기**: `more-horizontal` 버튼을 아이콘만 남김(흰 원 채움 · 테두리 · 그림자 삭제, 탭 영역 40 유지). IconButton에 `bare` 옵션 추가(다른 화면은 그대로)
 - **9.3b Figma 추가**([1235:9394](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1235-9394), 9.9 복제 기반) · 9.3 Danger zone에 Deactivate account 행(`pause`) 추가. 세 번째 행 문구 → "Comments & messages are hidden"(한 줄에 맞춤, `settings.deaSocial` 9개 언어 수정)
