@@ -133,7 +133,7 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
       onPress={onPress}
       style={styles.slot}
     >
-      {/* 1257:17291 — label → 6 → thumb; the Weather Tag follows right under it (no gap). */}
+      {/* 1257:17291 — label → 7 → thumb; → 3 → the Weather Tag. */}
       <View style={styles.slotTop}>
       <Text variant="Caption Strong" color={active ? 'fg/default' : 'fg/muted'} numberOfLines={1} style={styles.slotLabel}>{label}</Text>
       {empty ? (
@@ -155,7 +155,7 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: 18, paddingBottom: 17, gap: space[14], overflow: 'hidden', alignSelf: 'stretch' },
+  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: 18, paddingBottom: space[14], gap: space[14], overflow: 'hidden', alignSelf: 'stretch' },
   // Picks head → 8 → Meal timeline (Figma 1088:23142).
   picks: { gap: space[8] },
   // Now 136:4503 — padding 3 0 4; Now main (244 of the 310 row) → 3D icon 64.
@@ -173,9 +173,9 @@ const styles = StyleSheet.create({
   // The timeline is the card's full width minus 8 a side, so it overhangs the content box by 20 + 1 (border) − 8 = 13.
   timeline: { flexDirection: 'row', gap: space[2], marginHorizontal: -(space[20] + 1 - space[8]) },
   highlight: { position: 'absolute', left: 0, top: 0, bottom: 0, borderRadius: radius.xl },
-  // Meal Slot 131:4278 — height hugs: pt 8 · [label → 6 → thumb] · Weather Tag · pb 10 (8 + 95 + 32 + 10 = 145).
-  slot: { flex: 1, alignItems: 'center', paddingTop: space[8], paddingBottom: space[10], borderRadius: radius.xl },
-  slotTop: { alignSelf: 'stretch', alignItems: 'center', gap: space[6] },
+  // Meal Slot 131:4278 — height hugs: pt 8 · [label → 7 → thumb] → 3 → Weather Tag · pb 10 (8 + 96 + 3 + 32 + 10 = 149).
+  slot: { flex: 1, alignItems: 'center', gap: 3, paddingTop: space[8], paddingBottom: space[10], borderRadius: radius.xl },
+  slotTop: { alignSelf: 'stretch', alignItems: 'center', gap: 7 },
   slotLabel: { alignSelf: 'stretch', textAlign: 'center' },
   thumb: { width: 74, height: 74, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   emptyThumb: { borderWidth: 1, borderStyle: 'dashed' },
