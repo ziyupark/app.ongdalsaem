@@ -4,6 +4,8 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **4.1 Community · Explore**(1113:25908) 다시 맞춤: 본문 위아래 32 → **28**, 탭 간격 24 → **16**. SectionHeader `›`(Neighbourhood questions · Trending tags) fg/muted → **fg/default**, Special days `›` 20 → **24** fg/default(SectionHeader에 `moreColor` · `moreSize` 추가, 다른 화면은 그대로). Popular today 카드: Caption fg/muted → fg/default, ⋯ → **`chevron-right` 20**(신고·차단은 7.1). Question Card: 테두리 삭제, radius 16 → **32**, "구 · 시간" fg/muted → fg/default
+- **Food Card · Row**(12:384): 오버라인 → 제목 묶음 간격 3 → **4**, 제목 → 바이라인 0 → **3**, 북마크 20 fg/muted → **24 fg/default**, 오버라인 · 바이라인 fg/muted → fg/default(4.1 인스턴스)
 - **4.1 Community 탭**(1113:25920): 탭 글자 Body/M Strong · Body/M → **Title/M**(Outfit Medium 18/18, −0.2, 선택 · 미선택 같음). UnderlineTabs에 `labelVariant` 추가(다른 화면 탭은 그대로)
 - **7.1 Post detail**: "I made this" 버튼 삭제("I ate this"와 겹침, 문구 `dish.madeThis` 9개 언어 삭제). **More from**(601:13045): "See all" 글자 → `chevron-right` 20 아이콘(SectionHeader), Dish Tile → **Dish Tile 02**(131), 간격 16 → 8, 섹션 위아래 20 · 제목 → 줄 12
 - **8.1a Edit photo 추가**(Figma 없음): 8.1에서 선택한 사진을 탭 → **Edit** → 자르기(Free · Original · 1:1 · 4:5 · 16:9) · 회전(90°) · 좌우 반전 · 밝기 · 노출 · 대비 · 채도 · 따뜻함. 원본은 두고 편집본으로 업로드, 다시 열면 원본에서 지난 설정 그대로. Skia(`@shopify/react-native-skia` 2.14.0) 추가 → **새 Dev Build 필요**. 문구 `share.editPhoto · editTitle · editDone · editCrop · editAdjust · editRotate · editFlip · editReset · aspectFree · aspectOriginal · editDiscardTitle · editLoadFailed · editSaveFailed · adjust.*` 9개 언어 추가. 9.8b 오픈소스 라이선스에 React Native Skia 추가

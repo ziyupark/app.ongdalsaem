@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useTabFocusEffect } from '../TabBar';
-import { Clock, CloudRain, MapPin, Search, SlidersHorizontal, X } from '../icons/ongdal';
+import { ChevronRight, Clock, CloudRain, MapPin, Search, SlidersHorizontal, X } from '../icons/ongdal';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, ScrollView, Share, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -242,10 +242,10 @@ function AreaChips({ here, area, onChange, withAll, tight }: { here: Here; area:
 /** Our area · Popular today — top 3 dish names nearby today, widened step by step until 3 (see fetchTodayTopDishes). */
 /**
  * Popular today (4.1 1113:25935): SectionHeader (+ how far it widened as a badge) → 12 → up to 3 cards, gap 12.
- * Card 1219:15520 — bg/subtle, r2xl, px 16 · py 8, min 108 high: photo 80 r16 · [I ATE THIS · n pill → name · city · time]
- * · ⋯ (report / block, not on my own post). Ranked by "I ate this" (services/community fetchTodayTopDishes).
+ * Card 1219:15534 — bg/subtle, r2xl, px 16 · py 8, min 108 high: photo 80 r16 · [I ATE THIS · n pill → name · city · time (fg/default)]
+ * · › 20 fg/default. Ranked by "I ate this" (services/community fetchTodayTopDishes).
  */
-function TopToday({ here, excludeId, reload, me, onMore }: { here: Here; excludeId: string | null | undefined; reload: number; me: string | null; onMore: (t: ReportTarget) => void }) {
+function TopToday({ here, excludeId, reload }: { here: Here; excludeId: string | null | undefined; reload: number }) {
   const { color } = useTheme();
   const { t } = useTranslation();
   const { city, district } = placeOf(here);
@@ -291,10 +291,11 @@ function TopToday({ here, excludeId, reload, me, onMore }: { here: Here; exclude
                 <View style={styles.popName}>
                   <Text variant="Body/M Strong" numberOfLines={1}>{d.name}</Text>
                   {/* City only (never the neighbourhood / dong), in my language when the post has it. */}
-                  <Text variant="Caption" color="fg/muted" numberOfLines={1}>{[postPlace(d).city, timeAgo(d.createdAt, t)].filter(Boolean).join(' · ')}</Text>
+                  <Text variant="Caption" numberOfLines={1}>{[postPlace(d).city, timeAgo(d.createdAt, t)].filter(Boolean).join(' · ')}</Text>
                 </View>
               </View>
-              {d.creator.id !== me ? <MoreButton onPress={() => onMore({ kind: 'dish', id: d.dishId, owner: d.creator })} /> : null}
+              {/* 1219:15596 — chevron 20 fg/default (the card opens the post; report / block lives on the post). */}
+              <Icon icon={ChevronRight} size={20} />
             </Pressable>
           ))
         ) : (
@@ -306,8 +307,8 @@ function TopToday({ here, excludeId, reload, me, onMore }: { here: Here; exclude
 }
 
 /**
- * Question Card (469:10124, Explore 4.1) — bg/subtle + 1 border/default, r16, p16, gap 16: avatar 40 · name (Body/S Strong) ·
- * "district · time" · ⋯ → question (Body/M fg/default) → photo (h 395 on a 318 card, r32, when there is one) →
+ * Question Card (469:10124, Explore 4.1 1113:25964) — bg/subtle, no border, r2xl (32), p16, gap 16: avatar 40 · name (Body/S Strong) ·
+ * "district · time" (Caption fg/default) · ⋯ → question (Body/M fg/default) → photo (h 395 on a 318 card, r32, when there is one) →
  * [answers (message-circle 24 + count) · 12 · share] ··· bookmark, 21 in from each side.
  * The place is the district / city the question was saved with — never a dong.
  */
@@ -320,12 +321,12 @@ function ExploreQuestionCard({ q, me, onMore, onSave }: { q: Question; me: strin
     Share.share({ message: `${q.body} — ${link}`, url: link }).catch(() => undefined);
   };
   return (
-    <Pressable accessibilityRole="button" onPress={() => router.push(`/question/${q.id}`)} style={[styles.qCard, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
+    <Pressable accessibilityRole="button" onPress={() => router.push(`/question/${q.id}`)} style={[styles.qCard, { backgroundColor: color('bg/subtle') }]}>
       <View style={styles.qTop}>
         <Avatar url={q.author.avatarUrl} name={q.author.name} size={40} />
         <View style={styles.qWho}>
           <Text variant="Body/S Strong" numberOfLines={1}>{q.author.handle ?? q.author.name}</Text>
-          <Text variant="Caption" color="fg/muted" numberOfLines={1}>{[where, timeAgo(q.createdAt, t)].filter(Boolean).join(' · ')}</Text>
+          <Text variant="Caption" numberOfLines={1}>{[where, timeAgo(q.createdAt, t)].filter(Boolean).join(' · ')}</Text>
         </View>
         {!q.mine && q.author.id !== me ? <MoreButton onPress={() => onMore({ kind: 'question', id: q.id, owner: q.author })} /> : null}
       </View>
@@ -394,10 +395,10 @@ export function OurArea({ excludeId, reload = 0, onMore }: {
 
   return (
     <View style={styles.area}>
-      <TopToday here={here} excludeId={excludeId} reload={reload} me={me} onMore={onMore} />
+      <TopToday here={here} excludeId={excludeId} reload={reload} />
       {/* Neighbourhood questions 1113:25960 — SectionHeader (›) → 16 → cards, gap 14 → Ask a question. */}
       <View style={styles.questions}>
-        <SectionHeader title={t('community.area.questionsTitle')} onMore={() => router.push('/questions')} />
+        <SectionHeader title={t('community.area.questionsTitle')} moreColor="fg/default" onMore={() => router.push('/questions')} />
         <View style={[styles.px, styles.qList]}>
           {!loaded ? (
             <ActivityIndicator color={color('fg/muted')} style={styles.loadingS} />
@@ -524,7 +525,7 @@ const styles = StyleSheet.create({
   popName: { alignSelf: 'stretch', paddingLeft: 9, gap: space[2] },
   questions: { gap: space[16] },
   qList: { gap: space[14] },
-  qCard: { padding: space[16], gap: space[16], borderRadius: radius.lg, borderWidth: 1 },
+  qCard: { padding: space[16], gap: space[16], borderRadius: radius['2xl'] },
   qTop: { flexDirection: 'row', alignItems: 'center', gap: space[10] },
   qWho: { flex: 1, gap: 3 },
   // Figma 318×395 at 390 wide — kept as a ratio so it scales with the card on SE / Pro Max.

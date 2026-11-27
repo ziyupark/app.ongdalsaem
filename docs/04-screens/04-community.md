@@ -23,27 +23,27 @@
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
   1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash + 날씨 모션 · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3 — Community는 오버라인 → 12 → 제목 → 12)
-  2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 24, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
-  3. 본문(1219:15437): 위아래 32, **섹션 사이 38**. 순서 = Story of the day → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
+  2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 **16**, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
+  3. 본문(1219:15437): 위아래 **28**, **섹션 사이 38**. 순서 = Story of the day → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
   4. **Story of the day**(좌우 20, gap 16): Display/M 26 "Story of the day"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
     - 고르는 규칙(**오늘의 픽**): 공개 게시물 중 **내 지금 날씨와 같은 날씨 + 기온 ±1°C**(`weather_condition` = 내 무드, `temperature_c` 내 기온 −1 ~ +1). 캡션 있는 최근 2일 → 최근 30일 → 캡션 없어도 최신 60개 중 도토리 많은 순. 맞는 게시물이 없거나 날씨를 모르면(위치 꺼짐) 날씨 조건 없이 같은 순서로 고른다.
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
   5. **Popular today · Neighbourhood questions**(아래 "Our area")
-  6. **Trending tags**(1113:25982, gap 16): SectionHeader "Trending tags" + ›(→ 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(좌우 inset 20, 게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row 최대 3개(그 태그 게시물).
-  7. **Special days around the world**(1113:25999, gap 16): 제목 + ›(→ **4.3-1** 전체 목록) → **Festive Card** 168×196 가로 스크롤(gap 12, 좌우 inset 20), **가까운 명절 8개**. 카드 → 그 명절의 **4.3-2**.
+  6. **Trending tags**(1113:25982, gap 16): SectionHeader "Trending tags" + ›(20, fg/default → 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(좌우 inset 20, 게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row 최대 3개(그 태그 게시물).
+  7. **Special days around the world**(1113:25999, gap 16): 제목(Title/L) + ›(**24**, fg/default → **4.3-1** 전체 목록) → **Festive Card** 168×196 가로 스크롤(gap 12, 좌우 inset 20), **가까운 명절 8개**. 카드 → 그 명절의 **4.3-2**.
   8. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
-- Food Card Row: 썸네일 80 · Overline "끼니 · 기온°" · 제목 · "핸들 · 도시 · 시간" · 북마크(저장 토글) · **⋯**(남의 글일 때 → 신고·차단).
-- **⋯ 메뉴**(Story · Popular today · Question · Food Card): 7.3 ReportSheet — 신고(게시물 / 질문) · "{이름} 차단". 내 글에는 ⋯가 없다. 차단하면 화면 전체를 다시 불러오고, 차단한 사람의 글·질문은 RLS(`is_blocked_between`)로 모든 섹션에서 빠진다.
+- Food Card Row(12:384): 썸네일 80 radius 16 · 14 · [Overline "끼니 · 기온°" → 4 → (Title/S 제목 → 3 → Caption "핸들 · 도시 · 시간")] · `bookmark` **24 fg/default**(저장 토글, 채움 = 저장됨) · **⋯**(남의 글일 때 → 신고·차단). 글자는 모두 fg/default.
+- **⋯ 메뉴**(Story · Question · Food Card): 7.3 ReportSheet — 신고(게시물 / 질문) · "{이름} 차단". 내 글에는 ⋯가 없다. 차단하면 화면 전체를 다시 불러오고, 차단한 사람의 글·질문은 RLS(`is_blocked_between`)로 모든 섹션에서 빠진다.
 - 상태: Popular today · 질문은 불러오는 동안 스피너, 실패·없음이면 안내 문구(무한 로딩 없음). 게시물 목록이 실패하면 맨 위 LoadError(Try again).
 - 위치 표시는 시 · 구까지(동 이름은 쓰지 않음).
 
 #### 4.1 Our area — Popular today · Neighbourhood questions(4.1 1219:15435 · 1219:15436)
 - 위치가 켜져 있을 때(두 섹션 사이 38):
   - **Popular today**(1113:25935, gap 12): SectionHeader "Popular today" + 오른쪽 범위 배지(구 · 도시 · "도시 · Last 3 days" · "날씨 · Recent") → 카드 최대 3개(gap 12).
-    - 카드(1219:15520): bg/subtle, radius 2xl, padding 8 16, 최소 높이 108 — 사진 80 radius lg → [알약 overlay/scrim "I ATE THIS ・ {n}"(Overline · Body/S Strong, fg/on-photo) → (왼쪽 9 안쪽) Body/M Strong 요리 이름 · Caption fg/muted "도시 · 시간"] → ⋯. 탭 → 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
+    - 카드(1219:15534): bg/subtle, radius 2xl, padding 8 16, 최소 높이 108, gap 10 — 사진 80 radius lg → [알약 overlay/scrim "I ATE THIS ・ {n}"(Overline · Body/S Strong, fg/on-photo) → 5 → (왼쪽 9 안쪽, gap 2) Body/M Strong 요리 이름 · Caption **fg/default** "도시 · 시간"] → `chevron-right` **20 fg/default**(⋯ 없음 — 신고·차단은 7.1에서). 탭 → 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
     - 규칙: 공개 **게시물 단위**로 "I ate this" 수(`food_eaten_counts`) 많은 순 → 도토리 → 최신. 범위: 오늘 내 칸(geohash 5자리)과 주변 칸 → 오늘 같은 구 → 오늘 같은 도시 → 도시 최근 3일 → 같은 날씨 최근 7일 순으로 3개까지 채운다. Story of the day 게시물은 뺀다.
-  - **Neighbourhood questions**(1113:25960, gap 16): SectionHeader + ›(→ 3.7 목록) → Question Card 최대 3개(gap 14) → Outline M `message-circle` **"Ask a question"**. 없으면 Body/S fg/muted "No questions nearby yet. Be the first to ask."
-    - Explore Question Card(469:10124): bg/subtle + 1px border/default, radius 16, padding 16, gap 16 — Avatar 40 · Body/S Strong 이름 · Caption "구(또는 넓힌 범위) · 시간" · ⋯ → Body/M fg/default 질문 → 사진(있을 때, 318:395 비율, radius 32) → 좌우 21 안쪽에 [`message-circle` 24 + 답변 수 · 12 · `share` 24(시스템 공유: 질문 + 링크)] ··· **`bookmark` 24 = 질문 저장 토글**(채움 = 저장됨, 바로 바뀌고 실패하면 되돌림, DB question_saves). 카테고리 배지 · Me too는 없다(질문 카드 어디에도 없음 — 3.7 목록 · 3.8 상세 포함). 카드 → 3.8.
+  - **Neighbourhood questions**(1113:25960, gap 16): SectionHeader + ›(20, fg/default → 3.7 목록) → Question Card 최대 3개(gap 14) → Outline M `message-circle` **"Ask a question"**. 없으면 Body/S fg/muted "No questions nearby yet. Be the first to ask."
+    - Explore Question Card(469:10124): bg/subtle, **테두리 없음**, radius **2xl(32)**, padding 16, gap 16 — Avatar 40 · Body/S Strong 이름 · Caption **fg/default** "구(또는 넓힌 범위) · 시간" · ⋯(남의 질문일 때) → Body/M fg/default 질문 → 사진(있을 때, 318:395 비율, radius 32) → 좌우 21 안쪽에 [`message-circle` 24 + 답변 수 · 12 · `share` 24(시스템 공유: 질문 + 링크)] ··· **`bookmark` 24 = 질문 저장 토글**(채움 = 저장됨, 바로 바뀌고 실패하면 되돌림, DB question_saves). 카테고리 배지 · Me too는 없다(질문 카드 어디에도 없음 — 3.7 목록 · 3.8 상세 포함). 카드 → 3.8.
     - 규칙: 내 칸 질문이 3개 미만이면 주변 칸(한 단계 넓은 geohash) → 같은 구 → 같은 도시 → 최신 순으로 채운다. 넓혀서 가져온 질문에는 그 범위(구 · 도시) 라벨이 붙는다.
 - 위치가 꺼져 있으면: 카드(bg/subtle + border/default, radius 2xl, padding 20, 가운데) `map-pin` 22 fg/secondary · Body/M fg/secondary "Turn on location to see today’s table in our area." · Button M "Allow location"(권한 요청 → 도시 저장).
 

@@ -387,7 +387,7 @@ function Global() {
     />
   );
 
-  // Explore (4.1 1113:25908 · 1219:15437 — py 32, sections 38 apart): Story of the day → Popular today → Neighbourhood
+  // Explore (4.1 1113:25908 · 1219:15437 — py 28, sections 38 apart): Story of the day → Popular today → Neighbourhood
   // questions → Trending tags → Special days around the world.
   return (
     <View style={styles.explore}>
@@ -435,7 +435,7 @@ function Global() {
       {/* Group · Trending tags 1113:25982 — gap 16: header → chips → up to 3 Food Cards (rows inset p4, gap 12). */}
       {tags.length ? (
         <View style={styles.group16}>
-          <SectionHeader title={t('community.trendingTags')} onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
+          <SectionHeader title={t('community.trendingTags')} moreColor="fg/default" onMore={tag ? () => router.push(`/tag/${tag}`) : undefined} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsTight}>
             {tags.map((k) => <Chip key={k} label={tagLabel(k)} icon={MOOD_TAGS.find((m) => m.key === k)?.icon ?? CUSTOM_MOOD_ICON} selected={tag === k} onPress={() => setTag(k)} />)}
           </ScrollView>
@@ -443,9 +443,9 @@ function Global() {
         </View>
       ) : null}
 
-      {/* Group · Festive 1113:25999 — gap 16: title · more (→ all holidays), then 168×196 Festive Cards, gap 12. */}
+      {/* Group · Festive 1113:25999 — gap 16: title · chevron 24 (→ all holidays), then 168×196 Festive Cards, gap 12. */}
       <View style={styles.group16}>
-        <SectionHeader title={t('community.festiveTitle')} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
+        <SectionHeader title={t('community.festiveTitle')} moreColor="fg/default" moreSize={24} onMore={() => router.push('/holidays')} moreLabel={t('community.allHolidays')} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
           {festive.map((h) => <FestiveCard key={h.key} h={h} />)}
         </ScrollView>
@@ -564,7 +564,8 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
-  tabRow: { gap: space[24], paddingHorizontal: space[20] },
+  // Tabs 1113:25921 — gap 16, pl 20.
+  tabRow: { gap: space[16], paddingHorizontal: space[20] },
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
   loading: { marginTop: space[40] },
   // 4.1 groups: p42 top; header → content gap 6 (Story · Trending Bites · Festive) / 9 → 8 token (Trending tags).
@@ -572,7 +573,7 @@ const styles = StyleSheet.create({
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
   storyTop: { paddingTop: space[42] - space[20] },
-  explore: { paddingVertical: space[32], gap: 38 },
+  explore: { paddingVertical: 28, gap: 38 },
   storyGroup: { gap: space[16] },
   group16: { gap: space[16] },
   // ⋯ on the photo, top right (the card's p24 corner).

@@ -8,7 +8,7 @@ import { Pressable, StyleSheet, TextInput, View, type StyleProp, type ViewStyle 
 import { displayTemp } from '../../lib/prefs';
 import { timeAgo } from '../../lib/time';
 import type { CardDish, CookCard, Question, ViralItem } from '../../services/community';
-import { iconRing, radius, space, text, useTheme, withAlpha, FONT_SCALE_MAX } from '../../theme';
+import { iconRing, iconStroke, radius, space, text, useTheme, withAlpha, FONT_SCALE_MAX } from '../../theme';
 import { AcornIcon } from '../AcornIcon';
 import { Button } from '../Button';
 import { DishTile } from '../dish/DishTile';
@@ -53,9 +53,13 @@ export function countryName(code: string, lang: string) {
 
 /**
  * SectionHeader — Title/L, px 20. Title row, right end: optional Badge (pill) then, with `onMore`, a "See more" chevron
- * (ChevronRight 20 · fg/muted · 44×44 touch). `moreLabel` = its accessibility label (default "See more").
+ * (ChevronRight 20 · fg/muted by default · 44×44 touch). `moreLabel` = its accessibility label (default "See more").
  */
-export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge }: { title: string; eyebrow?: string; onMore?: () => void; moreLabel?: string; badge?: string }) {
+export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge, moreColor = 'fg/muted', moreSize = 20 }: {
+  title: string; eyebrow?: string; onMore?: () => void; moreLabel?: string; badge?: string;
+  /** Chevron override — 4.1 Explore uses fg/default (and 24 on Special days). */
+  moreColor?: 'fg/muted' | 'fg/default'; moreSize?: 20 | 24;
+}) {
   const { color } = useTheme();
   const { t } = useTranslation();
   return (
@@ -72,7 +76,7 @@ export function SectionHeader({ title, eyebrow, onMore, moreLabel, badge }: { ti
         ) : null}
         {onMore ? (
           <Pressable accessibilityRole="button" accessibilityLabel={moreLabel ?? t('following.seeMore')} hitSlop={space[12]} onPress={onMore}>
-            <Icon icon={ChevronRight} size={20} color="fg/muted" />
+            <Icon icon={ChevronRight} size={moreSize} color={moreColor} />
           </Pressable>
         ) : null}
       </View>
@@ -147,22 +151,25 @@ export function FoodGrid({ dishes, width, onOpen }: { dishes: CardDish[]; width:
   );
 }
 
-/** Food Card · Row — 80 thumb r16 · Overline eyebrow · Title/S · Caption · bookmark. */
+/**
+ * Food Card · Row (12:384 · 4.1 1113:25996) — 80 thumb r16 · 14 · [Overline eyebrow → 4 → (Title/S → 3 → Caption)] ·
+ * bookmark 24 fg/default. Text fg/default (4.1 instances).
+ */
 export function FoodRow({ dish, eyebrow, byline, saved, onSave, onPress, onMore }: { dish: CardDish; eyebrow: string; byline: string; saved?: boolean; onSave?: () => void; onPress: () => void; onMore?: () => void }) {
   const { color } = useTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={dish.name} onPress={onPress} style={styles.row}>
       <Image source={{ uri: dish.photo }} style={[styles.rowThumb, { backgroundColor: color('bg/muted') }]} contentFit="cover" transition={150} />
       <View style={[styles.flex, styles.rowMeta]}>
-        <Text variant="Overline" color="fg/muted" numberOfLines={1}>{eyebrow}</Text>
-        <View>
+        <Text variant="Overline" numberOfLines={1}>{eyebrow}</Text>
+        <View style={styles.rowName}>
           <Text variant="Title/S" numberOfLines={1}>{dish.name}</Text>
-          <Text variant="Caption" color="fg/muted" numberOfLines={1}>{byline}</Text>
+          <Text variant="Caption" numberOfLines={1}>{byline}</Text>
         </View>
       </View>
       {onSave ? (
-        <Pressable accessibilityRole="button" accessibilityState={{ selected: !!saved }} hitSlop={space[8]} onPress={onSave}>
-          <Bookmark size={20} strokeWidth={1.6} absoluteStrokeWidth color={color('fg/muted')} fill={saved ? color('fg/muted') : 'none'} />
+        <Pressable accessibilityRole="button" accessibilityState={{ selected: !!saved }} hitSlop={space[10]} onPress={onSave}>
+          <Bookmark size={24} strokeWidth={iconStroke(24)} absoluteStrokeWidth color={color('fg/default')} fill={saved ? color('fg/default') : 'none'} />
         </Pressable>
       ) : null}
       {onMore ? <MoreButton onPress={onMore} /> : null}
@@ -386,7 +393,8 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', columnGap: space[16], rowGap: space[20], paddingHorizontal: space[20] },
   row: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
   rowThumb: { width: 80, height: 80, borderRadius: radius.lg },
-  rowMeta: { gap: 3 },
+  rowMeta: { gap: space[4] },
+  rowName: { gap: 3 },
   photoCard: { borderRadius: radius['2xl'], overflow: 'hidden' },
   bottomScrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 120 },
   faces: { flexDirection: 'row', alignItems: 'center' },
