@@ -4,10 +4,10 @@
 
 ## 04 Community · Explore — [섹션 59:2365](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=59-2365)
 
-**탭 구성**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following · Challenges** 3개. 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 동네 내용은 Explore의 "Our area" 섹션으로 옮김. Explore에는 검색창이 없다). Figma 4.1 · 4.4 · Challenges 프레임이 이 구성이다(공통 헤더 + 밑줄 탭).
+**탭 구성**: Community 탭 화면 하나에 밑줄 탭 **Explore · Following** 2개(Challenges 탭은 v1에서 뺐다 — [99-removed-in-v1](99-removed-in-v1.md)). 예전 Global · Nearby는 **Explore 하나로 합쳤다**(Nearby의 동네 내용은 Explore의 "Our area" 섹션으로 옮김. Explore에는 검색창이 없다). Figma 4.1 · 4.4 프레임이 이 구성이다(공통 헤더 + 밑줄 탭).
 
 섹션 안 배치(라벨 기준, 화면 종류별):
-- **MAIN** — 4.1 Community · Explore(탭 화면) · 4.1 Community · Challenges(탭 화면) · 4.3-1 / 4.3-2 Special days around the world. Following(4.4)은 04b.
+- **MAIN** — 4.1 Community · Explore(탭 화면) · 4.3-1 / 4.3-2 Special days around the world. Following(4.4)은 04b.
 - **TEMPLATES** — 4.2 Tag · #Comfort · 4.3 Country · Japan. **앱은 v2 디자인**(Figma "4.2 Tag · #Comfort (v2)" [718:11114](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11114) · "4.3 Country · Japan (v2)" [718:11248](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=718-11248)). 명절 페이지(Halloween · Christmas …)도 **4.2 태그 템플릿**에 그 명절 태그를 넣은 것이다. 같은 종류의 다른 페이지(#Spicy, #Vegan, Italy …)는 **이 템플릿에 데이터만 바꿔** 쓴다.
 
 두 템플릿은 같은 뼈대(`CollectionParts`)를 쓰고 탭과 데이터만 다르다:
@@ -23,7 +23,7 @@
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
   1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash + 날씨 모션 · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3 — 네 탭 공통 로고 줄 → 22 → 오버라인 → 13 → 제목, Community는 제목 아래 12)
-  2. **UnderlineTabs**(Block · Tabs 1238:16782 — 헤더 아래 **위 14**(헤더 12 + 2) → 탭 43 → 구분선): **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 **16**, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
+  2. **UnderlineTabs**(Block · Tabs 1238:16782 — 헤더 아래 **위 14**(헤더 12 + 2) → 탭 43 → 구분선): **Explore**(active) · Table(왼쪽 20, 탭 간격 **16**, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
   3. 본문([1238:16768](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-16768) Frame 48): 위 **21** · 아래 **28**, **섹션 사이 38**. 순서 = Today’s Pick → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
   4. **Today’s Pick**(좌우 20, gap 16): Display/M **24** "Today’s Pick"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
     - 고르는 규칙(**오늘의 픽**): 공개 게시물 중 **내 지금 날씨와 같은 날씨 + 기온 ±1°C**(`weather_condition` = 내 무드, `temperature_c` 내 기온 −1 ~ +1). 캡션 있는 최근 2일 → 최근 30일 → 캡션 없어도 최신 60개 중 도토리 많은 순. 맞는 게시물이 없거나 날씨를 모르면(위치 꺼짐) 날씨 조건 없이 같은 순서로 고른다.
@@ -93,8 +93,8 @@
 팔로우한 사람과 관련된 화면 묶음(Following 탭 · 요리사 프로필 · 요리사 목록 · 메시지 4.11).
 
 ### 4.4 Community · Following · Neighbors' Table — [730:11217](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=730-11217)
-- 4.1과 같은 상단(ScreenHeader + 탭 Explore · **Following** · Challenges). 세로 스크롤.
-- 제목(Group · Title [813:12215](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=813-12215) — 위 22 · 좌우 20 · 아래 3) **Title/L** "Neighbors' Table"(항상 영어, Today’s Pick과 같은 자리) → **15**(제목 아래 3 + 6 + 6) → 날짜별 **Table** 카드(좌우 20, 사이 24).
+- 4.1과 같은 상단(ScreenHeader + 탭 Explore · **Following**). 세로 스크롤.
+- 제목(Group · Title [813:12215](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=813-12215) — 위 22 · 좌우 20 · 아래 3) **Display/M** "Neighbors' Table"(항상 영어, Today’s Pick과 같은 자리) → **15**(제목 아래 3 + 6 + 6) → 날짜별 **Table** 카드(좌우 20, 사이 24).
 - **기간 = 최근 2주**(오늘 포함 14일). 오늘 테이블은 항상 맨 위, 그 아래는 게시물이 있는 날만 최신 날짜 순. 제목 = Today's table / Yesterday's table / 날짜.
 - **Table**(730:11437 — bg/subtle, radius 24, padding 16, gap 16): 헤더(padding 3 6, 양 끝 정렬: 제목 Title/M · **날짜 알약** — 0.6 fg/disabled 테두리, padding 3 8, Caption fg/secondary; 지난 날짜 테이블은 알약 없음) → 접시 3열(gap 16) → 넘치면 **See more**(Caption Strong).
   - 맨 앞 = **내 자리**: 그날 내 게시물(올린 순서대로, 이름 대신 **"My seat"** Caption Strong fg/accent, 1233:11754). 올린 게 없으면 내 자리 없이 이웃 접시만 — **"Place your dish" 빈 접시(730:11395)는 만들지 않는다.**
@@ -137,27 +137,14 @@
 
 ---
 
-## 04c Community · Tables, Questions & Challenges — [섹션 467:9853](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=467-9853)
+## 04c Community · Tables & Questions — [섹션 467:9853](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=467-9853)
 
-같이 쓰는 공간 3가지. 섹션 안 라벨: **TABLES** · **NEIGHBORHOOD QUESTIONS**(3.7 · 3.8은 [03-nearby](03-nearby.md)) · **FOOD CHALLENGES**. (Eat together 4.23은 [99-removed-in-v1](99-removed-in-v1.md)) 새 컴포넌트 **Question Card** [469:10124](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-10124)([02-components](../02-components.md)).
+같이 쓰는 공간 2가지. 섹션 안 라벨: **TABLES** · **NEIGHBORHOOD QUESTIONS**(3.7 · 3.8은 [03-nearby](03-nearby.md)). (FOOD CHALLENGES · Eat together 4.23은 [99-removed-in-v1](99-removed-in-v1.md)) 새 컴포넌트 **Question Card** [469:10124](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-10124)([02-components](../02-components.md)).
 
 | 기능 | 무엇 | 들어가는 곳 | 쌓이는 곳 |
 |---|---|---|---|
 | **Tables** | 주제로 모이는 공간(#SoloMeals · #RainyDayFood · #KidsTable · #PlantBased · #CampCooking · #LunchBox). 운영자가 만들고 누구나 Join | 4.4 Browse tables · 4.2 태그 페이지(구현 시 "Open table") | 들어간 테이블 게시물이 **Following**에 |
 | **Neighborhood questions** | 동네 사람에게 짧게 묻기(≤200자, 7일 뒤 닫힘) | 4.1 Our area "Ask a question" | 4.1 Our area · 3.8 상세 |
-| **Food challenges** | 기간 · 참여자 · 사진 인증 | Community **Challenges 탭** | 4.10 Latest entries |
-
-### 4.1 Community · Challenges(탭) — [680:11155](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=680-11155)
-- Community 세 번째 탭. 위에서부터(섹션마다 SectionHeader):
-  1. **This week’s challenge**(Overline "SEASONAL TABLES"): 큰 카드(테마 사진 + 아래 scrim) — 위 유리 pill "Live · {남은 시간}"(점 fg/accent) → 제목 · 설명 → 참여자 아바타 24 겹침 + "{n} cooking · {n} entries" → 버튼: 참여 전 White M **Join challenge** · 참여 후 Kick M `upload` **Post my entry**(→ 8.1, 태그 미리 붙음) · 올린 뒤 Glass M `check` **Entry posted**(비활성). 카드 탭 → 4.10.
-  2. **Your challenges**: 참여 중 챌린지 행(올렸으면 "Entry posted", 곧 시작 "Starts …", 아니면 "Post before …" + **Post** 버튼).
-  3. **Top entries** + See all(→ 4.10): 그 챌린지 인증 사진 그리드.
-  4. **Coming up** + See all(→ **4.9**): 가로 카드(남은 기간 대문자 · Join / Join early / Joined).
-- 간격([4.10 826:15539](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=826-15539)): **This week’s challenge** 제목(Title/L) 위 **22** → 제목 → 카드 **15**(3 + 6 + 6). **Coming up** = 섹션 위 32 + 제목 묶음 위 **22** · 아래 **3** → 12 → 카드(제목 → 카드 15). Recently ended · Viral Bites = 섹션 위 32, 제목 패딩 없음 → 12(Viral 6) → 카드. **진행 중 챌린지가 없으면**([4.10 No Challenge 1269:18199](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1269-18199)) This week’s challenge · Join · Ends in · Latest entries가 통째로 빠지고 **Coming up이 맨 위** — 섹션 위 32 없이 탭 바로 아래 제목 묶음 위 22부터 → Recently ended(위 32) → Viral Bites.
-  5. **Recently ended**: 끝난 챌린지 행(흐리게, "Ended {date} · {n} entries").
-  - 맨 아래 **Viral Bites**(Figma 1113:25966, 위 32 · gap 6): SectionHeader "Viral Bites" → Country Card **전체 폭 × 180** 세로로 최대 3장(gap 12, r32, padding 14 18, 아래 120 잉크 페이드) — 위 Flag Tag(18, 12) + Viral badge(62, 12: "🔥 +n% this week" bg/kick · "✦ Editor’s pick" bg/inverse) · 아래 Display/M 요리 이름 → Weather Tag · Acorn Tag. 탭 → 4.7. 편집자 픽 먼저, 그다음 뜨는 요리. 없거나 실패하면 섹션을 숨긴다(챌린지가 없어도 보임). 모아 보는 목록 화면이 없어 제목 옆 ›는 두지 않는다.
-  6. **How it works**: Join("Shows up on Home") · Cook(그 챌린지 규칙) · Post(#태그) + Caption "Challenges are made by ongdalsaem and last 3–14 days. Post one public dish with the tag while it runs."
-- 챌린지가 없으면 EmptyState `flag` "No challenges right now".
 
 ### 4.7 Tables · Browse — [467:9855](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=467-9855)
 - 푸시(TopBar Inline "Tables", 뒤로). 세로 스크롤 975. TabBar(고정).
@@ -178,33 +165,3 @@
 - 4.21과 같고 Join → **Joined**(Secondary). Toast "You joined #SoloMeals — its posts now show up in Following." + 오른쪽 아래 **CreateFAB "Post to table"**(→ 8.1, 공유할 때 이 테이블이 미리 선택됨).
 - 규칙: 테이블에는 **들어간 사람만** 자기 요리를 올린다(DB table_posts). 나가기 = Joined 탭 → 확인 시트. 차단한 사람의 게시물은 보이지 않는다.
 
-### 4.9 Food challenges · All — [484:10315](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=484-10315)
-- Challenges 탭 **Coming up "See all"**에서 연다. 푸시(TopBar Inline "Food challenges", 뒤로).
-- 묶음(Overline 라벨 + 목록 박스 bg/subtle radius 16) 순서: **YOU’RE IN** → **RUNNING** → **STARTING SOON** → **ENDED**. 빈 묶음은 숨긴다.
-- **Challenge Row**: 썸네일 56(radius 16, 그 챌린지 Mood 그라데이션 + 가운데 Flag Tag, 끝난 것은 50%) · 제목 Title/S(+ **Closing soon** 배지 bg/accent-subtle · fg/accent, 72시간 미만) · 메타 Caption fg/muted · `chevron-right`.
-- 데이터: YOU’RE IN — Midnight Ramyeon Hack "2d 22h left · 2,830 cooking"(Closing soon) / RUNNING — Onigiri Shape-Off "5 days left · 1,240 cooking", Pasta in 15 "1 week left · 968 cooking" / STARTING SOON — Taco by the Weather "Starts Fri · Join now, post from Friday" / ENDED — Pancake Sunday "Ended Oct 25 · 742 entries".
-- 아래 안내 "Challenges are made by ongdalsaem and last 3–14 days. Post one public dish with the tag while it runs."
-- 이동: 참여 중 행 → **4.10b** · 진행 중 · 곧 시작 → **4.10** · 끝남 → **4.10c** · 뒤로 → Back.
-
-### 4.10 Challenge · Midnight Ramyeon Hack — [470:10224](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=470-10224)
-- Challenges 탭의 챌린지 카드 · Top entries See all에서 연다. 세로 스크롤 923.
-- **Hero**(챌린지 Mood 그라데이션, 위 56 · 좌우 20 · 아래 24, gap 12, 제목 · 설명 모두 fg/default — 그라데이션 위 fg/secondary는 대비 부족): 🇰🇷 Flag Tag · **Closing soon** 배지(bg/default, fg/accent) → "Midnight Ramyeon Hack"(Display/M) → "One leftover from the fridge. That’s the rule. Post a photo before the clock runs out." → 3칸 **Ends in 2d 22h** · **Cooking 2,830** · **Entries 1,104**(bg/default radius 12, Title/M + Caption).
-- 본문(좌우 20, gap 24): 참여자 아바타 4개 + "Aoi, Kenji and 2,828 others are cooking" → **How it works** = 7.1 재료 목록과 같은 **Ingredients List** 인스턴스(Title/L 제목 + Ingredient Row, 행 사이 border/default 선, 남는 행 숨김): **Join** · Shows up on Home / **Cook** · Ramyeon + one leftover / **Post** · One photo · #MidnightRamyeon → **Latest entries** 1,104 + 사진 3열 그리드(111, radius 12).
-- [고정] 하단 CTA 바(위 border, 112 = 위 16 · 버튼 56 · 아래 40): Button Primary L **Join challenge** → **4.10b**.
-- 상태 배지: 시작 전 "Starts Fri"(Join 가능, 사진 올리기는 시작 후) · 진행 중 · **Closing soon**(< 72h) · 끝남 "Ended — see the entries"(CTA 숨김). DB `challenge_cards.phase`.
-
-### 4.10b Challenge · Joined — [470:11467](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=470-11467)
-- 4.22에 **Your progress** 박스(bg/done-subtle, `check`(fg/done) · "You’re in"(fg/default) · "Post one photo with #MidnightRamyeon before Sunday 11:59 PM.")가 본문 맨 위에 추가. CTA = **Post my entry** → **8.1**(태그 #MidnightRamyeon 미리 붙음).
-- 인증 = 기간 안에 공유한 **공개 게시물 1개 이상**(DB challenge_entries). 올리면 박스가 "Entry posted · see it in Latest entries"로 바뀐다. 끝나면 홈에서 사라지고 프로필 다이어리에 기록.
-
-### 4.10c Challenge · Ended — [502:12476](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=502-12476)
-- 끝난 챌린지(4.9 ENDED 행에서 연다). 4.22와 같은 구조, Hero = 그 챌린지 Mood 그라데이션.
-- "Pancake Sunday" · 배지 **Ended Oct 25**(bg/default, fg/secondary) · "Any pancake, sweet or savory — Sunday only. Thanks to everyone who cooked." → 2칸 **742 Entries** · **1,020 Cooked**.
-- 본문: "Aoi, Kenji and 1,018 others cooked" → **All entries** 742 + 사진 그리드. How it works와 하단 CTA 없음(참여 · 인증 불가).
-- 끝난 챌린지는 90일 동안 목록에 남고, 내 인증은 프로필 다이어리에 계속 남는다.
-
-### 2.1c Home · In a challenge — [484:11596](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=484-11596)
-- 섹션 04c FOOD CHALLENGES 줄에 둔 **홈 상태 화면**(2.1 복제, 연결 같음). 챌린지에 들어가 있는 동안 홈 Story Card 위에 **Challenge Banner**가 생긴다.
-- Challenge Banner(350 FILL, radius 16, 그 챌린지 Mood 그라데이션, padding 12, gap 12): Flag Tag · "Midnight Ramyeon Hack"(Body/S Strong) / "2d 22h left · post your entry"(Caption fg/default) · Button Primary S **Post**.
-- 규칙: 참여 중인 챌린지가 여러 개면 끝나는 시간이 가까운 것 1개만(배너 탭 → 4.24에서 나머지). 인증을 올렸으면 "Entry posted · 2d 22h left"로 바뀌고 Post 버튼이 사라진다. 끝나면 배너도 사라진다.
-- 이동: 배너 → **4.10b** · Post → **8.1**(태그 미리 붙음).

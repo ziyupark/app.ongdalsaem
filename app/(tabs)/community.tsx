@@ -7,7 +7,6 @@ import {
   Avatar, FoodRow, PhotoCard, SectionHeader, MoreButton, useMyId, useReportMenu,
 } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
-import { ChallengesTab } from '../../src/components/community/ChallengesTab';
 import { OurArea } from '../../src/components/community/Nearby';
 import { upcomingFestive } from '../../src/lib/holidays';
 import { FestiveCard } from '../../src/components/community/FestiveCard';
@@ -37,9 +36,9 @@ import { postPlace } from '../../src/services/location';
 /** Holidays shown in the 4.1 carousel (nearest first); the more button lists them all. */
 const FESTIVE_CAROUSEL = 8;
 
-type Seg = 'global' | 'following' | 'challenges';
+type Seg = 'global' | 'following';
 
-const SEGS: Seg[] = ['global', 'following', 'challenges'];
+const SEGS: Seg[] = ['global', 'following'];
 
 /**
  * Community (Figma 3.1 Nearby 19:663 · 3.2 empty · 3.3 no results · 3.4 typing · 3.5 results · 3.6 area · 4.1 Global 19:818 ·
@@ -52,8 +51,8 @@ const SEGS: Seg[] = ['global', 'following', 'challenges'];
  * jumps to it in the same frame. With the header in view, all pages share the scroll (they show their top).
  */
 export default function Community() {
-  // tab=challenges from the share flow / 4.10c (at = a fresh value each time); focus=join scrolls to the Join button.
-  const params = useLocalSearchParams<{ tab?: Seg; at?: string; focus?: string }>();
+  // ?tab=… re-opens a tab (at = a fresh value each time).
+  const params = useLocalSearchParams<{ tab?: Seg; at?: string }>();
   const { color } = useTheme();
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
@@ -76,7 +75,7 @@ export default function Community() {
   const top = useSharedValue(0); // where the pages start in the outer scroll content
   const active = useSharedValue(SEGS.indexOf(first)); // settled page
   const pos = useSharedValue(SEGS.indexOf(first)); // pager position in pages (fractional mid-swipe) — drives the underline
-  const saved = useSharedValue<number[]>([0, 0, 0]); // each page's own scroll below the pages' top
+  const saved = useSharedValue<number[]>([0, 0]); // each page's own scroll below the pages' top
   const dragging = useSharedValue(false);
   const pageW = useSharedValue(width);
   useEffect(() => { pageW.value = width; }, [width, pageW]);
@@ -90,18 +89,9 @@ export default function Community() {
   };
   const opened = useRef(false);
   // Idle: the pager is as tall as the current page. Sliding: as tall as the tallest (room for every page's position).
-  const [heights, setHeights] = useState<number[]>([0, 0, 0]);
+  const [heights, setHeights] = useState<number[]>([0, 0]);
   const [moving, setMoving] = useState(false);
   const onHeight = useCallback((i: number, h: number) => setHeights((hs) => (hs[i] === h ? hs : hs.map((v, k) => (k === i ? h : v)))), []);
-
-  // Re-open a tab when navigated back here with ?tab=…; ?focus=join brings the Challenges Join button into view.
-  const joinY = useRef<number | null>(null);
-  const wantJoin = useRef(false);
-  const toJoin = useCallback(() => {
-    if (!wantJoin.current || joinY.current == null || segRef.current !== 'challenges') return;
-    wantJoin.current = false;
-    outer.current?.scrollTo({ y: Math.max(0, topY.current + joinY.current - space[42] * 3), animated: true });
-  }, [outer]);
 
   // JS side of a page landing (called from the UI thread).
   const settled = useRef<(j: number, y: number) => void>(() => undefined);
@@ -110,7 +100,6 @@ export default function Community() {
     setSegState(SEGS[j]);
     setMoving(false);
     bar.sync(y);
-    toJoin();
   };
   const onSettled = useCallback((j: number, y: number) => settled.current(j, y), []);
   const onDragStart = useCallback(() => {
@@ -182,19 +171,11 @@ export default function Community() {
     requestAnimationFrame(() => pager.current?.scrollTo({ x: SEGS.indexOf(k) * width, animated: !(instant || reduce) }));
   }, [visit, pager, width, reduce]);
 
+  // Re-open a tab when navigated back here with ?tab=….
   useEffect(() => {
     if (params.tab && SEGS.includes(params.tab)) goTo(params.tab, true);
-    if (params.focus === 'join') {
-      wantJoin.current = true;
-      // Already on Challenges (laid out) → scroll once this frame settles; otherwise the landing / onJoinY does it.
-      requestAnimationFrame(toJoin);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.tab, params.at, params.focus]);
-  const onJoinY = useCallback((y: number) => {
-    joinY.current = y;
-    toJoin();
-  }, [toJoin]);
+  }, [params.tab, params.at]);
 
   const onTab = (k: TabKey) => (k === 'community' ? outer.current?.scrollTo({ y: 0, animated: true }) : goTab(k));
 
@@ -203,9 +184,7 @@ export default function Community() {
   const pagerH = (moving ? Math.max(...heights) : heights[idx]) || undefined;
   const page = (k: Seg) => {
     if (!visited.has(k)) return null;
-    if (k === 'global') return <Global />;
-    if (k === 'following') return <Following />;
-    return <ChallengesTab onJoinY={onJoinY} />;
+    return k === 'global' ? <Global /> : <Following />;
   };
 
   // Transparent root: the global WeatherBackdrop (bg/default + wash + weather motion) shows through.
@@ -234,7 +213,6 @@ export default function Community() {
             items={[
               { key: 'global', label: t('community.explore') },
               { key: 'following', label: t('community.following') },
-              { key: 'challenges', label: t('community.challengesTab') },
             ]}
           />
         </View>
@@ -307,10 +285,10 @@ function Page({ index, width, height, sy, top, active, saved, onHeight, children
  * Tab hero title (Story of the day · Neighbors' Table) — Display/M fg/default (Fraunces like the header weather title),
  * always English; screen readers get the local string.
  */
-function HeroTitle({ k, variant = 'Display/M' }: { k: string; variant?: 'Display/M' | 'Title/L' }) {
+function HeroTitle({ k }: { k: string }) {
   const { t, i18n } = useTranslation();
   const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
-  return <Text variant={variant} accessibilityRole="header" accessibilityLabel={t(k)} numberOfLines={1}>{en(k)}</Text>;
+  return <Text variant="Display/M" accessibilityRole="header" accessibilityLabel={t(k)} numberOfLines={1}>{en(k)}</Text>;
 }
 
 function Global() {
@@ -530,9 +508,9 @@ function Following() {
 
   return (
     <View>
-      {/* Group · Title 813:12215 — pt 22 · px 20 · pb 3, Title/L "Neighbors' Table". */}
+      {/* Group · Title 813:12215 — pt 22 · px 20 · pb 3, Display/M "Neighbors' Table". */}
       <View style={[styles.px, styles.storyTop]}>
-        <HeroTitle k="following.title" variant="Title/L" />
+        <HeroTitle k="following.title" />
       </View>
       <View style={styles.tables}>
       {tables.map((tb) => {

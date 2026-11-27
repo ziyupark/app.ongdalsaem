@@ -29,7 +29,7 @@
 | [01-sign-in-setup](04-screens/01-sign-in-setup.md) | 1.2 Sign in(Apple · Google) · 1.3 Profile setup · 1.3b Taste · 1.4 Location · 1.5 Daily pick time · STATES |
 | [02-home](04-screens/02-home.md) | 2.1 Home(2.2 · 2.3 = 날씨별 예시) · 2.4 · 2.5–2.7 상태 · 2.8 Notifications |
 | [03-nearby](04-screens/03-nearby.md) | 3.1 Nearby list(지금 여는 버튼 없음) · 3.2–3.3 상태 · 3.4 Search · 3.5 Results · 3.6 범위 칩 · 3.7 Ask (3.7b 위치 꺼짐) · 3.8 Question |
-| [04-community](04-screens/04-community.md) | **Explore**(4.1 + Our area · 4.1b Holidays · 템플릿 4.2 Tag(명절 포함) · 4.3 Country, v2) · **Following**(4.4 · 4.4b · 4.4c · 4.5 · 4.6 · 4.11 Messages) · **Tables · Challenges**(4.7 · 4.8 · 4.8b · 4.10 · 4.10b · 4.10c · 4.9 · 2.1c) |
+| [04-community](04-screens/04-community.md) | **Explore**(4.1 + Our area · 4.1b Holidays · 템플릿 4.2 Tag(명절 포함) · 4.3 Country, v2) · **Following**(4.4 · 4.4b · 4.4c · 4.5 · 4.6 · 4.11 Messages) · **Tables**(4.7 · 4.8 · 4.8b) |
 | [05-timer](04-screens/05-timer.md) | 5.1 Kitchen timer · 5.2 Timer finished |
 | [06-profile](04-screens/06-profile.md) | 6.1 Dishes · 6.2 Saved · 6.3 Diary · 6.4 Offline · 6.4b Offline post |
 | [07-dish](04-screens/07-dish.md) | 7.1 Post detail · 7.1b Ate it · 7.2 Comments · 7.3 Report / block · 7.4 Share |
@@ -70,7 +70,7 @@
 3. TabBar(스크롤 숨김 · 활성 알약 이동) + CreateFAB + 탭 라우팅.
 4. 카드: Weather Card(+ Refresh) · Story · Food(Grid/Row) · Country · Pick · Timer · Feed Post · Dish Tile · Weather Tag / Acorn Tag.
 5. Launch·온보딩(00–01) → Home 2.1 → 상태 2.5/2.6/2.7 → 2.4.
-6. Community(Explore · Following · Challenges) → Timer → Profile → Dish → Share → Settings.
+6. Community(Explore · Following) → Timer → Profile → Dish → Share → Settings.
 7. 화면마다 Figma 링크의 `get_screenshot`과 비교 검수.
 
 ## 문서 갱신 규칙

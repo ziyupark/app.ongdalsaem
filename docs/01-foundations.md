@@ -94,7 +94,7 @@ mood:       mood/<key>/top · mood/<key>/base  (18종, §2.4 표)
 | Gradient/Dusk | linear | sunset/500 `#FFA528` → sunset/800 `#FF773A` | **TabBar 활성 아이콘 색** |
 
 - Sunset·Sunset linear·Dusk의 정지점은 **sunset 프리미티브 변수에 연결**되어 있다. 코드에서는 `--sunset-100…900` 변수로 그라데이션을 만든다.
-| **Mood/<key>** ×18 | **Weather Mood 2.0** — 여러 겹(아래 → 위): ① linear 위→아래 `top` 0% → 55% → `bg/default` 100% ② radial 블롭 2–3개(색 α0.4–0.95 → 0, 가장자리로 갈수록 투명) | 홈 Mood wash · 3.x · Challenge · Festive 카드 · 4.10 Hero · 4.9 썸네일 · 2.1c 배너. 키 · 값 §2.4 |
+| **Mood/<key>** ×18 | **Weather Mood 2.0** — 여러 겹(아래 → 위): ① linear 위→아래 `top` 0% → 55% → `bg/default` 100% ② radial 블롭 2–3개(색 α0.4–0.95 → 0, 가장자리로 갈수록 투명) | 홈 Mood wash · 3.x · Festive 카드. 키 · 값 §2.4 |
 
 - Mood 그라데이션 스타일 이름: `Mood/clear`, `Mood/clear-night`, `Mood/cloudy`, `Mood/overcast`, `Mood/drizzle`, `Mood/rain`, `Mood/heavy-rain`, `Mood/shower`, `Mood/thunder`, `Mood/sleet`, `Mood/flurries`, `Mood/snow`, `Mood/heavy-snow`, `Mood/fog`, `Mood/dust`, `Mood/heat`, `Mood/cold`, `Mood/windy`.
 - 코드: 레이어 순서 그대로 `background:` 에 여러 겹을 쓴다 — `radial-gradient(ellipse rx ry at cx cy, color a, color a×0.45 55%, transparent)` × 블롭 수, 맨 아래 `linear-gradient(180deg, var(--mood-<key>-top), var(--bg-default))`. React Native는 `react-native-svg`의 RadialGradient 여러 개 또는 `expo-linear-gradient` + 블롭 원(blur 대신 radial 투명도)으로 만든다.

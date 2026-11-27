@@ -502,7 +502,6 @@ export function editDraftFrom(dish: Dish): Partial<ShareDraft> {
     difficulty: dish.difficulty,
     placeEdited: false,
     uploadFailed: null,
-    challenge: null,
     landscape: dish.landscape,
   };
 }

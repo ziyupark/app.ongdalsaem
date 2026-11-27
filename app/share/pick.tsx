@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library/legacy';
 import { router } from 'expo-router';
-import { Camera, Check, ChevronDown, Flag } from '../../src/components/icons/ongdal';
+import { Camera, ChevronDown } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, FlatList, Linking, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -12,8 +12,7 @@ import { Button } from '../../src/components/Button';
 import { Icon } from '../../src/components/Icon';
 import { FlowTopBar } from '../../src/components/share/FlowTopBar';
 import { Text } from '../../src/components/Text';
-import { Toast } from '../../src/components/Toast';
-import { CHALLENGE_PHOTOS, getShareDraft, resetShareDraft, updateShareDraft, useShareDraft, type DraftPhoto } from '../../src/lib/shareDraft';
+import { resetShareDraft, updateShareDraft, useShareDraft, type DraftPhoto } from '../../src/lib/shareDraft';
 import { alertOpenSettings } from '../../src/lib/permissions';
 import { loadPhotoEditor } from '../../src/lib/optionalNative';
 import { FIXED_BUTTON_BOTTOM, radius, space, useTheme, withAlpha } from '../../src/theme';
@@ -26,7 +25,6 @@ type Perm = 'checking' | 'granted' | 'denied';
 
 /**
  * 8.1 Pick photos (Figma 23:1201) — in-app album grid, up to 10, numbered in tap order; first = cover.
- * A challenge entry (draft.challenge) takes one photo: tapping another photo swaps it, no numbers, "Joining: …" shown.
  */
 export default function PickPhotos() {
   const { color } = useTheme();
@@ -42,18 +40,6 @@ export default function PickPhotos() {
   const albumRef = useRef<MediaLibrary.Album | null>(null);
   const selected = draft.photos;
   const cell = (width - GAP * 2) / 3;
-  const challenge = draft.challenge;
-  const max = challenge ? CHALLENGE_PHOTOS : MAX_PHOTOS;
-  const [toast, setToast] = useState<string | null>(null);
-
-  // A challenge draft that arrives with several photos keeps only the first.
-  useEffect(() => {
-    const d = getShareDraft();
-    if (d.challenge && d.photos.length > CHALLENGE_PHOTOS) {
-      updateShareDraft({ photos: d.photos.slice(0, CHALLENGE_PHOTOS) });
-      setToast(t('share.challengeOnePhoto'));
-    }
-  }, [t]);
 
   const loadMore = useCallback(async () => {
     const c = cursor.current;
@@ -87,12 +73,11 @@ export default function PickPhotos() {
     const i = selected.findIndex((p) => p.id === a.id);
     const photo: DraftPhoto = { id: a.id, uri: a.uri, width: a.width, height: a.height, takenAt: a.creationTime ? new Date(a.creationTime) : undefined };
     if (i >= 0) updateShareDraft({ photos: selected.filter((p) => p.id !== a.id) });
-    else if (max === 1) updateShareDraft({ photos: [photo] });
-    else if (selected.length < max) updateShareDraft({ photos: [...selected, photo] });
+    else if (selected.length < MAX_PHOTOS) updateShareDraft({ photos: [...selected, photo] });
   };
 
   const openCamera = async () => {
-    if (selected.length >= max) return;
+    if (selected.length >= MAX_PHOTOS) return;
     try {
       // Turned off earlier → iOS won't show its prompt again: say why and offer Settings instead of doing nothing.
       const before = await ImagePicker.getCameraPermissionsAsync();
@@ -182,25 +167,17 @@ export default function PickPhotos() {
     <View>
       <View style={styles.titleBlock}>
         <Text variant="Display/M">{t('share.pickTitle')}</Text>
-        {challenge ? (
-          <View style={[styles.joining, { backgroundColor: color('bg/accent-subtle') }]}>
-            <Icon icon={Flag} size={14} color="fg/accent" />
-            <Text variant="Caption Strong" color="fg/accent" numberOfLines={1} style={styles.shrink}>{t('share.inChallenge', { name: challenge.title })}</Text>
-          </View>
-        ) : null}
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.selected}>
         {selected.map((p, i) => (
           <Pressable key={p.id} accessibilityRole="imagebutton" accessibilityLabel={t('share.photoN', { n: i + 1 })} onPress={() => photoOptions(i)} style={styles.thumb}>
             <Image source={{ uri: p.uri }} style={StyleSheet.absoluteFill} contentFit="cover" />
-            {max > 1 ? (
-              <View style={[styles.thumbNo, { backgroundColor: color('bg/primary') }]}>
-                <Text variant="Caption Strong" color="fg/on-primary">{String(i + 1)}</Text>
-              </View>
-            ) : null}
+            <View style={[styles.thumbNo, { backgroundColor: color('bg/primary') }]}>
+              <Text variant="Caption Strong" color="fg/on-primary">{String(i + 1)}</Text>
+            </View>
           </Pressable>
         ))}
-        {selected.length < max ? (
+        {selected.length < MAX_PHOTOS ? (
           <Pressable accessibilityRole="button" accessibilityLabel={t('share.camera')} onPress={openCamera} style={[styles.thumb, styles.camera, { borderColor: color('border/strong') }]}>
             <Icon icon={Camera} size={22} color="fg/muted" />
             <Text variant="Caption" color="fg/muted">{t('share.camera')}</Text>
@@ -212,7 +189,7 @@ export default function PickPhotos() {
           <Text variant="Title/S" numberOfLines={1}>{album?.title ?? t('share.recents')}</Text>
           <Icon icon={ChevronDown} size={18} />
         </Pressable>
-        <Text variant="Caption" color="fg/muted">{t(max > 1 ? 'share.pickHint' : 'share.pickHintChallenge')}</Text>
+        <Text variant="Caption" color="fg/muted">{t('share.pickHint')}</Text>
       </View>
     </View>
   );
@@ -247,7 +224,7 @@ export default function PickPhotos() {
                 <Image source={{ uri: item.uri }} style={StyleSheet.absoluteFill} contentFit="cover" recyclingKey={item.id} />
                 {on ? (
                   <View style={[styles.check, styles.checkOn, { backgroundColor: color('bg/primary'), borderColor: color('static/white') }]}>
-                    {max > 1 ? <Text variant="Caption Strong" color="fg/on-primary">{String(n + 1)}</Text> : <Icon icon={Check} size={14} color="fg/on-primary" />}
+                    <Text variant="Caption Strong" color="fg/on-primary">{String(n + 1)}</Text>
                   </View>
                 ) : (
                   <View style={[styles.check, styles.checkOff, { backgroundColor: color('overlay/shade'), borderColor: color('static/white') }]} />
@@ -265,13 +242,12 @@ export default function PickPhotos() {
       />
       <View style={styles.cta}>
         <Button
-          label={selected.length && max > 1 ? t('share.nextCount', { count: selected.length }) : t('share.next')}
+          label={selected.length ? t('share.nextCount', { count: selected.length }) : t('share.next')}
           disabled={selected.length === 0}
           loading={busy}
           onPress={next}
         />
       </View>
-      <Toast visible={!!toast} message={toast ?? ''} onHide={() => setToast(null)} bottom={FIXED_BUTTON_BOTTOM + 72} />
     </View>
   );
 }
@@ -279,8 +255,6 @@ export default function PickPhotos() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   titleBlock: { paddingTop: space[20], paddingHorizontal: space[20], gap: space[10] },
-  joining: { flexDirection: 'row', alignItems: 'center', gap: space[6], alignSelf: 'flex-start', maxWidth: '100%', height: 28, paddingHorizontal: space[10], borderRadius: radius.full },
-  shrink: { flexShrink: 1 },
   selected: { gap: space[8], paddingTop: space[20], paddingHorizontal: space[20] },
   thumb: { width: 76, height: 76, borderRadius: radius.md, overflow: 'hidden' },
   thumbNo: { position: 'absolute', top: 6, right: 4, width: 22, height: 22, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },

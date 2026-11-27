@@ -14,10 +14,11 @@
 | 나라 전체 보기 | 4.3 | 4.1 Trending Bites(See all 없음) |
 | 문서 오프라인 | 9.9d | 공통 연결 오류 처리 |
 | Eat together | 4.23 | 2단계 |
+| Food challenges | Challenges 탭 · 4.9 · 4.10 · 4.10b · 4.10c · 2.1c | 나중에 다시 넣음(아래 Food challenges) |
 
 Figma 컴포넌트 중 이 화면들에서만 쓰던 것(Chat Bubble · `calendar` · `phone` · `footprints` · `bus` · `car` · `arrow-up` 아이콘)은 삭제했다 — 이 섹션의 해당 인스턴스는 원본 없이 모양만 남아 있다. 되살릴 때 Figma 버전 기록에서 복구한다.
 
-DB 테이블 중 messages · message_threads · collections · collection_items는 앱이 다시 쓴다. marketing 컬럼 등은 남아 있지만 쓰지 않는다.
+DB 테이블 중 messages · message_threads · collections · collection_items는 앱이 다시 쓴다. marketing 컬럼 · challenges 테이블 등은 남아 있지만 쓰지 않는다.
 
 
 ## from 01-sign-in-setup.md
@@ -107,6 +108,55 @@ DB 테이블 중 messages · message_threads · collections · collection_items�
 - **2단계 설계 참고용 — v1에서 만들지 않는다**(화면 맨 위 점선 "PHASE 2" 표시, 프로토타입 연결 없음, DB 없음).
 - 블록: 사진 → "Dumpling night, we fold together" / 설명 → 상세 박스(`calendar` 날짜 · `map-pin` **동네만, 정확한 장소는 수락 후** · `users` 2 of 4 seats left · `utensils` 장보기 나눠 내기) → 호스트(아바타 40, "Hosted 3 times · ID verified") → **Meeting safely** 안내(bg/accent-subtle, 제목 fg/default · 본문 fg/secondary) → CTA **Ask to join**(호스트가 수락).
 - 2단계에서 정할 것: 본인 확인, 최대 인원, 미성년자 제한, 노쇼 · 신고 처리, 장소 공개 시점.
+
+### Food challenges (Challenges 탭 · 4.9 · 4.10 · 4.10b · 4.10c · 2.1c) — 2026-11-27에 뺌
+- 나중에 다시 넣을 예정. 앱 코드(Challenges 탭 · `/challenges` · `/challenge/[slug]` · 공유 흐름의 챌린지 참가 · 챌린지 테마 그림 `assets/holidays/*.jpg`)와 문구 `challenge.*` · `community.challenges` · `community.challengesTab` · `share.inChallenge` · `share.challengeOnePhoto` · `share.pickHintChallenge`는 지웠다 — git 기록에서 되살린다.
+- DB 테이블 challenges · challenge_participants · challenge_entries는 남아 있지만 앱이 쓰지 않는다.
+- Challenges 탭 맨 아래에 있던 **Viral Bites**도 탭과 함께 빠졌다(4.7 Viral 상세 화면 코드는 남아 있지만 여는 곳이 없음).
+- 아래는 뺄 때의 명세 그대로.
+
+### 4.1 Community · Challenges(탭, 뺌) — [680:11155](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=680-11155)
+- Community 세 번째 탭. 위에서부터(섹션마다 SectionHeader):
+  1. **This week’s challenge**(Overline "SEASONAL TABLES"): 큰 카드(테마 사진 + 아래 scrim) — 위 유리 pill "Live · {남은 시간}"(점 fg/accent) → 제목 · 설명 → 참여자 아바타 24 겹침 + "{n} cooking · {n} entries" → 버튼: 참여 전 White M **Join challenge** · 참여 후 Kick M `upload` **Post my entry**(→ 8.1, 태그 미리 붙음) · 올린 뒤 Glass M `check` **Entry posted**(비활성). 카드 탭 → 4.10.
+  2. **Your challenges**: 참여 중 챌린지 행(올렸으면 "Entry posted", 곧 시작 "Starts …", 아니면 "Post before …" + **Post** 버튼).
+  3. **Top entries** + See all(→ 4.10): 그 챌린지 인증 사진 그리드.
+  4. **Coming up** + See all(→ **4.9**): 가로 카드(남은 기간 대문자 · Join / Join early / Joined).
+- 간격([4.10 826:15539](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=826-15539)): **This week’s challenge** 제목(Title/L) 위 **22** → 제목 → 카드 **15**(3 + 6 + 6). **Coming up** = 섹션 위 32 + 제목 묶음 위 **22** · 아래 **3** → 12 → 카드(제목 → 카드 15). Recently ended · Viral Bites = 섹션 위 32, 제목 패딩 없음 → 12(Viral 6) → 카드. **진행 중 챌린지가 없으면**([4.10 No Challenge 1269:18199](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1269-18199)) This week’s challenge · Join · Ends in · Latest entries가 통째로 빠지고 **Coming up이 맨 위** — 섹션 위 32 없이 탭 바로 아래 제목 묶음 위 22부터 → Recently ended(위 32) → Viral Bites.
+  5. **Recently ended**: 끝난 챌린지 행(흐리게, "Ended {date} · {n} entries").
+  - 맨 아래 **Viral Bites**(Figma 1113:25966, 위 32 · gap 6): SectionHeader "Viral Bites" → Country Card **전체 폭 × 180** 세로로 최대 3장(gap 12, r32, padding 14 18, 아래 120 잉크 페이드) — 위 Flag Tag(18, 12) + Viral badge(62, 12: "🔥 +n% this week" bg/kick · "✦ Editor’s pick" bg/inverse) · 아래 Display/M 요리 이름 → Weather Tag · Acorn Tag. 탭 → 4.7. 편집자 픽 먼저, 그다음 뜨는 요리. 없거나 실패하면 섹션을 숨긴다(챌린지가 없어도 보임). 모아 보는 목록 화면이 없어 제목 옆 ›는 두지 않는다.
+  6. **How it works**: Join("Shows up on Home") · Cook(그 챌린지 규칙) · Post(#태그) + Caption "Challenges are made by ongdalsaem and last 3–14 days. Post one public dish with the tag while it runs."
+- 챌린지가 없으면 EmptyState `flag` "No challenges right now".
+
+### 4.9 Food challenges · All — [484:10315](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=484-10315)
+- Challenges 탭 **Coming up "See all"**에서 연다. 푸시(TopBar Inline "Food challenges", 뒤로).
+- 묶음(Overline 라벨 + 목록 박스 bg/subtle radius 16) 순서: **YOU’RE IN** → **RUNNING** → **STARTING SOON** → **ENDED**. 빈 묶음은 숨긴다.
+- **Challenge Row**: 썸네일 56(radius 16, 그 챌린지 Mood 그라데이션 + 가운데 Flag Tag, 끝난 것은 50%) · 제목 Title/S(+ **Closing soon** 배지 bg/accent-subtle · fg/accent, 72시간 미만) · 메타 Caption fg/muted · `chevron-right`.
+- 데이터: YOU’RE IN — Midnight Ramyeon Hack "2d 22h left · 2,830 cooking"(Closing soon) / RUNNING — Onigiri Shape-Off "5 days left · 1,240 cooking", Pasta in 15 "1 week left · 968 cooking" / STARTING SOON — Taco by the Weather "Starts Fri · Join now, post from Friday" / ENDED — Pancake Sunday "Ended Oct 25 · 742 entries".
+- 아래 안내 "Challenges are made by ongdalsaem and last 3–14 days. Post one public dish with the tag while it runs."
+- 이동: 참여 중 행 → **4.10b** · 진행 중 · 곧 시작 → **4.10** · 끝남 → **4.10c** · 뒤로 → Back.
+
+### 4.10 Challenge · Midnight Ramyeon Hack — [470:10224](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=470-10224)
+- Challenges 탭의 챌린지 카드 · Top entries See all에서 연다. 세로 스크롤 923.
+- **Hero**(챌린지 Mood 그라데이션, 위 56 · 좌우 20 · 아래 24, gap 12, 제목 · 설명 모두 fg/default — 그라데이션 위 fg/secondary는 대비 부족): 🇰🇷 Flag Tag · **Closing soon** 배지(bg/default, fg/accent) → "Midnight Ramyeon Hack"(Display/M) → "One leftover from the fridge. That’s the rule. Post a photo before the clock runs out." → 3칸 **Ends in 2d 22h** · **Cooking 2,830** · **Entries 1,104**(bg/default radius 12, Title/M + Caption).
+- 본문(좌우 20, gap 24): 참여자 아바타 4개 + "Aoi, Kenji and 2,828 others are cooking" → **How it works** = 7.1 재료 목록과 같은 **Ingredients List** 인스턴스(Title/L 제목 + Ingredient Row, 행 사이 border/default 선, 남는 행 숨김): **Join** · Shows up on Home / **Cook** · Ramyeon + one leftover / **Post** · One photo · #MidnightRamyeon → **Latest entries** 1,104 + 사진 3열 그리드(111, radius 12).
+- [고정] 하단 CTA 바(위 border, 112 = 위 16 · 버튼 56 · 아래 40): Button Primary L **Join challenge** → **4.10b**.
+- 상태 배지: 시작 전 "Starts Fri"(Join 가능, 사진 올리기는 시작 후) · 진행 중 · **Closing soon**(< 72h) · 끝남 "Ended — see the entries"(CTA 숨김). DB `challenge_cards.phase`.
+
+### 4.10b Challenge · Joined — [470:11467](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=470-11467)
+- 4.22에 **Your progress** 박스(bg/done-subtle, `check`(fg/done) · "You’re in"(fg/default) · "Post one photo with #MidnightRamyeon before Sunday 11:59 PM.")가 본문 맨 위에 추가. CTA = **Post my entry** → **8.1**(태그 #MidnightRamyeon 미리 붙음).
+- 인증 = 기간 안에 공유한 **공개 게시물 1개 이상**(DB challenge_entries). 올리면 박스가 "Entry posted · see it in Latest entries"로 바뀐다. 끝나면 홈에서 사라지고 프로필 다이어리에 기록.
+
+### 4.10c Challenge · Ended — [502:12476](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=502-12476)
+- 끝난 챌린지(4.9 ENDED 행에서 연다). 4.22와 같은 구조, Hero = 그 챌린지 Mood 그라데이션.
+- "Pancake Sunday" · 배지 **Ended Oct 25**(bg/default, fg/secondary) · "Any pancake, sweet or savory — Sunday only. Thanks to everyone who cooked." → 2칸 **742 Entries** · **1,020 Cooked**.
+- 본문: "Aoi, Kenji and 1,018 others cooked" → **All entries** 742 + 사진 그리드. How it works와 하단 CTA 없음(참여 · 인증 불가).
+- 끝난 챌린지는 90일 동안 목록에 남고, 내 인증은 프로필 다이어리에 계속 남는다.
+
+### 2.1c Home · In a challenge — [484:11596](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=484-11596)
+- 섹션 04c FOOD CHALLENGES 줄에 둔 **홈 상태 화면**(2.1 복제, 연결 같음). 챌린지에 들어가 있는 동안 홈 Story Card 위에 **Challenge Banner**가 생긴다.
+- Challenge Banner(350 FILL, radius 16, 그 챌린지 Mood 그라데이션, padding 12, gap 12): Flag Tag · "Midnight Ramyeon Hack"(Body/S Strong) / "2d 22h left · post your entry"(Caption fg/default) · Button Primary S **Post**.
+- 규칙: 참여 중인 챌린지가 여러 개면 끝나는 시간이 가까운 것 1개만(배너 탭 → 4.24에서 나머지). 인증을 올렸으면 "Entry posted · 2d 22h left"로 바뀌고 Post 버튼이 사라진다. 끝나면 배너도 사라진다.
+- 이동: 배너 → **4.10b** · Post → **8.1**(태그 미리 붙음).
 
 ## from 07-dish.md
 

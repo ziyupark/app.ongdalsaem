@@ -12,14 +12,13 @@ Notifications  bell(2.x · 4.1 · 4.4 · 4.4b — 탭 화면 ScreenHeader) → 2
 Global       + FAB → Share a dish (8.1 Pick photos ⇄ 8.1a Edit photo → 8.2 Details ⇄ 8.2e Travel → 8.3 Preview → 공유, 2단계 + 미리보기)
 Dish         7.1 Post detail(모든 게시물 상세, 레시피·댓글 포함) ⇄ 7.1b Ate it / 7.2 Comments sheet / 7.3 Report·block (Report · Block → 2.1 + 토스트)
              Feed Post share → 7.4 Share sheet · bookmark = 저장 토글(6.2 Saved)
-Community    탭: Explore(4.1) · Following(4.4) · Challenges
+Community    탭: Explore(4.1) · Following(4.4)
              4.1 Explore ─┬ (여는 버튼 없음) 3.1 Nearby list ─ 3.4 Search → 3.5 Results (3.3 no results) · 3.6 범위 칩 · 3.2 empty
                                │            └ Our area · 3.1 Ask → 3.7 Ask the neighborhood → 3.8 Question (위치 꺼짐 3.7b → 9.5)
                                ├ Special days more → 4.3-1 Special days around the world → 4.3-2(명절 페이지)
                                ├ 4.4 Following ─ 4.6 Cooks in your weather · 4.4b empty
                                │            ├ 칩 All · People · Tables (Tables, 테이블 없음 → 4.4c)
                                │            └ 4.7 Tables · Browse → 4.8 Table ⇄ 4.8b Joined (→ 8.1 Post to table)
-                               ├ Challenges 탭 · 4.9 Food challenges · All → 4.10 Challenge → 4.10b Joined → 8.1 (entry) · 홈 2.1c Banner → 4.10b
                                ├ 4.5 Cook profile ─ Message → 4.11 Messages(대화)
                                ├ 4.3 Country (v2, Trending Bites 카드에서)
                                ├ 4.2 Tag (v2: #Comfort · #Spicy · #Vegan … · 명절 태그도 같은 화면)
@@ -34,7 +33,7 @@ Settings     6.1 ⚙ → 9.1 Settings ─ 9.2 Edit profile ─ 9.2b Choose a pho
 |---|---|---|
 | Home | 지금 날씨·시간에 맞는 오늘의 한 끼 + 주변 식당 | 내 위치(도시/동) |
 | Timer | 주방 타이머 | — |
-| Community | **Explore**(오늘의 이야기 · **Our area**(오늘 인기 · 동네 질문) · Trending Bites · 명절 · 트렌딩 태그 · Explore Together) · **Following** · **Challenges** | Global + Local |
+| Community | **Explore**(오늘의 이야기 · **Our area**(오늘 인기 · 동네 질문) · Trending Bites · 명절 · 트렌딩 태그 · Explore Together) · **Following** | Global + Local |
 | Profile | 내 요리, 저장, 다이어리, 설정 | 나 |
 
 > 탭바는 4개. 내 동네는 Community Explore의 Our area. 태그 · 나라 · 명절 페이지는 Community 하위 템플릿이다.
@@ -87,25 +86,21 @@ Figma 페이지 구성:
 | 3.5 · 3.6 | 카드 / 검색바 · All | 7.1 / 3.4 · 3.1 |
 | 3.2 | Share a dish | 8.1 |
 | 3.3 | 날씨 칩 / 태그 칩 | 3.1(Same weather) / 4.2 |
-| 4.1 | Following · Challenges 탭 / Story card / Our area: 인기 행 · Ask a question · 질문 카드 / Country Card / Festive 카드 · 더보기 / Trending tags See all (칩 = 같은 화면 전환) / Row 카드 / `bell` | 4.4 · Challenges / 7.1 / 7.1 · 3.7 · 3.8 / **4.3** / 4.3-2 · 4.3-1 / 4.2 / 7.1 / 2.8 |
+| 4.1 | Following 탭 / Story card / Our area: 인기 행 · Ask a question · 질문 카드 / Country Card / Festive 카드 · 더보기 / Trending tags See all (칩 = 같은 화면 전환) / Row 카드 / `bell` | 4.4 / 7.1 / 7.1 · 3.7 · 3.8 / **4.3** / 4.3-2 · 4.3-1 / 4.2 / 7.1 / 2.8 |
 | 4.3-1 | 카드 / 뒤로 | 4.3-2 / Back |
 | 4.3-2 | 사진 카드 · 타일 / 음식 카테고리(같은 화면 거르기) / 뒤로 | 7.1 / — / Back |
 | 4.2 | 사진 · 카드 / 탭 · 카테고리 · 끼니 필터 (같은 화면 전환) / 뒤로 / TabBar | 7.1 / — / Back / 탭 |
 | 4.3 | 사진 · 카드 / 도시 탭 · 카테고리 · 끼니 필터 (같은 화면 전환) / 뒤로 / TabBar | 7.1 / — / Back / 탭 |
 | 4.5 | Follow / Message | (그 자리 토글) / 4.11 |
-| 4.4 | Following 헤더 / Suggested See all · Cook card / Explore · Challenges 탭 / 게시물 헤더 / 사진 / 댓글 / 테이블 pill / Browse tables / from #테이블 줄 (칩 = 같은 화면 전환) | 4.6 / 4.6 · 4.5 / 4.1 · Challenges / 4.5 / 7.1 / 7.2 / 4.8b / 4.7 / 4.8b |
+| 4.4 | Following 헤더 / Suggested See all · Cook card / Explore 탭 / 게시물 헤더 / 사진 / 댓글 / 테이블 pill / Browse tables / from #테이블 줄 (칩 = 같은 화면 전환) | 4.6 / 4.6 · 4.5 / 4.1 / 4.5 / 7.1 / 7.2 / 4.8b / 4.7 / 4.8b |
 | 4.4c | Browse tables | 4.7 |
 | 4.7 | 테이블 pill · Joined 행 / 다른 행 | 4.8b / 4.8 |
 | 4.8 | Join / 뒤로 | 4.8b / Back |
 | 4.8b | 뒤로 | Back |
-| 4.10 | Join challenge | 4.10b |
-| 4.10b | Post my entry | 8.1 |
-| 4.9 | 참여 중 행 / 진행 · 곧 시작 행 / 끝난 행 / 뒤로 | 4.10b / 4.10 / 4.10c / Back |
 | 3.7b | Turn on location | 9.5 |
 | 9.8 | Help center · Guidelines · Terms · Privacy · Location terms / Contact / Licenses / A letter from us | 9.8c / 9.8a / 9.8b / 1.1b |
 | 9.8a | Send | Back(토스트) |
 | 9.8c | 닫기 · Scrim | Back |
-| 2.1c | Challenge Banner / Post (그 밖은 2.1과 같음) | 4.10b / 8.1 |
 | 4.5 | Dish Tile / Follow / 뒤로 | 7.1 / (토글) / Back |
 | 4.4b | Find cooks | 4.6 |
 | 4.6 | Cook row / Follow·Following / 뒤로 | 4.5 / (토글) / Back |

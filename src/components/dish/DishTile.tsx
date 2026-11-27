@@ -13,7 +13,7 @@ const tileMediaHeight = (width: number) => Math.round((width * 208) / 167);
 /**
  * Dish Tile 670:20058 — Media (radius 24): Weather Tag XL top-left 8 · Acorn Tag XL bottom-left 8;
  * gap 6 → Text (px 20): Title (Title/S) · Byline "Comfort · Dinner" (Caption, fg/muted).
- * Used everywhere a dish grid or rail appears: 6.1 Profile, 4.5 Cook profile, 7.1 "More from", tables, challenges.
+ * Used everywhere a dish grid or rail appears: 6.1 Profile, 4.5 Cook profile, 7.1 "More from", tables.
  */
 /** `onAcorn` turns the Acorn Tag into a give / take-back toggle (`given` = filled); `acorns` overrides the count. */
 /** `place`: small label before the byline (Explore · Our area marks dishes from a wider range, e.g. "Mapo-gu"). */

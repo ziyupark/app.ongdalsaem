@@ -9,8 +9,7 @@ import { DishActionBar, useActionBarInset } from '../../src/components/dish/Dish
 import { type DishViewData } from '../../src/components/dish/DishView';
 import { PostView } from '../../src/components/dish/PostView';
 import { GlassIconButton, GlassPill } from '../../src/components/GlassIconButton';
-import { markChallengeEntered, markEditSaved, resetShareDraft, updateShareDraft, useShareDraft } from '../../src/lib/shareDraft';
-import { enterChallenge, setChallengeJoined } from '../../src/services/community';
+import { markEditSaved, resetShareDraft, updateShareDraft, useShareDraft } from '../../src/lib/shareDraft';
 import { createDish, updateDish, UploadError } from '../../src/services/foods';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
 import { isObjectionable } from '../../src/services/moderation';
@@ -66,22 +65,7 @@ export default function SharePreview() {
         resetShareDraft();
         return router.dismissTo(`/dish/${editId}`);
       }
-      const foodId = await createDish(d);
-      if (d.challenge) {
-        // 4.10 → 4.10b: join (entries need a participant row) and enter the dish, then back to the Challenges tab.
-        const id = d.challenge.id;
-        if (d.isPublic) {
-          try {
-            await setChallengeJoined(id, true);
-            await enterChallenge(id, foodId);
-            markChallengeEntered(id);
-          } catch (e) {
-            console.warn('[challenge entry]', e);
-          }
-        }
-        resetShareDraft();
-        return router.dismissTo({ pathname: '/community', params: { tab: 'challenges', at: String(Date.now()) } });
-      }
+      await createDish(d);
       resetShareDraft();
       router.dismissAll();
     } catch (e) {

@@ -1,4 +1,4 @@
-// Community (3.x Nearby · 4.x Global / Following / Tables / Challenges) — reads and writes on the tables in
+// Community (3.x Nearby · 4.x Global / Following / Tables) — reads and writes on the tables in
 // supabase/migrations/20261029000000_follows_and_messages.sql and 20261030020000_tables_questions_challenges.sql.
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Image } from 'react-native';
@@ -521,8 +521,6 @@ export type Answer = { id: string; body: string; author: Person; createdAt: Date
 
 /** The questions columns decorateQuestions reads. */
 const QUESTION_COLS = 'id, body, category, image_url, neighborhood, city, country, author_id, answer_count, created_at, mood, temp_c';
-/** The challenges columns decorateChallenges reads. */
-const CHALLENGE_COLS = 'id, slug, title, description, rule, tag, country, cover_url, starts_at, ends_at, participant_count, entry_count, theme';
 
 async function decorateQuestions(rows: Row[]): Promise<Question[]> {
   if (!rows.length) return [];
@@ -716,87 +714,6 @@ export async function deleteAnswer(id: string) {
   if (error) throw error;
 }
 
-
-// ---------------------------------------------------------------------------------------------- challenges
-
-type ChallengePhase = 'soon' | 'running' | 'ended';
-export type Challenge = {
-  id: string; slug: string; title: string; description: string | null; rule: string | null; tag: string; country: string | null; coverUrl: string | null;
-  startsAt: Date; endsAt: Date; participants: number; entries: number; joined: boolean; phase: ChallengePhase;
-  /** Illustration theme (lib/holidays THEME_IMAGE): chuseok · halloween · christmas · seollal · valentine · diwali · forest. */
-  theme: string;
-  /** I've posted an entry. */
-  entered: boolean;
-};
-
-const phaseOf = (s: Date, e: Date, now = Date.now()): ChallengePhase => (now < s.getTime() ? 'soon' : now >= e.getTime() ? 'ended' : 'running');
-
-async function decorateChallenges(rows: Row[]): Promise<Challenge[]> {
-  if (!rows.length) return [];
-  const me = await uid();
-  const ids = rows.map((r) => r.id);
-  const none = Promise.resolve({ data: [] as Row[] });
-  const [mine, posted] = await Promise.all([
-    me ? supabase.from('challenge_participants').select('challenge_id').eq('user_id', me).in('challenge_id', ids) : none,
-    me ? supabase.from('challenge_entries').select('challenge_id').eq('user_id', me).in('challenge_id', ids) : none,
-  ]);
-  const joined = new Set(((mine.data ?? []) as Row[]).map((r) => r.challenge_id));
-  const entered = new Set(((posted.data ?? []) as Row[]).map((r) => r.challenge_id));
-  return rows.map((r) => {
-    const startsAt = new Date(r.starts_at);
-    const endsAt = new Date(r.ends_at);
-    return {
-      id: r.id, slug: r.slug, title: r.title, description: r.description ?? null, rule: r.rule ?? null, tag: r.tag, country: r.country ?? null, coverUrl: r.cover_url ?? null,
-      startsAt, endsAt, participants: r.participant_count ?? 0, entries: r.entry_count ?? 0, joined: joined.has(r.id), phase: phaseOf(startsAt, endsAt),
-      theme: r.theme ?? 'forest', entered: entered.has(r.id),
-    };
-  });
-}
-
-/** 4.9 — all challenges (ended ones from the last 30 days). */
-export async function fetchChallenges(): Promise<Challenge[]> {
-  const since = new Date(Date.now() - 30 * 864e5).toISOString();
-  const { data, error } = await supabase.from('challenges').select(CHALLENGE_COLS).gte('ends_at', since).order('ends_at');
-  if (error) throw error;
-  return decorateChallenges(data as Row[]);
-}
-
-export async function fetchChallenge(slug: string): Promise<Challenge | null> {
-  const { data, error } = await supabase.from('challenges').select(CHALLENGE_COLS).eq('slug', slug).maybeSingle();
-  if (error) throw error;
-  return data ? (await decorateChallenges([data as Row]))[0] : null;
-}
-
-export async function setChallengeJoined(challengeId: string, on: boolean) {
-  const me = await needUid();
-  const { error } = on
-    ? await supabase.from('challenge_participants').insert({ challenge_id: challengeId, user_id: me })
-    : await supabase.from('challenge_participants').delete().eq('challenge_id', challengeId).eq('user_id', me);
-  if (error && error.code !== '23505') throw error;
-}
-
-export async function fetchChallengeEntries(challengeId: string, limit = 30): Promise<DishSummary[]> {
-  const { data, error } = await supabase
-    .from('challenge_entries')
-    .select(`created_at, food:foods(${SUMMARY_SELECT})`)
-    .eq('challenge_id', challengeId)
-    .order('created_at', { ascending: false })
-    .limit(limit);
-  if (error) throw error;
-  return (data as Row[]).filter((r) => r.food).map((r) => toSummary(r.food));
-}
-
-export async function fetchChallengeFaces(challengeId: string): Promise<Person[]> {
-  const { data } = await supabase.from('challenge_participants').select('user:profiles!user_id(id, display_name, username, avatar_url)').eq('challenge_id', challengeId).order('joined_at', { ascending: false }).limit(4);
-  return ((data ?? []) as Row[]).map((r) => toPerson(r.user));
-}
-
-/** After sharing a dish while in a challenge, enter it (RLS checks the dish is yours, public and the challenge is running). */
-export async function enterChallenge(challengeId: string, foodId: string) {
-  const me = await needUid();
-  const { error } = await supabase.from('challenge_entries').insert({ challenge_id: challengeId, food_id: foodId, user_id: me });
-  if (error && error.code !== '23505') throw error;
-}
 
 /** "2d 22h" / "5h 10m" until `to`. */
 export function timeLeft(to: Date, now = Date.now()) {

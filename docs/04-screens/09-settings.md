@@ -66,7 +66,7 @@
 - 그룹(라벨 없음): `clock` **Deleted on**(화살표 없음) · 값 = 오늘 + 30일(앱 언어 날짜, 예 "December 27, 2026")
 - Destructive L **Deactivate account** → 확인 팝업 "Deactivate your account?" / "Your account will be switched off and you’ll be signed out. If you don’t sign in again within 30 days, your account and everything in it will be deleted automatically." · Cancel · **Deactivate account** → `deactivate_own_account()` → 로그아웃 → 1.1 Splash
 - Ghost L **Keep my account** → 9.3
-- 비활성화 동안 다른 사람에게는 프로필(6.1 → 없는 계정 상태) · 요리 · 사진 · 댓글 · 질문 · 답변 · 메시지 대화 · 팔로우 · 도토리 · 테이블/챌린지 참여가 보이지 않고, 매일 추천 푸시에도 안 나온다(차단과 같은 방식)
+- 비활성화 동안 다른 사람에게는 프로필(6.1 → 없는 계정 상태) · 요리 · 사진 · 댓글 · 질문 · 답변 · 메시지 대화 · 팔로우 · 도토리 · 테이블 참여가 보이지 않고, 매일 추천 푸시에도 안 나온다(차단과 같은 방식)
 - 30일 안에 다시 로그인 → `reactivate_own_account()` → 팝업 "Welcome back" / "Your account is active again. Your profile and dishes are visible as before." → 모두 그대로. 30일이 지나면 서버가 9.9 삭제와 똑같이 지운다(purge-deactivated-accounts, 매일 1번)
 
 ### 9.4 Notifications — [193:6391](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6391)

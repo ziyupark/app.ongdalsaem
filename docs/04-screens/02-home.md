@@ -44,9 +44,6 @@
 
   사진 위 태그: Weather Tag = Weather 열의 아이콘 + 기온(예: `cloud-rain` `12°`), Acorn Tag = 1번 95 · 2번 74 · 3번 44 (2.6도 동일).
 
-
-> 챌린지에 참여 중일 때의 홈 = **2.1c Home · In a challenge** [484:11596](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=484-11596)(Story Card 위 Challenge Banner) — [04-community](04-community.md)
-
 ### 2.2 Home · Clear morning — [19:491](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=19-491)
 - "Wed, Oct 28 · Haeundae, Busan" / "Clear morning" / 19° "Clear and breezy" / H 24° · L 16°.
 - 슬롯: **Now** · Lunch 23° · Snack 24° · Dinner 20°(빈 → 8.1).

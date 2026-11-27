@@ -109,7 +109,7 @@
 | 점검 | 결과 | 판정 | 근거 |
 |---|---|---|---|
 | "Coming before launch" 안내 | 법률 문서 링크가 비어 있어 실제 사용자에게 노출됨 | **위험**(2.1 미완성) | `src/i18n/en.json` `documents.pendingTitle` · `app/settings/document.tsx:39` |
-| "곧 열려요" 빈 상태 | Tables 빈 상태 "New ones open soon." · Challenge "Starting soon". 데이터가 없으면 미완성 기능으로 보일 수 있음 | 위험(낮음): 심사 전에 실제 콘텐츠를 채워 둘 것 | `src/i18n/en.json` `emptyBody` · `challenge.soon` |
+| "곧 열려요" 빈 상태 | Tables 빈 상태 "New ones open soon." 데이터가 없으면 미완성 기능으로 보일 수 있음 | 위험(낮음): 심사 전에 실제 콘텐츠를 채워 둘 것 | `src/i18n/en.json` `emptyBody` |
 | 쓰지 않는 문구 | `share.comingSoon` "Soon": 코드에서 쓰지 않음 | 통과(노출 안 됨) | `src/i18n/en.json:327` |
 | 더미 이미지 | `assets/mock/` 9개 파일: 코드에서 참조하지 않아 번들에 안 들어감 | 통과(정리 권장) | `assets/mock/` |
 | 개발용 기능 | 테스트 계정 버튼 · 날씨 미리보기는 `__DEV__`에서만 보임 | 통과 | `app/sign-in.tsx` · `src/services/auth.ts:81-90` · `app/dev/weather.tsx` |
@@ -127,7 +127,7 @@
 | 사진 선택 | `MediaLibrary.requestPermissionsAsync`에 try/catch가 없다(예외 시 처리 안 된 Promise 거부) | 위험(낮음) | `app/share/pick.tsx:70-78` |
 | 카메라 권한 거부 | 거부하면 아무 안내 없이 끝남(크래시는 아님). 설정으로 안내하는 문구가 있으면 좋음 | 통과(UX 개선 여지) | `app/share/pick.tsx:91-92` |
 | 위치 권한 거부 | 거부 · 위치 서비스 꺼짐 · 오류 모두 null을 반환하고, 홈은 도시 선택 카드를 보여 줌 | 통과 | `src/services/location.ts:26-36` · `src/components/home/Cards.tsx:116-117` |
-| 목록 화면들 | 실패하면 빈 목록 · 오류 상태로 바뀜(무한 스피너 없음) | 통과 | `app/challenges.tsx:24` · `app/cooks-weather.tsx:27` · `app/challenge/[slug].tsx:58` · `app/viral/[name].tsx:45` · `app/question/[id].tsx:38` |
+| 목록 화면들 | 실패하면 빈 목록 · 오류 상태로 바뀜(무한 스피너 없음) | 통과 | `app/cooks-weather.tsx:27` · `app/viral/[name].tsx:45` · `app/question/[id].tsx:38` |
 | 로그인 실패 | 오류를 잡아 안내 문구 표시 | 통과 | `app/sign-in.tsx:48-64` |
 | 계정 삭제 실패 | 오류를 잡아 Alert, 버튼 다시 사용 가능 | 통과 | `app/settings/delete.tsx:40-43` |
 

@@ -92,14 +92,7 @@ interface Question { id: string; authorId: string; body: string;  // 5–200자
   expiresAt: string; createdAt: string }                        // 7일 — 3.1 · 3.7 · 3.8
 interface Answer { id: string; questionId: string; authorId: string; body: string; // ≤500자
   helpfulCount: number; helpful: boolean; createdAt: string }
-interface Challenge { id: string; slug: string; title: string; description?: string; rule?: string;
-  tag: string;                                     // 'MidnightRamyeon' → 게시물 태그 #MidnightRamyeon
-  country?: string; cover?: string; startsAt: string; endsAt: string;
-  participantCount: number; entryCount: number;
-  phase: 'upcoming'|'running'|'closing_soon'|'ended'; // closing_soon = 72시간 미만
-  joined: boolean; myEntryIds: string[] }          // 4.1 카드 · 4.10 · 4.10b
-interface ChallengeEntry { challengeId: string; dishId: string; userId: string; createdAt: string } // 기간 안 · 참여자 · 본인 공개 게시물
-// DB: supabase/migrations/20261030020000_tables_questions_challenges.sql — topic_tables(기본 6개) · table_members · table_posts · questions · answers · question_me_too · answer_helpful · challenges · challenge_participants · challenge_entries · view challenge_cards(phase · joined), 신고 대상에 question_id · answer_id 추가. 수는 트리거가 관리
+// DB: supabase/migrations/20261030020000_tables_questions_challenges.sql — topic_tables(기본 6개) · table_members · table_posts · questions · answers · question_me_too · answer_helpful · challenges · challenge_participants · challenge_entries · view challenge_cards(phase · joined — 챌린지는 v1 앱에서 뺐다, 테이블만 남음 · [99-removed-in-v1](04-screens/99-removed-in-v1.md)), 신고 대상에 question_id · answer_id 추가. 수는 트리거가 관리
 // DB: supabase/migrations/20261105000000_question_area_privacy.sql — questions.region_precision, question_areas(약 5 km geohash, 클라이언트 읽기 불가), ask_question()(질문 작성은 이것만) · nearby_questions(geohash)(약 20 km 범위, 차단 · 만료 제외)
 // Eat together는 2단계 — 데이터 모델 없음
 interface SupportTicket { id: string; userId: string; topic: 'bug'|'account'|'report_content'|'other';

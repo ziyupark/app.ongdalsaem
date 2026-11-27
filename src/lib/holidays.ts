@@ -1,30 +1,5 @@
-// Holidays around the world (4.1 Festive tables) + food-challenge themes (4.10 Challenges) — one illustration per theme.
-import { Cookie, Heart, Moon, Sparkles, Star, Sun, TreePine, type LucideIcon } from '../components/icons/ongdal';
+// Holidays around the world (4.1 Festive tables).
 import { HOLIDAY_DATES } from './holidayDates';
-import type { WeatherMood } from '../theme';
-
-export type ThemeKey = 'chuseok' | 'halloween' | 'christmas' | 'seollal' | 'valentine' | 'diwali' | 'forest';
-
-/** Illustrations (assets/holidays). Diwali has none yet — it falls back to its mood wash. */
-const THEME_IMAGE: Partial<Record<ThemeKey, number>> = {
-  chuseok: require('../../assets/holidays/chuseok.jpg'),
-  halloween: require('../../assets/holidays/halloween.jpg'),
-  christmas: require('../../assets/holidays/christmas.jpg'),
-  seollal: require('../../assets/holidays/seollal.jpg'),
-  valentine: require('../../assets/holidays/valentine.jpg'),
-  forest: require('../../assets/holidays/forest.jpg'),
-};
-
-/** Mood wash behind a theme (fallback when there is no illustration, and the tint for text over it). */
-export const THEME_MOOD: Record<ThemeKey, WeatherMood> = {
-  chuseok: 'clear-night', halloween: 'clear-night', christmas: 'snow', seollal: 'clear', valentine: 'clear', diwali: 'heat', forest: 'cloudy',
-};
-
-export const themeImage = (k: string | null | undefined) => (k && k in THEME_IMAGE ? THEME_IMAGE[k as ThemeKey] : THEME_IMAGE.forest);
-
-export const THEME_ICON: Record<ThemeKey, LucideIcon> = {
-  halloween: Cookie, christmas: Star, valentine: Heart, seollal: Sun, chuseok: Moon, diwali: Sparkles, forest: TreePine,
-};
 
 /**
  * Holidays around the world (4.1 Festive · the holiday sheet "옹달샘 · 세계의 명절 목록 초안"): food photo (Figma 697:11053
