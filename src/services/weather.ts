@@ -12,9 +12,13 @@ export async function owm<T>(body: Record<string, unknown>): Promise<T | null> {
   try {
     const { data, error } = await supabase.functions.invoke('weather', { body });
     if (error && __DEV__) {
-      // Dev builds only: why the weather is empty (status + the function's error code) in the Metro log.
-      const res = (error as { context?: Response }).context;
-      const detail = res ? `${res.status} ${await res.text().catch(() => '')}` : String(error);
+      // Dev builds only: why the weather is empty in the Metro log. HTTP / relay errors carry the Response
+      // (status + the function's error code); a network error (FunctionsFetchError) carries the fetch error instead.
+      const ctx = (error as { context?: unknown }).context;
+      const detail =
+        ctx && typeof (ctx as Response).text === 'function'
+          ? `${(ctx as Response).status} ${await (ctx as Response).text().catch(() => '')}`
+          : `${error.name}: ${error.message}${ctx ? ` — ${String((ctx as Error).message ?? ctx)}` : ''}`;
       console.warn('[weather]', body.kind, detail);
     }
     return error || data == null ? null : (data as T);
