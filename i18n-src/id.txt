@@ -376,7 +376,7 @@ seeAllComments=Lihat semua {{n}} komentar
 direct=Kirim
 offlineCopy=Kamu sedang offline — salinan tersimpan ini tetap bisa dipakai. Biji ek dan komentar muncul lagi saat online.
 inShopping=Ditambahkan
-addToShopping=Tambah ke belanja
+addToShopping=Tambah ke catatan belanja
 inFridgeZone=Ada di kulkas
 inFreezerZone=Ada di freezer
 [profile]

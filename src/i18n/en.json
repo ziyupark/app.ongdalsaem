@@ -475,7 +475,7 @@
     "direct": "Send",
     "offlineCopy": "You’re offline — this saved copy still works. Acorns and comments come back online.",
     "inShopping": "Added",
-    "addToShopping": "Add to shopping",
+    "addToShopping": "Add to shopping list",
     "inFridgeZone": "In the fridge",
     "inFreezerZone": "In the freezer"
   },
@@ -874,13 +874,13 @@
     "haveCount": "{{have}}/{{total}} ingredients on hand",
     "needs": "Need: {{items}}",
     "canCookEmpty": "Find recipes with what’s in your fridge.",
-    "shoppingZone": "Shopping memo",
-    "shoppingZoneTwoLine": "Shopping\nmemo",
+    "shoppingZone": "Shopping list",
+    "shoppingZoneTwoLine": "Shopping\nlist",
     "moveToFridge": "Bought → to the fridge",
-    "shoppingEmpty": "Nothing on your shopping memo yet. Pick Shopping memo above and add what to buy."
+    "shoppingEmpty": "Nothing on your shopping list yet. Pick Shopping list above and add what to buy."
   },
   "shopping": {
-    "added": "Added {{n}} to your shopping memo",
+    "added": "Added {{n}} to your shopping list",
     "remove": "Remove {{name}}"
   },
   "mealPlan": {
