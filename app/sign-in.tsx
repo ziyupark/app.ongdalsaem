@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
@@ -20,25 +21,26 @@ import { useTemp } from '../src/lib/prefs';
 import { placeLabel } from '../src/lib/useHere';
 import { requestDeviceLocation, reverseGeocodeCity, type Place } from '../src/services/location';
 import { fetchForecast, type Forecast } from '../src/services/weather';
-import { radius, space, useTheme, WEATHER_3D } from '../src/theme';
+import { radius, space, useTheme, WEATHER_3D, withAlpha } from '../src/theme';
 
 const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
 
 type Provider = 'Apple' | 'Google' | 'Dev';
 
 /**
- * 1207:10884 geometry (design px, 844 frame). weather header from y 54, centred: Logo row 40 → 22 → Overline → Weather
- * card · small (padding 12 16: temp Numeric/XL · condition Title/M · H/L · until Body/S) → Weather 3D 303×305 (y 225–530).
- * Block · Button at y 544 (14 under the 3D; Apple → Google → caption, gap 10), 142 above the Home Indicator.
+ * 1207:10884 geometry (design px, 844 frame). weather header from y 54, centred: Logo row 40 → 22 → Overline date
+ * (with the year) → 8 → Overline place → 7 → Weather card · small (padding 12 16: temp Numeric/XL · condition Title/M ·
+ * H/L · until Body/S) → Weather 3D 282×283 starting 4 above the card's bottom (y 250–533).
+ * Block · Button at y 544 (11 under the 3D; Apple → Google → caption, gap 10), 142 above the Home Indicator.
  * Landscape (Rectangle 22) = the splash image in a 390×650 box at y 194, cropped lower than on 1.1.
  */
 const HEADER_TOP = 54;
-const HERO = { w: 303, h: 305, below: 14 };
+const HERO = { w: 282, h: 283, overlap: 4, below: 11 };
 const ACTIONS_ABOVE_INDICATOR = 142;
 const LANDSCAPE = require('../assets/launch/splash-landscape.png');
 const ACTIONS_H = 124;
-/** Logo row 40 + 22 + Overline 14 + Weather card · small 95. */
-const HEADER_H = 171;
+/** Logo row 40 + 22 + date 14 + 8 + place 14 + 7 + Weather card · small 95. */
+const HEADER_H = 200;
 
 type Reading = { place: Place | null; forecast: Forecast };
 type WeatherHere = { status: 'loading' | 'ready' | 'denied' | 'failed'; reading: Reading | null };
@@ -112,21 +114,21 @@ export default function SignIn() {
   const temp = useTemp();
   const lang = i18n.language;
   const where = reading ? placeLabel(reading.place) || reading.forecast.city : '';
-  const date = new Date().toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric' });
+  const date = new Date().toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
   const hero = (f?.icon && WEATHER_3D[f.icon] ? f.icon : f?.mood) ?? 'clear';
   // Sky + motion follow the weather now (clear until it's known, or without location).
   const mood = f?.mood ?? 'clear';
   const weather = useMemo(() => ({ mood, timeOfDay: timeOfDayFor(mood, new Date()) }), [mood]);
   const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : '';
 
-  // Buttons sit 142 above the Home Indicator; the 3D weather (305 on 844+) shrinks to the room left under the
-  // header on small screens (iPhone SE), keeping 14 above the buttons.
+  // Buttons sit 142 above the Home Indicator; the 3D weather (283 on 844+) shrinks to the room left under the
+  // header on small screens (iPhone SE), keeping 11 above the buttons.
   const [headerH, setHeaderH] = useState(HEADER_H);
   const [actionsH, setActionsH] = useState(ACTIONS_H);
   const headerTop = Math.max(insets.top, HEADER_TOP);
   const actionsBottom = insets.bottom + ACTIONS_ABOVE_INDICATOR;
   const actionsTop = height - actionsBottom - actionsH;
-  const heroTop = headerTop + headerH;
+  const heroTop = headerTop + headerH - HERO.overlap;
   const k = Math.max(0, Math.min(1, (actionsTop - HERO.below - heroTop) / HERO.h));
 
   return (
@@ -135,16 +137,23 @@ export default function SignIn() {
       {/* Rectangle 22 (1268:17810): landscape at the bottom, under the sky and the glows (as on 1.1). */}
       <View pointerEvents="none" style={styles.landscape}>
         <Image source={LANDSCAPE} style={styles.landscapeImage} contentFit="fill" />
+        {/* The image's top edge sits under the white glow on 844; on taller phones the landscape (bottom-anchored)
+            drops below the glow — this 120 fade keeps its edge soft there. */}
+        <LinearGradient colors={[color('bg/subtle'), withAlpha(color('bg/subtle'), 0)]} style={styles.landscapeFade} />
       </View>
       <LaunchBackdrop weather={weather} />
 
-      {/* weather header 1268:17791 (centred): Logo row 40 → 22 → Overline date · place → Weather card · small. */}
+      {/* weather header 1268:17791 (centred): Logo row 40 → 22 → Overline date → 8 → Overline place → 7 → Weather card · small. */}
       <View style={[styles.header, { top: headerTop }]} onLayout={(e) => setHeaderH(e.nativeEvent.layout.height)}>
         <View style={styles.logoRow}>
           <Logo lockup="Compact" />
         </View>
         <View style={styles.center}>
-          <Text variant="Overline" numberOfLines={1}>{(where ? `${date} · ${where}` : date).toUpperCase()}</Text>
+          {/* 1268:17795 — the place line keeps its height while unknown, so the card doesn't move when it arrives. */}
+          <View style={styles.dateBlock}>
+            <Text variant="Overline" numberOfLines={1} style={styles.centerText}>{date.toUpperCase()}</Text>
+            <Text variant="Overline" numberOfLines={1} style={styles.centerText}>{where ? where.toUpperCase() : ' '}</Text>
+          </View>
           {/* Weather card · small 1268:17827 — the space stays while loading / without weather, so nothing jumps.
               Location off → "Turn on location" (Button Outline M, navigation) in its place → iOS Settings. */}
           <View style={styles.cardSlot}>
@@ -169,7 +178,7 @@ export default function SignIn() {
         </View>
       </View>
 
-      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 303×305, centred under the card. */}
+      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 282×283, centred, 4 into the card's bottom. */}
       <Image
         source={WEATHER_3D[hero]}
         style={[styles.hero, { top: heroTop, left: (width - HERO.w * k) / 2, width: HERO.w * k, height: HERO.h * k }]}
@@ -178,7 +187,7 @@ export default function SignIn() {
         pointerEvents="none"
       />
 
-      {/* Block · Button: Apple → Google → caption, gap 10, 112 above the Home Indicator. */}
+      {/* Block · Button: Apple → Google → caption, gap 10, 142 above the Home Indicator. */}
       <View style={[styles.actions, { bottom: actionsBottom }]} onLayout={(e) => setActionsH(e.nativeEvent.layout.height)}>
         {/* The free-Apple-ID test build (FREE_APPLE_TEAM=1) can't sign in with Apple. */}
         {FREE_TEAM ? null : <AuthButton provider="Apple" label={t('signIn.apple')} onPress={() => run('Apple')} loading={busy === 'Apple'} disabled={busy !== null} />}
@@ -214,9 +223,12 @@ const styles = StyleSheet.create({
  // Box 390×650 whose bottom meets the frame bottom (844); image 188.64 % × 67.27 % at 0.01 % / 43.2 % of it.
   landscape: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 650, overflow: 'hidden' },
   landscapeImage: { position: 'absolute', left: '0.01%', top: '43.2%', width: '188.64%', height: '67.27%' },
+  landscapeFade: { position: 'absolute', left: 0, right: 0, top: '43.2%', height: 120 },
   header: { position: 'absolute', left: space[20], right: space[20], gap: 22 },
   logoRow: { height: space[40], flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  center: { alignItems: 'center' },
+  center: { alignItems: 'center', gap: 7 },
+  dateBlock: { alignItems: 'center', gap: space[8] },
+  centerText: { textAlign: 'center' },
   // Weather card · small: padding 12 16, radius 24 (no fill); temp (padding 1 8 4) → 4 → condition (gap 6) / details (gap 2).
   card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[4], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.xl },
   tempBox: { paddingHorizontal: space[8], paddingTop: 1, paddingBottom: space[4], alignItems: 'center', justifyContent: 'center' },

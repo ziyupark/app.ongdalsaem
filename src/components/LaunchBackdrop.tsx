@@ -9,35 +9,38 @@ import { WeatherMoodLayer } from './WeatherMoodLayer';
 /** Sky height (`photo:welcome` 390×420). */
 const SKY_H = 420;
 
+/** Figma layer blur 103.3 = Gaussian σ 51.65 (Figma exports blur r as stdDeviation r/2 — cf. the sun shadow's 10.55). */
+const GLOW_SIGMA = 103.3 / 2;
+
 /** Normal CDF (Abramowitz–Stegun erf, |error| < 1.5e-7). */
-const phi = (x: number) => {
+function phi(x: number) {
   const z = Math.abs(x) / Math.SQRT2;
   const t = 1 / (1 + 0.3275911 * z);
   const erf = 1 - (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t) * Math.exp(-z * z);
   return 0.5 * (1 + (x < 0 ? -erf : erf));
-};
+}
+
 /**
  * The two glows are full-width bands, so their blur is purely vertical: a band y0–y1 blurred by σ has opacity
- * Φ((y − y0)/σ) − Φ((y − y1)/σ). Drawn as one vertical gradient (stops every 10 pt) — an SVG Gaussian blur this
- * large got cut off in a straight line on iOS.
+ * Φ((y − y0)/σ) − Φ((y − y1)/σ). Each band = one vertical gradient over y0 − 2.5σ … y1 + 2.5σ with 13 stops of that
+ * curve — an SVG Gaussian blur this large got cut off in a straight line on iOS.
  */
-const GLOW_BANDS: [number, number][] = [[302, 543], [228, 617]];
-const GLOW_FROM = 60;
-const GLOW_TO = 800;
-const GLOW_STOPS = Array.from({ length: (GLOW_TO - GLOW_FROM) / 10 + 1 }, (_, i) => {
-  const y = GLOW_FROM + i * 10;
-  const clear = GLOW_BANDS.reduce((c, [y0, y1]) => c * (1 - (phi((y - y0) / GLOW_SIGMA) - phi((y - y1) / GLOW_SIGMA))), 1);
-  return { at: i / ((GLOW_TO - GLOW_FROM) / 10), alpha: 1 - clear };
+const GLOWS = ([[302, 543], [236, 625]] as const).map(([y0, y1]) => {
+  const top = y0 - 2.5 * GLOW_SIGMA;
+  const h = y1 - y0 + 5 * GLOW_SIGMA;
+  const locations = Array.from({ length: 13 }, (_, i) => i / 12);
+  const alphas = locations.map((l) => {
+    const y = top + l * h;
+    return phi((y - y0) / GLOW_SIGMA) - phi((y - y1) / GLOW_SIGMA);
+  });
+  return { top, h, locations, alphas };
 });
-
-/** Figma layer blur 103.3 = Gaussian σ 51.65 (Figma exports blur r as stdDeviation r/2 — cf. the sun shadow's 10.55). */
-const GLOW_SIGMA = 103.3 / 2;
 
 /**
  * Launch backdrop shared by 1.1 Splash (1157:10518) and 1.2 Sign in (1207:10884), bottom → top:
  * - sky `photo:welcome` 390×420 = Mood/clear (LAUNCH_SKY) fading to bg/default, + Scrim top 0–120 (ink 18 % → 0);
- * - two soft white glows (layer blur 103.3): a full-width band y 302–543 and a 990-wide band y 228–617 (x −300),
- *   drawn as their vertical blur profile (GLOW_STOPS).
+ * - two soft white glows (layer blur 103.3): a full-width band y 302–543 and a 990-wide band y 236–625 (x −300),
+ *   drawn as their vertical blur profile (GLOWS).
  * Design px from the top, full width (the 390 frame stretches). The Fade layer of the frames sits under the sky
  * and is fully covered by it, so it isn't drawn.
  *
@@ -71,11 +74,14 @@ export function LaunchBackdrop({ weather }: { weather?: { mood: WeatherMood; tim
         ) : null}
         <LinearGradient colors={[withAlpha(ink, 0.18), withAlpha(ink, 0)]} style={styles.scrim} />
       </View>
-      <LinearGradient
-        colors={GLOW_STOPS.map((g) => withAlpha(glow, g.alpha)) as unknown as readonly [string, string, ...string[]]}
-        locations={GLOW_STOPS.map((g) => g.at) as unknown as readonly [number, number, ...number[]]}
-        style={styles.glow}
-      />
+      {GLOWS.map((g, i) => (
+        <LinearGradient
+          key={i}
+          colors={g.alphas.map((a) => withAlpha(glow, a)) as unknown as readonly [string, string, ...string[]]}
+          locations={g.locations as unknown as readonly [number, number, ...number[]]}
+          style={[styles.glow, { top: g.top, height: g.h }]}
+        />
+      ))}
     </View>
   );
 }
@@ -83,5 +89,5 @@ export function LaunchBackdrop({ weather }: { weather?: { mood: WeatherMood; tim
 const styles = StyleSheet.create({
   sky: { position: 'absolute', left: 0, right: 0, top: 0, height: SKY_H, overflow: 'hidden' },
   scrim: { position: 'absolute', left: 0, right: 0, top: 0, height: 120 },
-  glow: { position: 'absolute', left: 0, right: 0, top: GLOW_FROM, height: GLOW_TO - GLOW_FROM },
+  glow: { position: 'absolute', left: 0, right: 0 },
 });
