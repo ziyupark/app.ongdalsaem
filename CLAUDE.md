@@ -20,6 +20,7 @@
 8. **화면 문구는 i18n 키만 쓰고, 문구를 추가·수정할 때는 9개 언어를 같은 작업에서 함께 반영한다.** 9개 `src/i18n/<lang>.json`을 모두 직접 고친다(`i18n-src/*.txt`도 같이 맞춰 둔다). `i18n-src/build.py`는 지금 txt가 JSON보다 뒤처져 있어 돌리면 번역이 지워지니 쓰지 않는다. ja · zh-TW · id · th · vi에는 `_one` 키가 없는 것이 정상이다.
 9. **키 · 비밀번호 · 토큰은 절대 코드, 설정 파일, 커밋, 채팅에 붙여넣지 않는다.** 비밀 값은 `.env`(커밋 안 함)에만 두고, 새 값이 필요하면 `.env.example`에 이름만 추가한다.
 10. **작업이 끝나면 `npx tsc --noEmit`(= `npm run typecheck`)으로 확인**하고, 오류가 있으면 고친 뒤 결과를 그대로 알린다.
+11. **작업 보고는 짧게** — 바뀐 값, 확인이 필요한 것, 고친 문서 위치, 타입 검사 결과만 한 줄씩 적는다.
 
 ## 플랫폼
 React Native(Expo SDK 58, expo-router), iOS 우선 + Android. 소셜 로그인(Apple · Google)과 위젯 때문에 **Dev Build**(expo-dev-client)로 실행한다 — Expo Go 아님.
