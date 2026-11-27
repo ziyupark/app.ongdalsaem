@@ -46,7 +46,11 @@ type Now = { mood: WeatherMood; icon?: Weather3DKey; tempC: number; hi: number; 
  * are always *my* weather and place; avatar, name, status, acorns and dishes are theirs, with Follow / Message instead of
  * editing. Their Diary and Saved stay private, so only Dishes is shown.
  */
-export function ProfileScreen({ userId }: { userId?: string }) {
+/**
+ * `showFollow` / `showMessage` (another cook only, default on): the Follow · Message buttons under the bio
+ * (Weather Card 1233:14208 — Row 87 → 12 → bio → 14 → buttons). Both off = the plain card (Profile Header 126:4345).
+ */
+export function ProfileScreen({ userId, showFollow = true, showMessage = true }: { userId?: string; showFollow?: boolean; showMessage?: boolean }) {
   const isMe = !userId;
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -222,6 +226,7 @@ export function ProfileScreen({ userId }: { userId?: string }) {
   const nowDetail = now ? t('home.hiLo', { hi: displayTemp(now.hi), lo: displayTemp(now.lo) }) : t('home.retry');
   const nowUntil = now?.until ? t('home.untilLine', { time: now.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
+  const actions = !isMe && !!me && (showFollow || showMessage);
   // 6.1 Profile Header 126:4345 — ScreenHeader (gap 22) → [card → 22 → Block · Tabs (py 9, hairline)] → 8 → grid.
   const header = (
     <>
@@ -249,7 +254,9 @@ export function ProfileScreen({ userId }: { userId?: string }) {
           <WeatherIcon3D mood={now?.mood} icon={now?.icon} size={64} />
         </View>
         <View style={[styles.divider, { backgroundColor: color('border/default') }]} />
-        <View style={styles.idRow}>
+        {/* Buttons on (1233:14208): [Row 87 → 12 → bio] → 14 → buttons. Off (126:4345): Row → 14 → bio. */}
+        <View style={actions ? styles.idGroup : styles.idGroupPlain}>
+        <View style={[styles.idRow, actions && styles.idRowActions]}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('profile.changePhoto')} onPress={pickAvatar} disabled={!me || !isMe}>
             <View style={[styles.avatar, { backgroundColor: color('bg/accent-subtle'), borderColor: color('bg/subtle') }]}>
               {me?.avatarUrl ? <Image source={{ uri: me.avatarUrl }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} /> : (
@@ -276,17 +283,22 @@ export function ProfileScreen({ userId }: { userId?: string }) {
         ) : me?.bio ? (
           <Text variant="Body/S" color="fg/secondary">{me.bio}</Text>
         ) : null}
-        {isMe || !me ? null : (
+        </View>
+        {actions ? (
           <View style={styles.btns}>
-            {/* 1217:15137 — two 32-high buttons, gap 6: Follow = bg/kick + white (Following = bg/muted), Message = bg/muted + fg/muted. */}
-            <Pressable accessibilityRole="button" accessibilityState={{ selected: following }} onPress={toggleFollow} style={({ pressed }) => [styles.btn, { backgroundColor: color(following ? 'bg/muted' : 'bg/kick') }, pressed && styles.pressed]}>
-              <Text variant="Button/M" color={following ? 'fg/default' : 'static/white'} numberOfLines={1}>{t(following ? 'cook.following' : 'cook.follow')}</Text>
-            </Pressable>
-            <Pressable accessibilityRole="button" onPress={message} style={({ pressed }) => [styles.btn, { backgroundColor: color('bg/muted') }, pressed && styles.pressed]}>
-              <Text variant="Button/M" color="fg/muted" numberOfLines={1}>{t('cook.message')}</Text>
-            </Pressable>
+            {/* Frame 42 1233:14202 — 32-high buttons, gap 6.6, radius 9.6: Follow = bg/kick + white (Following = bg/muted), Message = bg/muted + fg/muted. */}
+            {showFollow ? (
+              <Pressable accessibilityRole="button" accessibilityState={{ selected: following }} onPress={toggleFollow} style={({ pressed }) => [styles.btn, { backgroundColor: color(following ? 'bg/muted' : 'bg/kick') }, pressed && styles.pressed]}>
+                <Text variant="Button/M" color={following ? 'fg/default' : 'static/white'} numberOfLines={1}>{t(following ? 'cook.following' : 'cook.follow')}</Text>
+              </Pressable>
+            ) : null}
+            {showMessage ? (
+              <Pressable accessibilityRole="button" onPress={message} style={({ pressed }) => [styles.btn, { backgroundColor: color('bg/muted') }, pressed && styles.pressed]}>
+                <Text variant="Button/M" color="fg/muted" numberOfLines={1}>{t('cook.message')}</Text>
+              </Pressable>
+            ) : null}
           </View>
-        )}
+        ) : null}
       </View>
       {/* Block · Tabs 1233:12327: "Dishes 48" · "Diary" · "Saved" (Title/M, fg/default · fg/muted). Another cook's = Dishes only. */}
       <UnderlineTabs
@@ -384,8 +396,11 @@ const styles = StyleSheet.create({
   cardGroup: { gap: 22 },
   center: { alignItems: 'center', justifyContent: 'center' },
   bioRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[8] },
-  btns: { flexDirection: 'row', gap: space[6] },
-  btn: { flex: 1, height: 32, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center', paddingHorizontal: space[10] },
+  btns: { flexDirection: 'row', gap: 6.6 },
+  btn: { flex: 1, height: 32, borderRadius: 9.6, alignItems: 'center', justifyContent: 'center', paddingHorizontal: space[10] },
+  idGroup: { gap: space[12] },
+  idGroupPlain: { gap: space[14] },
+  // Row 1233:14187 — 87 high when the buttons follow (the 105 name box is centred in it).
   pressed: { opacity: 0.85 },
   bioField: { borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: space[16], paddingTop: space[12], paddingBottom: space[8], gap: space[4] },
   bioInput: { minHeight: 72, textAlignVertical: 'top', padding: 0 },
@@ -401,6 +416,7 @@ const styles = StyleSheet.create({
   tabular: { fontVariant: ['tabular-nums'] },
   // Row 614:13914 — avatar 88 (1.2 white border) · 16 · name (105 tall).
   idRow: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
+  idRowActions: { height: 87 },
   avatar: { width: 88, height: 88, borderRadius: radius.full, borderWidth: 1.2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   // name 614:13916 — fixed 105 tall, centred, gap 11, 80 % opacity.
   name: { flex: 1, minWidth: 97, height: 105, gap: 11, justifyContent: 'center', opacity: 0.8 },

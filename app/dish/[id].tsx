@@ -243,7 +243,8 @@ export default function PostDetail() {
   }
 
   const firstName = dish.creator.name.split(' ')[0];
-  const openAuthor = () => (mine ? goTab('profile') : router.push(`/cook/${dish.creator.id}`));
+  // From a post the cook card has no Follow · Message buttons (Profile Header 126:4345).
+  const openAuthor = () => (mine ? goTab('profile') : router.push(`/cook/${dish.creator.id}?actions=0`));
   const meal = dish.meals.find(isPresetMeal);
 
   const actionBar = (
