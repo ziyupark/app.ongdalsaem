@@ -150,7 +150,8 @@ function WeatherTitle({ a, b, label }: { a: string; b: string; label: string }) 
 type Right = 'settings' | 'notifications' | 'more' | 'none';
 
 /**
- * Header shared by Home · Community · Timer · Profile — Frame 1238:15195, identical on every tab so nothing moves when
+ * Header shared by Home · Community · Timer · Profile — Figma component "weather header" 1238:15501 (was Frame 1238:15195),
+ * identical on every tab so nothing moves when
  * you switch: safe area → row 40 (logo · right button) → 22 → date · place (Overline) → 13 → weather title (Display/XL).
  * Only the space under the title belongs to the screen (12 · Home 18 · Profile 22). All its spacing lives here.
  * `right`: settings / notifications (unread dot) / more (`onMore`: report · block on another cook) / an empty 40 slot.

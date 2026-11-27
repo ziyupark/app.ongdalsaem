@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **weather header 컴포넌트**([1238:15501](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-15501)): 네 탭 공통 헤더를 Figma 컴포넌트로 분리 — 코드 `ScreenHeader`와 값이 같아 화면 변경 없음, 문서 · 코드 기준 노드만 연결
 - **4.4 오늘의 식탁 "Place your dish" 빈 접시 삭제**: 내 게시물이 없으면 내 자리 없이 이웃 접시만(My seat는 그대로). 점선 접시 이미지 · 문구 `following.placeMine` 9개 언어 삭제
 - **@ 전부 삭제**: 프로필 카드 · 설정 내 계정 · 차단 목록 · 9.2 아이디 안내(`settings.usernameHelper` 9개 언어)에서도 @ 삭제. Figma 프로필 카드 텍스트도 @ 없이
 - **화면에 없는 버튼 · 칩 기능 정리**: Me too · Helpful · Asker’s pick 저장 함수와 그것만 쓰던 불러오기(question_me_too · answer_helpful · best_answer_id) 삭제(DB 테이블 · 컬럼은 그대로). 안 쓰는 문구 `ask.answersOverline · askersPick · helpful · kind · meToo · pick · unpick` 9개 언어 삭제

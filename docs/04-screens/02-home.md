@@ -7,7 +7,7 @@
 ### 홈 공통 레이아웃 (2.1 / 2.2 / 2.3 / 2.6)
 1. [A] **Mood wash** — 현재 날씨 무드([§2.4](../01-foundations.md)) 그라데이션 85 % + **날씨 모션**(WeatherMoodLayer), 높이 420. 스크롤하면 내용과 함께 올라가며 사라진다. 앱 전체에 **하나뿐인 전역 배경**(WeatherBackdrop)이라 **Home · Community · Timer · Profile 네 탭이 같은 wash**를 쓰고, 탭을 옮겨도 모션이 끊기지 않는다([02-components §3.1b](../02-components.md)).
 2. StatusBar(글자색은 wash 밝기에 맞춤).
-3. **ScreenHeader**(네 탭 공통 · [1238:15195](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-15195) — 로고 · 날짜 · 제목은 **모든 탭에서 같은 위치 · 같은 모양**이라 탭을 바꿔도 움직이지 않는다. 좌우 20; 제목 아래만 화면별: 홈 18 · 프로필 22 · Community · Timer 12):
+3. **ScreenHeader**(네 탭 공통 · Figma 컴포넌트 **weather header** [1238:15501](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-15501) — 로고 · 날짜 · 제목은 **모든 탭에서 같은 위치 · 같은 모양**이라 탭을 바꿔도 움직이지 않는다. 좌우 20; 제목 아래만 화면별: 홈 18 · 프로필 22 · Community · Timer 12):
    - 헤더 행(높이 40): 좌 Logo(Compact) "ongdalsaem"(길게 누르면 개발용 메뉴), 우 IconButton(Soft, M) `bell`(알림 → **2.8**, 안 읽은 알림이 있으면 6px 점). *Map 버튼 없음.*
    - **22** → **날짜·위치 오버라인**: "Tue, Oct 27 · Mapo, Seoul"(제목과 같은 왼쪽 선).
    - **13** → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
