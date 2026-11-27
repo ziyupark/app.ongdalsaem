@@ -214,7 +214,7 @@ export default function Community() {
       <ScreenWash wash={wash} />
       <Animated.ScrollView
         ref={outer}
-        contentContainerStyle={{ paddingBottom: 110 + space[24] }}
+        contentContainerStyle={{ paddingBottom: 110 }}
         onScroll={onOuterScroll}
         scrollEventThrottle={16}
       >
@@ -222,7 +222,9 @@ export default function Community() {
         <Animated.View onLayout={(e) => { wrapY.current = e.nativeEvent.layout.y; placeTop(); }}>
         {/* Block · Tabs 330:7325 — no fill: the mood wash runs behind the title and the tabs. */}
         <View>
+          {/* Block · Tabs 1238:16782 — pt 14 (header pb 12 + 2) → tabs 43 → hairline. */}
           <UnderlineTabs
+            style={styles.tabsBlock}
             ink={tabInk}
             contentStyle={styles.tabRow}
             labelVariant="Title/M"
@@ -305,10 +307,10 @@ function Page({ index, width, height, sy, top, active, saved, onHeight, children
  * Tab hero title (Story of the day · Neighbors' Table) — Display/M fg/default (Fraunces like the header weather title),
  * always English; screen readers get the local string.
  */
-function HeroTitle({ k }: { k: string }) {
+function HeroTitle({ k, variant = 'Display/M' }: { k: string; variant?: 'Display/M' | 'Title/L' }) {
   const { t, i18n } = useTranslation();
   const en = useMemo(() => i18n.getFixedT('en'), [i18n]);
-  return <Text variant="Display/M" accessibilityRole="header" accessibilityLabel={t(k)} numberOfLines={1}>{en(k)}</Text>;
+  return <Text variant={variant} accessibilityRole="header" accessibilityLabel={t(k)} numberOfLines={1}>{en(k)}</Text>;
 }
 
 function Global() {
@@ -528,9 +530,9 @@ function Following() {
 
   return (
     <View>
-      {/* Title — same place and style as Story of the day on Explore. */}
+      {/* Group · Title 813:12215 — pt 22 · px 20 · pb 3, Title/L "Neighbors' Table". */}
       <View style={[styles.px, styles.storyTop]}>
-        <HeroTitle k="following.title" />
+        <HeroTitle k="following.title" variant="Title/L" />
       </View>
       <View style={styles.tables}>
       {tables.map((tb) => {
@@ -570,6 +572,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   flex: { flex: 1 },
   px: { paddingHorizontal: space[20] },
+  tabsBlock: { paddingTop: 2 },
   // Tabs 1113:25921 — gap 16, pl 20.
   tabRow: { gap: space[16], paddingHorizontal: space[20] },
   chipsTight: { flexDirection: 'row', gap: space[8], paddingHorizontal: space[20] },
@@ -579,7 +582,8 @@ const styles = StyleSheet.create({
   tagRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rows: { paddingHorizontal: space[20], paddingTop: space[4], gap: space[12] },
   storyTop: { paddingTop: space[42] - space[20] },
-  explore: { paddingVertical: 28, gap: 38 },
+  // Frame 48 (4.1 1238:16768) — pt 21 · pb 28, sections 38 apart; then the 110 tab bar spacer.
+  explore: { paddingTop: 21, paddingBottom: 28, gap: 38 },
   storyGroup: { gap: space[16] },
   group16: { gap: space[16] },
   // ⋯ on the photo, top right (the card's p24 corner).

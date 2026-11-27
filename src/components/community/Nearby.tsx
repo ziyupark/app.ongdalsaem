@@ -518,7 +518,8 @@ const styles = StyleSheet.create({
   popular: { gap: space[12] },
   popularList: { gap: space[12] },
   // minHeight (not height) so larger text sizes grow the card instead of clipping it.
-  popCard: { minHeight: 108, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[16], paddingVertical: space[8], borderRadius: radius['2xl'] },
+  // Food Card 318 inside p16: photo 80 · 10 · text 190 · 10 · chevron 20, 8 left empty at the end → right padding 16 + 8.
+  popCard: { minHeight: 108, flexDirection: 'row', alignItems: 'center', gap: space[10], paddingLeft: space[16], paddingRight: space[16] + space[8], paddingVertical: space[8], borderRadius: radius['2xl'] },
   popPhoto: { width: 80, height: 80, borderRadius: radius.lg },
   popText: { flex: 1, gap: 5, alignItems: 'flex-start' },
   ate: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 9, paddingVertical: 3, borderRadius: radius.full, maxWidth: '100%' },

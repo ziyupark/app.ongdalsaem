@@ -4,6 +4,8 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **4.1 Community · Explore 오토레이아웃 점검**([1238:16768](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-16768)): 탭 블록 위 12 → **14**, 본문 위 28 → **21**(아래 28 그대로), 바닥 여백 110 + 24 → **110**(Table · Challenges도 같음), Popular today 카드 오른쪽 padding 16 → **24**. 제목 "Story of the day" → **"Today’s Pick"**(9개 언어 `community.story`)
+- **4.4 "Neighbors' Table" 제목**([813:12215](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=813-12215)): Display/M → **Title/L**(Outfit Medium 22/27)
 - **Meal Slot**([131:4278](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=131-4278)): 높이 hug. 간격 6 하나 → [라벨 → **6** → 썸네일] → **0** → Weather Tag. Weather Tag 높이 24 고정 → **hug 32**(5 + 22 + 5). 칸 좌우 padding 4 → **0**
 - **프로필 Weather Card**([1233:14208](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1233-14208)): 버튼 불린 `showFollow` · `showMessage` 두 개 → **`showButton` 하나**(Follow · Message 함께). 카드 = 홈 Weather card와 같은 유리(배경 블러 + Elevation/3 그림자 추가), 아래 padding 18 → **17**. Now 줄 위 3 · 아래 4, 기온 padding 0 8 2 8 → **0 6 2 2**, 기온 → 상태 사이 4 → **0**
 - **홈 · 커뮤니티 · 프로필 · 타이머 헤더와 Weather card 같은 자리**(2.1 · 4.1 · 6.1 · 5.1): 제목 → Weather card 홈 18 · 프로필 22 → **둘 다 20**(카드 y 212). weather header는 네 탭 모두 y 54 그대로. 6.1 탭 구분선 → 그리드 8 → **10**

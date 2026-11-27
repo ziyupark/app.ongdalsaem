@@ -23,15 +23,15 @@
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
   1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash + 날씨 모션 · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3 — 네 탭 공통 로고 줄 → 22 → 오버라인 → 13 → 제목, Community는 제목 아래 12)
-  2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 **16**, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
-  3. 본문(1219:15437): 위아래 **28**, **섹션 사이 38**. 순서 = Story of the day → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
-  4. **Story of the day**(좌우 20, gap 16): Display/M 26 "Story of the day"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
+  2. **UnderlineTabs**(Block · Tabs 1238:16782 — 헤더 아래 **위 14**(헤더 12 + 2) → 탭 43 → 구분선): **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 **16**, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
+  3. 본문([1238:16768](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-16768) Frame 48): 위 **21** · 아래 **28**, **섹션 사이 38**. 순서 = Today’s Pick → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
+  4. **Today’s Pick**(좌우 20, gap 16): Display/M 26 "Today’s Pick"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
     - 고르는 규칙(**오늘의 픽**): 공개 게시물 중 **내 지금 날씨와 같은 날씨 + 기온 ±1°C**(`weather_condition` = 내 무드, `temperature_c` 내 기온 −1 ~ +1). 캡션 있는 최근 2일 → 최근 30일 → 캡션 없어도 최신 60개 중 도토리 많은 순. 맞는 게시물이 없거나 날씨를 모르면(위치 꺼짐) 날씨 조건 없이 같은 순서로 고른다.
      - 고르는 규칙: 최근 2일 · 캡션 있는 게시물 중 도토리 최다 → 없으면 최근 30일 → 그래도 없으면 최신 60개 중 도토리 최다(캡션 줄 생략). 섹션이 사라지지 않게 한다.
   5. **Popular today · Neighbourhood questions**(아래 "Our area")
   6. **Trending tags**(1113:25982, gap 16): SectionHeader "Trending tags" + ›(20, fg/default → 선택한 태그의 4.2) → 태그 칩(아이콘) 가로 스크롤(좌우 inset 20, 게시물에 많은 무드 태그 6개, 첫 태그 Selected) → Food Card Row 최대 3개(그 태그 게시물).
   7. **Special days around the world**(1113:25999, gap 16): 제목(Title/L) + ›(**24**, fg/default → **4.3-1** 전체 목록) → **Festive Card** 168×196 가로 스크롤(gap 12, 좌우 inset 20), **가까운 명절 8개**. 카드 → 그 명절의 **4.3-2**.
-  8. TabBar(Community, CreateFAB) — 바닥 여백 110 + 24.
+  8. TabBar(Community, CreateFAB) — 바닥 여백 **110**(Tab bar spacer).
 - Food Card Row(12:384): 썸네일 80 radius 16 · 14 · [Overline "끼니 · 기온°" → 4 → (Title/S 제목 → 3 → Caption "핸들 · 도시 · 시간")] · `bookmark` **24 fg/default**(저장 토글, 채움 = 저장됨) · **⋯**(남의 글일 때 → 신고·차단). 글자는 모두 fg/default.
 - **⋯ 메뉴**(Story · Question · Food Card): 7.3 ReportSheet — 신고(게시물 / 질문) · "{이름} 차단". 내 글에는 ⋯가 없다. 차단하면 화면 전체를 다시 불러오고, 차단한 사람의 글·질문은 RLS(`is_blocked_between`)로 모든 섹션에서 빠진다.
 - 상태: Popular today · 질문은 불러오는 동안 스피너, 실패·없음이면 안내 문구(무한 로딩 없음). 게시물 목록이 실패하면 맨 위 LoadError(Try again).
@@ -40,7 +40,7 @@
 #### 4.1 Our area — Popular today · Neighbourhood questions(4.1 1219:15435 · 1219:15436)
 - 위치가 켜져 있을 때(두 섹션 사이 38):
   - **Popular today**(1113:25935, gap 12): SectionHeader "Popular today" + 오른쪽 범위 배지(구 · 도시 · "도시 · Last 3 days" · "날씨 · Recent") → 카드 최대 3개(gap 12).
-    - 카드(1219:15534): bg/subtle, radius 2xl, padding 8 16, 최소 높이 108, gap 10 — 사진 80 radius lg → [알약 overlay/scrim "I ATE THIS ・ {n}"(Overline · Body/S Strong, fg/on-photo) → 5 → (왼쪽 9 안쪽, gap 2) Body/M Strong 요리 이름 · Caption **fg/default** "도시 · 시간"] → `chevron-right` **20 fg/default**(⋯ 없음 — 신고·차단은 7.1에서). 탭 → 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
+    - 카드(1219:15534): bg/subtle, radius 2xl, padding 8 24 8 16(Food Card 318 끝 8 빈칸), 최소 높이 108, gap 10 — 사진 80 radius lg → [알약 overlay/scrim "I ATE THIS ・ {n}"(Overline · Body/S Strong, fg/on-photo) → 5 → (왼쪽 9 안쪽, gap 2) Body/M Strong 요리 이름 · Caption **fg/default** "도시 · 시간"] → `chevron-right` **20 fg/default**(⋯ 없음 — 신고·차단은 7.1에서). 탭 → 7.1. 없으면 Body/S fg/muted "No dishes shared nearby today yet."
     - 규칙: 공개 **게시물 단위**로 "I ate this" 수(`food_eaten_counts`) 많은 순 → 도토리 → 최신. 범위: 오늘 내 칸(geohash 5자리)과 주변 칸 → 오늘 같은 구 → 오늘 같은 도시 → 도시 최근 3일 → 같은 날씨 최근 7일 순으로 3개까지 채운다. Story of the day 게시물은 뺀다.
   - **Neighbourhood questions**(1113:25960, gap 16): SectionHeader + ›(20, fg/default → 3.7 목록) → Question Card 최대 3개(gap 14) → Outline M `message-circle` **"Ask a question"**. 없으면 Body/S fg/muted "No questions nearby yet. Be the first to ask."
     - Explore Question Card(469:10124): bg/subtle, **테두리 없음**, radius **2xl(32)**, padding 16, gap 16 — Avatar 40 · Body/S Strong 이름 · Caption **fg/default** "구(또는 넓힌 범위) · 시간" · ⋯(남의 질문일 때) → Body/M fg/default 질문 → 사진(있을 때, 318:395 비율, radius 32) → 아래 줄(좌우 여백 **0**, 카드 안쪽 끝에 맞춤) [`message-circle` 24 + 답변 수 · 12 · `share` 24(시스템 공유: 질문 + 링크)] ··· **`bookmark` 24 = 질문 저장 토글**(채움 = 저장됨, 바로 바뀌고 실패하면 되돌림, DB question_saves). 카테고리 배지 · Me too는 없다(질문 카드 어디에도 없음 — 3.7 목록 · 3.8 상세 포함). 카드 → 3.8.
@@ -71,7 +71,7 @@
   3. **Group**(위 22 · gap 16): Display/M 한 줄 제목(`tag.headlines.<태그>`, 없으면 "{태그}") → **사진 카드 350×400 가로 스크롤**(gap 6, 좌우 20, 넘김 = 카드 한 장씩) — 이 태그 **인기 게시물 1–3위**, 사진만(아래 잉크 scrim). 탭 → 7.1.
   4. 18 → **동그란 카테고리**(가로 스크롤, 좌우 20, gap 16): 사진 64 원 + Caption 라벨(gap 8). 이 태그 게시물에 함께 많이 붙은 무드 태그 최대 6개(지금 태그 제외), 사진 = 그 태그 첫 게시물. 선택 = 2px fg/accent 테두리 + 라벨 fg/accent. 탭하면 같은 화면에서 그리드를 거르고, 다시 탭하면 해제.
   5. 32 → Overline fg/muted **"LATEST · {카테고리}"**(카테고리를 고르지 않았으면 "LATEST") → 12 → **Dish Tile 2열 그리드**(좌우 20, 열 16 · 줄 20) — **최신순**. Acorn Tag = 도토리 토글(내가 준 상태 기준, 누르면 숫자가 바로 바뀜). 비면 EmptyState "No #{tag} dishes here yet" / "Share one and it shows up here." 불러오기 실패 = LoadError(Try again).
-  6. TabBar(Community active, CreateFAB) — 바닥 여백 110 + 24.
+  6. TabBar(Community active, CreateFAB) — 바닥 여백 **110**.
 - 정렬 탭(Latest · Popular · By weather) · 정보 알약(내 날씨 · 요리 수) · 끼니 필터 시트는 없다.
 - 이동: 사진 · 타일 → 7.1 · 뒤로 → BACK · TabBar.
 - **명절 태그**도 같은 화면이다(명절 날짜 헤더 · CELEBRATED IN 칩은 없다).
@@ -94,7 +94,7 @@
 
 ### 4.4 Community · Following · Neighbors' Table — [730:11217](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=730-11217)
 - 4.1과 같은 상단(ScreenHeader + 탭 Explore · **Following** · Challenges). 세로 스크롤.
-- 제목 Display/M "Neighbors' Table"(Story of the day와 같은 자리 · 스타일) → **15**(제목 아래 3 + 6 + 6) → 날짜별 **Table** 카드(좌우 20, 사이 24).
+- 제목(Group · Title [813:12215](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=813-12215) — 위 22 · 좌우 20 · 아래 3) **Title/L** "Neighbors' Table"(항상 영어, Today’s Pick과 같은 자리) → **15**(제목 아래 3 + 6 + 6) → 날짜별 **Table** 카드(좌우 20, 사이 24).
 - **기간 = 최근 2주**(오늘 포함 14일). 오늘 테이블은 항상 맨 위, 그 아래는 게시물이 있는 날만 최신 날짜 순. 제목 = Today's table / Yesterday's table / 날짜.
 - **Table**(730:11437 — bg/subtle, radius 24, padding 16, gap 16): 헤더(padding 3 6, 양 끝 정렬: 제목 Title/M · **날짜 알약** — 0.6 fg/disabled 테두리, padding 3 8, Caption fg/secondary; 지난 날짜 테이블은 알약 없음) → 접시 3열(gap 16) → 넘치면 **See more**(Caption Strong).
   - 맨 앞 = **내 자리**: 그날 내 게시물(올린 순서대로, 이름 대신 **"My seat"** Caption Strong fg/accent, 1233:11754). 올린 게 없으면 내 자리 없이 이웃 접시만 — **"Place your dish" 빈 접시(730:11395)는 만들지 않는다.**
