@@ -147,7 +147,8 @@ function ChallengesBody({ onJoinY }: { onJoinY?: (y: number) => void }) {
     <View>
       {featured ? (
         <>
-          {/* Group · This week's challenge (826:15999) — p20 20 0 · gap 12 · title x20 = hero x20 (SectionHeader has its own px20): SectionHeader → Challenge Hero 350×400. */}
+          {/* Group · Title (1269:18120, pt 22 · pb 3) → Group · This week's challenge (826:15999, pt 6 → pt 6) → Challenge Hero 350×400;
+              title x20 = hero x20 (SectionHeader has its own px20). */}
           <View style={styles.featured}>
             <SectionHeader title={t('challenge.featured')} />
             <View style={styles.heroWrap}>
@@ -189,10 +190,13 @@ function ChallengesBody({ onJoinY }: { onJoinY?: (y: number) => void }) {
         </>
       ) : null}
 
-      {/* Group · Coming up — p32 · gap 12: header (more → all) → 168×220 Challenge Cards; Join early in place. */}
+      {/* Group · Coming up (826:16078) — pt 32 · gap 12: Inset (pt 22 · pb 3) header (more → all) → 168×220 Challenge Cards; Join early in place. */}
       {coming.length ? (
         <View style={styles.section}>
-          <SectionHeader title={t('challenge.comingUp')} onMore={() => router.push('/challenges')} />
+          {/* Inset 826:16079 — pt 22 · pb 3 around the header (only Coming up has it). */}
+          <View style={styles.comingHead}>
+            <SectionHeader title={t('challenge.comingUp')} onMore={() => router.push('/challenges')} />
+          </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
             {coming.map((c) => {
               const soon = c.phase === 'soon';
@@ -361,7 +365,8 @@ const styles = StyleSheet.create({
   loading: { marginTop: space[40] },
   flex: { flex: 1 },
   pressed: { opacity: 0.85 },
-  featured: { paddingTop: space[20], gap: space[12] },
+  // 4.10 (826:15539): Group · Title pt 22 → title → pb 3 + pt 6 + pt 6 = 15 → hero.
+  featured: { paddingTop: 22, gap: 15 },
   heroWrap: { paddingHorizontal: space[20] },
   hero: { height: 400, borderRadius: radius['2xl'], overflow: 'hidden', padding: space[20], gap: space[8] },
   heroTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -380,6 +385,7 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
   entry: { borderRadius: radius.md },
   section: { paddingTop: space[32], gap: space[12] },
+  comingHead: { paddingTop: 22, paddingBottom: 3 },
   carousel: { gap: space[12], paddingHorizontal: space[20] },
   card: { width: 168, height: 220, borderRadius: radius.xl, overflow: 'hidden', padding: space[16], gap: space[6] },
   badge: { width: 36, height: 36, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },

@@ -153,6 +153,7 @@
   2. **Your challenges**: 참여 중 챌린지 행(올렸으면 "Entry posted", 곧 시작 "Starts …", 아니면 "Post before …" + **Post** 버튼).
   3. **Top entries** + See all(→ 4.10): 그 챌린지 인증 사진 그리드.
   4. **Coming up** + See all(→ **4.9**): 가로 카드(남은 기간 대문자 · Join / Join early / Joined).
+- 간격([4.10 826:15539](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=826-15539)): **This week’s challenge** 제목(Title/L) 위 **22** → 제목 → 카드 **15**(3 + 6 + 6). **Coming up** = 섹션 위 32 + 제목 묶음 위 **22** · 아래 **3** → 12 → 카드(제목 → 카드 15). Recently ended · Viral Bites = 섹션 위 32, 제목 패딩 없음 → 12(Viral 6) → 카드.
   5. **Recently ended**: 끝난 챌린지 행(흐리게, "Ended {date} · {n} entries").
   - 맨 아래 **Viral Bites**(Figma 1113:25966, 위 32 · gap 6): SectionHeader "Viral Bites" → Country Card **전체 폭 × 180** 세로로 최대 3장(gap 12, r32, padding 14 18, 아래 120 잉크 페이드) — 위 Flag Tag(18, 12) + Viral badge(62, 12: "🔥 +n% this week" bg/kick · "✦ Editor’s pick" bg/inverse) · 아래 Display/M 요리 이름 → Weather Tag · Acorn Tag. 탭 → 4.7. 편집자 픽 먼저, 그다음 뜨는 요리. 없거나 실패하면 섹션을 숨긴다(챌린지가 없어도 보임). 모아 보는 목록 화면이 없어 제목 옆 ›는 두지 않는다.
   6. **How it works**: Join("Shows up on Home") · Cook(그 챌린지 규칙) · Post(#태그) + Caption "Challenges are made by ongdalsaem and last 3–14 days. Post one public dish with the tag while it runs."
