@@ -191,6 +191,8 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 | Handwriting | Gaegu Bold | 20 / 24 | 0 | 앱에서 지금 쓰는 곳 없음(옛 1.1b 편지 서명) |
 | Tagline | Outfit | 11 / 14 | 2.4 | UPPERCASE |
 
+> **글자 잘림 방지(코드)**: 줄 높이가 글꼴 자체 높이보다 작은 스타일(Title/M 18/18 · Overline 13/14 · Display/XL 46/49 · Display/L 34/37 · 큰 숫자 등)은 `Text`가 글꼴 자체 줄 높이로 그리고 위아래 음수 여백으로 줄여, 자리 높이는 토큰 그대로 두면서 글자 위 · 아래(g · y · p)가 잘리지 않게 한다.
+
 - 한글(Noto Sans KR): line-height 1.6 (16px 이상은 1.55), letter-spacing −0.2 ~ −0.4px.
 - 숫자는 모두 `font-variant-numeric: tabular-nums`.
 - 홈 Display/XL 제목은 **두 톤**: 앞 단어 `fg/default`, 날씨 단어(예: "Rainy")는 Gradient/Sunset linear 텍스트 채움 또는 `fg/accent`.

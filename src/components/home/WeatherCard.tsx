@@ -33,7 +33,7 @@ type Props = {
 
 /**
  * Weather Card 136:4716 — glass surface (glass/surface + blur, 1px bg/subtle edge, Elevation/3), radius 2xl, children centred.
- * Padding 18 20 17, gap 12. Now row (temp XXL 80 · condition / H·L / until · 3D icon 64) → divider → [Picks head (Overline · Refresh 32)
+ * Padding 18 20 17, gap 14. Now row (pt 3 · pb 4) (temp XXL 80 · condition / H·L / until · 3D icon 64) → divider → [Picks head (Overline · Refresh 32)
  * → 8 → Meal timeline (13 wider than the content box a side — slots 9 from the card edge; 4 equal slots of 82 at 390 wide, gap 2)].
  */
 export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots, picksHead, onRefresh, onSlotPress }: Props) {
@@ -152,17 +152,19 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: 18, paddingBottom: 17, gap: space[12], overflow: 'hidden', alignSelf: 'stretch' },
+  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: 18, paddingBottom: 17, gap: space[14], overflow: 'hidden', alignSelf: 'stretch' },
   // Picks head → 8 → Meal timeline (Figma 1088:23142).
   picks: { gap: space[8] },
-  now: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  // Now 876:13581 — temp (padding 0 · 8 · 2 · 8) · gap 4 · condition over H/L and "until" (gap 6, lines gap 2).
-  nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  tempBox: { paddingHorizontal: space[8], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
+  // Now 136:4503 — padding 3 0 4; Now main (244 of the 310 row) → 3D icon 64.
+  now: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingTop: 3, paddingBottom: space[4] },
+  // Now main 876:13581 — temp (padding 0 · 6 · 2 · 2) right next to condition over H/L and "until" (gap 6, lines gap 2).
+  nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  tempBox: { paddingLeft: space[2], paddingRight: space[6], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
   divider: { height: 1, alignSelf: 'stretch' },
-  head: { flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  // Picks head 329:362 — 32 high.
+  head: { height: 32, flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flex: { flex: 1 },
   refresh: { width: 32, height: 32, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
   // The timeline is the card's full width minus 8 a side, so it overhangs the content box by 20 + 1 (border) − 8 = 13.

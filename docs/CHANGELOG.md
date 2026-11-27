@@ -4,6 +4,8 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **Weather Card**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716)): gap 12 → **14**, Now 줄 padding **3 0 4** 추가, 기온 padding 0 8 2 8 → **0 6 2 2**, 기온 → 상태 4 → **0**, Now main → 3D 아이콘 14 → **2**, Picks head 높이 **32**
+- **글자 잘림 수정**: 줄 높이가 글꼴 높이보다 작은 모든 글자 스타일(Title/M · Overline · Display/XL · Display/L 등)에 큰 숫자와 같은 잘림 방지 적용(전에는 큰 숫자와 한 · 일 · 중 · 태 · 베트남어만). 자리 높이는 그대로
 - **4.4 Neighbors' Table 내 자리 다시 추가**([730:11217](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=730-11217)): 테이블 맨 앞에 내 게시물 = **"My seat"**(Caption Strong fg/accent), 오늘 올린 게 없으면 **"Place your dish"** 점선 빈 접시(→ 8.1). 문구 `following.placeMine · mySeat` 9개 언어 다시 추가. 테이블 헤더: 제목 아래 Caption → **양 끝 정렬 + 날짜 알약**(0.6 fg/disabled 테두리, padding 3 8), 헤더 padding 3 6. 제목 → 첫 테이블 6 → **15**
 - **6.x 프로필 헤더**(Profile Header [126:4345](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=126-4345)): 로고 줄 → 오버라인 → 제목 → 카드 간격 20 / 11 / 18 → **22 / 22 / 22**(ScreenHeader `profile`, 홈 · 커뮤니티는 그대로). 카드 gap 12 → **14**, 아바타 74 → **88**(테두리 border/default → 흰색 bg/subtle), 아이디 줄 높이 80 고정 삭제(이름 칸 105), 상태 메시지 Body/M → **Body/S**. 탭 구분선 화면 끝까지 → **좌우 20 안쪽**, 카드 → 탭 22 → **22 + 9**
 - **Display/M 글자 스타일**: 26/29 → **24/29**(−0.45 그대로, Figma 텍스트 스타일, 앱 전체 적용)

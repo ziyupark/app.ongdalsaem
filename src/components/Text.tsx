@@ -28,11 +28,12 @@ function localeFont(fontFamily: unknown, lang: string): TextStyle | null {
 }
 
 /**
- * Big numerals whose token line height is smaller than the font's own height (Numeric/XL 72/66 — Outfit needs ~91).
- * iOS then cuts the top of the glyphs. Render them with the font's natural line height and pull the box back in with
+ * Any token whose line height is smaller than the font's own height — Title/M 18/18 (Outfit needs 23), Overline 13/14,
+ * Display/XL 46/49 (Fraunces needs 57), the big numerals (Numeric/XL 72/66 needs 91) … iOS then cuts the top and the
+ * descenders (g · y · p) of the glyphs. Render them with the font's natural line height and pull the box back in with
  * negative margins: same layout height as the token, glyphs placed exactly as in Figma (half-leading split evenly).
+ * Tokens whose line height already fits (Body/M 15/20 …) are left as they are.
  */
-const UNCLIP = new Set<TextVariant>(['XXL 80', 'Numeric/XL', 'Numeric/L', 'Numeric/Timer']);
 
 /**
  * Scripts drawn taller than Outfit / Fraunces: Korean (Noto Sans KR, ~1.45 em) and the system fonts used for
@@ -67,7 +68,7 @@ export function Text({ variant = 'Body/M', color = 'fg/default', style, ...rest 
   const base = text[variant];
   const locale = localeFont(base.fontFamily, i18n.language);
   const lang = i18n.language;
-  const fit = (UNCLIP.has(variant) || TALL_SCRIPT.has(lang)) && base.fontSize && base.lineHeight
+  const fit = base.fontSize && base.lineHeight
     ? unclip(locale?.fontFamily ?? base.fontFamily, base.fontSize, base.lineHeight, lang)
     : null;
   return <RNText maxFontSizeMultiplier={fontScaleMax(base.fontSize)} {...rest} style={[base, locale, fit, { color: c(color) }, style]} />;
