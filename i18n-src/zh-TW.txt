@@ -602,6 +602,7 @@ deviceIs=你的手機設定為{{lang}}
 languageNote=關閉後可為 ongdalsaem 單獨選擇語言。料理貼文會保持原本撰寫的語言。
 allLanguages=所有語言
 languageUnits=天氣用語、心情標籤和日期會跟隨你選的語言。單位（°C / °F）另外設定。
+languageSoon=即將推出
 chooseCity=選擇城市
 searchCity=搜尋城市
 useCurrent=使用目前位置

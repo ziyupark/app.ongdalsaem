@@ -607,6 +607,7 @@ deviceIs=Seu celular está em {{lang}}
 languageNote=Desligue para escolher um idioma só para o ongdalsaem. Os posts continuam no idioma em que foram escritos.
 allLanguages=Todos os idiomas
 languageUnits=Palavras do clima, tags e datas seguem o idioma escolhido. As unidades (°C / °F) são definidas à parte.
+languageSoon=Em breve
 chooseCity=Escolher cidade
 searchCity=Buscar uma cidade
 useCurrent=Usar localização atual

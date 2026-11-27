@@ -602,6 +602,7 @@ deviceIs=お使いのスマートフォンは{{lang}}に設定されています
 languageNote=オフにすると ongdalsaem だけの言語を選べます。料理の投稿は書かれた言語のまま表示されます。
 allLanguages=すべての言語
 languageUnits=天気の言葉、気分タグ、日付は選んだ言語に従います。単位（°C / °F）は別に設定します。
+languageSoon=準備中
 chooseCity=街を選ぶ
 searchCity=街を検索
 useCurrent=現在地を使う

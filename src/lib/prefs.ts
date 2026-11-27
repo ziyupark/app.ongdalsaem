@@ -2,9 +2,9 @@
 // Account-level values (privacy, location, marketing) live on profiles and are saved by services/settings.ts.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSyncExternalStore } from 'react';
-import i18n, { deviceLanguage, ensureLanguage, type AppLanguage } from '../i18n';
+import i18n, { ensureLanguage, resolveLanguage, type AppLanguage } from '../i18n';
 
-export { deviceLanguage, NATIVE_NAMES, SUPPORTED_LANGUAGES } from '../i18n';
+export { deviceLanguage, isLaunched, NATIVE_NAMES, resolveLanguage, SUPPORTED_LANGUAGES } from '../i18n';
 
 export type TempUnit = 'C' | 'F';
 export type Prefs = {
@@ -37,7 +37,7 @@ const listeners = new Set<() => void>();
 
 
 function apply() {
-  const lng = prefs.language ?? deviceLanguage();
+  const lng = resolveLanguage(prefs.language);
   if (i18n.language !== lng) {
     ensureLanguage(lng);
     i18n.changeLanguage(lng).catch(() => undefined);

@@ -735,6 +735,7 @@
     "allLanguages": "すべての言語",
     "searchLanguages": "言語を検索",
     "languageUnits": "天気の言葉、気分タグ、日付は選んだ言語に従います。単位（°C / °F）は別に設定します。",
+    "languageSoon": "準備中",
     "chooseCity": "街を選ぶ",
     "searchCity": "街を検索",
     "useCurrent": "現在地を使う",

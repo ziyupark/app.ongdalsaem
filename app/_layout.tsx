@@ -8,7 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toast } from '../src/components/Toast';
 import { preloadWeather3D } from '../src/components/WeatherIcon3D';
-import { deviceLanguage } from '../src/i18n';
+import { resolveLanguage } from '../src/i18n';
 import { WeatherBackdrop } from '../src/components/WeatherBackdrop';
 import { coreFontFiles, koreanFontFiles, ThemeProvider, useTheme } from '../src/theme';
 import { loadPrefs, usePrefs } from '../src/lib/prefs';
@@ -86,7 +86,7 @@ export default function RootLayout() {
   const [prefsReady, setPrefsReady] = useState(false);
   const { language } = usePrefs();
   useEffect(() => { loadPrefs().finally(() => setPrefsReady(true)); }, []);
-  const loaded = coreLoaded && prefsReady && (koreanLoaded || (language ?? deviceLanguage()) !== 'ko');
+  const loaded = coreLoaded && prefsReady && (koreanLoaded || resolveLanguage(language) !== 'ko');
   usePushSync();
   useEffect(() => preloadWeather3D(), []);
   useEffect(() => {

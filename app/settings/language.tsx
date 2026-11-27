@@ -7,7 +7,7 @@ import { SettingsGroup, SettingsRow, SettingsScreen } from '../../src/components
 import { Text } from '../../src/components/Text';
 import { Toggle } from '../../src/components/Toggle';
 import type { AppLanguage } from '../../src/i18n';
-import { deviceLanguage, NATIVE_NAMES, setPrefs, SUPPORTED_LANGUAGES, usePrefs } from '../../src/lib/prefs';
+import { deviceLanguage, isLaunched, NATIVE_NAMES, resolveLanguage, setPrefs, SUPPORTED_LANGUAGES, usePrefs } from '../../src/lib/prefs';
 import { updateAccount } from '../../src/services/settings';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../src/theme';
 
@@ -19,14 +19,14 @@ export default function Language() {
   const { t } = useTranslation();
   const prefs = usePrefs();
   const device = deviceLanguage();
-  const current = prefs.language ?? device;
+  const current = resolveLanguage(prefs.language);
   const [q, setQ] = useState('');
   const needle = q.trim().toLowerCase();
   const shown = SUPPORTED_LANGUAGES.filter((l) => !needle || [l, NATIVE_NAMES[l], t(`settings.languages.${l}`)].some((s) => s.toLowerCase().includes(needle)));
 
   const choose = (lng: AppLanguage | null) => {
     setPrefs({ language: lng });
-    updateAccount({ language: lng ?? device }).catch(() => undefined);
+    updateAccount({ language: resolveLanguage(lng) }).catch(() => undefined);
   };
 
   return (
@@ -54,11 +54,14 @@ export default function Language() {
       <SettingsGroup label={t('settings.allLanguages')} note={t('settings.languageUnits')}>
         {shown.map((l) => {
           const on = current === l;
+          // v1 is English only: the other languages are listed but can't be picked yet ("Coming soon").
+          const soon = !isLaunched(l);
+          const off = prefs.language == null || soon;
           return (
-            <Pressable key={l} accessibilityRole="radio" accessibilityState={{ selected: on }} disabled={prefs.language == null} onPress={() => choose(l)} style={[styles.row, { backgroundColor: color('bg/default') }, prefs.language == null && { opacity: 0.5 }]}>
+            <Pressable key={l} accessibilityRole="radio" accessibilityState={{ selected: on, disabled: off }} disabled={off} onPress={() => choose(l)} style={[styles.row, { backgroundColor: color('bg/default') }, off && { opacity: 0.5 }]}>
               <View style={styles.flex}>
                 <Text variant="Body/M">{t(`settings.languages.${l}`)}</Text>
-                <Text variant="Caption" color="fg/muted">{NATIVE_NAMES[l]}</Text>
+                <Text variant="Caption" color="fg/muted">{soon ? `${NATIVE_NAMES[l]} · ${t('settings.languageSoon')}` : NATIVE_NAMES[l]}</Text>
               </View>
               {on ? <Icon icon={Check} size={20} color="fg/accent" /> : null}
             </Pressable>

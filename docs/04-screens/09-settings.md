@@ -101,7 +101,7 @@
 - **ALL LANGUAGES**(Radio Row, 스위치가 켜져 있으면 Disabled): 각 행 = 영어 이름 + **그 언어 자체 표기**(Noto Sans KR — 한/중/일 글자 표시용): English (United States) ✓ · Korean 한국어 · Japanese 日本語 · Chinese, Simplified 简体中文 · Spanish Español · French Français · German Deutsch · Italian Italiano · Portuguese Português (Brasil)
 - 캡션: "Weather words, mood tags and dates follow the language you pick. Units (°C / °F) are set separately."
 - 언어를 바꾸면 앱 문구가 즉시 바뀐다(재시작 없음, `i18next` + `expo-localization`). 사용자가 쓴 글(요리 이름·설명·직접 만든 무드)은 번역하지 않는다.
-- 출시 1차 언어: English · Korean. 나머지는 번역이 준비된 언어만 목록에 보인다.
+- **v1 출시 언어 = English만**(`LAUNCHED_LANGUAGES`, `src/i18n/index.ts`). 나머지 8개 언어는 목록에 보이지만 Disabled(50 %), 둘째 줄 "{자체 표기} · Coming soon"(`settings.languageSoon`). 기기 언어가 아직 열리지 않은 언어면 Use device language를 켜도 English로 보인다. 예전에 고른 언어가 저장돼 있어도 English. 번역 파일은 그대로 두고, 언어를 열 때 `LAUNCHED_LANGUAGES`에 추가한다.
 
 ### Diet & allergies (코드 기준, Figma 없음)
 - 9.1 Diet & allergies 행에서 연다(온보딩 Taste 다음 단계와 같은 폼). 누를 때마다 바로 저장.

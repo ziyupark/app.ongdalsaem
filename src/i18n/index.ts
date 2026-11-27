@@ -8,6 +8,18 @@ import en from './en.json';
 export const SUPPORTED_LANGUAGES = ['en', 'ko', 'ja', 'zh-TW', 'es', 'pt-BR', 'id', 'th', 'vi'] as const;
 export type AppLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
+/**
+ * Languages open in this release — v1 launches in English only. The other translations stay in the app; 9.6 lists
+ * them as "Coming soon". Add a language here to open it.
+ */
+export const LAUNCHED_LANGUAGES: readonly AppLanguage[] = ['en'];
+export const isLaunched = (l: AppLanguage) => LAUNCHED_LANGUAGES.includes(l);
+/** The language the app shows: my 9.6 choice, else the phone's — English when that one isn't open yet. */
+export function resolveLanguage(choice: AppLanguage | null | undefined): AppLanguage {
+  const l = choice ?? deviceLanguage();
+  return isLaunched(l) ? l : 'en';
+}
+
 /** Each language's own name (9.6 second line, support ticket). */
 export const NATIVE_NAMES: Record<AppLanguage, string> = {
   en: 'English',
@@ -54,7 +66,7 @@ export function ensureLanguage(lng: AppLanguage) {
   if (!i18n.hasResourceBundle(lng, 'translation')) i18n.addResourceBundle(lng, 'translation', LOAD[lng]());
 }
 
-const startLng = deviceLanguage();
+const startLng = resolveLanguage(null);
 i18n.use(initReactI18next).init({
   resources: { en: { translation: en }, ...(startLng !== 'en' ? { [startLng]: { translation: LOAD[startLng]() } } : {}) },
   lng: startLng,

@@ -602,6 +602,7 @@ deviceIs=Ponselmu memakai {{lang}}
 languageNote=Matikan untuk memilih bahasa khusus ongdalsaem. Postingan masakan tetap dalam bahasa aslinya.
 allLanguages=Semua bahasa
 languageUnits=Kata cuaca, tag suasana, dan tanggal mengikuti bahasa yang kamu pilih. Satuan (°C / °F) diatur terpisah.
+languageSoon=Segera hadir
 chooseCity=Pilih kota
 searchCity=Cari kota
 useCurrent=Gunakan lokasi saat ini

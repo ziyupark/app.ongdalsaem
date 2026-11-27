@@ -752,6 +752,7 @@
     "allLanguages": "모든 언어",
     "searchLanguages": "언어 검색",
     "languageUnits": "날씨, 기분 태그, 날짜가 고른 언어를 따라요. 온도 단위(°C / °F)는 따로 설정해요.",
+    "languageSoon": "준비 중",
     "chooseCity": "도시 선택",
     "searchCity": "도시 검색",
     "useCurrent": "현재 위치 사용",

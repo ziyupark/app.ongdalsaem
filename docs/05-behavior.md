@@ -87,7 +87,7 @@
 - 톤: 따뜻하고 날씨에 빗댄 짧은 문장. 사과보다 초대("Be the first table in this snow"). 오류 문구에 "실패" 대신 "napping", "didn’t upload — tap to retry"처럼 다음 행동을 제시.
 
 ### 9.1 다국어(i18n)
-- 앱 기본 언어 English. 1차 지원 English · Korean(9.6). 언어 결정 순서: 9.6에서 고른 언어 → 기기 언어(`expo-localization`) → English.
+- 앱 기본 언어 English. **v1 출시는 English만**(9.6 나머지 언어 "Coming soon"). 언어 결정 순서: 9.6에서 고른 언어 → 기기 언어(`expo-localization`) → English — 단, 출시하지 않은 언어(`LAUNCHED_LANGUAGES`에 없음)면 English.
 - UI 문구는 모두 i18n 키(`i18next`, `en.json` · `ko.json`). 화면에 문자열을 직접 쓰지 않는다. 날씨 단어·기본 무드 칩·끼니·명절 이름·날짜 형식도 번역 대상.
 - 번역하지 않는 것: 사용자가 쓴 글(요리 이름·설명·직접 만든 무드·댓글·메시지), 사용자 이름, 지명 고유명.
 - 폰트: 한·중·일 글자는 Noto Sans KR(fallback 체인 `Outfit → Noto Sans KR`), Gaegu는 지금 쓰는 화면 없음(옛 1.1b 편지).

@@ -602,6 +602,7 @@ deviceIs=Điện thoại của bạn đang dùng {{lang}}
 languageNote=Tắt để chọn ngôn ngữ riêng cho ongdalsaem. Bài đăng món ăn vẫn giữ ngôn ngữ gốc.
 allLanguages=Tất cả ngôn ngữ
 languageUnits=Từ ngữ thời tiết, thẻ tâm trạng và ngày tháng theo ngôn ngữ bạn chọn. Đơn vị (°C / °F) được đặt riêng.
+languageSoon=Sắp ra mắt
 chooseCity=Chọn thành phố
 searchCity=Tìm thành phố
 useCurrent=Dùng vị trí hiện tại
