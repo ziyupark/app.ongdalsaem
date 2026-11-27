@@ -1,3 +1,4 @@
+import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -28,7 +29,7 @@ import { myUserId, supabase } from '../../lib/supabase';
 import { follow } from '../../services/activity';
 import { startThread } from '../../services/messages';
 import { isObjectionable, reportUser } from '../../services/moderation';
-import { radius, space, text, useTheme, type Weather3DKey, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
+import { elevation, radius, space, text, useTheme, type Weather3DKey, type WeatherMood, FONT_SCALE_MAX } from '../../theme';
 
 /** Grid 670:20275 — x20 · 2 columns · gap 16 · rows 20 apart. */
 const GAP = 16;
@@ -47,10 +48,10 @@ type Now = { mood: WeatherMood; icon?: Weather3DKey; tempC: number; hi: number; 
  * editing. Their Diary and Saved stay private, so only Dishes is shown.
  */
 /**
- * `showFollow` / `showMessage` (another cook only, default on): the Follow · Message buttons under the bio
- * (Weather Card 1233:14208 — Row 87 → 12 → bio → 14 → buttons). Both off = the plain card (Profile Header 126:4345).
+ * `showButton` (another cook only, default on) — Weather Card 1233:14208's boolean: the Follow · Message buttons under
+ * the bio (Row 87 → 12 → bio → 14 → buttons). Off = the plain card (Profile Header 126:4345).
  */
-export function ProfileScreen({ userId, showFollow = true, showMessage = true }: { userId?: string; showFollow?: boolean; showMessage?: boolean }) {
+export function ProfileScreen({ userId, showButton = true }: { userId?: string; showButton?: boolean }) {
   const isMe = !userId;
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
@@ -226,7 +227,7 @@ export function ProfileScreen({ userId, showFollow = true, showMessage = true }:
   const nowDetail = now ? t('home.hiLo', { hi: displayTemp(now.hi), lo: displayTemp(now.lo) }) : t('home.retry');
   const nowUntil = now?.until ? t('home.untilLine', { time: now.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
-  const actions = !isMe && !!me && (showFollow || showMessage);
+  const actions = !isMe && !!me && showButton;
   // 6.1 Profile Header 126:4345 — ScreenHeader (gap 22) → [card → 22 → Block · Tabs (py 9, hairline)] → 8 → grid.
   const header = (
     <>
@@ -234,8 +235,9 @@ export function ProfileScreen({ userId, showFollow = true, showMessage = true }:
     <View style={styles.header}>
       {/* Frame 10 — card → 22 → tabs. */}
       <View style={styles.cardGroup}>
-      <View style={[styles.card, { borderColor: color('bg/subtle') }]}>
-        {/* Weather card 614:13895 — glass/surface fill only (no blur, no shadow). */}
+      <View style={[styles.card, elevation['Elevation/3 Float'], { borderColor: color('bg/subtle') }]}>
+        {/* Weather Card 1233:14208 — Surface/Glass card: blur 20 + glass/surface, 1px bg/subtle edge, Elevation/3 (as on Home). */}
+        <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
         <View style={[StyleSheet.absoluteFill, { backgroundColor: color('glass/surface') }]} />
         {/* Now 1094:24025 — same as the Home Weather Card: temp (padding 0 8 2 8) · 4 · condition → 6 → H/L · until (gap 2) · 14 · 3D icon 64. */}
         <View style={styles.nowRow}>
@@ -287,16 +289,12 @@ export function ProfileScreen({ userId, showFollow = true, showMessage = true }:
         {actions ? (
           <View style={styles.btns}>
             {/* Frame 42 1233:14202 — 32-high buttons, gap 6.6, radius 9.6: Follow = bg/kick + white (Following = bg/muted), Message = bg/muted + fg/muted. */}
-            {showFollow ? (
-              <Pressable accessibilityRole="button" accessibilityState={{ selected: following }} onPress={toggleFollow} style={({ pressed }) => [styles.btn, { backgroundColor: color(following ? 'bg/muted' : 'bg/kick') }, pressed && styles.pressed]}>
+            <Pressable accessibilityRole="button" accessibilityState={{ selected: following }} onPress={toggleFollow} style={({ pressed }) => [styles.btn, { backgroundColor: color(following ? 'bg/muted' : 'bg/kick') }, pressed && styles.pressed]}>
                 <Text variant="Button/M" color={following ? 'fg/default' : 'static/white'} numberOfLines={1}>{t(following ? 'cook.following' : 'cook.follow')}</Text>
               </Pressable>
-            ) : null}
-            {showMessage ? (
               <Pressable accessibilityRole="button" onPress={message} style={({ pressed }) => [styles.btn, { backgroundColor: color('bg/muted') }, pressed && styles.pressed]}>
                 <Text variant="Button/M" color="fg/muted" numberOfLines={1}>{t('cook.message')}</Text>
               </Pressable>
-            ) : null}
           </View>
         ) : null}
       </View>
@@ -405,11 +403,13 @@ const styles = StyleSheet.create({
   bioField: { borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: space[16], paddingTop: space[12], paddingBottom: space[8], gap: space[4] },
   bioInput: { minHeight: 72, textAlignVertical: 'top', padding: 0 },
   count: { alignSelf: 'flex-end' },
-  // Weather card 614:13895 — padding 18 20, gap 14.
-  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingVertical: 18, gap: space[14], overflow: 'hidden' },
-  nowRow: { flexDirection: 'row', alignItems: 'center', gap: space[14] },
-  nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[4] },
-  tempBox: { paddingHorizontal: space[8], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
+  // Weather Card 1233:14208 — padding 18 20 17, gap 14 (same box as the Home Weather Card).
+  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: 18, paddingBottom: 17, gap: space[14], overflow: 'hidden' },
+  // Now 1233:14128 — padding 3 0 4; Now main (244) → 3D icon 64.
+  nowRow: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingTop: 3, paddingBottom: space[4] },
+  // Temp (padding 0 · 6 · 2 · 2) right next to the condition.
+  nowMain: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  tempBox: { paddingLeft: space[2], paddingRight: space[6], paddingBottom: space[2], alignItems: 'center', justifyContent: 'center' },
   nowText: { flex: 1, gap: space[6] },
   details: { gap: space[2] },
   divider: { height: 1 },

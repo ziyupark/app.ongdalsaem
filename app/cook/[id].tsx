@@ -7,6 +7,5 @@ import { ProfileScreen } from '../../src/components/profile/ProfileScreen';
  */
 export default function CookProfile() {
   const { id, actions } = useLocalSearchParams<{ id: string; actions?: string }>();
-  const show = actions !== '0';
-  return <ProfileScreen userId={id} showFollow={show} showMessage={show} />;
+  return <ProfileScreen userId={id} showButton={actions !== '0'} />;
 }
