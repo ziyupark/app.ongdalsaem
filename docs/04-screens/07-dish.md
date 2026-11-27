@@ -6,6 +6,7 @@
 
 ### 7.1 Post detail — [20:1380](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=20-1380)
 사람들이 올린 게시물의 **유일한 상세 화면**. 홈 피드 게시물·Story Card·Food Card·Country Card·Dish Tile 등 모든 요리 카드가 여기로 온다(목업 데이터 = 홈 피드의 Minji 김치찌개 게시물, 구현 시 게시물 id로 내용만 바뀜). 피드 게시물을 누르면 **같은 사진·같은 태그 위치·같은 헤더·같은 캡션**이 그대로 이어지도록 Feed Post 컴포넌트를 재사용한다.
+- **배경 = 내 현재 날씨**(코드 기준): 탭과 같은 Mood wash(높이 420, 85 %) + **날씨 모션**(WeatherMoodLayer)을 이 화면 안에 그린다(푸시 화면은 투명할 수 없어 전역 WeatherBackdrop 대신 자기 wash). 스크롤하면 내용과 함께 올라가며 300pt까지 사라진다. 뒤로 · 작성자 줄 글자색 = wash 잉크(8 % · 20 % 지점). 화면이 가려지거나 앱이 백그라운드면 모션 멈춤, 날씨 값이 없으면(2.6) wash만, 위치 꺼짐 + 도시 없음이면 wash 없음. 게시물의 날씨는 사진 위 Weather Tag로만 보인다.
 - **댓글은 이 화면에 펼치지 않는다** — 댓글 아이콘을 누르면 7.2 시트로만 본다.
 - **골격**: 프레임 390×2030(내용 전체 길이) — 기기 화면 390×844에서 세로 스크롤(overflow Vertical). Top bar는 위, Action bar·Home Indicator는 **아래에 고정**(constraint Bottom). 레이어 순서 = Hero(absolute, 함께 스크롤) → Hero spacer 528 → Sheet → [고정] Top bar · Action bar · Home Indicator(numberOfFixedChildren 3). TabBar·FAB 없음(푸시 화면).
 - **Hero**(390×560, clip):

@@ -6,7 +6,7 @@ import { makeMutable } from 'react-native-reanimated';
  *
  * Shown only on the routes below (their screens are transparent so it shows through). Everywhere else — post detail
  * 7.x, settings, notifications, Question, Special days around the world and every other pushed screen — it fades
- * out (300 ms) and pauses behind that screen's opaque bg token, then fades back in and resumes where it stopped.
+ * out (300 ms) and pauses behind that screen's opaque bg token (7.1 draws its own wash + motion, ScreenWash `motion`), then fades back in and resumes where it stopped.
  * Pushed screens can't be transparent: the native stack would show the tab underneath through them.
  *
  * Key = expo-router segments joined with '/'. Add or remove a route here only.

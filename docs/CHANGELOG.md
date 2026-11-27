@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **7.1 Post detail 배경**: 내 현재 날씨의 Mood wash + 날씨 모션을 상세 화면에도 표시(스크롤 시 올라가며 사라짐, 뒤로 · 작성자 줄 글자색 = wash 잉크). `ScreenWash`에 `motion` 옵션 추가(다른 푸시 화면은 그대로 그라데이션만)
 - **4.2 Tag 그리드 도토리 수정**: Dish Tile의 Acorn Tag가 눌리지 않던 문제 → 도토리 토글(내가 준 상태 기준). 같은 그리드(FoodGrid)를 쓰는 4.3 Country · 명절 · Viral · 4.4 Table · Nearby 그리드도 같이 적용
 - **4.1 Community · Explore**(1113:25908) 다시 맞춤: 본문 위아래 32 → **28**, 탭 간격 24 → **16**. SectionHeader `›`(Neighbourhood questions · Trending tags) fg/muted → **fg/default**, Special days `›` 20 → **24** fg/default(SectionHeader에 `moreColor` · `moreSize` 추가, 다른 화면은 그대로). Popular today 카드: Caption fg/muted → fg/default, ⋯ → **`chevron-right` 20**(신고·차단은 7.1). Question Card: 테두리 삭제, radius 16 → **32**, "구 · 시간" fg/muted → fg/default
 - **Food Card · Row**(12:384): 오버라인 → 제목 묶음 간격 3 → **4**, 제목 → 바이라인 0 → **3**, 북마크 20 fg/muted → **24 fg/default**, 오버라인 · 바이라인 fg/muted → fg/default(4.1 인스턴스)

@@ -1,7 +1,6 @@
 import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goTab } from '../../src/components/TabBar';
-import { StatusBar } from 'expo-status-bar';
 import { ChefHat, ChevronLeft, ChevronRight, Utensils } from '../../src/components/icons/ongdal';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +15,8 @@ import { PostView } from '../../src/components/dish/PostView';
 import { ReportSheet } from '../../src/components/dish/ReportSheet';
 import { ShareSheet } from '../../src/components/dish/ShareSheet';
 import { Icon } from '../../src/components/Icon';
+import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
+import { useWashScroll } from '../../src/lib/useWashScroll';
 import { InlineBanner } from '../../src/components/InlineBanner';
 import { Text } from '../../src/components/Text';
 import { Toast } from '../../src/components/Toast';
@@ -44,6 +45,10 @@ export default function PostDetail() {
   const { color } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  // My current weather behind the post: the wash + weather motion, drawn in this (opaque, pushed) screen.
+  const wash = useWashScroll();
+  const backInk = useScreenInk(0.08);
+  const cookInk = useScreenInk(0.2);
   const [state, setState] = useState<State>({ kind: 'loading' });
   const [more, setMore] = useState<DishSummary[]>([]);
   // "I made this": who cooked from this recipe · the recipe this one was cooked from.
@@ -217,10 +222,10 @@ export default function PostDetail() {
   if (state.kind !== 'ready' || !view || !dish) {
     return (
       <View style={[styles.root, { backgroundColor: color('bg/default'), paddingTop: insets.top }]}>
-        <StatusBar style="auto" />
+        <ScreenWash wash={wash} local motion />
         <View style={styles.backRow}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[8]} onPress={() => router.back()}>
-            <Icon icon={ChevronLeft} size={24} />
+            <Icon icon={ChevronLeft} size={24} color={backInk?.strong} />
           </Pressable>
         </View>
         <View style={styles.center}>
@@ -308,7 +313,7 @@ export default function PostDetail() {
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
-      <StatusBar style="auto" />
+      <ScreenWash wash={wash} local motion />
       <PostView
         dish={view}
         given={given}
@@ -326,6 +331,8 @@ export default function PostDetail() {
         comments={comments}
         more={made || moreFrom ? <>{made}{moreFrom}</> : null}
         scrollToComments={openComments === '1'}
+        onScrollY={wash.onY}
+        topInk={cookInk ? { strong: cookInk.strong, muted: cookInk.muted, secondary: cookInk.secondary } : undefined}
         banner={offline ? (
           <InlineBanner text={t('dish.offlineCopy')} />
         ) : undefined}

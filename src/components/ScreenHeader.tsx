@@ -1,9 +1,9 @@
 import { router, useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Bell, ChevronLeft, MoreHorizontal, Settings } from './icons/ongdal';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDevWeather } from '../lib/devWeather';
@@ -12,13 +12,14 @@ import { placeLabel, useHere } from '../lib/useHere';
 import { hasUnread } from '../services/activity';
 import { washScrollY } from '../lib/weatherBackdrop';
 import type { WashScroll } from '../lib/useWashScroll';
-import { space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
+import { FX_TIMING, space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
 import { bwOn, useWashInk, washOpacity } from '../theme/washInk';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import { Logo } from './Logo';
 import { MoodGradient } from './MoodGradient';
 import { Text } from './Text';
+import { WeatherMoodLayer } from './WeatherMoodLayer';
 
 /** Wash height — the same on Home · Community · Timer · Profile. */
 const WASH_HEIGHT = 420;
@@ -59,9 +60,11 @@ export function useScreenInk(at: number) {
  * Status bar ink for the wash + the wash itself. On the four tabs the wash (and its weather motion) is the global
  * WeatherBackdrop behind the transparent screen — this only feeds it this screen's scroll offset while focused, so
  * the wash moves up with the content and fades out. `local` (a pushed screen, e.g. another cook's profile): the
- * screen is opaque, so it draws a still wash of its own that scrolls with `wash.style`.
+ * screen is opaque, so it draws a still wash of its own that scrolls with `wash.style`. `motion` (with `local`, e.g.
+ * 7.1 Post detail): that wash also carries my weather's motion (WeatherMoodLayer) — paused while the screen is not
+ * focused or the app is in the background, hidden when there is no weather reading (2.6).
  */
-export function ScreenWash({ wash, local = false }: { wash: WashScroll; local?: boolean }) {
+export function ScreenWash({ wash, local = false, motion = false }: { wash: WashScroll; local?: boolean; motion?: boolean }) {
   const { scheme } = useTheme();
   const { on, mood } = useScreenWeather();
   const logoInk = useWashInk(on ? mood : null, 0.12, WASH_OPACITY);
@@ -80,9 +83,36 @@ export function ScreenWash({ wash, local = false }: { wash: WashScroll; local?: 
       {local && on ? (
         <Animated.View pointerEvents="none" style={[styles.wash, wash.style]}>
           <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
+          {motion ? <LocalMotion /> : null}
         </Animated.View>
       ) : null}
     </>
+  );
+}
+
+/** Weather motion inside a pushed screen's own wash — runs only while that screen is focused and the app is active. */
+function LocalMotion() {
+  const { width } = useWindowDimensions();
+  const { mood, forecast, dev } = useScreenWeather();
+  const fxMood = dev?.mood ?? forecast?.mood ?? null;
+  const timeOfDay = dev?.timeOfDay ?? timeOfDayFor(mood, new Date());
+  const [focused, setFocused] = useState(false);
+  useFocusEffect(useCallback(() => { setFocused(true); return () => setFocused(false); }, []));
+  const [active, setActive] = useState(AppState.currentState !== 'background');
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (st) => setActive(st === 'active'));
+    return () => sub.remove();
+  }, []);
+  if (!fxMood) return null;
+  return (
+    <WeatherMoodLayer
+      mood={fxMood}
+      timeOfDay={timeOfDay}
+      running={focused && active}
+      width={width}
+      height={WASH_HEIGHT}
+      delay={FX_TIMING.startDelay}
+    />
   );
 }
 
