@@ -76,10 +76,13 @@ export function WeekStrip({ onMonth }: { onMonth: () => void }) {
     <View style={styles.root}>
       <View style={styles.head}>
         {/* Always "Weekly Menu" — no date range, on this week or after the arrows. */}
-        <Text variant="Title/M" style={styles.flex}>{t('diary.thisWeek')}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={t('diary.monthView')} onPress={onMonth} hitSlop={space[8]}>
-          <Icon icon={CalendarDays} size={20} color="fg/accent" />
-        </Pressable>
+        {/* Month view sits right after the title; the week arrows stay at the right end. */}
+        <View style={styles.title}>
+          <Text variant="Title/M" numberOfLines={1} style={styles.shrink}>{t('diary.thisWeek')}</Text>
+          <Pressable accessibilityRole="button" accessibilityLabel={t('diary.monthView')} onPress={onMonth} hitSlop={space[8]}>
+            <Icon icon={CalendarDays} size={20} color="fg/accent" />
+          </Pressable>
+        </View>
         <Pressable accessibilityRole="button" accessibilityLabel={t('diary.prevWeek')} onPress={() => setOffset((o) => o - 1)} hitSlop={space[8]}>
           <Icon icon={ChevronLeft} size={20} color="fg/muted" />
         </Pressable>
@@ -143,7 +146,8 @@ export function WeekStrip({ onMonth }: { onMonth: () => void }) {
 const styles = StyleSheet.create({
   root: { gap: space[10] },
   head: { flexDirection: 'row', alignItems: 'center', gap: space[16] },
-  flex: { flex: 1 },
+  title: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[8] },
+  shrink: { flexShrink: 1 },
   row: { flexDirection: 'row', gap: space[4] },
   cell: { flex: 1, alignItems: 'center', gap: space[4], paddingVertical: space[8], borderRadius: radius.lg, borderWidth: 2 },
   wx: { flexDirection: 'row', alignItems: 'center', gap: space[2], minHeight: 16 }, // grows with larger text sizes

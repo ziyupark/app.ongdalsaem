@@ -889,6 +889,7 @@
     "needs": "Need: {{items}}",
     "canCookEmpty": "Find recipes with what’s in your fridge.",
     "shoppingZone": "Shopping memo",
+    "shoppingZoneTwoLine": "Shopping\nmemo",
     "moveToFridge": "Bought → to the fridge",
     "shoppingEmpty": "Nothing on your shopping memo yet. Pick Shopping memo above and add what to buy."
   },

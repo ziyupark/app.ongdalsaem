@@ -33,7 +33,7 @@
 - **내가 올린 요리만** 보여 준다("I ate this" 기록은 이번 주 줄 · 월 보기 · 월 요약에 넣지 않는다).
 - 순서(위→아래): **이번 주 한 줄** → **월 요약 한 줄** → **Fridge memo**(냉장실/냉동실 → What you can cook now) → **Shopping list**.
 - **이번 주 한 줄**
-  - 헤더: Title/M "Weekly Menu"(날짜 범위 없음 — 지난주 · 다음주로 넘겨도 제목은 그대로) · `calendar-days` 20 fg/accent(Month view) · `chevron-left`/`chevron-right` 20 fg/muted(지난주/다음주, 제한 없음). 어느 주인지는 칸의 날짜로 본다.
+  - 헤더: Title/M "Weekly Menu"(날짜 범위 없음 — 지난주 · 다음주로 넘겨도 제목은 그대로) → 8 → `calendar-days` 20 fg/accent(Month view, 제목 바로 오른쪽) ··· 오른쪽 끝 `chevron-left`/`chevron-right` 20 fg/muted(지난주/다음주, 제한 없음, 사이 16). 어느 주인지는 칸의 날짜로 본다.
   - 7칸(로케일 주 시작 요일을 따름 — 기기 Intl 정보, 없으면 es · vi = 월요일, 나머지 = 일요일). 칸 = 요일 한 글자 · 날짜 · 날씨 줄(아이콘 14) · 원형 36. **오늘 칸** = border/focus 2 + 요일 · 날짜 fg/accent.
   - **지난 날**: 그날 날씨 아이콘 + 내가 만든 요리 원형 사진. 없으면 빈칸. 탭 → 그 요리 7.1.
   - **오늘 · 앞으로**: 예보 날씨 아이콘 + 최고기온 + 계획한 요리(사진, 없으면 이름 첫 글자 · bg/accent-subtle). 계획 없으면 점선 원 `plus`. 예보가 없는 먼 날짜는 날씨 생략.
@@ -46,7 +46,7 @@
 
 ### 6.3 Fridge memo(Diary 탭 아래) — 코드 기준, Figma 없음
 - **기기에만 저장**(서버에 올리지 않음).
-- Title/M "Fridge" → **칸 선택** 3개(높이 48, radius input 20): **Fridge** · **Freezer** · **Shopping memo**(선택 = bg/inverse + fg/inverse, 아니면 bg/subtle + border/default).
+- Title/M "Fridge" → **칸 선택** 3개(높이 48, radius input 20): **Fridge** · **Freezer** · **Shopping memo**(선택 = bg/inverse + fg/inverse, 아니면 bg/subtle + border/default). 글자 Button/M 15/20 가운데 정렬 — Shopping memo만 **2줄**("Shopping / memo", 행간 20 → 40, 키 `fridge.shoppingZoneTwoLine`).
   - 고른 칸의 **상자가 강조**된다: 상자 테두리 2 border/focus(다이어리 오늘 칸과 같음). 고르지 않은 상자는 투명 테두리 2라 크기 · 안쪽 위치는 같다(테두리 2 + padding 14 = 16).
 - **입력 줄**(높이 48): Input "Add an ingredient" + Button M "Add" → 고른 칸(Shopping memo면 장보기 목록)에 추가.
 - **칸별 상자** Fridge / Freezer: 재료 칩. 넣은 지 **7일이 넘으면 칩 테두리 fg/accent**. 칩 탭 → "Remove {name}?" 확인 후 삭제. 비었으면 "Nothing in the fridge yet. Add what you just put in."

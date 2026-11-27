@@ -881,6 +881,7 @@
     "needs": "Kurang: {{items}}",
     "canCookEmpty": "Temukan resep dari bahan di kulkasmu.",
     "shoppingZone": "Catatan belanja",
+    "shoppingZoneTwoLine": "Catatan\nbelanja",
     "moveToFridge": "Sudah dibeli → ke kulkas",
     "shoppingEmpty": "Catatan belanja masih kosong. Pilih Catatan belanja di atas dan tulis yang mau dibeli."
   },
