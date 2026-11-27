@@ -113,7 +113,7 @@ export default function Privacy() {
             </View>
             <View style={styles.flex}>
               <Text variant="Body/M Strong">{u.name}</Text>
-              {u.handle ? <Text variant="Caption" color="fg/muted">{`@${u.handle}`}</Text> : null}
+              {u.handle ? <Text variant="Caption" color="fg/muted">{u.handle}</Text> : null}
             </View>
             <Button label={t('settings.unblock')} variant="Outline" size="S" onPress={() => unblock(u)} />
           </View>

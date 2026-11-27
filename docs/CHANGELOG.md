@@ -4,6 +4,9 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **4.4 오늘의 식탁 "Place your dish" 빈 접시 삭제**: 내 게시물이 없으면 내 자리 없이 이웃 접시만(My seat는 그대로). 점선 접시 이미지 · 문구 `following.placeMine` 9개 언어 삭제
+- **@ 전부 삭제**: 프로필 카드 · 설정 내 계정 · 차단 목록 · 9.2 아이디 안내(`settings.usernameHelper` 9개 언어)에서도 @ 삭제. Figma 프로필 카드 텍스트도 @ 없이
+- **화면에 없는 버튼 · 칩 기능 정리**: Me too · Helpful · Asker’s pick 저장 함수와 그것만 쓰던 불러오기(question_me_too · answer_helpful · best_answer_id) 삭제(DB 테이블 · 컬럼은 그대로). 안 쓰는 문구 `ask.answersOverline · askersPick · helpful · kind · meToo · pick · unpick` 9개 언어 삭제
 - **3.8 Question 답 = 댓글 모양**([469:11388](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=469-11388) · 3.8b [1242:10038](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1242-10038)): 답 = Comment(아바타 40 · 이름 Body/M Strong · 시간 Caption fg/disabled → 본문), "N ANSWERS" 제목 · 동네 · Asker’s pick 배지 · 고르기 메뉴 · Helpful 삭제(DB 컬럼은 남김). 질문 카드 아래 줄 `message-circle` 16 + "N answers" → **`message-circle` 24 + 숫자 Body/S Strong**(1242:10044, 커뮤니티 질문 카드도 같음). 답 없음 문구 가운데 정렬
 - **댓글 이름 @ 삭제**: 게시물 댓글 · 질문 답변의 아이디 앞 @ 삭제(프로필 카드 · 설정 · 차단 목록은 그대로)
 - **헤더 글자색 고정 + 제목 둘째 단어 유리 효과**(Figma 1238:15195 · 블러는 코드에서 추가): 날짜 · 제목을 wash 잉크 대신 **fg/default 고정**, 둘째 단어(evening)는 글자 안에서 뒤 배경을 흐리게 비추는 **반투명 유리**(BlurView 24 + fg/disabled 75 %). `@react-native-masked-view/masked-view` 0.3.2 추가 → **새 Dev Build 필요**

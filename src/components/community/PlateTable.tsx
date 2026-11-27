@@ -1,9 +1,7 @@
 import { Image } from 'expo-image';
-import { Plus } from '../icons/ongdal';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { elevation, radius, space, useTheme } from '../../theme';
-import { Icon } from '../Icon';
 import { Text } from '../Text';
 import { Avatar } from './Parts';
 
@@ -14,8 +12,6 @@ const PLATE = 95;
 const RIM = 6;
 const BADGE = 24;
 const BADGE_RING = 2;
-/** My seat · Empty 730:11397 — the dashed plate, exported from Figma (95 × 95 @2x). */
-const DASHED_SEAT = require('../../../assets/table/dashed-seat.png');
 
 /**
  * Table · <day> (Figma 4.4 Community · Table 730:11437) — bg/subtle card r24 · p16 · gap 16:
@@ -86,21 +82,6 @@ export function Plate({ item, mine, onPress, onCook }: { item: PlateItem; mine?:
   );
 }
 
-/** My seat · Empty 730:11395 — dashed plate with `plus` 24 (fg/accent) in the middle, "Place your dish" Caption Strong fg/accent. */
-export function EmptySeat({ label, onPress }: { label: string; onPress: () => void }) {
-  return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={styles.cellInner}>
-      <View style={styles.plateBox}>
-        <Image source={DASHED_SEAT} style={StyleSheet.absoluteFill} contentFit="contain" />
-        <View style={[StyleSheet.absoluteFill, styles.seatPlus]}>
-          <Icon icon={Plus} size={24} color="fg/accent" />
-        </View>
-      </View>
-      <Text variant="Caption Strong" color="fg/accent" numberOfLines={1} style={styles.label}>{label}</Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   table: { borderRadius: radius.xl, padding: space[16], gap: space[16] },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[8], paddingHorizontal: space[6], paddingVertical: 3 },
@@ -120,6 +101,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: space[2],
   },
   badge: { borderWidth: BADGE_RING, borderRadius: radius.full, overflow: 'hidden' },
-  seatPlus: { alignItems: 'center', justifyContent: 'center' },
   label: { alignSelf: 'stretch', textAlign: 'center' },
 });

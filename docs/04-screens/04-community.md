@@ -97,7 +97,7 @@
 - 제목 Display/M "Neighbors' Table"(Story of the day와 같은 자리 · 스타일) → **15**(제목 아래 3 + 6 + 6) → 날짜별 **Table** 카드(좌우 20, 사이 24).
 - **기간 = 최근 2주**(오늘 포함 14일). 오늘 테이블은 항상 맨 위, 그 아래는 게시물이 있는 날만 최신 날짜 순. 제목 = Today's table / Yesterday's table / 날짜.
 - **Table**(730:11437 — bg/subtle, radius 24, padding 16, gap 16): 헤더(padding 3 6, 양 끝 정렬: 제목 Title/M · **날짜 알약** — 0.6 fg/disabled 테두리, padding 3 8, Caption fg/secondary; 지난 날짜 테이블은 알약 없음) → 접시 3열(gap 16) → 넘치면 **See more**(Caption Strong).
-  - 맨 앞 = **내 자리**: 그날 내 게시물(올린 순서대로, 이름 대신 **"My seat"** Caption Strong fg/accent, 1233:11754). 오늘 올린 게 없으면 **"Place your dish"** 빈 접시(730:11395 — 점선 접시 + `plus` 24 fg/accent, Caption Strong fg/accent) → 탭하면 8.1 사진 고르기. 지난 날은 내 게시물이 있을 때만.
+  - 맨 앞 = **내 자리**: 그날 내 게시물(올린 순서대로, 이름 대신 **"My seat"** Caption Strong fg/accent, 1233:11754). 올린 게 없으면 내 자리 없이 이웃 접시만 — **"Place your dish" 빈 접시(730:11395)는 만들지 않는다.**
   - 그 뒤 = 그날 **이웃 게시물**(내 칸 geohash 5자리 · 주변 칸 · 같은 구), **올린 순서대로**(먼저 올린 것이 앞). 한 요리사가 여러 개 올리면 모두 나온다. 차단한 요리사는 빠진다.
   - 처음에 오늘은 **3줄(9개)**, 지난 날은 **2줄(6개)**까지 보이고, See more → 그 테이블 전체.
   - 접시(Plate): 둥근 사진 + bg/default 테두리 6 + Elevation/1, 오른쪽 아래 요리사 Avatar 24, 아래 Caption fg/secondary 요리 이름 1줄.

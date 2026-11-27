@@ -266,8 +266,8 @@ export function ProfileScreen({ userId, showFollow = true, showMessage = true }:
             </View>
           </Pressable>
           <View style={styles.name}>
-            {/* 614:13917 — @username only, Display/M (display name line removed). */}
-            <Text variant="Display/M" numberOfLines={1}>{me?.username ? `@${me.username}` : me?.displayName ?? ' '}</Text>
+            {/* 614:13917 — username only (no @), Display/M (display name line removed). */}
+            <Text variant="Display/M" numberOfLines={1}>{me?.username ?? me?.displayName ?? ' '}</Text>
             <View style={[styles.acorns, { backgroundColor: color('bg/muted') }]}>
               <AcornIcon size={16} filled />
               <Text variant="Caption Strong">{t('profile.totalAcorns', { count: acorns ?? 0 })}</Text>

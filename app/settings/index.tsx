@@ -58,7 +58,7 @@ export default function Settings() {
           )}
         </View>
         <View style={styles.flex}>
-          <Text variant="Title/S" numberOfLines={1}>{me?.username ? `@${me.username}` : me?.displayName ?? ' '}</Text>
+          <Text variant="Title/S" numberOfLines={1}>{me?.username ?? me?.displayName ?? ' '}</Text>
           <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{t('settings.editProfile')}</Text>
         </View>
         <Icon icon={ChevronRight} size={18} />

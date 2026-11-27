@@ -509,7 +509,7 @@ export type QuestionCategory = (typeof QUESTION_CATEGORIES)[number];
 
 export type Question = {
   id: string; body: string; category: QuestionCategory; imageUrl: string | null; place: string | null;
-  author: Person; answers: number; meToo: number; mine: boolean; meTooByMe: boolean; bestAnswerId: string | null; createdAt: Date;
+  author: Person; answers: number; mine: boolean; createdAt: Date;
   /** I saved (bookmarked) it — question_saves (20261128000000). */
   savedByMe: boolean;
   /** Weather when it was asked. */
@@ -517,10 +517,10 @@ export type Question = {
   /** Set when a question came from a wider range than your area cell (Explore · Our area), e.g. "Dongjak-gu", "Seoul". */
   range?: string;
 };
-export type Answer = { id: string; body: string; author: Person; helpful: number; helpfulByMe: boolean; place: string | null; createdAt: Date };
+export type Answer = { id: string; body: string; author: Person; createdAt: Date };
 
 /** The questions columns decorateQuestions reads. */
-const QUESTION_COLS = 'id, body, category, image_url, neighborhood, city, country, author_id, answer_count, me_too_count, best_answer_id, created_at, mood, temp_c';
+const QUESTION_COLS = 'id, body, category, image_url, neighborhood, city, country, author_id, answer_count, created_at, mood, temp_c';
 /** The challenges columns decorateChallenges reads. */
 const CHALLENGE_COLS = 'id, slug, title, description, rule, tag, country, cover_url, starts_at, ends_at, participant_count, entry_count, theme';
 
@@ -529,21 +529,19 @@ async function decorateQuestions(rows: Row[]): Promise<Question[]> {
   const me = await uid();
   const authorIds = [...new Set(rows.map((r) => r.author_id))];
   const ids = rows.map((r) => r.id);
-  const [authors, mine, saved] = await Promise.all([
+  const [authors, saved] = await Promise.all([
     supabase.from('profiles').select('id, display_name, username, avatar_url').in('id', authorIds),
-    me ? supabase.from('question_me_too').select('question_id').eq('user_id', me).in('question_id', ids) : Promise.resolve({ data: [] as Row[] }),
     // Errors (e.g. the question_saves migration not applied yet) just mean "nothing saved".
     me ? supabase.from('question_saves').select('question_id').eq('user_id', me).in('question_id', ids) : Promise.resolve({ data: [] as Row[] }),
   ]);
   const savedIds = new Set(((saved.data ?? []) as Row[]).map((r) => r.question_id));
   const byId = new Map(((authors.data ?? []) as Row[]).map((p) => [p.id, toPerson(p)]));
-  const meToo = new Set(((mine.data ?? []) as Row[]).map((r) => r.question_id));
   return rows.map((r) => ({
     id: r.id, body: r.body, category: r.category, imageUrl: r.image_url ?? null,
     place: r.neighborhood ?? r.city ?? r.country ?? null,
     author: byId.get(r.author_id) ?? toPerson(null, r.author_id),
-    answers: r.answer_count ?? 0, meToo: r.me_too_count ?? 0, mine: r.author_id === me, meTooByMe: meToo.has(r.id), savedByMe: savedIds.has(r.id),
-    bestAnswerId: r.best_answer_id ?? null, createdAt: new Date(r.created_at),
+    answers: r.answer_count ?? 0, mine: r.author_id === me, savedByMe: savedIds.has(r.id),
+    createdAt: new Date(r.created_at),
     mood: r.mood ?? null, tempC: r.temp_c == null ? null : Number(r.temp_c),
   }));
 }
@@ -696,26 +694,15 @@ export async function setQuestionSaved(questionId: string, on: boolean) {
   if (error && error.code !== '23505') throw error;
 }
 
-export async function setMeToo(questionId: string, on: boolean) {
-  const me = await needUid();
-  const { error } = on
-    ? await supabase.from('question_me_too').insert({ question_id: questionId, user_id: me })
-    : await supabase.from('question_me_too').delete().eq('question_id', questionId).eq('user_id', me);
-  if (error && error.code !== '23505') throw error;
-}
-
+/** 3.8 answers, oldest first (shown as Comments: name · time → body). */
 export async function fetchAnswers(questionId: string): Promise<Answer[]> {
-  const me = await uid();
   const { data, error } = await supabase
     .from('answers')
-    .select('id, body, helpful_count, created_at, author:profiles!author_id(id, display_name, username, avatar_url, city)')
+    .select('id, body, created_at, author:profiles!author_id(id, display_name, username, avatar_url)')
     .eq('question_id', questionId)
     .order('created_at');
   if (error) throw error;
-  const rows = data as Row[];
-  const mine = me && rows.length ? await supabase.from('answer_helpful').select('answer_id').eq('user_id', me).in('answer_id', rows.map((r) => r.id)) : { data: [] as Row[] };
-  const set = new Set(((mine.data ?? []) as Row[]).map((r) => r.answer_id));
-  return rows.map((r) => ({ id: r.id, body: r.body, author: toPerson(r.author), helpful: r.helpful_count ?? 0, helpfulByMe: set.has(r.id), place: r.author?.city ?? null, createdAt: new Date(r.created_at) }));
+  return (data as Row[]).map((r) => ({ id: r.id, body: r.body, author: toPerson(r.author), createdAt: new Date(r.created_at) }));
 }
 
 export async function addAnswer(questionId: string, body: string) {
@@ -729,19 +716,6 @@ export async function deleteAnswer(id: string) {
   if (error) throw error;
 }
 
-export async function setHelpful(answerId: string, on: boolean) {
-  const me = await needUid();
-  const { error } = on
-    ? await supabase.from('answer_helpful').insert({ answer_id: answerId, user_id: me })
-    : await supabase.from('answer_helpful').delete().eq('answer_id', answerId).eq('user_id', me);
-  if (error && error.code !== '23505') throw error;
-}
-
-/** Asker's pick. */
-export async function setBestAnswer(questionId: string, answerId: string | null) {
-  const { error } = await supabase.from('questions').update({ best_answer_id: answerId }).eq('id', questionId);
-  if (error) throw error;
-}
 
 // ---------------------------------------------------------------------------------------------- challenges
 

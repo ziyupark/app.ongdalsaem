@@ -27,7 +27,7 @@ import {
   fetchGlobal, fetchMyDishesSince, fetchNeighborPlates, fetchStoryOfTheDay,
   localDate, localMidnight, topTags, type CardDish,
 } from '../../src/services/community';
-import { EmptySeat, Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
+import { Plate, PlateGrid, PlateTable, type PlateItem } from '../../src/components/community/PlateTable';
 import { fetchMyMarks, setAcorn, setSaved } from '../../src/services/foods';
 import { cellsAround } from '../../src/lib/geohash';
 import { useHere } from '../../src/lib/useHere';
@@ -470,9 +470,8 @@ const TABLE_DAYS = 14;
 
 /**
  * 4.4 Community · Table (Figma 730:11217) — "Neighbors' Table" title, then one table per local day over the last 2 weeks
- * (today always · then days with plates: yesterday · the date). Each table = my seat first — my posts that day as
- * "My seat" (1233:11754), or today with none the dashed "Place your dish" seat (730:11395 → share flow) — then
- * neighbours' posts (area cell → neighbouring cells → district), in the order they were posted. No follow buttons.
+ * (today always · then days with plates: yesterday · the date). Each table = my posts that day first as "My seat"
+ * (1233:11754) — no empty "Place your dish" seat — then neighbours' posts (area cell → neighbouring cells → district), in the order they were posted. No follow buttons.
  */
 function Following() {
   const { color } = useTheme();
@@ -535,11 +534,9 @@ function Following() {
       </View>
       <View style={styles.tables}>
       {tables.map((tb) => {
-        const seat = tb.mine.length
-          ? tb.mine.map((d) => (
-            <Plate key={d.id} mine item={toPlate(d, t('following.mySeat'))} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />
-          ))
-          : tb.kind === 'today' ? [<EmptySeat key="seat" label={t('following.placeMine')} onPress={() => router.push('/share/pick')} />] : [];
+        const seat = tb.mine.map((d) => (
+          <Plate key={d.id} mine item={toPlate(d, t('following.mySeat'))} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />
+        ));
         const plates = [...seat, ...tb.plates.map((d) => (
           <Plate key={d.id} item={toPlate(d)} onPress={() => router.push(`/dish/${d.id}`)} onCook={() => router.push(`/cook/${d.creator.id}`)} />
         ))];

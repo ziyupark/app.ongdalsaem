@@ -41,7 +41,7 @@
 ### 9.2 Edit profile — [193:6134](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6134)
 - 위쪽(가운데 정렬): **Avatar edit**(96) = Avatar 88 + 오른쪽 아래 **편집 배지**(Edit, 32 원, bg/primary, 2px bg/default 테두리, `camera` 16 fg/on-primary). 아바타나 배지를 탭 → **9.2b**.
 - 입력:
-  - *(닉네임 Display name 입력칸 없음 — 앱 어디서나 @username이 이름이다)*
+  - *(닉네임 Display name 입력칸 없음 — 앱 어디서나 username(@ 없이)이 이름이다. 아이디 칸 아래 안내도 "jiyu_4821 · 14일에 한 번 바꿀 수 있어요"처럼 @ 없이)*
   - Username "@jiyu.cooks"(가입 때 자동 생성된 `jiyu_4821`을 사용자가 바꾼 예) — helper "ongdalsaem.app/@jiyu.cooks · changeable once every 30 days". 입력 중 실시간 중복 확인, 중복·허용 외 문자면 Error 상태. **30일에 1회만 변경**, 제한 중에는 Disabled + helper에 다음 변경 가능 날짜 표시. 바꾼 뒤 예전 handle은 14일간 예약(다른 사람이 못 씀).
   - Bio "Cooking for one, mostly when it rains." — helper "38 / 80"
 - Button Primary L "Save changes": 변경이 없으면 Disabled. 저장하면 9.1로 돌아간다.
