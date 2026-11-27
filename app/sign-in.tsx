@@ -28,19 +28,22 @@ const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
 type Provider = 'Apple' | 'Google' | 'Dev';
 
 /**
- * 1207:10884 geometry (design px, 844 frame). weather header from y 54, centred: Logo row 40 → 22 → Overline date
- * (with the year) → 8 → Overline place → 7 → Weather card · small (padding 12 16: temp Numeric/XL · condition Title/M ·
- * H/L · until Body/S) → Weather 3D 282×283 starting 4 above the card's bottom (y 250–533).
- * Block · Button at y 544 (11 under the 3D; Apple → Google → caption, gap 10), 142 above the Home Indicator.
+ * 1207:10884 geometry (design px, 844 frame). weather header from y 54: Logo row 40 (centred) → 118 → centred block
+ * [Overline date (with the year) → 8 → Overline place → 7 → Weather card · small (padding 12 16: temp Numeric/XL ·
+ * condition Title/M · H/L · until Body/S)] → −4 → Weather 3D 156 (y 212 → 346–502).
+ * Block · Button at y 544 (42 under the 3D; Apple → Google → caption, gap 10), 142 above the Home Indicator.
  * Landscape (Rectangle 22) = the splash image in a 390×650 box at y 194, cropped lower than on 1.1.
  */
 const HEADER_TOP = 54;
-const HERO = { w: 282, h: 283, overlap: 4, below: 11 };
+const LOGO_ROW = 40;
+/** Logo row → weather block: 118 as drawn; on short screens it gives way first (down to 12), then the 3D shrinks. */
+const LOGO_GAP = { max: 118, min: 12 };
+const HERO = { size: 156, overlap: 4, below: 42 };
 const ACTIONS_ABOVE_INDICATOR = 142;
 const LANDSCAPE = require('../assets/launch/splash-landscape.png');
 const ACTIONS_H = 124;
-/** Logo row 40 + 22 + date 14 + 8 + place 14 + 7 + Weather card · small 95. */
-const HEADER_H = 200;
+/** Date 14 + 8 + place 14 + 7 + Weather card · small 95. */
+const BLOCK_H = 138;
 
 type Reading = { place: Place | null; forecast: Forecast };
 type WeatherHere = { status: 'loading' | 'ready' | 'denied' | 'failed'; reading: Reading | null };
@@ -123,15 +126,17 @@ export default function SignIn() {
   const weather = useMemo(() => ({ mood, timeOfDay: timeOfDayFor(mood, new Date()) }), [mood]);
   const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : '';
 
-  // Buttons sit 142 above the Home Indicator; the 3D weather (283 on 844+) shrinks to the room left under the
-  // header on small screens (iPhone SE), keeping 11 above the buttons.
-  const [headerH, setHeaderH] = useState(HEADER_H);
+  // Buttons sit 142 above the Home Indicator. Above them, bottom-up: 42 → Weather 3D 156 → (−4) the weather block.
+  // The block sits 118 under the logo row as drawn; on short screens (iPhone SE) that gap shrinks to 12, then the 3D.
+  const [blockH, setBlockH] = useState(BLOCK_H);
   const [actionsH, setActionsH] = useState(ACTIONS_H);
   const headerTop = Math.max(insets.top, HEADER_TOP);
   const actionsBottom = insets.bottom + ACTIONS_ABOVE_INDICATOR;
   const actionsTop = height - actionsBottom - actionsH;
-  const heroTop = headerTop + headerH - HERO.overlap;
-  const k = Math.max(0, Math.min(1, (actionsTop - HERO.below - heroTop) / HERO.h));
+  const logoBottom = headerTop + LOGO_ROW;
+  const blockTop = Math.max(logoBottom + LOGO_GAP.min, Math.min(logoBottom + LOGO_GAP.max, actionsTop - HERO.below - HERO.size - (blockH - HERO.overlap)));
+  const heroTop = blockTop + blockH - HERO.overlap;
+  const heroSize = Math.max(0, Math.min(HERO.size, actionsTop - HERO.below - heroTop));
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
@@ -145,11 +150,11 @@ export default function SignIn() {
       </View>
       <LaunchBackdrop weather={weather} />
 
-      {/* weather header 1268:17791 (centred): Logo row 40 → 22 → Overline date → 8 → Overline place → 7 → Weather card · small. */}
-      <View style={[styles.header, { top: headerTop }]} onLayout={(e) => setHeaderH(e.nativeEvent.layout.height)}>
-        <View style={styles.logoRow}>
-          <Logo lockup="Compact" />
-        </View>
+      {/* weather header 1268:17791: Logo row 40 (centred) → 118 → Overline date → 8 → Overline place → 7 → Weather card · small. */}
+      <View style={[styles.logoRow, { top: headerTop }]}>
+        <Logo lockup="Compact" />
+      </View>
+      <View style={[styles.header, { top: blockTop }]} onLayout={(e) => setBlockH(e.nativeEvent.layout.height)}>
         <View style={styles.center}>
           {/* 1268:17795 — the place line keeps its height while unknown, so the card doesn't move when it arrives. */}
           <View style={styles.dateBlock}>
@@ -180,10 +185,10 @@ export default function SignIn() {
         </View>
       </View>
 
-      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 282×283, centred, 4 into the card's bottom. */}
+      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 156, centred, 4 into the card's bottom. */}
       <Image
         source={WEATHER_3D[hero]}
-        style={[styles.hero, { top: heroTop, left: (width - HERO.w * k) / 2, width: HERO.w * k, height: HERO.h * k }]}
+        style={[styles.hero, { top: heroTop, left: (width - heroSize) / 2, width: heroSize, height: heroSize }]}
         contentFit="contain"
         transition={300}
         pointerEvents="none"
@@ -226,8 +231,8 @@ const styles = StyleSheet.create({
   landscape: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 650, overflow: 'hidden' },
   landscapeImage: { position: 'absolute', left: '0.01%', top: '43.2%', width: '188.64%', height: '67.27%' },
   landscapeFade: { position: 'absolute', left: 0, right: 0, top: '43.2%', height: 120 },
-  header: { position: 'absolute', left: space[20], right: space[20], gap: 22 },
-  logoRow: { height: space[40], flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  header: { position: 'absolute', left: space[20], right: space[20] },
+  logoRow: { position: 'absolute', left: space[20], right: space[20], height: space[40], flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   center: { alignItems: 'center', gap: 7 },
   dateBlock: { alignItems: 'center', gap: space[8] },
   centerText: { textAlign: 'center' },
