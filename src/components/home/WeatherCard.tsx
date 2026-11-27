@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
   thumb: { width: 74, height: 74, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   emptyThumb: { borderWidth: 1, borderStyle: 'dashed' },
   // Weather Tag 1231:11417 (no fill) — 24 high, padding 5 12 5 9, gap 5, icon 18 · Body/L fg/default.
-  slotTemp: { height: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 5, paddingLeft: 9, paddingRight: space[12], borderRadius: radius.full, overflow: 'hidden' },
+  // Body/L's 22 line (25 in Korean) is taller than the tag, so nothing clips here: the digits draw past the 24 box.
+  slotTemp: { height: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 5, paddingLeft: 9, paddingRight: space[12], borderRadius: radius.full },
   tabular: { fontVariant: ['tabular-nums'] },
 });
