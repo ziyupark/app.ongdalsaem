@@ -56,11 +56,13 @@ function useWeatherHere(): WeatherHere {
     let alive = true;
     (async (): Promise<WeatherHere> => {
       const coords = await requestDeviceLocation();
+      if (__DEV__) console.log('[sign-in weather] location', coords ? 'ok' : 'denied / off');
       if (!coords) return { status: 'denied', reading: null };
       const [place, forecast] = await Promise.all([reverseGeocodeCity(coords).catch(() => null), fetchForecast(coords).catch(() => null)]);
+      if (__DEV__) console.log('[sign-in weather] place', place?.city ?? null, '· forecast', forecast ? `${forecast.mood} ${forecast.tempC}°` : 'FAILED (see [weather] above)');
       return forecast ? { status: 'ready', reading: { place, forecast } } : { status: 'failed', reading: null };
     })()
-      .catch((): WeatherHere => ({ status: 'failed', reading: null }))
+      .catch((e): WeatherHere => { if (__DEV__) console.warn('[sign-in weather]', e); return { status: 'failed', reading: null }; })
       .then((r) => { if (alive) setState(r); });
     return () => { alive = false; };
   }, [tries]);
@@ -199,7 +201,7 @@ export default function SignIn() {
 
       {/* DEV ONLY — not in the design; stripped from release builds. */}
       {__DEV__ ? (
-        <View style={[styles.dev, { top: insets.top + space[8] }]}>
+        <View style={[styles.dev, { bottom: insets.bottom + space[4] }]}>
           <Button label="Dev · test account" variant="Ghost" size="S" onPress={() => run('Dev')} loading={busy === 'Dev'} disabled={busy !== null} />
         </View>
       ) : null}
@@ -226,6 +228,7 @@ const styles = StyleSheet.create({
   hero: { position: 'absolute' },
   actions: { position: 'absolute', left: space[20], right: space[20], gap: space[10] },
   legal: { textAlign: 'center' },
-  dev: { position: 'absolute', right: space[20] },
+  // Bottom-left over the landscape, clear of the centred logo and the buttons.
+  dev: { position: 'absolute', left: space[20] },
 });
 
