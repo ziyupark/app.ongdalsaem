@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **7.1 Post detail Meta**(601:12639): 캡션 Body/S → **Body/M**(fg/default), 제목 → 캡션 간격 16 → **13**
 - **4.4 Neighbors' Table**(730:11217): 내 자리(Place your dish 빈 접시 · My seat) · 이웃 + Follow · 요리사 추천("Cooks to follow …") 삭제. 내 게시물은 그날 테이블에 이웃 게시물과 함께 **올린 순서대로**. 기간 3일 → **2주**, 요리사당 1개 · 하루 9개 제한 없앰, 처음 보이는 수 = 오늘 3줄 · 지난 날 2줄 → See more. 문구 `following.placeMine · mySeat · suggest · suggestBody` 9개 언어 삭제. 04-community 4.4 · 4.4b를 실제 화면대로 다시 씀
 - **4.1 Story of the day**(1113:25926) = 오늘의 픽: 내 날씨와 같은 날씨 + 기온 ±1°C 게시물 중에서 고름(없으면 전처럼 날씨 조건 없이)
 - **Weather Card**(136:4716): 기온 Numeric/XL 72 → **XXL 80**(Outfit Light 80/66, −2.6 — 새 글자 스타일, 6.1 프로필 기온도 같은 스타일로 바꿈). Meal Slot 기온 → **Weather Tag**(배경 없음, 높이 24, padding 5 12 5 9, gap 5): 아이콘 14 → **18**, 기온 Body/S Strong → **Body/L**. padding 18 20 17 · gap 12 · 칸 padding 8 4 10 4 · gap 6은 그대로

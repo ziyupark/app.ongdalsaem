@@ -137,7 +137,7 @@ export function PostView({ dish, given, saved, onAcorn, onComments, onShare, onS
 
       <View style={styles.meta}>
         <View style={styles.px}><Text variant="Display/L">{dish.name}</Text></View>
-        {dish.caption ? <View style={styles.px}><Text variant="Body/S">{dish.caption}</Text></View> : null}
+        {dish.caption ? <View style={styles.px}><Text variant="Body/M">{dish.caption}</Text></View> : null}
       </View>
 
       {tags.length ? (
@@ -168,7 +168,8 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', alignItems: 'center', gap: 18, paddingTop: space[12], paddingBottom: space[8], paddingHorizontal: space[20] },
   count: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   spacer: { flex: 1 },
-  meta: { gap: space[16], paddingTop: space[8], paddingBottom: space[10] },
+  // Meta 601:12639 — title Display/L → 13 → caption Body/M fg/default (no line limit), both px 20.
+  meta: { gap: 13, paddingTop: space[8], paddingBottom: space[10] },
   px: { paddingHorizontal: space[20] },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8], paddingTop: space[10], paddingHorizontal: space[20], paddingBottom: space[2] },
   actionBar: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingVertical: 28 },
