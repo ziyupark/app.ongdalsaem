@@ -86,6 +86,19 @@
       "fish": "Fish",
       "soy": "Soy",
       "sesame": "Sesame"
+    },
+    "add": {
+      "own": "Add your own",
+      "dietTitle": "Add to your diet",
+      "dietBody": "Dishes with this word in the name or ingredients are left out of your picks and search.",
+      "dietPlaceholder": "e.g. Pork",
+      "allergyTitle": "Add an allergy",
+      "allergyBody": "We’ll leave out dishes with this word and warn you on a dish that has it.",
+      "allergyPlaceholder": "e.g. Kiwi",
+      "duplicate": "You already have this one.",
+      "add": "Add",
+      "removeTitle": "Remove “{{label}}”?",
+      "remove": "Remove"
     }
   },
   "notify": {

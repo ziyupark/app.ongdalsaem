@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { allergensIn } from '../../lib/allergens';
+import { allergensIn, customIn } from '../../lib/allergens';
 import { useDietPrefs } from '../../lib/dietPrefs';
 import { useFridge } from '../../lib/fridge';
 import { findIngredient, hasIngredients } from '../../lib/ingredientMatch';
@@ -84,8 +84,11 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
     onAddedToShopping?.(chosen.length);
   };
   // 7.1 allergy warning — my allergens found in the dish name or ingredients.
-  const { allergies } = useDietPrefs();
-  const warn = dish.id && allergies.length ? allergensIn([dish.name, ...dish.ingredients.map((i) => i.name)], allergies) : [];
+  const { allergies, customAllergies } = useDietPrefs();
+  const dishTexts = [dish.name, ...dish.ingredients.map((i) => i.name)];
+  const warn = dish.id && (allergies.length || customAllergies.length)
+    ? [...allergensIn(dishTexts, allergies).map((a) => t(`diet.allergens.${a}`)), ...customIn(dishTexts, customAllergies)]
+    : [];
   const hasRecipe = dish.ingredients.length > 0 || dish.steps.length > 0 || dish.calories != null;
   const facts = [
     dish.servings != null ? t('dish.serves', { n: dish.servings }) : null,
@@ -103,7 +106,7 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
               <View style={[styles.section, styles.warnRow]}>
                 <View style={[styles.warn, { backgroundColor: color('bg/destructive-subtle') }]}>
                   <Icon icon={AlertTriangle} size={14} color="fg/destructive" />
-                  <Text variant="Caption Strong" color="fg/destructive">{t('dish.allergyWarning', { items: warn.map((a) => t(`diet.allergens.${a}`)).join(', ') })}</Text>
+                  <Text variant="Caption Strong" color="fg/destructive">{t('dish.allergyWarning', { items: warn.join(', ') })}</Text>
                 </View>
               </View>
             ) : null}

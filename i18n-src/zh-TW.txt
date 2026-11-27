@@ -1194,6 +1194,17 @@ allergens.shellfish=甲殼類
 allergens.fish=魚
 allergens.soy=黃豆
 allergens.sesame=芝麻
+add.own=自行新增
+add.dietTitle=新增到飲食
+add.dietBody=名稱或食材含有這個詞的料理，不會出現在推薦和搜尋中。
+add.dietPlaceholder=例如：豬肉
+add.allergyTitle=新增過敏
+add.allergyBody=我們會排除含有這個詞的料理，並在料理頁面提醒你。
+add.allergyPlaceholder=例如：奇異果
+add.duplicate=已經有這個了。
+add.add=新增
+add.removeTitle=要刪除「{{label}}」嗎？
+add.remove=刪除
 [location]
 whyTitle=為什麼需要位置？
 whyBody=用來顯示你社區的天氣和附近的店。我們不會儲存你的精確座標，只以社區為單位使用。

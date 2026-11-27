@@ -1213,6 +1213,17 @@ allergens.shellfish=Mariscos
 allergens.fish=Pescado
 allergens.soy=Soja
 allergens.sesame=Sésamo
+add.own=Añadir otro
+add.dietTitle=Añadir a tu dieta
+add.dietBody=Dejaremos fuera de tus recomendaciones y búsquedas los platos con esta palabra en el nombre o los ingredientes.
+add.dietPlaceholder=p. ej., Cerdo
+add.allergyTitle=Añadir una alergia
+add.allergyBody=Dejaremos fuera los platos con esta palabra y te avisaremos en los que la tengan.
+add.allergyPlaceholder=p. ej., Kiwi
+add.duplicate=Ya lo tienes.
+add.add=Añadir
+add.removeTitle=¿Quitar «{{label}}»?
+add.remove=Quitar
 [location]
 whyTitle=¿Por qué lo necesitamos?
 whyBody=Para el clima de tu barrio y los lugares cercanos. Nunca guardamos tus coordenadas exactas: solo usamos tu zona.

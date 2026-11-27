@@ -49,7 +49,11 @@ interface Settings { appearance: 'system'|'light'|'dark'; tempUnit: 'C'|'F';   /
   notify: { acorns: boolean; comments: boolean; followers: boolean;
     dailyPick: boolean; dailyPickTime: string; timer: boolean };
   /* marketing: v1 미사용(광고 없음) — DB 컬럼만 있음 */ }
-// 측정 단위·식단 선호 설정은 두지 않는다.
+// 측정 단위 설정은 두지 않는다.
+interface DietPrefs { diet: 'vegetarian'|'vegan'|'pescatarian'|null; allergies: Allergen[]; // Diet & allergies(9.1 행 · 온보딩 Taste 다음) — DB profiles.diet · allergies
+  customDiet: string[]; customAllergies: string[] }  // "Add your own"으로 직접 넣은 단어(각 1–20자, 목록당 최대 20개) — DB profiles.custom_diet · custom_allergies
+// 식단·알레르기 판정은 기기에서(src/lib/allergens.ts): 고정 항목 = 9개 언어 키워드 사전, 직접 넣은 단어 = 그 단어 자체를 요리 이름 · 재료에서 찾음.
+// DB: supabase/migrations/20261116000000_profile_diet_allergies.sql · 20261129000000_profile_custom_diet_tags.sql
 // DB: supabase/migrations/20261030000000_dish_type_privacy_language.sql — foods(dish_type · place_name(예약) · allow_comments · region_precision) · profiles(언어 · 공개 기본값 · 메시지 · 위치)
 // Today's pick · 끼니 슬롯은 서버 API 없이 앱이 공개 게시물 풀에서 고른다(src/services/recommend.ts, 규칙 = 05-behavior §6.1 · §6.2). Mood Prompt(기분 입력)는 없다.
 // 취향: profiles.favorite_tags(text[]) — 1.3b Taste에서 저장, Today's pick 취향 보너스에 사용

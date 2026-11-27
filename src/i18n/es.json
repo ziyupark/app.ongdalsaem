@@ -86,6 +86,19 @@
       "fish": "Pescado",
       "soy": "Soja",
       "sesame": "Sésamo"
+    },
+    "add": {
+      "own": "Añadir otro",
+      "dietTitle": "Añadir a tu dieta",
+      "dietBody": "Dejaremos fuera de tus recomendaciones y búsquedas los platos con esta palabra en el nombre o los ingredientes.",
+      "dietPlaceholder": "p. ej., Cerdo",
+      "allergyTitle": "Añadir una alergia",
+      "allergyBody": "Dejaremos fuera los platos con esta palabra y te avisaremos en los que la tengan.",
+      "allergyPlaceholder": "p. ej., Kiwi",
+      "duplicate": "Ya lo tienes.",
+      "add": "Añadir",
+      "removeTitle": "¿Quitar «{{label}}»?",
+      "remove": "Quitar"
     }
   },
   "notify": {

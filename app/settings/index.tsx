@@ -74,7 +74,7 @@ export default function Settings() {
         <SettingsRow
           icon={Salad}
           label={t('diet.title')}
-          value={[diet.diet ? t(`diet.diets.${diet.diet}`) : null, diet.allergies.length ? t('diet.allergyCount', { n: diet.allergies.length }) : null].filter(Boolean).join(' · ') || t('diet.none')}
+          value={[diet.diet ? t(`diet.diets.${diet.diet}`) : null, ...diet.customDiet, diet.allergies.length + diet.customAllergies.length ? t('diet.allergyCount', { n: diet.allergies.length + diet.customAllergies.length }) : null].filter(Boolean).join(' · ') || t('diet.none')}
           onPress={() => router.push('/settings/diet')}
         />
         <SettingsRow icon={MapIcon} label={t('settings.mapApp')} value={mapApp ? t(MAP_APP_LABEL[mapApp]) : t('mapApps.ask')} onPress={pickMapApp} />

@@ -6,7 +6,12 @@ export const ALLERGENS = ['peanut', 'tree_nut', 'milk', 'egg', 'wheat', 'shellfi
 export type Allergen = (typeof ALLERGENS)[number];
 export const DIETS = ['vegetarian', 'vegan', 'pescatarian'] as const;
 export type Diet = (typeof DIETS)[number];
-export type DietPrefs = { diet: Diet | null; allergies: Allergen[] };
+/** customDiet · customAllergies = words the user typed in ("Add your own"), each a word to stay away from. */
+export type DietPrefs = { diet: Diet | null; allergies: Allergen[]; customDiet: string[]; customAllergies: string[] };
+export const NO_DIET: DietPrefs = { diet: null, allergies: [], customDiet: [], customAllergies: [] };
+export const MAX_DIET_TAG_LENGTH = 20;
+export const MAX_DIET_TAGS = 20;
+export const hasDietPrefs = (p: DietPrefs | null) => !!p && (!!p.diet || !!p.allergies.length || !!p.customDiet.length || !!p.customAllergies.length);
 
 type Group = Allergen | 'meat' | 'honey';
 
@@ -89,15 +94,11 @@ const NOT: Partial<Record<Group, string[]>> = {
 
 const LATIN = /^[a-zà-ỹ' ]+$/i;
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const MATCHERS = Object.fromEntries(
-  (Object.keys(WORDS) as Group[]).map((g) => [
-    g,
-    WORDS[g].map((w) => {
-      const lw = w.toLowerCase();
-      return LATIN.test(lw) ? ((s: string) => new RegExp(`(^|[^\\p{L}])${esc(lw)}(s|es)?($|[^\\p{L}])`, 'u').test(s)) : ((s: string) => s.includes(lw));
-    }),
-  ]),
-) as Record<Group, ((s: string) => boolean)[]>;
+const matcher = (w: string) => {
+  const lw = w.toLowerCase();
+  return LATIN.test(lw) ? ((s: string) => new RegExp(`(^|[^\\p{L}])${esc(lw)}(s|es)?($|[^\\p{L}])`, 'u').test(s)) : ((s: string) => s.includes(lw));
+};
+const MATCHERS = Object.fromEntries((Object.keys(WORDS) as Group[]).map((g) => [g, WORDS[g].map(matcher)])) as Record<Group, ((s: string) => boolean)[]>;
 
 /** Lowercased text with that group's false friends blanked out. */
 function prepare(text: string, g: Group) {
@@ -118,6 +119,16 @@ export function allergensIn(texts: string[], mine: readonly Allergen[]): Allerge
   return ALLERGENS.filter((a) => mine.includes(a) && has(texts, a));
 }
 
+/** Which of my own tags (typed words) appear in the dish name / ingredients — same word rules as the dictionary. */
+export function customIn(texts: string[], words: readonly string[]): string[] {
+  if (!words.length) return [];
+  const lower = texts.map((t) => ` ${t.toLowerCase()} `);
+  return words.filter((w) => {
+    const m = matcher(w.trim());
+    return w.trim() && lower.some((s) => m(s));
+  });
+}
+
 /** The diet rules this dish breaks: vegan = no meat · fish · shellfish · egg · milk · honey; vegetarian = no meat · fish · shellfish; pescatarian = no meat. */
 function breaksDiet(texts: string[], diet: Diet | null): boolean {
   if (!diet) return false;
@@ -127,6 +138,6 @@ function breaksDiet(texts: string[], diet: Diet | null): boolean {
 
 /** Leave this dish out of picks and search results? */
 export function clashes(texts: string[], prefs: DietPrefs | null): boolean {
-  if (!prefs || (!prefs.diet && !prefs.allergies.length)) return false;
-  return breaksDiet(texts, prefs.diet) || allergensIn(texts, prefs.allergies).length > 0;
+  if (!prefs || !hasDietPrefs(prefs)) return false;
+  return breaksDiet(texts, prefs.diet) || allergensIn(texts, prefs.allergies).length > 0 || customIn(texts, [...prefs.customDiet, ...prefs.customAllergies]).length > 0;
 }

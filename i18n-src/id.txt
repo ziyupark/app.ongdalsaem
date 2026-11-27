@@ -1194,6 +1194,17 @@ allergens.shellfish=Kerang & udang
 allergens.fish=Ikan
 allergens.soy=Kedelai
 allergens.sesame=Wijen
+add.own=Tambah sendiri
+add.dietTitle=Tambah ke pola makan
+add.dietBody=Hidangan dengan kata ini di nama atau bahannya tidak akan muncul di rekomendasi dan pencarian.
+add.dietPlaceholder=mis. Babi
+add.allergyTitle=Tambah alergi
+add.allergyBody=Kami akan menyaring hidangan dengan kata ini dan memberi peringatan di hidangan yang memilikinya.
+add.allergyPlaceholder=mis. Kiwi
+add.duplicate=Kamu sudah punya ini.
+add.add=Tambah
+add.removeTitle=Hapus “{{label}}”?
+add.remove=Hapus
 [location]
 whyTitle=Mengapa ini diperlukan?
 whyBody=Untuk cuaca di lingkunganmu dan tempat makan terdekat. Kami tidak pernah menyimpan koordinat persismu — hanya areamu yang dipakai.

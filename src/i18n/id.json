@@ -86,6 +86,19 @@
       "fish": "Ikan",
       "soy": "Kedelai",
       "sesame": "Wijen"
+    },
+    "add": {
+      "own": "Tambah sendiri",
+      "dietTitle": "Tambah ke pola makan",
+      "dietBody": "Hidangan dengan kata ini di nama atau bahannya tidak akan muncul di rekomendasi dan pencarian.",
+      "dietPlaceholder": "mis. Babi",
+      "allergyTitle": "Tambah alergi",
+      "allergyBody": "Kami akan menyaring hidangan dengan kata ini dan memberi peringatan di hidangan yang memilikinya.",
+      "allergyPlaceholder": "mis. Kiwi",
+      "duplicate": "Kamu sudah punya ini.",
+      "add": "Tambah",
+      "removeTitle": "Hapus “{{label}}”?",
+      "remove": "Hapus"
     }
   },
   "notify": {

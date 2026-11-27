@@ -86,6 +86,19 @@
       "fish": "魚",
       "soy": "黃豆",
       "sesame": "芝麻"
+    },
+    "add": {
+      "own": "自行新增",
+      "dietTitle": "新增到飲食",
+      "dietBody": "名稱或食材含有這個詞的料理，不會出現在推薦和搜尋中。",
+      "dietPlaceholder": "例如：豬肉",
+      "allergyTitle": "新增過敏",
+      "allergyBody": "我們會排除含有這個詞的料理，並在料理頁面提醒你。",
+      "allergyPlaceholder": "例如：奇異果",
+      "duplicate": "已經有這個了。",
+      "add": "新增",
+      "removeTitle": "要刪除「{{label}}」嗎？",
+      "remove": "刪除"
     }
   },
   "notify": {

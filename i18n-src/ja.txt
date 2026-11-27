@@ -1194,6 +1194,17 @@ allergens.shellfish=甲殻類
 allergens.fish=魚
 allergens.soy=大豆
 allergens.sesame=ごま
+add.own=自分で追加
+add.dietTitle=食事スタイルに追加
+add.dietBody=料理名や材料にこの言葉がある料理は、おすすめと検索から外します。
+add.dietPlaceholder=例：豚肉
+add.allergyTitle=アレルギーを追加
+add.allergyBody=この言葉を含む料理は外し、料理の画面でもお知らせします。
+add.allergyPlaceholder=例：キウイ
+add.duplicate=すでに追加されています。
+add.add=追加
+add.removeTitle=「{{label}}」を削除しますか？
+add.remove=削除
 [location]
 whyTitle=なぜ必要なの？
 whyBody=近所の天気と近くのお店を表示するためです。正確な座標は保存せず、地域単位でのみ使います。

@@ -1194,6 +1194,17 @@ allergens.shellfish=Giáp xác
 allergens.fish=Cá
 allergens.soy=Đậu nành
 allergens.sesame=Mè
+add.own=Tự thêm
+add.dietTitle=Thêm vào chế độ ăn
+add.dietBody=Món có từ này trong tên hoặc nguyên liệu sẽ không xuất hiện trong gợi ý và tìm kiếm.
+add.dietPlaceholder=VD: Thịt heo
+add.allergyTitle=Thêm dị ứng
+add.allergyBody=Chúng tôi sẽ bỏ qua món có từ này và cảnh báo bạn ở món có chứa nó.
+add.allergyPlaceholder=VD: Kiwi
+add.duplicate=Bạn đã có mục này.
+add.add=Thêm
+add.removeTitle=Xóa “{{label}}”?
+add.remove=Xóa
 [location]
 whyTitle=Vì sao cần vị trí?
 whyBody=Để biết thời tiết khu phố và quán gần bạn. Chúng tôi không lưu tọa độ chính xác — chỉ dùng theo khu vực.

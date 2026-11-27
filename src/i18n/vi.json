@@ -86,6 +86,19 @@
       "fish": "Cá",
       "soy": "Đậu nành",
       "sesame": "Mè"
+    },
+    "add": {
+      "own": "Tự thêm",
+      "dietTitle": "Thêm vào chế độ ăn",
+      "dietBody": "Món có từ này trong tên hoặc nguyên liệu sẽ không xuất hiện trong gợi ý và tìm kiếm.",
+      "dietPlaceholder": "VD: Thịt heo",
+      "allergyTitle": "Thêm dị ứng",
+      "allergyBody": "Chúng tôi sẽ bỏ qua món có từ này và cảnh báo bạn ở món có chứa nó.",
+      "allergyPlaceholder": "VD: Kiwi",
+      "duplicate": "Bạn đã có mục này.",
+      "add": "Thêm",
+      "removeTitle": "Xóa “{{label}}”?",
+      "remove": "Xóa"
     }
   },
   "notify": {

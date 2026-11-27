@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **Diet & allergies 태그 직접 추가**(Figma 없음): DIET · ALLERGIES 칩 끝에 **Add your own** → 단어 입력(1–20자, 목록당 20개) → 선택된 칩으로 저장, 탭하면 삭제 확인. 그 단어가 든 요리는 추천 · 검색에서 빠지고, 직접 넣은 알레르기는 7.1 경고에도 표시. DB `profiles.custom_diet · custom_allergies` 추가(migration `20261129000000_profile_custom_diet_tags.sql`). 문구 `diet.add.*` 9개 언어 추가. 09-settings에 Diet & allergies 화면, 06-data-model에 `DietPrefs` 추가
 - **고객 지원 메일 변경**: help@ongdalsaem.app → **app.ongdalsaem@gmail.com**(9.7 문의하기 링크 · 9.8 정보 캡션, `SUPPORT_EMAIL`)
 - **7.1 Post detail 배경**: 내 현재 날씨의 Mood wash + 날씨 모션을 상세 화면에도 표시(스크롤 시 올라가며 사라짐, 뒤로 · 작성자 줄 글자색 = wash 잉크). `ScreenWash`에 `motion` 옵션 추가(다른 푸시 화면은 그대로 그라데이션만)
 - **4.2 Tag 그리드 도토리 수정**: Dish Tile의 Acorn Tag가 눌리지 않던 문제 → 도토리 토글(내가 준 상태 기준). 같은 그리드(FoodGrid)를 쓰는 4.3 Country · 명절 · Viral · 4.4 Table · Nearby 그리드도 같이 적용

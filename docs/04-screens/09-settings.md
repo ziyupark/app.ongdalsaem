@@ -31,7 +31,7 @@
 - TopBar "Settings" → **Profile card**: 가로, radius 16, bg/subtle, padding 14 16. 구성은 Avatar 56 + "@jiyu.cooks"(Title/S) / "Edit profile"(Body/S muted) + `chevron-right`. 탭 → 9.2.
 - 그룹:
   - ACCOUNT: Account & security › (9.3)
-  - PREFERENCES: Notifications › (9.4) · `thermometer` Temperature **°C**(선택 시트: °C / °F) · `globe` **Language** "English" › (9.6)
+  - PREFERENCES: Notifications › (9.4) · `thermometer` Temperature **°C**(선택 시트: °C / °F) · `globe` **Language** "English" › (9.6) · `salad` **Diet & allergies** › (값 = 식단 · 직접 넣은 식단 단어 · "Allergies: n", 없으면 "No restriction")
   - PRIVACY & SAFETY: Privacy & location › (9.5)
   - SUPPORT: Help & policies › (9.8)
   - (제목 없음) Sign out (Destructive) → 1.2
@@ -90,6 +90,13 @@
 - 캡션: "Weather words, mood tags and dates follow the language you pick. Units (°C / °F) are set separately."
 - 언어를 바꾸면 앱 문구가 즉시 바뀐다(재시작 없음, `i18next` + `expo-localization`). 사용자가 쓴 글(요리 이름·설명·직접 만든 무드)은 번역하지 않는다.
 - 출시 1차 언어: English · Korean. 나머지는 번역이 준비된 언어만 목록에 보인다.
+
+### Diet & allergies (코드 기준, Figma 없음)
+- 9.1 Diet & allergies 행에서 연다(온보딩 Taste 다음 단계와 같은 폼). 누를 때마다 바로 저장.
+- **DIET**: Chip "No restriction" · Vegetarian · Vegan · Pescatarian(하나만) + 직접 넣은 단어 + **Add your own**(Chip · Add, `plus`). "No restriction"을 누르면 식단과 직접 넣은 식단 단어를 모두 지운다.
+- **ALLERGIES**: 9개 알레르기 Chip(여러 개) + 직접 넣은 단어 + **Add your own**.
+- **Add your own** → 다이얼로그(8.2b Add your mood와 같은 카드): `plus` 배지 · 제목/설명 · 입력칸(1–20자, 카운터) · 이미 있는 항목(고정 항목 이름 포함, 대소문자 무시)이면 "You already have this one." · Cancel / Add. 넣은 단어는 선택된 Chip으로 보이고, 탭하면 "Remove “…”?" 확인 후 지운다. 목록당 최대 20개.
+- 직접 넣은 단어가 요리 이름이나 재료에 있으면 추천 · 검색에서 뺀다. 직접 넣은 알레르기는 7.1 알레르기 경고에도 그 단어 그대로 나온다.
 
 ### 9.7 Choose city — [26:248](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-248)
 - **위치를 끈 사용자 전용**(2.5 "Choose city"에서만 진입). 위치가 켜져 있으면 날씨는 항상 현재 위치 기준이라 이 화면을 쓰지 않는다.

@@ -86,6 +86,19 @@
       "fish": "Peixe",
       "soy": "Soja",
       "sesame": "Gergelim"
+    },
+    "add": {
+      "own": "Adicionar outro",
+      "dietTitle": "Adicionar à sua dieta",
+      "dietBody": "Pratos com essa palavra no nome ou nos ingredientes ficam fora das sugestões e da busca.",
+      "dietPlaceholder": "Ex.: Porco",
+      "allergyTitle": "Adicionar alergia",
+      "allergyBody": "Vamos deixar de fora pratos com essa palavra e avisar você nos pratos que a tiverem.",
+      "allergyPlaceholder": "Ex.: Kiwi",
+      "duplicate": "Você já tem esse.",
+      "add": "Adicionar",
+      "removeTitle": "Remover “{{label}}”?",
+      "remove": "Remover"
     }
   },
   "notify": {

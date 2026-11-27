@@ -86,6 +86,19 @@
       "fish": "생선",
       "soy": "대두",
       "sesame": "참깨"
+    },
+    "add": {
+      "own": "직접 추가",
+      "dietTitle": "식단에 추가",
+      "dietBody": "이 단어가 요리 이름이나 재료에 있으면 추천과 검색에서 빼 드려요.",
+      "dietPlaceholder": "예: 돼지고기",
+      "allergyTitle": "알레르기 추가",
+      "allergyBody": "이 단어가 든 요리는 빼고, 요리 화면에서도 알려 드려요.",
+      "allergyPlaceholder": "예: 키위",
+      "duplicate": "이미 있는 항목이에요.",
+      "add": "추가",
+      "removeTitle": "“{{label}}”을(를) 삭제할까요?",
+      "remove": "삭제"
     }
   },
   "notify": {

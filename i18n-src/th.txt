@@ -1194,6 +1194,17 @@ allergens.shellfish=สัตว์มีเปลือก
 allergens.fish=ปลา
 allergens.soy=ถั่วเหลือง
 allergens.sesame=งา
+add.own=เพิ่มเอง
+add.dietTitle=เพิ่มในการกิน
+add.dietBody=เมนูที่มีคำนี้ในชื่อหรือวัตถุดิบจะไม่แสดงในเมนูแนะนำและการค้นหา
+add.dietPlaceholder=เช่น หมู
+add.allergyTitle=เพิ่มอาการแพ้
+add.allergyBody=เราจะไม่แสดงเมนูที่มีคำนี้ และจะเตือนในเมนูที่มี
+add.allergyPlaceholder=เช่น กีวี
+add.duplicate=มีรายการนี้อยู่แล้ว
+add.add=เพิ่ม
+add.removeTitle=ลบ “{{label}}” ไหม
+add.remove=ลบ
 [location]
 whyTitle=ทำไมต้องใช้ตำแหน่ง?
 whyBody=เพื่อแสดงสภาพอากาศในย่านของคุณและร้านใกล้เคียง เราไม่บันทึกพิกัดที่แน่นอน ใช้เพียงระดับย่านเท่านั้น

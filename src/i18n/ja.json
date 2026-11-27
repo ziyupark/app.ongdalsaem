@@ -86,6 +86,19 @@
       "fish": "魚",
       "soy": "大豆",
       "sesame": "ごま"
+    },
+    "add": {
+      "own": "自分で追加",
+      "dietTitle": "食事スタイルに追加",
+      "dietBody": "料理名や材料にこの言葉がある料理は、おすすめと検索から外します。",
+      "dietPlaceholder": "例：豚肉",
+      "allergyTitle": "アレルギーを追加",
+      "allergyBody": "この言葉を含む料理は外し、料理の画面でもお知らせします。",
+      "allergyPlaceholder": "例：キウイ",
+      "duplicate": "すでに追加されています。",
+      "add": "追加",
+      "removeTitle": "「{{label}}」を削除しますか？",
+      "remove": "削除"
     }
   },
   "notify": {
