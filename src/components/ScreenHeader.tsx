@@ -138,7 +138,7 @@ function WeatherTitle({ a, b, label }: { a: string; b: string; label: string }) 
   const clear = { color: 'transparent' };
   return (
     <View accessible accessibilityRole="header" accessibilityLabel={label}>
-      <MaskedView style={StyleSheet.absoluteFill} maskElement={line(clear, { color: color('fg/default') })}>
+      <MaskedView style={styles.glassArea} maskElement={<View style={styles.glassPad}>{line(clear, { color: color('fg/default') })}</View>}>
         <BlurView intensity={24} tint="light" style={StyleSheet.absoluteFill} />
         <View style={[StyleSheet.absoluteFill, styles.frost, { backgroundColor: color('fg/disabled') }]} />
       </MaskedView>
@@ -245,6 +245,11 @@ const styles = StyleSheet.create({
   // Title → 20 → the Weather card — Home and Profile alike (card at y 212 in 2.1 · 6.1).
   rootWeather: { paddingBottom: space[20] },
   rootProfile: { paddingBottom: space[20] },
+  // The frosted copy's area reaches past the title box: Text draws Display/XL at Fraunces' natural 57 line height pulled
+  // back to 49, so the descenders (g · y) and the last glyph's overhang fall outside the box — a mask the size of the box
+  // cut them off. The mask line is padded back by the same amount so both copies stay on top of each other.
+  glassArea: { position: 'absolute', top: -space[8], bottom: -space[8], left: -space[8], right: -space[8] },
+  glassPad: { flex: 1, padding: space[8] },
   // fg/disabled over the blurred wash — mostly the colour, a little of the background showing through.
   frost: { opacity: 0.75 },
 });
