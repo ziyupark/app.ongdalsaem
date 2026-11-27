@@ -13,12 +13,12 @@
    - 12(홈 · 프로필 11) → **대제목** Display/XL 두 톤: "Rainy evening"(날씨 단어 강조 + 시간대는 fg/disabled 톤) — 날씨 무드 + 시간대(morning/afternoon/evening/night) 조합. 한 줄, 넘치면 글자 크기를 줄여 맞춘다.
    - 글자색은 wash 위치별 잉크(로고 12 % · 오버라인 26 % · 제목 33 % 지점의 밝기)에 맞춘다.
 4. **Weather card**([136:4716](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=136-4716) — glass/surface + blur, 1px bg/subtle 테두리, Elevation/3, radius 2xl 32, 350×307, padding 위 18 · 좌우 20 · 아래 17, gap 12, 가운데 정렬):
-   - 큰 기온 Numeric/XL "12°"(padding 위 0 · 좌우 8 · 아래 2) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → **3D 날씨 아이콘 64**(우측, 원형 배경 없음 — [§2.4](../01-foundations.md)). 날씨가 없으면 bg/muted 원 + `cloud`.
+   - 큰 기온 XXL 80 "12°"(padding 위 0 · 좌우 8 · 아래 2) → 4 → 상태 Title/M "Light rain" → 6 → Body/S 두 줄 "H 14° · L 8°" / "until 9 PM"(줄 간격 2) → 14 → **3D 날씨 아이콘 64**(우측, 원형 배경 없음 — [§2.4](../01-foundations.md)). 날씨가 없으면 bg/muted 원 + `cloud`.
    - 구분선 → 12 → [**Picks head** → 8 → **Meal timeline**](한 묶음).
    - **Picks head**: Overline fg/muted "Picks for this weather" ··· **Refresh** 아이콘 버튼(`rotate-ccw` 32 원, 글자 없음). 탭할 때마다 같은 날씨·기온·무드에 맞는 **다른 요리**로 네 슬롯을 다시 채운다([§6.1](../05-behavior.md)).
    - **Meal timeline**: 4개 슬롯 가로 배치 — 이전 끼니 · **Now** · 다음 · 그다음. 각 슬롯 = 끼니 라벨 + 썸네일 원 + 예보 기온. Now 슬롯은 **선셋 그라데이션 링**.
      - **네 칸은 항상 같은 폭**: 타임라인은 카드 안쪽 폭(308)보다 **양쪽 13씩 넓다**(카드 바깥 가장자리에서 8 안쪽, 칸이 카드 가장자리에서 9). 칸 사이 2 → 390 화면에서 칸당 82(`flex: 1 1 0`). 라벨 길이와 관계없이 폭이 같고, 라벨은 칸 가운데 정렬.
-     - 칸(Meal Slot): padding 8 4 10 4, gap 6 — 라벨 Caption Strong(대문자 아님) → 썸네일 원 **74** → 날씨 아이콘 14 + 기온(Body/S Strong).
+     - 칸(Meal Slot): padding 8 4 10 4, gap 6 — 라벨 Caption Strong(대문자 아님) → 썸네일 원 **74** → **Weather Tag**(배경 없음, 높이 24, padding 5 12 5 9, gap 5: 날씨 아이콘 18 + 기온 Body/L fg/default).
    - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` 36 → 8.1.
    - Mood Prompt(기분 입력)는 홈에 없다.
 5. **Block · feed — 피드** (Weather card 아래, 전체 폭, padding-top 40, 게시물 사이 24) — 홈의 중심은 **날씨에 맞는 요리 추천**(Weather card의 끼니 슬롯 + 이 피드). Today’s pick 카드 · Nearby card(Similar Bites)는 없다(2.1 19:191에서 뺌):

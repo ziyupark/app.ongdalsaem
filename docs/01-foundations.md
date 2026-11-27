@@ -164,17 +164,18 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 | Display/M | Fraunces SemiBold | 26 / 29 | −0.45 | 화면 타이틀(온보딩, 공유) |
 | Display/Quote | Fraunces SemiBold | 22 / 29 | −0.5 | 인용/스토리, 5.1 음식 이름 박스 |
 | Title/L | Outfit Medium | 22 / 27 | −0.35 | |
-| Title/M | Outfit Medium | 18 / 23 | −0.2 | 카드 제목 |
+| Title/M | Outfit Medium | 18 / 18 | −0.2 | 카드 제목 |
 | Title/S | Outfit Medium | 16 / 21 | −0.1 | |
-| Body/L | Outfit Regular | 17 / 25 | −0.15 | |
+| Body/L | Outfit Regular | 17 / 22 | −0.15 | 홈 Meal Slot 기온 |
 | Body/M | Outfit Regular | 15 / 20 | 0.13 | 기본 본문 |
 | Body/M Strong | Outfit Medium | 15 / 21 | 0 | |
-| Body/S | Outfit Regular | 13 / 19 | 0 | |
+| Body/S | Outfit Regular | 13 / 16 | 0 | |
 | Body/S Strong | Outfit Medium | 13 / 18 | 0 | |
 | Caption | Outfit Regular | 12 / 16 | 0.1 | 메타 |
-| Caption Strong | Outfit Medium | 12 / 15 | 0 | |
-| Overline | Outfit Regular | 11 / 14 | 1.3 | **UPPERCASE** |
-| Numeric/XL | Outfit Light | 64 / 64 | −2.6 | 홈 Weather Card 기온(2.6에서는 시각 "6:40"), `tabular-nums` |
+| Caption Strong | Outfit Medium | 12 / 15 | 0.1 | |
+| Overline | Outfit Medium | 13 / 14 | 1 | **UPPERCASE** |
+| XXL 80 | Outfit Light | 80 / 66 | −2.6 | 홈 Weather Card · 6.1 프로필 기온, `tabular-nums` |
+| Numeric/XL | Outfit Light | 72 / 66 | −2.6 | 2.6 시각 "6:40" 등, `tabular-nums` |
 | Numeric/Timer | Fraunces SemiBold | 52 / 58 | 2 | 5.1/5.2 진행 링 안 타이머 숫자, `tabular-nums` |
 | Numeric/L | Outfit | 28 / 31 | — | |
 | Numeric/M | Outfit | 17 / 21 | — | |

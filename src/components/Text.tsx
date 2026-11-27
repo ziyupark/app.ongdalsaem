@@ -32,7 +32,7 @@ function localeFont(fontFamily: unknown, lang: string): TextStyle | null {
  * iOS then cuts the top of the glyphs. Render them with the font's natural line height and pull the box back in with
  * negative margins: same layout height as the token, glyphs placed exactly as in Figma (half-leading split evenly).
  */
-const UNCLIP = new Set<TextVariant>(['Numeric/XL', 'Numeric/L', 'Numeric/Timer']);
+const UNCLIP = new Set<TextVariant>(['XXL 80', 'Numeric/XL', 'Numeric/L', 'Numeric/Timer']);
 
 /**
  * Scripts drawn taller than Outfit / Fraunces: Korean (Noto Sans KR, ~1.45 em) and the system fonts used for

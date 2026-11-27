@@ -4,6 +4,8 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **Weather Card**(136:4716): 기온 Numeric/XL 72 → **XXL 80**(Outfit Light 80/66, −2.6 — 새 글자 스타일, 6.1 프로필 기온도 같은 스타일로 바꿈). Meal Slot 기온 → **Weather Tag**(배경 없음, 높이 24, padding 5 12 5 9, gap 5): 아이콘 14 → **18**, 기온 Body/S Strong → **Body/L**. padding 18 20 17 · gap 12 · 칸 padding 8 4 10 4 · gap 6은 그대로
+- **Body/L 글자 스타일**: 17/25 → **17/22**, **Overline** 자간 1.3 → **1**(Figma 텍스트 스타일 변경, 앱 전체 적용). 01-foundations 글자 표의 Title/M · Body/S · Caption Strong · Overline · Numeric/XL 값도 실제 토큰대로 고침
 - **Body/M 글자 스타일**: 15/22 · −0.05 → **15/20 · 0.13**(Figma 텍스트 스타일 변경, 앱 전체 Body/M에 적용)
 - **6.1 Profile 기온**(1094:24027): Numeric/XL 72 → **80**(홈 Weather Card는 72 그대로)
 - **댓글 이름 = @username**(Comment 132:4846): Avatar 32 → 40, 이름 Body/S Strong → Body/M Strong, 본문 Body/S fg/secondary → Body/M fg/default. 3.8 답변 이름도 @username

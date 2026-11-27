@@ -33,7 +33,7 @@ type Props = {
 
 /**
  * Weather Card 136:4716 — glass surface (glass/surface + blur, 1px bg/subtle edge, Elevation/3), radius 2xl, children centred.
- * Padding 18 20 17, gap 12. Now row (temp · condition / H·L / until · 3D icon 64) → divider → [Picks head (Overline · Refresh 32)
+ * Padding 18 20 17, gap 12. Now row (temp XXL 80 · condition / H·L / until · 3D icon 64) → divider → [Picks head (Overline · Refresh 32)
  * → 8 → Meal timeline (13 wider than the content box a side — slots 9 from the card edge; 4 equal slots of 82 at 390 wide, gap 2)].
  */
 export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots, picksHead, onRefresh, onSlotPress }: Props) {
@@ -85,7 +85,7 @@ export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots
       <View style={styles.now}>
         <View style={styles.nowMain}>
           <View style={styles.tempBox}>
-            <Text variant="Numeric/XL" style={styles.tabular}>{tempC === undefined ? '--°' : `${temp(tempC)}°`}</Text>
+            <Text variant="XXL 80" style={styles.tabular}>{tempC === undefined ? '--°' : `${temp(tempC)}°`}</Text>
           </View>
           <View style={styles.nowText}>
             <Text variant="Title/M" numberOfLines={1}>{condition}</Text>
@@ -119,7 +119,7 @@ export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots
   );
 }
 
-/** Meal Slot 131:4280 — label (Caption Strong, centred) → thumb 74 (empty: plus 36) → weather icon 14 + temp. Active = fg/default label on the sliding bg/muted highlight. */
+/** Meal Slot 131:4280 — label (Caption Strong, centred) → thumb 74 (empty: plus 36) → Weather Tag (icon 18 · Body/L temp). Active = fg/default label on the sliding bg/muted highlight. */
 function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; onPress: () => void }) {
   const { color } = useTheme();
   const { t } = useTranslation();
@@ -144,8 +144,8 @@ function MealSlot({ slot, active, onPress }: { slot: SlotView; active: boolean; 
         </View>
       )}
       <View style={styles.slotTemp}>
-        <Icon icon={WEATHER_ICON[slot.mood ?? 'overcast']} size={14} />
-        <Text variant="Body/S Strong" style={styles.tabular}>{slot.tempC === undefined ? '--°' : `${temp(slot.tempC)}°`}</Text>
+        <Icon icon={WEATHER_ICON[slot.mood ?? 'overcast']} size={18} />
+        <Text variant="Body/L" style={styles.tabular}>{slot.tempC === undefined ? '--°' : `${temp(slot.tempC)}°`}</Text>
       </View>
     </Pressable>
   );
@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
   slotLabel: { alignSelf: 'stretch', textAlign: 'center' },
   thumb: { width: 74, height: 74, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   emptyThumb: { borderWidth: 1, borderStyle: 'dashed' },
-  slotTemp: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  // Weather Tag 1231:11417 (no fill) — 24 high, padding 5 12 5 9, gap 5, icon 18 · Body/L fg/default.
+  slotTemp: { height: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 5, paddingLeft: 9, paddingRight: space[12], borderRadius: radius.full, overflow: 'hidden' },
   tabular: { fontVariant: ['tabular-nums'] },
 });

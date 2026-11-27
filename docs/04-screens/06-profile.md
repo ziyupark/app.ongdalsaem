@@ -7,7 +7,7 @@
 ### 프로필 공통 헤더 (6.1 / 6.2 / 6.3 / 6.4) — 코드 기준(Figma 6.1 657:16468 · 컴포넌트 `Profile Header` [126:4345](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=126-4345)는 이전 구성)
 - **ScreenWash + ScreenHeader**(네 탭 공통, Figma 6.1 1217:14479 Block · title & weather — 오버라인 → 11 → 제목 → 18 → 카드): 오른쪽 = 내 프로필 `settings`(→ 9.1), 다른 요리사 = 빈 자리 + 로고 대신 **뒤로** 버튼(4.5).
 - **프로필 카드**(1217:14567 — 좌우 20, padding 18 20, **gap 12**, 유리: glass/surface 88 %, 테두리 bg/subtle):
-  1. **날씨 줄** — 홈 Weather card Now 줄과 같은 규칙: Numeric/XL 기온(padding 0 8 2 8) → 4 → Title/M 상태 → 6 → Body/S fg/muted 두 줄 "H 14° · L 9°" / "until 9 PM"(줄 간격 2) · **3D 날씨 아이콘 64**(원형 배경 없음, 날씨 없으면 bg/muted 원 + `cloud` — [§2.4](../01-foundations.md)). **항상 내 위치의 날씨**(다른 요리사 프로필에서도). 날씨가 없으면 "--°" / "No weather yet".
+  1. **날씨 줄** — 홈 Weather card Now 줄과 같은 규칙: XXL 80 기온(padding 0 8 2 8) → 4 → Title/M 상태 → 6 → Body/S fg/muted 두 줄 "H 14° · L 9°" / "until 9 PM"(줄 간격 2) · **3D 날씨 아이콘 64**(원형 배경 없음, 날씨 없으면 bg/muted 원 + `cloud` — [§2.4](../01-foundations.md)). **항상 내 위치의 날씨**(다른 요리사 프로필에서도). 날씨가 없으면 "--°" / "No weather yet".
   2. 구분선 border/default(위아래 12 — 홈 Weather Card와 같은 위치)
   3. **아이디 줄**(높이 80): 아바타 **74**(1.2 테두리 border/default, 사진 없으면 bg/accent-subtle + 첫 글자 Display/M fg/accent; 내 프로필은 탭 → 사진 바꾸기) + 16 + [Display/M 이름 → 2 → Body/S fg/muted "@username"] → 11 → **도토리 칩**(bg/muted, 채운 도토리 16 + Caption Strong **"Total acorns {n}"**) — 받은 도토리 합계.
   4. **상태 메시지**(**Body/M** fg/secondary). 내 프로필은 눌러서 고침("Add a status message" fg/muted 자리표시) → BottomSheet "Status message"(입력칸 + 글자 수).
