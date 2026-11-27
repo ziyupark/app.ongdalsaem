@@ -51,7 +51,7 @@
 - 목적: 매일 Today’s pick 알림을 받을 시간을 정하고 알림 권한을 묻는다.
 - 블록: StatusBar → TopBar(Inline, 오른쪽 Button Ghost S **"Skip"**) → Overline "STEP 3 OF 3" + Display/L **"When should we send / your daily pick?"** + Body/M fg/secondary "One dish for today’s weather, every day at this time. You can change it in Settings." → 40 → **시간 휠**(좌우 20, 5줄 보임, 줄 높이 46, 30분 간격 48개, 시각 표기는 앱 언어 형식). 가운데 줄 = bg/subtle + 1px border/default radius md 강조, 글자 Title/L fg/default · 나머지 Body/L fg/muted(한 칸 떨어지면 70 %, 그 밖 40 %). 처음 위치 = 저장된 시간(기본 07:30).
   - [고정] Button Primary L `bell` **"Turn on notifications"**
-- 동작: 버튼 → `prefs.pickTime` 저장 + Daily pick 알림 켬 → 시스템 알림 권한 요청 → 기기 토큰과 시간을 서버에 저장 → Home. Skip → 저장 없이 Home.
+- 동작: 버튼 → `prefs.pickTimes` = [고른 시간] 저장(시간 추가는 9.4에서, 최대 5개) + Daily pick 알림 켬 → 시스템 알림 권한 요청 → 기기 토큰과 시간을 서버에 저장 → Home. Skip → 저장 없이 Home.
 - 이동: 1.4에서 위치가 꺼진 채 왔으면 Home은 2.5 상태로 연다.
 - 휠은 VoiceOver에서 조절 가능한 항목(위·아래로 30분씩).
 

@@ -684,6 +684,8 @@
     "forYou": "Para ti",
     "nDailyPick": "Idea diaria según el clima",
     "pickTime": "Hora de la idea",
+    "addPickTime": "Añadir hora",
+    "removePickTime": "Quitar esta hora",
     "nTimer": "Temporizador de cocina",
     "adsEvents": "Anuncios y eventos",
     "nAds": "Ofertas y eventos",

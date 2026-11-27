@@ -696,6 +696,8 @@
     "forYou": "For you",
     "nDailyPick": "Daily weather pick",
     "pickTime": "Pick time",
+    "addPickTime": "Add pick time",
+    "removePickTime": "Remove this time",
     "nTimer": "Kitchen timer",
     "adsEvents": "Ads & events",
     "nAds": "Offers & events",

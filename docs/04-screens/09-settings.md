@@ -61,6 +61,7 @@
 ### 9.4 Notifications — [193:6391](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6391)
 - ACTIVITY(Switch): Acorns on your dishes **on** · Comments & replies **on** · New followers **on**
 - FOR YOU: Daily weather pick **on** · Pick time **7:30 AM**(Value, 시간 선택 시트) · Kitchen timer **on**
+  - Pick time은 **최대 5개**(Figma에는 1개만): 시간마다 Pick time 행 1개(시각 순). 행 탭 → 시간 선택 시트(이미 고른 시간은 빼고) + 2개 이상이면 **Remove this time**(Destructive). 5개 미만이면 마지막에 `plus` **Add pick time** 행 → 시간 선택 시트. 시트 시간 = 7:00 · 7:30 · 8:00 · 9:00 · 11:30 · 12:00 · 15:00 · 17:30 · 18:00 · 20:00. Daily weather pick이 꺼지면 모두 비활성.
 - 광고 · 이벤트 알림은 v1에 없다(ADS & EVENTS 그룹 숨김). 나중에 추가하면 옵트인 · 야간 별도 동의 · "(광고)" 표시 · 2년 재확인([99-removed-in-v1](99-removed-in-v1.md) 9.9e).
 - OS 알림이 꺼져 있으면 맨 위에 Inline Banner(Neutral) "Notifications are off in system settings · Turn on"을 표시한다.
 

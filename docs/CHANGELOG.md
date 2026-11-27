@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **9.4 Pick time 최대 5개**(Figma 없음): 시간마다 Pick time 행, 탭 → 바꾸기 · **Remove this time**, 5개 미만이면 `plus` **Add pick time**. 시간 선택지 6 → 10개(12:00 · 15:00 · 18:00 · 20:00 추가). 푸시는 고른 시각마다 1번. `prefs.pickTime` → `pickTimes`(옛 값 자동 이전), DB `push_tokens.pick_times · last_sent_at` 추가(migration `20261130000000_daily_pick_times.sql`), send-daily-recommendation 수정. 문구 `settings.addPickTime · removePickTime` 9개 언어 추가
 - **Diet & allergies 태그 직접 추가**(Figma 없음): DIET · ALLERGIES 칩 끝에 **Add your own** → 단어 입력(1–20자, 목록당 20개) → 선택된 칩으로 저장, 탭하면 삭제 확인. 그 단어가 든 요리는 추천 · 검색에서 빠지고, 직접 넣은 알레르기는 7.1 경고에도 표시. DB `profiles.custom_diet · custom_allergies` 추가(migration `20261129000000_profile_custom_diet_tags.sql`). 문구 `diet.add.*` 9개 언어 추가. 09-settings에 Diet & allergies 화면, 06-data-model에 `DietPrefs` 추가
 - **고객 지원 메일 변경**: help@ongdalsaem.app → **app.ongdalsaem@gmail.com**(9.7 문의하기 링크 · 9.8 정보 캡션, `SUPPORT_EMAIL`)
 - **7.1 Post detail 배경**: 내 현재 날씨의 Mood wash + 날씨 모션을 상세 화면에도 표시(스크롤 시 올라가며 사라짐, 뒤로 · 작성자 줄 글자색 = wash 잉크). `ScreenWash`에 `motion` 옵션 추가(다른 푸시 화면은 그대로 그라데이션만)

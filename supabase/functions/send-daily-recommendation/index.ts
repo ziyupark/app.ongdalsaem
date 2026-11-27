@@ -1,8 +1,8 @@
-// 9.4 "Today's pick" push — today's weather + one dish that suits it, once a day at each user's chosen time.
+// 9.4 "Today's pick" push — today's weather + one dish that suits it, at each of the user's chosen times (up to 5 a day).
 //
 // Called every 15 min by pg_cron (supabase/migrations/20261108000000_daily_pick_push.sql). For every
-// push_tokens row with daily_pick on whose local pick_time fell in the last 15 minutes and that hasn't had
-// today's push yet: weather at the stored (rounded) coordinates → mood → a dish from that weather family
+// push_tokens row with daily_pick on where one of its local pick_times fell in the last 15 minutes and that
+// wasn't sent to in the last 15 minutes (20261130000000_daily_pick_times.sql): weather at the stored (rounded) coordinates → mood → a dish from that weather family
 // (same rules as the app's Today's pick: exact weather first, then acorns × freshness × meal) → Expo push.
 //
 // Title: "Light rain 14° · Mapo-gu, Seoul"   Body: "Today's pick: Beef noodle soup"   (in the app language)
@@ -122,8 +122,8 @@ function pick(pool: PoolDish[], mood: Mood | null, hour: number, userId: string,
 }
 
 type Row = {
-  user_id: string; token: string; pick_time: string; tz: string; lat: number | null; lon: number | null;
-  place: string | null; city: string | null; language: string; temp_unit: "C" | "F"; last_sent_on: string | null;
+  user_id: string; token: string; pick_times: string[]; tz: string; lat: number | null; lon: number | null;
+  place: string | null; city: string | null; language: string; temp_unit: "C" | "F"; last_sent_at: string | null;
 };
 
 Deno.serve(async (req) => {
@@ -135,19 +135,23 @@ Deno.serve(async (req) => {
 
   const { data: rows, error } = await supabase
     .from("push_tokens")
-    .select("user_id, token, pick_time, tz, lat, lon, place, city, language, temp_unit, last_sent_on")
+    .select("user_id, token, pick_times, tz, lat, lon, place, city, language, temp_unit, last_sent_at")
     .eq("daily_pick", true);
   if (error) {
     console.error("[daily-pick]", error.message);
     return new Response(JSON.stringify({ error: "query_failed" }), { status: 500 });
   }
 
-  // Who is due: local pick_time within the last WINDOW_MIN minutes, not yet sent today.
+  // Who is due: one of the local pick_times within the last WINDOW_MIN minutes, and nothing sent in that window yet.
+  const windowStart = now.getTime() - WINDOW_MIN * 60_000;
   const due = ((rows ?? []) as Row[]).flatMap((r) => {
+    if (r.last_sent_at && new Date(r.last_sent_at).getTime() > windowStart) return [];
     const local = localNow(r.tz, now);
-    const [h, m] = r.pick_time.split(":").map(Number);
-    const since = (local.minutes - (h * 60 + m) + 1440) % 1440;
-    return since < WINDOW_MIN && r.last_sent_on !== local.date ? [{ ...r, local }] : [];
+    const hit = (r.pick_times ?? []).some((t) => {
+      const [h, m] = t.split(":").map(Number);
+      return (local.minutes - (h * 60 + m) + 1440) % 1440 < WINDOW_MIN;
+    });
+    return hit ? [{ ...r, local }] : [];
   });
   if (!due.length) return new Response(JSON.stringify({ sent: 0 }), { status: 200 });
 
@@ -189,6 +193,7 @@ Deno.serve(async (req) => {
   const weatherCache = new Map<string, Promise<{ mood: Mood; tempC: number } | null>>();
   const messages: { to: string; title: string; body: string; sound: "default"; data: { foodId: string; url: string } }[] = [];
   const sentTo: { user_id: string; date: string }[] = [];
+  const sentAt = now.toISOString();
 
   for (const r of due) {
     // Rounded coordinates, or the chosen city when location is off.
@@ -222,7 +227,7 @@ Deno.serve(async (req) => {
     });
   }
   for (const s of sentTo) {
-    await supabase.from("push_tokens").update({ last_sent_on: s.date }).eq("user_id", s.user_id);
+    await supabase.from("push_tokens").update({ last_sent_on: s.date, last_sent_at: sentAt }).eq("user_id", s.user_id);
   }
 
   return new Response(JSON.stringify({ sent: messages.length }), { status: 200 });

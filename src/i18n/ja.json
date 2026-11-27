@@ -679,6 +679,8 @@
     "forYou": "あなたへ",
     "nDailyPick": "毎日の天気おすすめ",
     "pickTime": "おすすめの時間",
+    "addPickTime": "時間を追加",
+    "removePickTime": "この時間を削除",
     "nTimer": "キッチンタイマー",
     "adsEvents": "広告とイベント",
     "nAds": "特典とイベント",

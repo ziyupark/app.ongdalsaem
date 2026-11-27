@@ -696,6 +696,8 @@
     "forYou": "추천",
     "nDailyPick": "오늘의 날씨 추천",
     "pickTime": "추천 시간",
+    "addPickTime": "추천 시간 추가",
+    "removePickTime": "이 시간 삭제",
     "nTimer": "키친 타이머",
     "adsEvents": "광고 및 이벤트",
     "nAds": "혜택·이벤트 소식",
