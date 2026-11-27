@@ -15,11 +15,11 @@
 ### 1.2 Sign in (Welcome) — [1207:10884](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1207-10884)
 - 앱을 처음 열었을 때 보는 **보편적인 시작 화면**: 위 날씨 헤더(지금 내 위치 날씨), 가운데 지금 날씨 3D, 아래 로그인 버튼 2개(Apple · Google). 이메일 · 비밀번호 입력은 없다.
 - 레이아웃(자유 배치, 스크롤 없음):
-  0. 프레임 배경 = bg/default(크림) + LaunchBackdrop(하늘 `photo:welcome` 390×420 Mood/clear → bg/default, Scrim top 0–120, 흰 글로 2개 — 1.1과 같음)
+  0. 프레임 배경 = bg/default(크림) → **아래 풍경**(Rectangle 22: 1.1과 같은 `assets/launch/splash-landscape.png`, 390×650 상자 y 194–844 안에서 188.64 % × 67.27 %, 위치 0.01 % / **43.2 %** — 1.1보다 아래로 잘림) → LaunchBackdrop(하늘 `photo:welcome` 390×420 Mood/clear → bg/default, Scrim top 0–120, 흰 글로 2개 — 1.1과 같음)
   1. StatusBar(Tone=Dark)
   2. **weather header**(y 54, 좌우 20, gap 22): Logo(Compact) 줄(높이 40) → Overline fg/default 대문자 **"TUE, OCT 27 · MAPO, SEOUL"**(날짜 = 앱 언어 형식 요일 · 월 · 일, 장소 = 구 · 도시) → 13 → **Weather Now** 350("Light rain · 12°" / "Mapo, Seoul · right now" / "H 14° · L 8°")
-  3. **Weather 3D**(지금 날씨의 3D 아이콘, 모르면 `clear`) 367×370, 가운데, y 221–591(헤더 아래 6 · 버튼 위 18). 작은 화면(iPhone SE)은 그 사이 공간에 맞춰 줄어든다.
-  4. [고정] Block · Button(y 609–733, Home Indicator 위 77, gap 10): **Auth Button(Apple)** "Continue with Apple" → **Auth Button(Google)** "Continue with Google" → Caption 가운데 "By continuing, you agree to our **Terms** and **Privacy Policy**."(두 단어 Caption Strong fg/secondary, 탭 → 9.8c 문서 시트). 이메일 버튼은 없다.
+  3. **Weather 3D**(지금 날씨의 3D 아이콘, 모르면 `clear`) 355×359, 가운데, y 215–574(헤더 바로 아래 ~ 버튼 바로 위). 작은 화면(iPhone SE)은 그 사이 공간에 맞춰 줄어든다.
+  4. [고정] Block · Button(y 574–698, Home Indicator 위 112, gap 10): **Auth Button(Apple)** "Continue with Apple" → **Auth Button(Google)** "Continue with Google" → Caption 가운데 "By continuing, you agree to our **Terms** and **Privacy Policy**."(두 단어 Caption Strong fg/secondary, 탭 → 9.8c 문서 시트). 이메일 버튼은 없다.
   5. [A] Home Indicator
 - **지금 내 위치 날씨(로그인 전)**: 화면이 열리면 위치 권한을 묻는다(시스템 창, 이미 정했으면 묻지 않음). 허용 → 기기 좌표(소수 2자리로 반올림해 전송)로 장소 이름 · 지금 날씨 · 오늘 최고/최저를 읽어 Overline 장소, Weather Now, 가운데 3D 아이콘에 보여 준다. 거부 · 위치 꺼짐 · 읽기 실패 → Overline은 날짜만, Weather Now 없음, 3D = `clear`. 로그인 전 날씨는 `weather` 함수가 **좌표로 읽는 current · forecast만**, IP당 시간 30회까지 허용한다(도시 검색 · 도시 이름 조회는 로그인 필요). 이 읽기는 저장하지 않으며, 로그인 후에는 공유 읽기(useHere)가 다시 읽는다.
 - 이동: Apple/Google → **1.3b**(첫 로그인, @username 자동 생성) 또는 2.1(기존 계정).

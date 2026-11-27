@@ -26,12 +26,14 @@ const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
 type Provider = 'Apple' | 'Google' | 'Dev';
 
 /**
- * 1207:10884 geometry (design px, 844 frame). Weather header from y 54; Weather 3D 367×370 at y 221 (6 under the
- * header, 18 above the buttons); Block · Button at y 609 (Apple → Google → caption, gap 10), 77 above the Home Indicator.
+ * 1207:10884 geometry (design px, 844 frame). Weather header y 54–215; Weather 3D 355×359 at y 215 (right under the
+ * header, ending where the buttons start); Block · Button at y 574 (Apple → Google → caption, gap 10), 112 above the
+ * Home Indicator. Landscape (Rectangle 22) = the splash image in a 390×650 box at y 194, cropped lower than on 1.1.
  */
 const HEADER_TOP = 54;
-const HERO = { w: 367, h: 370, above: 6, below: 18 };
-const ACTIONS_ABOVE_INDICATOR = 77;
+const HERO = { w: 355, h: 359, above: 0, below: 0 };
+const ACTIONS_ABOVE_INDICATOR = 112;
+const LANDSCAPE = require('../assets/launch/splash-landscape.png');
 const ACTIONS_H = 124;
 const HEADER_H = 161;
 
@@ -98,8 +100,8 @@ export default function SignIn() {
   const date = new Date().toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric' });
   const hero = (f?.icon && WEATHER_3D[f.icon] ? f.icon : f?.mood) ?? 'clear';
 
-  // Buttons sit 77 above the Home Indicator; the 3D weather fills the room between the header and the buttons
-  // (370 on 844+, smaller on iPhone SE), 6 under the header and 18 above the buttons as drawn.
+  // Buttons sit 112 above the Home Indicator; the 3D weather fills the room between the header and the buttons
+  // (359 on 844+, smaller on iPhone SE).
   const [headerH, setHeaderH] = useState(HEADER_H);
   const [actionsH, setActionsH] = useState(ACTIONS_H);
   const headerTop = Math.max(insets.top, HEADER_TOP);
@@ -113,6 +115,10 @@ export default function SignIn() {
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      {/* Rectangle 22 (1268:17810): landscape at the bottom, under the sky and the glows (as on 1.1). */}
+      <View pointerEvents="none" style={styles.landscape}>
+        <Image source={LANDSCAPE} style={styles.landscapeImage} contentFit="fill" />
+      </View>
       <LaunchBackdrop />
 
       {/* weather header 1268:17791: Logo row 40 → 22 → Overline date · place → 13 → Weather Now. */}
@@ -134,7 +140,7 @@ export default function SignIn() {
         </View>
       </View>
 
-      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 367×370, centred. */}
+      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 355×359, centred. */}
       <Image
         source={WEATHER_3D[hero]}
         style={[styles.hero, { top: heroTop, left: (width - HERO.w * k) / 2, width: HERO.w * k, height: heroH }]}
@@ -143,7 +149,7 @@ export default function SignIn() {
         pointerEvents="none"
       />
 
-      {/* Block · Button: Apple → Google → caption, gap 10, 77 above the Home Indicator. */}
+      {/* Block · Button: Apple → Google → caption, gap 10, 112 above the Home Indicator. */}
       <View style={[styles.actions, { bottom: actionsBottom }]} onLayout={(e) => setActionsH(e.nativeEvent.layout.height)}>
         {/* The free-Apple-ID test build (FREE_APPLE_TEAM=1) can't sign in with Apple. */}
         {FREE_TEAM ? null : <AuthButton provider="Apple" label={t('signIn.apple')} onPress={() => run('Apple')} loading={busy === 'Apple'} disabled={busy !== null} />}
@@ -176,6 +182,9 @@ export default function SignIn() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+ // Box 390×650 whose bottom meets the frame bottom (844); image 188.64 % × 67.27 % at 0.01 % / 43.2 % of it.
+  landscape: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 650, overflow: 'hidden' },
+  landscapeImage: { position: 'absolute', left: '0.01%', top: '43.2%', width: '188.64%', height: '67.27%' },
   header: { position: 'absolute', left: space[20], right: space[20], gap: 22 },
   logoRow: { height: space[40], flexDirection: 'row', alignItems: 'center' },
   now: { gap: 13 },
