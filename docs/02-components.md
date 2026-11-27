@@ -170,7 +170,7 @@ Weather Tag · Acorn Tag · Photo Counter — 규격은 [§3.4](#34-사진-위-�
 - 글자색은 wash 위 위치(로고 12 % · 오버라인 26 % · 제목 33 %)의 밝기에 맞춘 잉크. 마지막 날씨 값은 앱을 다시 열 때도 먼저 보여 준다(기기 캐시).
 
 ### 3.1c UnderlineTabs — 코드 기준
-- X 스타일 밑줄 탭: 전체 폭 **1px border/default 선(30 % 투명)** + 선택 탭 아래 **3px fg/default 막대**(라벨 글자 폭, radius full). 탭을 바꾸면 막대가 200ms에 미끄러져 간다. 탭 높이 43(위 10 · 아래 12). 선택 = fg/default, 나머지 fg/muted(wash 위에서는 wash 잉크). 아이콘 탭도 가능(6.x 내 프로필).
+- X 스타일 밑줄 탭: 전체 폭 **1px border/default 선(30 % 투명)** + 선택 탭 아래 **3px fg/default 막대**(라벨 글자 폭, radius full). 탭을 바꾸면 막대가 200ms에 미끄러져 간다. 탭 높이 43(위 10 · 아래 12). 선택 = fg/default, 나머지 fg/muted(wash 위에서는 wash 잉크). 글자 기본 Body/M Strong(선택) · Body/M, `labelVariant`로 한 스타일 지정(4.1 Community = Title/M). 아이콘 탭도 가능(6.x 내 프로필).
 - 쓰는 곳: Community(Explore · Following · Challenges) · Profile · 4.2 · 4.3. Figma `Tab` 6:252(24×3 bg/primary 막대)는 쓰지 않는다.
 
 ### 3.2 아이콘 목록 (Lucide + custom) — Figma에 남긴 82개(화면에서 쓰는 것만)

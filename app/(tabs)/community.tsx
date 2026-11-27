@@ -225,6 +225,7 @@ export default function Community() {
           <UnderlineTabs
             ink={tabInk}
             contentStyle={styles.tabRow}
+            labelVariant="Title/M"
             value={seg}
             onChange={(k) => goTo(k)}
             progress={pos}

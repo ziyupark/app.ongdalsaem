@@ -23,7 +23,7 @@
 - 목적: **전 세계 식탁 + 우리 동네**. 세로 스크롤.
 - 블록:
   1. **ScreenWash + ScreenHeader**(Home과 같은 무드 wash + 날씨 모션 · 로고 · `bell` · 날짜·위치 · 날씨 제목, [02-home](02-home.md) 공통 레이아웃 3 — Community는 오버라인 → 12 → 제목 → 12)
-  2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 24, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
+  2. **UnderlineTabs**: **Explore**(active) · Table · Challenges(왼쪽 20, 탭 간격 24, 글자 **Title/M** 18/18 — 선택 · 미선택 같은 굵기, 아래 border/default 30 % 줄). 글자색은 wash 55 % 지점 잉크. 한 번 연 탭은 계속 마운트해 둔다(탭을 바꿔도 다시 불러오지 않음).
   3. 본문(1219:15437): 위아래 32, **섹션 사이 38**. 순서 = Story of the day → Popular today → Neighbourhood questions → Trending tags → Special days around the world. (Viral Bites · Explore Together는 Explore에 없다.)
   4. **Story of the day**(좌우 20, gap 16): Display/M 26 "Story of the day"(항상 영어, 읽기는 내 언어) → Story Card **350×420**(PhotoCard, padding 24, Card scrim): 오른쪽 위 **⋯**(fg/on-photo, 남의 글일 때 → 신고·차단) · 아래 Statement 요리 이름(2줄) → Body/M 설명(2줄) → Body/S "이름 · 도시 · 시간" + Avatar 40 → Weather Tag · Acorn Tag(도토리 토글). 탭 → 7.1.
     - 고르는 규칙(**오늘의 픽**): 공개 게시물 중 **내 지금 날씨와 같은 날씨 + 기온 ±1°C**(`weather_condition` = 내 무드, `temperature_c` 내 기온 −1 ~ +1). 캡션 있는 최근 2일 → 최근 30일 → 캡션 없어도 최신 60개 중 도토리 많은 순. 맞는 게시물이 없거나 날씨를 모르면(위치 꺼짐) 날씨 조건 없이 같은 순서로 고른다.
