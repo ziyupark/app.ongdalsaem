@@ -214,7 +214,7 @@ custom: acorn(라인) · acorn-color(컬러) · heart-filled(채운 하트, v1 �
 
 ### 3.3 Feed Post 상세 (390 × 652, 전체 폭)
 
-세로 스택, gap 0, padding-bottom 24. 사진 카드는 좌우 20 안쪽(390 폭 → 350), Header는 좌우 21, Actions · Caption은 좌우 38.
+세로 스택, gap 0, padding-bottom 18. 사진 카드는 좌우 20 안쪽(390 폭 → 350), Header는 좌우 21, Actions · Caption은 좌우 38.
 
 | 순서 | 레이어 | 스펙 |
 |---|---|---|

@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **Feed Post · 홈 피드 padding**([119:601](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=119-601) · [123:3261](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=123-3261)): Feed Post 아래 padding 24 → **18**. Block · feed 위 padding 40 → **24**, 게시물 사이 gap 24 → **0**(게시물 간 간격 48 → 18)
 - **Display/M = 24 확정**: Today’s Pick 제목도 24(Figma 1238:16790의 26 덮어쓰기 제거 — 스타일 Display/M 24/29 그대로). 앱 코드는 이미 24
 - **4.1 Community · Explore 오토레이아웃 점검**([1238:16768](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1238-16768)): 탭 블록 위 12 → **14**, 본문 위 28 → **21**(아래 28 그대로), 바닥 여백 110 + 24 → **110**(Table · Challenges도 같음), Popular today 카드 오른쪽 padding 16 → **24**. 제목 "Story of the day" → **"Today’s Pick"**(9개 언어 `community.story`)
 - **4.4 "Neighbors' Table" 제목**([813:12215](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=813-12215)): Display/M → **Title/L**(Outfit Medium 22/27)

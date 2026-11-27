@@ -102,7 +102,7 @@ export const FeedPost = memo(function FeedPost({ post, onOpen, onAuthor, onComme
 });
 
 const styles = StyleSheet.create({
-  post: { paddingBottom: space[24] },
+  post: { paddingBottom: 18 }, // Feed Post 119:601 — padding-bottom 18
   header: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: 21, paddingVertical: space[12] }, // Header 119:602 — padding 12 21
   avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   author: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[10] },

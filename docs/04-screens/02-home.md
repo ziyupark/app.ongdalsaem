@@ -21,7 +21,7 @@
      - 칸(Meal Slot 131:4278): 높이 hug, padding 8 0 10 — [라벨 Caption Strong(대문자 아님) → 6 → 썸네일 원 **74**] → 0 → **Weather Tag**(배경 없음, 높이 hug 32, padding 5 12 5 9, gap 5: 날씨 아이콘 18 + 기온 Body/L fg/default).
    - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` 36 → 8.1.
    - Mood Prompt(기분 입력)는 홈에 없다.
-5. **Block · feed — 피드** (Weather card 아래, 전체 폭, padding-top 40, 게시물 사이 24) — 홈의 중심은 **날씨에 맞는 요리 추천**(Weather card의 끼니 슬롯 + 이 피드). Today’s pick 카드 · Nearby card(Similar Bites)는 없다(2.1 19:191에서 뺌):
+5. **Block · feed — 피드** (Weather card 아래, 전체 폭, padding-top 24, 게시물 사이 간격 없음 — 각 Feed Post의 아래 padding 18) — 홈의 중심은 **날씨에 맞는 요리 추천**(Weather card의 끼니 슬롯 + 이 피드). Today’s pick 카드 · Nearby card(Similar Bites)는 없다(2.1 19:191에서 뺌):
    - 피드 헤더 · Similar 칩 줄은 없다. **Feed Post ×N**([§3.3](../02-components.md))만 이어진다.
    - 20개 이상이면 끝에 **Loading more**(16px 원호 스피너 fg/accent + Caption fg/muted `Loading more like this…`).
    - **Tab bar spacer** 96px.

@@ -192,7 +192,7 @@ export default function HomeScreen() {
   const detail = f ? t('home.hiLo', { hi: displayTemp(f.hi), lo: displayTemp(f.lo) }) : t('home.retry');
   const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(i18n.language, { hour: 'numeric' }) }) : undefined;
 
-  // Block · feed 123:3261 — padding-top 40, gap 24. Under the Weather card (2.1); under the location card when location is off.
+  // Block · feed 123:3261 — padding-top 24, no gap (each Feed Post ends with its own 18). Under the Weather card (2.1); under the location card when location is off.
   const feed = (
     <View style={styles.feed}>
       {feedFailed && !posts.length ? <LoadError onRetry={() => { setFeedFailed(false); setFeedAttempt((n) => n + 1); }} /> : null}
@@ -273,6 +273,6 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   // Body under ScreenHeader (withWeather: its 18 bottom = title → Weather card).
   px: { paddingHorizontal: space[20] },
-  // Block · feed: padding-top 40, gap 24 between Feed Posts (each also keeps its own 24 bottom padding).
-  feed: { paddingTop: space[40], gap: space[24] },
+  // Block · feed 123:3261: padding-top 24, no gap — posts are spaced by their own 18 bottom padding.
+  feed: { paddingTop: space[24] },
 });
