@@ -24,7 +24,6 @@ legalSuffix= của chúng mình.
 apple=Tiếp tục với Apple
 google=Tiếp tục với Google
 error=Đăng nhập đang ngủ trưa — chạm để thử lại.
-weatherNow={{condition}} · {{temp}}°
 [location]
 step=Bước 2/3
 title=Để thời tiết\ngiúp bạn chọn.

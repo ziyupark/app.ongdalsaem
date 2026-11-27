@@ -26,8 +26,7 @@
     "legalSuffix": " kami.",
     "apple": "Lanjutkan dengan Apple",
     "google": "Lanjutkan dengan Google",
-    "error": "Proses masuk sedang tidur siang — ketuk untuk mencoba lagi.",
-    "weatherNow": "{{condition}} · {{temp}}°"
+    "error": "Proses masuk sedang tidur siang — ketuk untuk mencoba lagi."
   },
   "location": {
     "step": "Langkah 2 dari 3",

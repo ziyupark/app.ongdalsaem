@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,7 +11,7 @@ import { Button } from '../src/components/Button';
 import { Logo } from '../src/components/Logo';
 import { LaunchBackdrop } from '../src/components/LaunchBackdrop';
 import { Text } from '../src/components/Text';
-import { WeatherNow } from '../src/components/WeatherNow';
+import { timeOfDayFor } from '../src/components/ScreenHeader';
 import { signInWithApple, signInWithDevTestAccount, signInWithGoogle, type SignInResult } from '../src/services/auth';
 import { ensureHandle, getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { openLegal } from '../src/lib/legal';
@@ -19,30 +19,32 @@ import { useTemp } from '../src/lib/prefs';
 import { placeLabel } from '../src/lib/useHere';
 import { requestDeviceLocation, reverseGeocodeCity, type Place } from '../src/services/location';
 import { fetchForecast, type Forecast } from '../src/services/weather';
-import { space, useTheme, WEATHER_3D } from '../src/theme';
+import { radius, space, useTheme, WEATHER_3D } from '../src/theme';
 
 const FREE_TEAM = !!Constants.expoConfig?.extra?.freeTeam;
 
 type Provider = 'Apple' | 'Google' | 'Dev';
 
 /**
- * 1207:10884 geometry (design px, 844 frame). Weather header y 54–215; Weather 3D 355×359 at y 215 (right under the
- * header, ending where the buttons start); Block · Button at y 574 (Apple → Google → caption, gap 10), 112 above the
- * Home Indicator. Landscape (Rectangle 22) = the splash image in a 390×650 box at y 194, cropped lower than on 1.1.
+ * 1207:10884 geometry (design px, 844 frame). weather header from y 54, centred: Logo row 40 → 22 → Overline → Weather
+ * card · small (padding 12 16: temp Numeric/XL · condition Title/M · H/L · until Body/S) → Weather 3D 303×305 (y 225–530).
+ * Block · Button at y 544 (14 under the 3D; Apple → Google → caption, gap 10), 142 above the Home Indicator.
+ * Landscape (Rectangle 22) = the splash image in a 390×650 box at y 194, cropped lower than on 1.1.
  */
 const HEADER_TOP = 54;
-const HERO = { w: 355, h: 359, above: 0, below: 0 };
-const ACTIONS_ABOVE_INDICATOR = 112;
+const HERO = { w: 303, h: 305, below: 14 };
+const ACTIONS_ABOVE_INDICATOR = 142;
 const LANDSCAPE = require('../assets/launch/splash-landscape.png');
 const ACTIONS_H = 124;
-const HEADER_H = 161;
+/** Logo row 40 + 22 + Overline 14 + Weather card · small 95. */
+const HEADER_H = 171;
 
 type Reading = { place: Place | null; forecast: Forecast } | null;
 
 /**
  * Weather where you are, before sign-in: asks for location (the system prompt; already decided → no prompt), then the
  * rounded coordinates go to the weather function (signed-out reads allowed for coordinates only). Denied or offline
- * → null (date only, no Weather Now).
+ * → null (date only, the card stays empty).
  */
 function useWeatherHere() {
   const [reading, setReading] = useState<Reading | undefined>(undefined);
@@ -61,7 +63,7 @@ function useWeatherHere() {
   return reading;
 }
 
-/** 1.2 Sign in — 1207:10884. Sky + glows (LaunchBackdrop) · weather header (Logo · date · place · Weather Now) · Weather 3D of now · Apple · Google · legal caption. */
+/** 1.2 Sign in — 1207:10884. Weather sky + motion + glows (LaunchBackdrop) · landscape · weather header (Logo · date · place · temp card) · Weather 3D of now · Apple · Google · legal caption. */
 export default function SignIn() {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
@@ -99,18 +101,20 @@ export default function SignIn() {
   const where = reading ? placeLabel(reading.place) || reading.forecast.city : '';
   const date = new Date().toLocaleDateString(lang, { weekday: 'short', month: 'short', day: 'numeric' });
   const hero = (f?.icon && WEATHER_3D[f.icon] ? f.icon : f?.mood) ?? 'clear';
+  // Sky + motion follow the weather now (clear until it's known, or without location).
+  const mood = f?.mood ?? 'clear';
+  const weather = useMemo(() => ({ mood, timeOfDay: timeOfDayFor(mood, new Date()) }), [mood]);
+  const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : '';
 
-  // Buttons sit 112 above the Home Indicator; the 3D weather fills the room between the header and the buttons
-  // (359 on 844+, smaller on iPhone SE).
+  // Buttons sit 142 above the Home Indicator; the 3D weather (305 on 844+) shrinks to the room left under the
+  // header on small screens (iPhone SE), keeping 14 above the buttons.
   const [headerH, setHeaderH] = useState(HEADER_H);
   const [actionsH, setActionsH] = useState(ACTIONS_H);
   const headerTop = Math.max(insets.top, HEADER_TOP);
   const actionsBottom = insets.bottom + ACTIONS_ABOVE_INDICATOR;
   const actionsTop = height - actionsBottom - actionsH;
-  const room = actionsTop - HERO.below - (headerTop + headerH + HERO.above);
-  const k = Math.max(0, Math.min(1, room / HERO.h));
-  const heroH = HERO.h * k;
-  const heroTop = actionsTop - HERO.below - heroH - (room - heroH) / 2;
+  const heroTop = headerTop + headerH;
+  const k = Math.max(0, Math.min(1, (actionsTop - HERO.below - heroTop) / HERO.h));
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
@@ -119,31 +123,35 @@ export default function SignIn() {
       <View pointerEvents="none" style={styles.landscape}>
         <Image source={LANDSCAPE} style={styles.landscapeImage} contentFit="fill" />
       </View>
-      <LaunchBackdrop />
+      <LaunchBackdrop weather={weather} />
 
-      {/* weather header 1268:17791: Logo row 40 → 22 → Overline date · place → 13 → Weather Now. */}
+      {/* weather header 1268:17791 (centred): Logo row 40 → 22 → Overline date · place → Weather card · small. */}
       <View style={[styles.header, { top: headerTop }]} onLayout={(e) => setHeaderH(e.nativeEvent.layout.height)}>
         <View style={styles.logoRow}>
           <Logo lockup="Compact" />
         </View>
-        <View style={styles.now}>
+        <View style={styles.center}>
           <Text variant="Overline" numberOfLines={1}>{(where ? `${date} · ${where}` : date).toUpperCase()}</Text>
-          {f ? (
-            <WeatherNow
-              mood={f.mood}
-              icon={f.icon}
-              now={t('signIn.weatherNow', { condition: t(`home.condition.${f.mood}`), temp: temp(f.tempC) })}
-              place={t('community.rightNow', { place: where })}
-              range={t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) })}
-            />
-          ) : null}
+          {/* Weather card · small 1268:17827 — the space stays while loading / without weather, so nothing jumps. */}
+          <View style={[styles.card, { opacity: f ? 1 : 0 }]} accessible={!!f} accessibilityLabel={f ? [`${temp(f.tempC)}°`, t(`home.condition.${f.mood}`), t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) }), until].filter(Boolean).join(', ') : undefined}>
+            <View style={styles.tempBox}>
+              <Text variant="Numeric/XL" style={styles.tabular}>{f ? `${temp(f.tempC)}°` : '--°'}</Text>
+            </View>
+            <View style={styles.condition}>
+              <Text variant="Title/M" numberOfLines={1}>{f ? t(`home.condition.${f.mood}`) : ' '}</Text>
+              <View style={styles.details}>
+                <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{f ? t('home.hiLo', { hi: temp(f.hi), lo: temp(f.lo) }) : ' '}</Text>
+                {until ? <Text variant="Body/S" color="fg/muted" numberOfLines={1}>{until}</Text> : null}
+              </View>
+            </View>
+          </View>
         </View>
       </View>
 
-      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 355×359, centred. */}
+      {/* Weather 3D of the weather now (1132:220; clear until it's known) — 303×305, centred under the card. */}
       <Image
         source={WEATHER_3D[hero]}
-        style={[styles.hero, { top: heroTop, left: (width - HERO.w * k) / 2, width: HERO.w * k, height: heroH }]}
+        style={[styles.hero, { top: heroTop, left: (width - HERO.w * k) / 2, width: HERO.w * k, height: HERO.h * k }]}
         contentFit="contain"
         transition={300}
         pointerEvents="none"
@@ -186,8 +194,14 @@ const styles = StyleSheet.create({
   landscape: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 650, overflow: 'hidden' },
   landscapeImage: { position: 'absolute', left: '0.01%', top: '43.2%', width: '188.64%', height: '67.27%' },
   header: { position: 'absolute', left: space[20], right: space[20], gap: 22 },
-  logoRow: { height: space[40], flexDirection: 'row', alignItems: 'center' },
-  now: { gap: 13 },
+  logoRow: { height: space[40], flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  center: { alignItems: 'center' },
+  // Weather card · small: padding 12 16, radius 24 (no fill); temp (padding 1 8 4) → 4 → condition (gap 6) / details (gap 2).
+  card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[4], paddingHorizontal: space[16], paddingVertical: space[12], borderRadius: radius.xl },
+  tempBox: { paddingHorizontal: space[8], paddingTop: 1, paddingBottom: space[4], alignItems: 'center', justifyContent: 'center' },
+  tabular: { fontVariant: ['tabular-nums'] },
+  condition: { gap: space[6] },
+  details: { gap: space[2] },
   hero: { position: 'absolute' },
   actions: { position: 'absolute', left: space[20], right: space[20], gap: space[10] },
   legal: { textAlign: 'center' },

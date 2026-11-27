@@ -24,7 +24,6 @@ legalSuffix=に同意したことになります。
 apple=Appleで続ける
 google=Googleで続ける
 error=サインインがお昼寝中です — タップしてもう一度。
-weatherNow={{condition}} · {{temp}}°
 [location]
 step=ステップ 2/3
 title=天気に\n選んでもらおう。

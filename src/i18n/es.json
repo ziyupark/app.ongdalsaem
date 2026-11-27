@@ -26,8 +26,7 @@
     "legalSuffix": ".",
     "apple": "Continuar con Apple",
     "google": "Continuar con Google",
-    "error": "El inicio de sesión está echando una siesta. Toca para reintentar.",
-    "weatherNow": "{{condition}} · {{temp}}°"
+    "error": "El inicio de sesión está echando una siesta. Toca para reintentar."
   },
   "location": {
     "step": "Paso 2 de 3",

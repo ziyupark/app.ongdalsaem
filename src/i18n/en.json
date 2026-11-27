@@ -26,8 +26,7 @@
     "legalSuffix": ".",
     "apple": "Continue with Apple",
     "google": "Continue with Google",
-    "error": "Sign-in is napping — tap to try again.",
-    "weatherNow": "{{condition}} · {{temp}}°"
+    "error": "Sign-in is napping — tap to try again."
   },
   "location": {
     "step": "Step 2 of 3",

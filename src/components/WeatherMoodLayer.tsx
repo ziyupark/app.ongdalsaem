@@ -29,7 +29,7 @@ type Layer = { key: string; mood: WeatherMood; timeOfDay: TimeOfDay; leaving: bo
 
 /**
  * Weather Mood animation layer — slow, quiet motion over the mood wash (rain, snow, lightning, drifting clouds,
- * fog, wind, stars, breathing sun glow). Mounted once, in the global WeatherBackdrop; ignores touches and melts away
+ * fog, wind, stars, breathing sun glow). Mounted once in the global WeatherBackdrop (and on 1.2 Sign in, LaunchBackdrop); ignores touches and melts away
  * over the bottom 40 %.
  *
  * Every particle is a pure function of one clock (ms), advanced by a frame callback: pausing stops the callback, so

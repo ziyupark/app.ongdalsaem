@@ -26,8 +26,7 @@
     "legalSuffix": "に同意したことになります。",
     "apple": "Appleで続ける",
     "google": "Googleで続ける",
-    "error": "サインインがお昼寝中です — タップしてもう一度。",
-    "weatherNow": "{{condition}} · {{temp}}°"
+    "error": "サインインがお昼寝中です — タップしてもう一度。"
   },
   "location": {
     "step": "ステップ 2/3",

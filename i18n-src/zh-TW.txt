@@ -24,7 +24,6 @@ legalSuffix=。
 apple=使用 Apple 繼續
 google=使用 Google 繼續
 error=登入正在打盹——點一下再試一次。
-weatherNow={{condition}} · {{temp}}°
 [location]
 step=第 2 步，共 3 步
 title=讓天氣\n幫你決定。

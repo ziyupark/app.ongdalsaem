@@ -24,7 +24,6 @@ legalSuffix= kami.
 apple=Lanjutkan dengan Apple
 google=Lanjutkan dengan Google
 error=Proses masuk sedang tidur siang — ketuk untuk mencoba lagi.
-weatherNow={{condition}} · {{temp}}°
 [location]
 step=Langkah 2 dari 3
 title=Biar cuaca\nmembantumu memilih.

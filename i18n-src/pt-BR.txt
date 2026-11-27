@@ -24,7 +24,6 @@ legalSuffix=.
 apple=Continuar com a Apple
 google=Continuar com o Google
 error=O login está tirando um cochilo — toque para tentar de novo.
-weatherNow={{condition}} · {{temp}}°
 [location]
 step=Etapa 2 de 3
 title=Deixe o clima\najudar você a escolher.

@@ -13,15 +13,15 @@
 **흐름 원칙**: 신규 = 1.2(Apple/Google, @username 자동 생성) → 1.3b(건너뛰기 가능) → 1.4 → 1.5(건너뛰기 가능) → 2.1. 단계 표시는 **STEP n OF 3**(1.3b = 1 · 1.4 = 2 · 1.5 = 3). 기존 사용자 = 1.2 → 2.1.
 
 ### 1.2 Sign in (Welcome) — [1207:10884](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1207-10884)
-- 앱을 처음 열었을 때 보는 **보편적인 시작 화면**: 위 날씨 헤더(지금 내 위치 날씨), 가운데 지금 날씨 3D, 아래 로그인 버튼 2개(Apple · Google). 이메일 · 비밀번호 입력은 없다.
+- 앱을 처음 열었을 때 보는 **보편적인 시작 화면**: 위 날씨 헤더(지금 내 위치 날씨, 가운데 정렬), 지금 날씨 3D, 아래 로그인 버튼 2개(Apple · Google). 이메일 · 비밀번호 입력은 없다. **하늘 · 모션 · 3D 아이콘은 지금 날씨를 따른다.**
 - 레이아웃(자유 배치, 스크롤 없음):
-  0. 프레임 배경 = bg/default(크림) → **아래 풍경**(Rectangle 22: 1.1과 같은 `assets/launch/splash-landscape.png`, 390×650 상자 y 194–844 안에서 188.64 % × 67.27 %, 위치 0.01 % / **43.2 %** — 1.1보다 아래로 잘림) → LaunchBackdrop(하늘 `photo:welcome` 390×420 Mood/clear → bg/default, Scrim top 0–120, 흰 글로 2개 — 1.1과 같음)
+  0. 프레임 배경 = bg/default(크림) → **아래 풍경**(Rectangle 22: 1.1과 같은 `assets/launch/splash-landscape.png`, 390×650 상자 y 194–844 안에서 188.64 % × 67.27 %, 위치 0.01 % / **43.2 %** — 1.1보다 아래로 잘림, 날씨와 관계없이 같음) → LaunchBackdrop: **하늘 390×420** = 맑음은 `photo:welcome`(1.1과 같은 Mood/clear 하늘), 그 밖의 날씨는 그 무드의 `Mood/<key>`(100 %, 1200ms 페이드) + **Weather Mood 모션**([§2.4](../01-foundations.md) — 비 · 눈 · 구름 · 해 빛 번짐 등, 낮/밤) + Scrim top 0–120 + 흰 글로 2개(1.1과 같음)
   1. StatusBar(Tone=Dark)
-  2. **weather header**(y 54, 좌우 20, gap 22): Logo(Compact) 줄(높이 40) → Overline fg/default 대문자 **"TUE, OCT 27 · MAPO, SEOUL"**(날짜 = 앱 언어 형식 요일 · 월 · 일, 장소 = 구 · 도시) → 13 → **Weather Now** 350("Light rain · 12°" / "Mapo, Seoul · right now" / "H 14° · L 8°")
-  3. **Weather 3D**(지금 날씨의 3D 아이콘, 모르면 `clear`) 355×359, 가운데, y 215–574(헤더 바로 아래 ~ 버튼 바로 위). 작은 화면(iPhone SE)은 그 사이 공간에 맞춰 줄어든다.
-  4. [고정] Block · Button(y 574–698, Home Indicator 위 112, gap 10): **Auth Button(Apple)** "Continue with Apple" → **Auth Button(Google)** "Continue with Google" → Caption 가운데 "By continuing, you agree to our **Terms** and **Privacy Policy**."(두 단어 Caption Strong fg/secondary, 탭 → 9.8c 문서 시트). 이메일 버튼은 없다.
+  2. **weather header**(y 54, 좌우 20, gap 22, 가운데 정렬): Logo(Compact) 줄(높이 40, 가운데) → Overline fg/default 대문자 **"TUE, OCT 27 · MAPO, SEOUL"**(날짜 = 앱 언어 형식 요일 · 월 · 일, 장소 = 구 · 도시) → **Weather card · small**(배경 없음, padding 12 16, radius 24, 가운데): 기온 **Numeric/XL "32°"**(padding 1 8 4) → 4 → [Title/M 상태 "Clear" → 6 → Body/S fg/muted "H 14° · L 9°" / (2) "until 9 PM"(바뀔 시각을 알 때만)] — 홈 Weather Card Now 줄과 같은 문구
+  3. **Weather 3D**(지금 날씨의 3D 아이콘, 모르면 `clear`) 303×305, 카드 바로 아래 가운데(y 225–530). 작은 화면(iPhone SE)은 버튼 위 14를 남기고 줄어든다.
+  4. [고정] Block · Button(y 544–668, Home Indicator 위 142, gap 10): **Auth Button(Apple)** "Continue with Apple" → **Auth Button(Google)** "Continue with Google" → Caption 가운데 "By continuing, you agree to our **Terms** and **Privacy Policy**."(두 단어 Caption Strong fg/secondary, 탭 → 9.8c 문서 시트). 이메일 버튼은 없다.
   5. [A] Home Indicator
-- **지금 내 위치 날씨(로그인 전)**: 화면이 열리면 위치 권한을 묻는다(시스템 창, 이미 정했으면 묻지 않음). 허용 → 기기 좌표(소수 2자리로 반올림해 전송)로 장소 이름 · 지금 날씨 · 오늘 최고/최저를 읽어 Overline 장소, Weather Now, 가운데 3D 아이콘에 보여 준다. 거부 · 위치 꺼짐 · 읽기 실패 → Overline은 날짜만, Weather Now 없음, 3D = `clear`. 로그인 전 날씨는 `weather` 함수가 **좌표로 읽는 current · forecast만**, IP당 시간 30회까지 허용한다(도시 검색 · 도시 이름 조회는 로그인 필요). 이 읽기는 저장하지 않으며, 로그인 후에는 공유 읽기(useHere)가 다시 읽는다.
+- **지금 내 위치 날씨(로그인 전)**: 화면이 열리면 위치 권한을 묻는다(시스템 창, 이미 정했으면 묻지 않음). 허용 → 기기 좌표(소수 2자리로 반올림해 전송)로 장소 이름 · 지금 날씨 · 오늘 최고/최저 · 바뀔 시각을 읽어 Overline 장소, 기온 카드, 하늘 · 모션, 3D 아이콘에 보여 준다. 읽는 중 · 거부 · 위치 꺼짐 · 읽기 실패 → Overline은 날짜만, 기온 카드 자리는 비워 둠(자리 유지), 하늘 · 모션 · 3D = 맑음. 앱이 백그라운드면 모션 정지, Reduce Motion이면 정지 한 장. 로그인 전 날씨는 `weather` 함수가 **좌표로 읽는 current · forecast만**, IP당 시간 30회까지 허용한다(도시 검색 · 도시 이름 조회는 로그인 필요). 이 읽기는 저장하지 않으며, 로그인 후에는 공유 읽기(useHere)가 다시 읽는다.
 - 이동: Apple/Google → **1.3b**(첫 로그인, @username 자동 생성) 또는 2.1(기존 계정).
 - Apple·Google 버튼은 각 사 브랜드 규정(로고·문구·크기)을 따른다([07-assets-licenses](../07-assets-licenses.md)). Apple 버튼 외곽선 = 검정 1px(Auth Button 컴포넌트 값, HIG White with outline).
 - 로그인 처리(Supabase Auth): **Apple** = iOS 기본 Apple 로그인 시트 → identity token + nonce로 세션 생성(Android는 웹 로그인). Apple이 처음 한 번만 주는 이름은 계정 메타데이터에 저장해 @username 자동 생성에 쓴다. **Google** = Supabase OAuth를 앱 안 인증 창으로 열고 `ongdalsaem://auth-callback`으로 돌아와 코드 교환(PKCE).

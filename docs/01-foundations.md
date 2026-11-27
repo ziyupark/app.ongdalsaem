@@ -139,6 +139,7 @@ mood:       mood/<key>/top · mood/<key>/base  (18종, §2.4 표)
 - 입자 수 상한: 비 60 · 눈 40 · 그 밖 20. transform · opacity만 움직인다(레이아웃 변경 없음, UI 스레드).
 - 무드가 바뀌면 이전 효과 800ms 페이드아웃 + 새 효과 1200ms 페이드인(크로스페이드). 앱 첫 실행 때만 wash가 400ms 페이드인되고 300ms 뒤 모션이 1200ms에 걸쳐 나타난다. 화면 · 탭 전환 · 뒤로가기 · 백그라운드 복귀에서는 페이드 없이 멈춘 자리에서 이어진다.
 - **Reduce Motion**: 움직이지 않는 한 장만 보이고 번개는 아예 없다.
+- 보이는 곳: 네 탭(전역 WeatherBackdrop) · 7.1 Post detail · **1.2 Sign in**(LaunchBackdrop 하늘 420 위, 로그인 전 기기 위치 날씨 — 모르면 clear).
 - 개발용: 홈 로고 길게 누르기 → "Weather mood preview"에서 18개 무드 × 낮/밤을 바로 바꿔 볼 수 있다(개발 빌드만).
 
 Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=72-787)
