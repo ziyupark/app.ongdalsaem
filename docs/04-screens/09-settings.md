@@ -57,6 +57,9 @@
   - 캡션: "Use any connected account to sign in. Keep at least one sign-in method." 마지막 남은 방법은 해제할 수 없다.
 - DANGER ZONE: **Delete account**(Destructive) → 9.9
   - 캡션: "Permanently deletes your profile, dishes, photos, comments, acorns and diary. This can’t be undone."
+- DANGER ZONE: **Deactivate account**(Destructive, `pause`, Figma 없음) — Delete account 아래
+  - 탭 → 확인 팝업 "Deactivate your account?" / "Your account will be switched off and you’ll be signed out. If you don’t sign in again within 30 days, your account and everything in it will be deleted automatically." · Cancel · **Deactivate account**
+  - 확인 → `deactivate_own_account()`(profiles.deactivated_at = 지금) → 로그아웃 → 1.1 Splash. 30일 안에 다시 로그인하면 비활성화가 풀린다(`reactivate_own_account()`), 아니면 서버가 9.9 삭제와 똑같이 지운다(purge-deactivated-accounts, 매일 1번)
 
 ### 9.4 Notifications — [193:6391](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=193-6391)
 - ACTIVITY(Switch): Acorns on your dishes **on** · Comments & replies **on** · New followers **on**

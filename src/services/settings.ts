@@ -114,6 +114,18 @@ export async function deleteMyAccount() {
   await clearLocalUserData('deleteAccount');
 }
 
+/**
+ * 9.3 Deactivate account — marks the account (profiles.deactivated_at) and signs out. Signing in again within
+ * 30 days keeps it (auth.ts reactivate); otherwise purge-deactivated-accounts deletes it like deleteMyAccount.
+ */
+export async function deactivateMyAccount() {
+  const { error } = await supabase.rpc('deactivate_own_account');
+  if (error) throw error;
+  await clearPush();
+  await supabase.auth.signOut().catch(() => undefined);
+  await clearLocalUserData('signOut');
+}
+
 /** Every file in my folder of both photo buckets (best effort). */
 async function removeMyFiles() {
   const user = await uid();
