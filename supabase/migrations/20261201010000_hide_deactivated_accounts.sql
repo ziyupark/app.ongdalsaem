@@ -4,7 +4,7 @@
 -- signed out anyway, and signing in again clears deactivated_at → everything is back as it was).
 --
 --   deactivated_ids() — every deactivated account (security definer: profiles rows of deactivated accounts are
---                       hidden from other users below). Policies call it as `(select deactivated_ids())` so it
+--                       hidden from other users below). Policies call it as `(select deactivated_ids())::uuid[]` so it
 --                       runs once per query, not once per row.
 --   is_blocked_between(a, b) — now also true when a ≠ b and either side is deactivated. Every "blocked" check
 --                       (foods · food_images · comments · questions · answers · nearby/area questions · threads ·
@@ -32,30 +32,30 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- Profiles: a deactivated profile is "not found" for others (6.1 other cook → missing state).
-drop policy "profiles are publicly readable" on profiles;
+drop policy if exists "profiles are publicly readable" on profiles;
 create policy "profiles are publicly readable"
   on profiles for select
   using (deactivated_at is null or id = (select auth.uid()));
 
 -- Rows that point at a person and are read with their profile embedded.
-drop policy "follows are publicly readable" on follows;
+drop policy if exists "follows are publicly readable" on follows;
 create policy "follows are publicly readable"
   on follows for select
-  using (not (follower_id = any ((select deactivated_ids()))) and not (followee_id = any ((select deactivated_ids()))));
+  using (not (follower_id = any ((select deactivated_ids())::uuid[])) and not (followee_id = any ((select deactivated_ids())::uuid[])));
 
-drop policy "likes are publicly readable" on likes;
+drop policy if exists "likes are publicly readable" on likes;
 create policy "likes are publicly readable"
   on likes for select
-  using (not (user_id = any ((select deactivated_ids()))));
+  using (not (user_id = any ((select deactivated_ids())::uuid[])));
 
-drop policy "members are public" on table_members;
+drop policy if exists "members are public" on table_members;
 create policy "members are public" on table_members for select
-  using (not (user_id = any ((select deactivated_ids()))));
+  using (not (user_id = any ((select deactivated_ids())::uuid[])));
 
-drop policy "participants are public" on challenge_participants;
+drop policy if exists "participants are public" on challenge_participants;
 create policy "participants are public" on challenge_participants for select
-  using (not (user_id = any ((select deactivated_ids()))));
+  using (not (user_id = any ((select deactivated_ids())::uuid[])));
 
-drop policy "entries are public" on challenge_entries;
+drop policy if exists "entries are public" on challenge_entries;
 create policy "entries are public" on challenge_entries for select
-  using (not (user_id = any ((select deactivated_ids()))));
+  using (not (user_id = any ((select deactivated_ids())::uuid[])));
