@@ -174,7 +174,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
         {right === 'settings' ? (
           <IconButton icon={Settings} accessibilityLabel={t('profile.settings')} onPress={() => router.push('/settings')} />
         ) : right === 'more' && onMore ? (
-          <IconButton icon={MoreHorizontal} accessibilityLabel={t('home.more')} onPress={onMore} />
+          <IconButton bare icon={MoreHorizontal} accessibilityLabel={t('home.more')} onPress={onMore} />
         ) : right === 'notifications' ? (
           <IconButton icon={Bell} accessibilityLabel={t('home.notifications')} dot={unread} onPress={() => router.push('/notifications')} />
         ) : (
