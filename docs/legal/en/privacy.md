@@ -21,7 +21,7 @@ For users in Korea, the Korean version (한국어) is the official one.
 
 - Allergy information is health information. We ask for separate consent when you enter it, and you can use the Service without it.
 - Your exact coordinates are never shown to other users. Posts show only the area name at the level you choose.
-- Your meal plan and fridge and shopping memos stay on your device and are never sent to our servers.
+- Your meal plan, fridge memo and shopping list stay on your device and are never sent to our servers.
 - We don't use advertising tracking or cookies.
 
 ## 2. How long we keep it
