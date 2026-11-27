@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **타이머 "— done" 토스트 위치**: TabBar 캡슐 위 42 → **8**(토스트 아래 끝 = 하단 safe area + 96 → 바 윗면 + 8)
 - **푸시 화면 탭 다시 누르기 = 맨 위로**: TabBar가 있는 푸시 화면(4.2 · 4.3 · 4.4 Tables · 4.5 · Questions · Viral · 다른 사람 프로필)에서 켜져 있는 Community 탭을 누르면, 아래로 스크롤한 상태면 먼저 그 화면 맨 위로(전: 바로 Community 탭으로 돌아감). 맨 위에서 누르면 전처럼 탭으로. 네 탭 화면은 전과 같이 다시 누르면 맨 위로
 - **Community Challenges 탭 삭제**(나중에 다시 넣음): 밑줄 탭 Explore · Following · Challenges → **Explore · Following**. 4.9 Food challenges · 4.10 · 4.10b · 4.10c 화면, 공유 흐름의 챌린지 참가(사진 1장 · "Joining: …"), 챌린지 테마 그림 `assets/holidays/{chuseok,halloween,christmas,seollal,valentine,forest}.jpg`, 서비스 함수 삭제. 탭 맨 아래 **Viral Bites**도 함께 빠짐(4.7 Viral 상세 코드는 남았지만 여는 곳 없음). 문구 `challenge.*` · `community.challenges` · `community.challengesTab` · `share.inChallenge` · `share.challengeOnePhoto` · `share.pickHintChallenge` 9개 언어 삭제. DB 테이블 challenges · challenge_participants · challenge_entries는 그대로. 문서의 챌린지 명세(Challenges 탭 · 4.9 · 4.10 · 4.10b · 4.10c · 2.1c)는 [99-removed-in-v1](04-screens/99-removed-in-v1.md)로 옮김
 - **4.4 "Neighbors' Table" 제목**([813:12215](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=813-12215)): Title/L → **Display/M**(Fraunces SemiBold 24/29 — Today’s Pick과 같은 스타일)

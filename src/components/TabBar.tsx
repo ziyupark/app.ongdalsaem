@@ -37,6 +37,8 @@ const BOTTOM = 84; // bottom edge of the bar inside the 110-tall area (the 34 ho
 const AREA_H = 110;
 /** How far the bar slides down when fully hidden: bar height + bottom safe area. */
 const hideDistance = (bottomInset: number) => EXP.h + bottomInset;
+/** Distance from the screen's bottom edge to the top of the bar (capsule / FAB), while shown — for things that sit just above it. */
+export const tabBarTop = (bottomInset: number) => bottomInset - 34 + AREA_H - (BOTTOM - EXP.h);
 
 const HREF: Record<TabKey, '/home' | '/community' | '/timer' | '/profile'> = {
   home: '/home', community: '/community', timer: '/timer', profile: '/profile',

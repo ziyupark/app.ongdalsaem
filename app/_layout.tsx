@@ -7,10 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toast } from '../src/components/Toast';
+import { tabBarTop } from '../src/components/TabBar';
 import { preloadWeather3D } from '../src/components/WeatherIcon3D';
 import { resolveLanguage } from '../src/i18n';
 import { WeatherBackdrop } from '../src/components/WeatherBackdrop';
-import { coreFontFiles, koreanFontFiles, ThemeProvider, useTheme } from '../src/theme';
+import { coreFontFiles, koreanFontFiles, space, ThemeProvider, useTheme } from '../src/theme';
 import { loadPrefs, usePrefs } from '../src/lib/prefs';
 import { usePushSync } from '../src/lib/push';
 import { dismissDone, focusTimer, useDoneQueue, useTimers } from '../src/lib/timers';
@@ -36,7 +37,7 @@ function TimerDoneToast() {
       message={t('timer.labelDone', { label: timer.label })}
       onHide={hide}
       onPress={() => { hide(); focusTimer(timer.id); router.dismissTo('/timer'); }}
-      bottom={insets.bottom + 96}
+      bottom={tabBarTop(insets.bottom) + space[8]}
     />
   );
 }
