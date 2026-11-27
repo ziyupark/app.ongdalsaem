@@ -103,7 +103,8 @@ export default function Questions() {
     }
   };
 
-  const onTab = (k: TabKey) => goTab(k);
+  const list = useRef<FlatList<Question>>(null);
+  const onTab = (k: TabKey) => (k === 'community' && bar.scrolled() ? list.current?.scrollToOffset({ offset: 0, animated: true }) : goTab(k));
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => bar.onY(e.nativeEvent.contentOffset.y);
 
   const menu = (q: Question) => {
@@ -216,6 +217,7 @@ export default function Questions() {
         </View>
       ) : (
         <FlatList
+          ref={list}
           data={items}
           keyExtractor={(q) => q.id}
           renderItem={row}

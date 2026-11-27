@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { TrendingUp } from '../../src/components/icons/ongdal';
-import { useEffect, useMemo, useState } from 'react';
+import { type ComponentRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -58,12 +58,13 @@ export default function TagScreen() {
     bar.onY(e.nativeEvent.contentOffset.y);
     wash.onY(e.nativeEvent.contentOffset.y);
   };
-  const onTab = (k: TabKey) => goTab(k);
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
+  const onTab = (k: TabKey) => (k === 'community' && bar.scrolled() ? scroll.current?.scrollTo({ y: 0, animated: true }) : goTab(k));
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash wash={wash} local />
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={[{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }]}>
+      <ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={[{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }]}>
         <CollectionTop
           dishes={all}
           width={width}

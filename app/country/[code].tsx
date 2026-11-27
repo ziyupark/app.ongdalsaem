@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { MapPin } from '../../src/components/icons/ongdal';
-import { useEffect, useMemo, useState } from 'react';
+import { type ComponentRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Share, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -90,13 +90,14 @@ export default function CountryScreen() {
     const link = Linking.createURL(`/country/${cc}`);
     Share.share({ message: `#${name} — ${link}`, url: link }).catch(() => undefined);
   };
-  const onTab = (k: TabKey) => goTab(k);
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
+  const onTab = (k: TabKey) => (k === 'community' && bar.scrolled() ? scroll.current?.scrollTo({ y: 0, animated: true }) : goTab(k));
   const pickCity = (c: string) => { setCity(c); setCategory(null); setMeal(null); };
 
   return (
     <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
       <ScreenWash wash={wash} local />
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }}>
+      <ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingTop: insets.top, paddingBottom: TAB_BAR_H + space[24] }}>
         <CollectionTop
           dishes={all}
           width={width}

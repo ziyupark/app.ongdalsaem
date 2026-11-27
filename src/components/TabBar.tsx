@@ -94,7 +94,10 @@ type Props = {
   active: TabKey;
   /** 0 = shown … 1 = hidden — from useTabBarScroll (follows the scroll, snaps by the last scroll direction). */
   progress?: SharedValue<number>;
-  /** Also called for the tab that is already active (re-tap: the screen scrolls back to the top). */
+  /**
+   * Also called for the tab that is already active (re-tap: the screen scrolls back to the top). A screen pushed on
+   * top of the tabs scrolls to its own top first when scrolled down; at the top, the tap goes to the tab.
+   */
   onTab: (k: TabKey) => void;
   onCreate: () => void;
 };
@@ -306,7 +309,9 @@ export function useTabBarScroll() {
 
   /** A programmatic jump (e.g. Community pager landing on another page) — move the baseline and show the bar. */
   const sync = useCallback((y: number) => { last.current = y; show(); }, [show]);
-  return { progress, onY, sync };
+  /** Scrolled away from the top — a pushed screen's re-tap on its tab scrolls up first, then goes to the tab. */
+  const scrolled = useCallback(() => last.current > 1, []);
+  return { progress, onY, sync, scrolled };
 }
 
 const styles = StyleSheet.create({

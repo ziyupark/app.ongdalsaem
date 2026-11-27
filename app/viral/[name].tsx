@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, Plus } from '../../src/components/icons/ongdal';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { type ComponentRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -68,7 +68,8 @@ export default function ViralScreen() {
     bar.onY(contentOffset.y);
     if (contentOffset.y + layoutMeasurement.height > contentSize.height - 400) loadMore();
   };
-  const onTab = (k: TabKey) => goTab(k);
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
+  const onTab = (k: TabKey) => (k === 'community' && bar.scrolled() ? scroll.current?.scrollTo({ y: 0, animated: true }) : goTab(k));
   const share = () => {
     resetShareDraft();
     updateShareDraft({ name });
@@ -93,6 +94,7 @@ export default function ViralScreen() {
       </View>
 
       <ScrollView
+        ref={scroll}
         onScroll={onScroll}
         scrollEventThrottle={16}
         contentContainerStyle={[{ paddingBottom: TAB_BAR_H + space[24] }, empty && styles.grow]}

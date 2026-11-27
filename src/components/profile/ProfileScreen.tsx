@@ -127,7 +127,8 @@ export function ProfileScreen({ userId, showButton = true }: { userId?: string; 
     bar.onY(y, contentSize.height - layoutMeasurement.height);
   };
 
-  const onTab = (k: TabKey) => (k === 'profile' ? listRef.current?.scrollToOffset({ offset: 0, animated: true }) : goTab(k));
+  // Own profile: re-tap Profile scrolls up. Another cook's (pushed, Community active): scrolled down → up first, then back to Community.
+  const onTab = (k: TabKey) => (k === (isMe ? 'profile' : 'community') && (isMe || bar.scrolled()) ? listRef.current?.scrollToOffset({ offset: 0, animated: true }) : goTab(k));
 
   // Another cook: their public profile + whether I follow them. Opening yourself goes to the real Profile tab.
   const loadOther = async (id: string): Promise<MyProfile | null> => {
@@ -381,7 +382,7 @@ export function ProfileScreen({ userId, showButton = true }: { userId?: string; 
         </View>
         <Button label={t('common.save')} size="L" onPress={saveBio} loading={bioSaving} />
       </BottomSheet>
-      <TabBar active={isMe ? 'profile' : 'community'} progress={bar.progress} onTab={(k) => (isMe ? onTab(k) : goTab(k))} onCreate={() => router.push('/share/pick')} />
+      <TabBar active={isMe ? 'profile' : 'community'} progress={bar.progress} onTab={onTab} onCreate={() => router.push('/share/pick')} />
     </View>
   );
 }

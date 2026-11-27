@@ -1,14 +1,14 @@
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { Users } from '../src/components/icons/ongdal';
-import { useCallback, useEffect, useState } from 'react';
+import { type ComponentRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState, ListCard, ListRow, SearchField } from '../src/components/community/Parts';
 import { LoadError } from '../src/components/LoadError';
 import { Button } from '../src/components/Button';
-import { goTab, TabBar } from '../src/components/TabBar';
+import { goTab, TabBar, type TabKey } from '../src/components/TabBar';
 import { Text } from '../src/components/Text';
 import { TopBar } from '../src/components/TopBar';
 import { fetchMyTables, fetchTables, setTableJoined, type Table } from '../src/services/community';
@@ -49,10 +49,16 @@ export default function Tables() {
     </View>
   );
 
+  // Scrolled down: re-tap Community scrolls up first; at the top it goes back to the Community tab.
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
+  const y = useRef(0);
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => { y.current = e.nativeEvent.contentOffset.y; };
+  const onTab = (k: TabKey) => (k === 'community' && y.current > 1 ? scroll.current?.scrollTo({ y: 0, animated: true }) : goTab(k));
+
   return (
     <View style={[styles.root, { paddingTop: insets.top, backgroundColor: color('bg/default') }]}>
       <TopBar title={t('tables.title')} onBack={() => router.back()} backLabel={t('common.back')} />
-      <ScrollView contentContainerStyle={[styles.body, { paddingBottom: 120 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={[styles.body, { paddingBottom: 120 }]} keyboardShouldPersistTaps="handled">
         <Text variant="Body/S" color="fg/secondary">{t('tables.intro')}</Text>
         <SearchField value={term} onChangeText={setTerm} placeholder={t('tables.search')} focused={focused} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
 
@@ -102,7 +108,7 @@ export default function Tables() {
         )}
         </View>
       </ScrollView>
-      <TabBar active="community" onTab={goTab} onCreate={() => router.push('/share/pick')} />
+      <TabBar active="community" onTab={onTab} onCreate={() => router.push('/share/pick')} />
     </View>
   );
 }
