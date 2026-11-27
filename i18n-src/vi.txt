@@ -13,7 +13,7 @@ skip=Bỏ qua
 title=Có những bữa ăn ở lại với ta nhiều năm.
 letter=Chúng mình tạo ra ongdalsaem để ghi nhớ những bữa ăn ta đã chia sẻ với những người làm ta hạnh phúc.\n\nMột mâm cơm ấm ở nhà, một bát ăn đối diện người bạn, cả món đầu tiên còn vụng về của bạn — mỗi món đều giữ lại một chút thời gian.\n\nHãy chia sẻ bữa ăn hạnh phúc nhất của bạn tại đây.
 signature=— từ căn bếp ongdalsaem
-cta=Chia sẻ bữa ăn đầu tiên
+cta=Tiếp tục
 note=Bạn chỉ thấy lá thư này một lần · Đọc lại trong Cài đặt\n› Trợ giúp & chính sách
 [signIn]
 title=Thời tiết trên\nbàn ăn của bạn thế nào?
@@ -1164,18 +1164,6 @@ meals.lunch=Bữa trưa
 meals.dinner=Bữa tối
 removeAsk=Xóa khỏi thực đơn?
 planDay=Lên thực đơn {{date}}
-[welcome]
-introTitle=Bữa ăn mỗi ngày,\ntheo thời tiết.
-introBody=Xem mọi người nấu gì trong thời tiết giống bạn và chọn món cho hôm nay.
-features.weather=Gợi ý theo thời tiết
-features.weatherBody=Món hợp với bầu trời lúc này.
-features.nearby=Quán gần đây
-features.nearbyBody=Chỗ ăn gần bạn.
-features.timer=Hẹn giờ nhà bếp
-features.timerBody=Nhiều hẹn giờ cùng lúc khi nấu.
-features.holidays=Ngày kỷ niệm thế giới
-features.holidaysBody=Món ăn ngày kỷ niệm khắp thế giới.
-start=Bắt đầu
 [taste]
 step=Bước 1/3
 title=Bạn thích\nbữa ăn kiểu nào?

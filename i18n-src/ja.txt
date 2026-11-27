@@ -13,7 +13,7 @@ skip=スキップ
 title=何年たっても心に残る食事がある。
 letter=ongdalsaem は、わたしたちを幸せにしてくれた人たちと分け合った食事を覚えておくために生まれました。\n\n家の温かな食卓、友だちと向かい合って食べた一杯、はじめて作ったぎこちない料理——そのひとつひとつに、小さな時間が詰まっています。\n\nいちばん幸せだった食事を、ここでシェアしてください。
 signature=— ongdalsaem のキッチンより
-cta=はじめての料理をシェアする
+cta=続ける
 note=この手紙が表示されるのは一度だけです · 設定でもう一度読めます\n› ヘルプとポリシー
 [signIn]
 title=あなたの食卓は\nどんな天気？
@@ -1164,18 +1164,6 @@ meals.lunch=昼食
 meals.dinner=夕食
 removeAsk=献立から削除しますか？
 planDay={{date}}の献立を立てる
-[welcome]
-introTitle=天気と選ぶ、\n今日のごはん。
-introBody=同じ天気の日にみんなが作った料理を見て、今日の一品を決めましょう。
-features.weather=今日の天気のおすすめ
-features.weatherBody=今の空に合う一品。
-features.nearby=近くのお店
-features.nearbyBody=近くで食べられる場所。
-features.timer=キッチンタイマー
-features.timerBody=料理中に複数同時に。
-features.holidays=世界の記念日
-features.holidaysBody=世界各地の記念日の料理。
-start=はじめる
 [taste]
 step=ステップ 1/3
 title=どんなごはんが\n好きですか？

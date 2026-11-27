@@ -15,21 +15,8 @@
     "title": "Hay comidas que nos acompañan durante años.",
     "letter": "Creamos ongdalsaem para recordar las comidas que compartimos con las personas que nos hicieron felices.\n\nUna mesa cálida en casa, un plato frente a un amigo, incluso tu primer plato torpe: cada uno guarda un poco de tiempo.\n\nComparte aquí tu comida más feliz.",
     "signature": "— desde la cocina de ongdalsaem",
-    "cta": "Compartir mi primera comida",
-    "note": "Verás esta carta una sola vez · Vuelve a leerla en Ajustes\n› Ayuda y políticas",
-    "introTitle": "Tu comida de cada día,\ncon el clima.",
-    "introBody": "Mira lo que cocina la gente con un clima como el tuyo y decide qué comer hoy.",
-    "features": {
-      "weather": "Sugerencia según el clima",
-      "weatherBody": "Un plato para el cielo de ahora.",
-      "nearby": "Lugares cercanos",
-      "nearbyBody": "Dónde comerlo cerca de ti.",
-      "timer": "Temporizador de cocina",
-      "timerBody": "Varios temporizadores a la vez.",
-      "holidays": "Días especiales del mundo",
-      "holidaysBody": "Platos de días especiales de todo el mundo."
-    },
-    "start": "Empezar"
+    "cta": "Continuar",
+    "note": "Verás esta carta una sola vez · Vuelve a leerla en Ajustes\n› Ayuda y políticas"
   },
   "signIn": {
     "title": "¿Qué tiempo hace\nen tu mesa?",

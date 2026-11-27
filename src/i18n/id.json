@@ -15,21 +15,8 @@
     "title": "Ada makanan yang terus kita ingat bertahun-tahun.",
     "letter": "Kami membuat ongdalsaem untuk mengenang makanan yang kita santap bersama orang-orang yang membuat kita bahagia.\n\nMeja hangat di rumah, semangkuk makanan di depan sahabat, bahkan masakan pertamamu yang masih kikuk — masing-masing menyimpan sepotong waktu.\n\nBagikan makanan paling membahagiakanmu di sini.",
     "signature": "— dari dapur ongdalsaem",
-    "cta": "Bagikan makanan pertamaku",
-    "note": "Surat ini hanya muncul sekali · Baca lagi di Pengaturan\n› Bantuan & kebijakan",
-    "introTitle": "Makan harianmu,\nsesuai cuaca.",
-    "introBody": "Lihat masakan orang di cuaca seperti cuacamu, lalu tentukan mau makan apa hari ini.",
-    "features": {
-      "weather": "Rekomendasi cuaca hari ini",
-      "weatherBody": "Hidangan yang pas dengan langit saat ini.",
-      "nearby": "Tempat terdekat",
-      "nearbyBody": "Tempat makan di dekatmu.",
-      "timer": "Timer dapur",
-      "timerBody": "Beberapa timer sekaligus saat memasak.",
-      "holidays": "Hari istimewa dunia",
-      "holidaysBody": "Hidangan hari istimewa dari seluruh dunia."
-    },
-    "start": "Mulai"
+    "cta": "Lanjutkan",
+    "note": "Surat ini hanya muncul sekali · Baca lagi di Pengaturan\n› Bantuan & kebijakan"
   },
   "signIn": {
     "title": "Bagaimana cuaca\ndi mejamu?",

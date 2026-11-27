@@ -5,7 +5,7 @@
 ## 1. 정보 구조 (IA)
 
 ```
-Launch      1.1 Splash → 1.1b Welcome(앱 소개, 첫 실행 1회)
+Launch      1.1 Splash → 1.1b Welcome letter(편지, 첫 실행 1회)
 Onboarding  1.2 Sign in(Welcome) → Apple · Google(@username 자동 생성) → 1.3b Taste → 1.4 Location → 1.5 Daily pick time → Home (기존 계정은 바로 Home)
 Tab bar (4)  Home(2.x) · Community(4.x · 3.x Our area/Nearby list) · Timer(5.x) · Profile(6.x)  + FAB(탭바 줄 오른쪽 끝)
 Notifications  bell(2.x · 4.1 · 4.4 · 4.4b — 탭 화면 ScreenHeader) → 2.8 Notifications (2.8b empty)
@@ -68,7 +68,7 @@ Figma 페이지 구성:
 | From | 트리거 | To |
 |---|---|---|
 | 1.1 | 1.2초 자동(AFTER_TIMEOUT) | 1.1b(첫 실행) / 1.2 |
-| 1.1b | Get started | 1.2(다시 보기로 열었으면 BACK) |
+| 1.1b | Continue | 1.2(다시 보기로 열었으면 BACK) |
 | 1.2 | Continue with Google · Apple | 1.3b(첫 로그인) / 2.1(기존) |
 | 1.3b · 1.4 · 1.5 | 뒤로 | Back |
 | 1.3b | Continue / Skip | 1.4 |

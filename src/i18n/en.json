@@ -12,24 +12,11 @@
   },
   "welcome": {
     "skip": "Skip",
-    "title": "Some meals stay with us for years.",
-    "letter": "We made ongdalsaem to remember the meals we shared with the people who made us happy.\n\nA warm table at home, a bowl across from a friend, even your first clumsy dish — each one holds a little time.\n\nShare your happiest meal here.",
+    "title": "Some meals stay\nwith us for years.",
+    "letter": "We made ongdalsaem to hold on to the memories of meals shared with the people who make us happy.\n\nA warm table at home, a meal shared with a friend, even your first clumsy dish\neach one holds a little piece of time.\n\nShare the meals that make you happiest.",
     "signature": "— from the ongdalsaem kitchen",
-    "cta": "Share my first meal",
-    "note": "You’ll see this letter once · Read it again in Settings\n› Help & policies",
-    "introTitle": "Your daily meal,\nwith the weather.",
-    "introBody": "See what people cook in weather like yours, and find what to eat today.",
-    "features": {
-      "weather": "Today’s weather pick",
-      "weatherBody": "A dish that fits the sky right now.",
-      "nearby": "Places nearby",
-      "nearbyBody": "Where to eat it close to you.",
-      "timer": "Kitchen timer",
-      "timerBody": "Several timers at once while you cook.",
-      "holidays": "Special days of the world",
-      "holidaysBody": "Special-day dishes from around the world."
-    },
-    "start": "Get started"
+    "cta": "Continue",
+    "note": "You’ll see this letter once · Read it again in Settings\n› Help & policies"
   },
   "signIn": {
     "title": "What’s the weather\non your table?",

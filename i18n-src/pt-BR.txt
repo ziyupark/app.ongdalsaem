@@ -13,7 +13,7 @@ skip=Pular
 title=Algumas refeições ficam com a gente por anos.
 letter=Criamos o ongdalsaem para lembrar as refeições que dividimos com as pessoas que nos fizeram felizes.\n\nUma mesa quentinha em casa, um prato de frente para um amigo, até o seu primeiro prato meio desajeitado — cada um guarda um pouquinho de tempo.\n\nCompartilhe aqui a sua refeição mais feliz.
 signature=— da cozinha do ongdalsaem
-cta=Compartilhar minha primeira refeição
+cta=Continuar
 note=Você verá esta carta só uma vez · Leia de novo em Ajustes\n› Ajuda e políticas
 [signIn]
 title=Como está o tempo\nna sua mesa?
@@ -1182,18 +1182,6 @@ meals.lunch=Almoço
 meals.dinner=Jantar
 removeAsk=Remover do plano de refeições?
 planDay=Planejar {{date}}
-[welcome]
-introTitle=Sua refeição do dia,\ncom o clima.
-introBody=Veja o que as pessoas cozinham num clima como o seu e decida o que comer hoje.
-features.weather=Sugestão do clima de hoje
-features.weatherBody=Um prato para o céu de agora.
-features.nearby=Lugares por perto
-features.nearbyBody=Onde comer perto de você.
-features.timer=Timer de cozinha
-features.timerBody=Vários timers ao mesmo tempo.
-features.holidays=Datas especiais do mundo
-features.holidaysBody=Pratos de datas especiais do mundo todo.
-start=Começar
 [taste]
 step=Etapa 1 de 3
 title=Que tipo de refeição\nvocê ama?

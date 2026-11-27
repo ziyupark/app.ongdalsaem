@@ -13,7 +13,7 @@ skip=略過
 title=有些餐點，會陪我們好多年。
 letter=我們做了 ongdalsaem，是為了記住那些和讓我們幸福的人一起分享的餐點。\n\n家裡溫暖的餐桌、和朋友面對面的一碗，甚至是你第一道笨手笨腳的料理——每一道都裝著一點點時光。\n\n在這裡分享你最幸福的一餐吧。
 signature=— 來自 ongdalsaem 廚房
-cta=分享我的第一道料理
+cta=繼續
 note=這封信只會出現一次 · 可在設定中再次閱讀\n› 說明與政策
 [signIn]
 title=你的餐桌上\n是什麼天氣？
@@ -1164,18 +1164,6 @@ meals.lunch=午餐
 meals.dinner=晚餐
 removeAsk=要從菜單計畫移除嗎？
 planDay=規劃 {{date}}
-[welcome]
-introTitle=跟著天氣選的\n每日一餐。
-introBody=看看大家在和你一樣的天氣裡煮了什麼，決定今天吃什麼。
-features.weather=今日天氣推薦
-features.weatherBody=適合此刻天空的一道菜。
-features.nearby=附近的店
-features.nearbyBody=在你附近就能吃到。
-features.timer=廚房計時器
-features.timerBody=做菜時同時開好幾個。
-features.holidays=世界紀念日
-features.holidaysBody=世界各地的紀念日料理。
-start=開始使用
 [taste]
 step=第 1 步，共 3 步
 title=你喜歡\n什麼樣的一餐？

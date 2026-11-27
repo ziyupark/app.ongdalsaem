@@ -4,6 +4,7 @@
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
+- **1.1b Welcome = 편지 화면**([197:6526](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=197-6526)): 기능 카드 2×2 앱 소개 → Figma대로 선셋 띠 + 편지 시트(다람쥐 3D · 제목 · 편지 3문단 · 서명 · Continue · 안내). 새 텍스트 토큰 `Body/Letter`(15/22). 문구 `welcome.cta` "Share my first meal" → **"Continue"**(9개 언어), en 제목 · 편지 문구 Figma대로, 안 쓰는 `welcome.introTitle · introBody · features.* · start` 삭제
 - **v1은 영어로만 출시**: 앱 언어 = English 고정(기기 언어 · 예전 선택과 관계없이). 9.6에서 나머지 8개 언어는 "Coming soon"으로 선택 불가. 번역 파일은 유지(`LAUNCHED_LANGUAGES`에 추가하면 열림). 문구 `settings.languageSoon` 9개 언어 추가
 - **로그인하면 날씨를 바로 읽기**(2.6 "No weather yet"이 남던 문제): 로그인 전 읽기는 건너뛰고(401), 처음 로그인 · 다시 로그인 시 즉시 다시 읽음. 실패한 읽기는 10분 캐시에 남기지 않음(`src/lib/useHere.ts`)
 - **6.3 Weekly Menu 헤더**: Month view `calendar-days` 아이콘을 오른쪽 화살표 옆 → **제목 바로 오른쪽**(gap 8)으로(11/13 요청 반영). 화살표는 오른쪽 끝 그대로. Figma 6.3(747:11057)은 아직 "Month view" 글자

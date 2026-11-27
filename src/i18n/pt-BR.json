@@ -15,21 +15,8 @@
     "title": "Algumas refeições ficam com a gente por anos.",
     "letter": "Criamos o ongdalsaem para lembrar as refeições que dividimos com as pessoas que nos fizeram felizes.\n\nUma mesa quentinha em casa, um prato de frente para um amigo, até o seu primeiro prato meio desajeitado — cada um guarda um pouquinho de tempo.\n\nCompartilhe aqui a sua refeição mais feliz.",
     "signature": "— da cozinha do ongdalsaem",
-    "cta": "Compartilhar minha primeira refeição",
-    "note": "Você verá esta carta só uma vez · Leia de novo em Ajustes\n› Ajuda e políticas",
-    "introTitle": "Sua refeição do dia,\ncom o clima.",
-    "introBody": "Veja o que as pessoas cozinham num clima como o seu e decida o que comer hoje.",
-    "features": {
-      "weather": "Sugestão do clima de hoje",
-      "weatherBody": "Um prato para o céu de agora.",
-      "nearby": "Lugares por perto",
-      "nearbyBody": "Onde comer perto de você.",
-      "timer": "Timer de cozinha",
-      "timerBody": "Vários timers ao mesmo tempo.",
-      "holidays": "Datas especiais do mundo",
-      "holidaysBody": "Pratos de datas especiais do mundo todo."
-    },
-    "start": "Começar"
+    "cta": "Continuar",
+    "note": "Você verá esta carta só uma vez · Leia de novo em Ajustes\n› Ajuda e políticas"
   },
   "signIn": {
     "title": "Como está o tempo\nna sua mesa?",

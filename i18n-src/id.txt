@@ -13,7 +13,7 @@ skip=Lewati
 title=Ada makanan yang terus kita ingat bertahun-tahun.
 letter=Kami membuat ongdalsaem untuk mengenang makanan yang kita santap bersama orang-orang yang membuat kita bahagia.\n\nMeja hangat di rumah, semangkuk makanan di depan sahabat, bahkan masakan pertamamu yang masih kikuk — masing-masing menyimpan sepotong waktu.\n\nBagikan makanan paling membahagiakanmu di sini.
 signature=— dari dapur ongdalsaem
-cta=Bagikan makanan pertamaku
+cta=Lanjutkan
 note=Surat ini hanya muncul sekali · Baca lagi di Pengaturan\n› Bantuan & kebijakan
 [signIn]
 title=Bagaimana cuaca\ndi mejamu?
@@ -1164,18 +1164,6 @@ meals.lunch=Makan siang
 meals.dinner=Makan malam
 removeAsk=Hapus dari rencana makan?
 planDay=Rencanakan {{date}}
-[welcome]
-introTitle=Makan harianmu,\nsesuai cuaca.
-introBody=Lihat masakan orang di cuaca seperti cuacamu, lalu tentukan mau makan apa hari ini.
-features.weather=Rekomendasi cuaca hari ini
-features.weatherBody=Hidangan yang pas dengan langit saat ini.
-features.nearby=Tempat terdekat
-features.nearbyBody=Tempat makan di dekatmu.
-features.timer=Timer dapur
-features.timerBody=Beberapa timer sekaligus saat memasak.
-features.holidays=Hari istimewa dunia
-features.holidaysBody=Hidangan hari istimewa dari seluruh dunia.
-start=Mulai
 [taste]
 step=Langkah 1 dari 3
 title=Makanan seperti apa\nyang kamu suka?

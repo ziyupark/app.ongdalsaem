@@ -68,6 +68,8 @@ export const text = {
   Tagline: t('Outfit-Regular', 11, 14, 2.4, true),
   /** Compact logo wordmark (Logo Lockup=Compact). */
   'Wordmark/Compact': t('Outfit-Medium', 24, 26, -0.8),
+  /** 1.1b letter body only (Figma 436:385 — raw 15/22, not a shared style). */
+  'Body/Letter': t('Outfit-Regular', 15, 22, -0.05),
   /** 1.1b letter signature only. */
   Handwriting: t('Gaegu-Bold', 20, 24),
   /** Auth Button · Google — Google Sans Medium, 14/20 at 40 tall scaled to the 44 button (Google branding guidelines). */

@@ -3,22 +3,24 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '../src/components/Button';
+import { Icon } from '../src/components/Icon';
+import { ArrowRight } from '../src/components/icons/ongdal';
+import { MoodGradient } from '../src/components/MoodGradient';
 import { Text } from '../src/components/Text';
 import { markWelcomeLetterSeen } from '../src/lib/flags';
 import { radius, space, useTheme } from '../src/theme';
 
-/** What the app does, one card each (2×2). Images reuse the weather / holiday assets. */
-const FEATURES = [
-  { key: 'weather', image: require('../assets/weather3d/weather3d_clear.png'), fit: 'contain' },
-  { key: 'nearby', image: require('../assets/holidays/food/samgyeopsal.jpg'), fit: 'cover' },
-  { key: 'timer', image: require('../assets/holidays/food/pasta_day.jpg'), fit: 'cover' },
-  { key: 'holidays', image: require('../assets/holidays/chuseok.jpg'), fit: 'cover' },
-] as const;
+/** Brand 3D / squirrel-acorn (1033:22732) — 120 × 131 frame, the image cropped as in Figma (133.1 % × 122.73 % at −12.78 %, −9.74 %). */
+const SQUIRREL = require('../assets/brand/squirrel-acorn-3d.png');
 
-/** Onboarding 0 — value intro before sign-in. Shown once (local flag); `replay` reopens it from Settings. */
+/**
+ * 1.1b Welcome letter — 197:6526. Sunset band (Mood/clear, 160 high) behind the status bar → Letter sheet
+ * (bg/subtle, top radius 32, pt 10 · px 32 · pb 40, gap 15): grabber row 36 → 16 → squirrel 120×131 → title (Display/L)
+ * → letter (3 paragraphs, gap 13) + signature → 40 → Continue (bg/inverse pill 56) → note (Caption).
+ * Shown once before sign-in (local flag); `replay` reopens it from 9.8 "A letter from us".
+ */
 export default function Welcome() {
   const insets = useSafeAreaInsets();
   const { color, scheme } = useTheme();
@@ -28,39 +30,46 @@ export default function Welcome() {
 
   const { replay } = useLocalSearchParams<{ replay?: string }>();
   const next = () => (replay ? router.back() : router.replace('/sign-in'));
-
-  const bottom = Math.max(insets.bottom, space[24]) + space[10];
+  const paragraphs = t('welcome.letter').split(/\n\s*\n/);
 
   return (
-    <View style={[styles.root, { backgroundColor: color('bg/default'), paddingTop: insets.top }]}>
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <ScrollView contentContainerStyle={{ paddingBottom: 56 + space[24] + bottom }}>
-        <View style={styles.heading}>
-          <Text variant="Display/L" accessibilityRole="header">{t('welcome.introTitle')}</Text>
-          <Text variant="Body/M" color="fg/secondary">{t('welcome.introBody')}</Text>
-        </View>
-        <View style={styles.grid}>
-          {FEATURES.map((f) => (
-            <View
-              key={f.key}
-              accessible
-              accessibilityLabel={`${t(`welcome.features.${f.key}`)}. ${t(`welcome.features.${f.key}Body`)}`}
-              style={[styles.card, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}
-            >
-              <View style={[styles.media, { backgroundColor: color('bg/muted') }]}>
-                <Image source={f.image} style={StyleSheet.absoluteFill} contentFit={f.fit} accessibilityIgnoresInvertColors />
-              </View>
-              <View style={styles.cardText}>
-                <Text variant="Body/M Strong" numberOfLines={2}>{t(`welcome.features.${f.key}`)}</Text>
-                <Text variant="Body/S" color="fg/muted" numberOfLines={3}>{t(`welcome.features.${f.key}Body`)}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-
-      <View style={[styles.fixed, { bottom }]}>
-        <Button label={t('welcome.start')} onPress={next} />
+    <View style={[styles.root, { backgroundColor: color('bg/default') }]}>
+      <StatusBar style="light" />
+      <View style={styles.band} pointerEvents="none">
+        <MoodGradient mood="clear" base={color('bg/default')} />
+      </View>
+      {/* Block · StatusBar 197:6528 — status bar + 10. */}
+      <View style={{ height: insets.top + space[10] }} />
+      <View style={[styles.sheet, { backgroundColor: color('bg/subtle') }]}>
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.top}>
+            <View style={[styles.grabber, { backgroundColor: color('border/strong') }]} />
+          </View>
+          <View style={styles.gap16} />
+          <View style={styles.squirrel} accessible={false}>
+            <Image source={SQUIRREL} style={styles.squirrelImage} contentFit="cover" accessibilityIgnoresInvertColors />
+          </View>
+          <Text variant="Display/L" accessibilityRole="header" style={styles.center}>{t('welcome.title')}</Text>
+          {/* 540:13236 — 364 wide (19 past the sheet's 32 padding on each side), gap 13. */}
+          <View style={styles.letter}>
+            {paragraphs.map((p, i) => (
+              <Text key={i} variant="Body/Letter" color="fg/secondary" style={styles.center}>{p}</Text>
+            ))}
+            <Text variant="Handwriting" color="fg/accent" style={styles.center}>{t('welcome.signature')}</Text>
+          </View>
+          <View style={styles.gap40} />
+          {/* CTA card 436:10495 — bg/inverse pill 56, px 20, "Continue" Title/M + arrow-right 22, gap 12. */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('welcome.cta')}
+            onPress={next}
+            style={({ pressed }) => [styles.cta, { backgroundColor: color('bg/inverse') }, pressed && styles.pressed]}
+          >
+            <Text variant="Title/M" color="fg/inverse">{t('welcome.cta')}</Text>
+            <Icon icon={ArrowRight} size={22} color="fg/inverse" />
+          </Pressable>
+          <Text variant="Caption" color="fg/muted" style={styles.center}>{t('welcome.note')}</Text>
+        </ScrollView>
       </View>
     </View>
   );
@@ -68,10 +77,17 @@ export default function Welcome() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  heading: { paddingTop: space[40], paddingHorizontal: space[20], gap: space[12] },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[12], paddingTop: space[32], paddingHorizontal: space[20] },
-  card: { width: '47%', flexGrow: 1, borderRadius: radius.lg, borderWidth: 1, overflow: 'hidden' },
-  media: { aspectRatio: 4 / 3 },
-  cardText: { padding: space[12], gap: space[4] },
-  fixed: { position: 'absolute', left: space[20], right: space[20] },
+  band: { position: 'absolute', left: 0, right: 0, top: 0, height: 160 },
+  sheet: { flex: 1, borderTopLeftRadius: radius['2xl'], borderTopRightRadius: radius['2xl'], overflow: 'hidden' },
+  content: { flexGrow: 1, alignItems: 'center', gap: 15, paddingTop: space[10], paddingHorizontal: space[32], paddingBottom: space[40] },
+  top: { alignSelf: 'stretch', height: 36 },
+  grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: radius.full },
+  gap16: { height: space[16] },
+  gap40: { height: space[40] },
+  squirrel: { width: 120, height: 131, overflow: 'hidden' },
+  squirrelImage: { position: 'absolute', width: '133.1%', height: '122.73%', left: '-12.78%', top: '-9.74%' },
+  letter: { alignSelf: 'stretch', marginHorizontal: -19, alignItems: 'center', gap: 13 },
+  center: { textAlign: 'center' },
+  cta: { alignSelf: 'stretch', height: 56, borderRadius: radius.full, paddingHorizontal: space[20], flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[12] },
+  pressed: { opacity: 0.85 },
 });
