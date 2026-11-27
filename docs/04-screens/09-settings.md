@@ -103,14 +103,14 @@
 - **HELP**: **Help center**(`compass`) → 9.8c · Contact support(`mail`) → **9.8a** · Community guidelines(`users`) → 9.8c
 - **LEGAL**: Terms of service · Privacy policy · Location-based service terms → **9.8c**(문서 시트) · Open-source licenses → **9.8b**(Marketing consent terms 행은 숨김 — 광고 없음)
 - **ABOUT**: **A letter from us**(`acorn`) → **1.1b** Welcome(앱 소개) 다시 보기 · Version **1.0.0 (100) · latest**(누르지 않음, 새 버전이 있을 때만 "Update available" → 스토어)
-  - 캡션: "ongdalsaem · help@ongdalsaem.app · Weather data by OpenWeather · Fonts: Fraunces, Outfit, Noto Sans KR (OFL) · Icons: Lucide (ISC)". 사업자로 등록하면 이 줄에 실제 사업자등록번호를 추가한다(자리표시자 번호는 쓰지 않음).
+  - 캡션: "ongdalsaem · app.ongdalsaem@gmail.com · Weather data by OpenWeather · Fonts: Fraunces, Outfit, Noto Sans KR (OFL) · Icons: Lucide (ISC)". 사업자로 등록하면 이 줄에 실제 사업자등록번호를 추가한다(자리표시자 번호는 쓰지 않음).
 - 문서 종류별 여는 방식: 긴 문서(약관 · 개인정보 · 위치 약관 · 가이드라인 · 도움말) = **웹뷰 시트**(호스팅한 웹 문서, expo-web-browser), 앱 데이터가 필요한 것(문의 · 라이선스 · 마케팅 동의) = 네이티브 푸시 화면.
 
 ### 9.8a Contact support — [497:10459](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=497-10459)
 - 푸시(TopBar Inline "Contact support"). **What’s it about?** Chip 한 줄: **Bug**(Selected) · Account · Report · Other(1개 필수, DB topic = bug · account · report_content · other).
 - 메시지 칸(bg/default, focus 테두리 1.5, radius 16, Body/M, 5–1000자) + 아래 줄 **Screenshot**(`image`, 선택 1장) ··· "92 / 1000".
 - 안내 박스(bg/accent-subtle, `alert-circle`): "We’ll attach app version 1.0.0 (100), iOS 18.2 and English to help us fix it. We reply to minji@example.com within 3 days." — 버전 · OS · 언어는 자동으로 붙는다. 답장 주소 = 로그인 이메일.
-- 링크 "Or email help@ongdalsaem.app"(`mail`, fg/accent) → 메일 앱(mailto, 제목에 버전 · 기기 자동 입력).
+- 링크 "Or email app.ongdalsaem@gmail.com"(`mail`, fg/accent) → 메일 앱(mailto, 제목에 버전 · 기기 자동 입력).
 - [고정] Button Primary L **Send**(y 744) → Back + Toast "Thanks — we’ll reply by email within 3 days." 입력 전에는 Disabled.
 - DB `support_tickets`(본인만 보내기 · 읽기, 처리 완료 후 3년 보관).
 

@@ -115,7 +115,7 @@
 | 개발용 기능 | 테스트 계정 버튼 · 날씨 미리보기는 `__DEV__`에서만 보임 | 통과 | `app/sign-in.tsx` · `src/services/auth.ts:81-90` · `app/dev/weather.tsx` |
 | placeholder URL | `https://placeholder.supabase.co`는 환경변수가 없을 때의 대체값. 스토어 빌드에는 EAS 값이 들어감 | 통과 | `src/lib/supabase.ts:18` |
 | http:// 주소 | 없음. 외부 주소는 모두 https | 통과 | `src/`, `app/` 검색 |
-| 고객 지원 메일 | `help@ongdalsaem.app`: 실제로 받을 수 있는 주소인지 확인 필요 | 확인 필요 | `src/lib/support.ts:3` |
+| 고객 지원 메일 | `app.ongdalsaem@gmail.com`: 실제로 받을 수 있는 주소인지 확인 필요 | 확인 필요 | `src/lib/support.ts:3` |
 | 디버그 로그 | `__DEV__` 밖 `console.warn` 12곳(오류 기록용, 개인정보 없음). `console.log` 없음 | 통과(낮음) | `app/sign-in.tsx:59` · `app/(tabs)/home.tsx:57,86` · `app/setup/*.tsx` · `src/services/weather.ts:18` · `src/services/foods.ts:447` 등 |
 
 ## 9. 네트워크 실패 · 권한 거부 시 크래시 · 무한 로딩 — 위험 (낮음)
