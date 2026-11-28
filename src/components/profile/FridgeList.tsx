@@ -326,7 +326,8 @@ const styles = StyleSheet.create({
   card: { width: CARD, borderRadius: radius.lg, overflow: 'hidden' },
   // Right padding 0: the cards run to the box's right edge.
   canCookBox: { paddingRight: 0 },
-  canCookHead: { gap: space[2] },
+  // Title row keeps the old right inset (14) so the refresh button isn't on the edge.
+  canCookHead: { gap: space[2], paddingRight: space[14] },
   // Clipped by the box (overflow hidden) so the third card shows only in part, as in Figma.
   placeholders: { flexDirection: 'row', gap: space[8] },
   placeholder: { width: CARD, height: 190, borderRadius: radius.lg, borderWidth: 0.66, borderStyle: 'dashed' },
