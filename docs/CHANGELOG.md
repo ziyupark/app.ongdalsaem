@@ -2,6 +2,11 @@
 
 디자인 버전별 변경 요약이다. 본문 문서에는 최종 상태만 적고, 무엇이 바뀌었는지는 여기에만 남긴다. 새 변경은 맨 위에 추가한다.
 
+## v1.8.7 — 2026-11-28 (냉장고 메모)
+
+- **6.3 칸 선택 "Shopping list" 글자 정가운데**: 2줄 행간 16이 Outfit 높이(19)보다 작아 글자가 약 1.5pt 위로 떠 보이던 것 → `Text`에 `leading` 옵션 추가(행간을 줄이면서 잘린 만큼 아래로 내림)
+- **6.3 Shopping list 칩 탭 = 삭제**: 탭 체크/해제 · 길게 눌러 삭제 → Fridge / Freezer와 같이 **탭 → "Remove {name}?" 확인 후 삭제**. 체크가 없어져 "Bought → to the fridge" 버튼 삭제(옮기기는 끌어서 놓기). 문구 `fridge.moveToFridge` 9개 언어 삭제, `toggleShopping` · `moveCheckedToFridge` 삭제
+
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
 
 - **타이머 "— done" 토스트 위치**: TabBar 캡슐 위 42 → **8**(토스트 아래 끝 = 하단 safe area + 96 → 바 윗면 + 8)

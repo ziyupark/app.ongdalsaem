@@ -2,7 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { Platform, Text as RNText, type TextProps, type TextStyle } from 'react-native';
 import { FONT_METRICS, fontScaleMax, text, useTheme, type ColorToken, type TextVariant } from '../theme';
 
-type Props = TextProps & { variant?: TextVariant; color?: ColorToken };
+type Props = TextProps & {
+  variant?: TextVariant;
+  color?: ColorToken;
+  /** Tighter line height than the token (multi-line labels, e.g. "Shopping / list" at 16). See `tighten`. */
+  leading?: number;
+};
 
 /** Korean locale: Outfit has no Hangul, so UI text switches to Noto Sans KR (docs/01-foundations.md §2.6, 05-behavior §9.1). */
 const KOREAN_FAMILY: Record<string, string> = {
@@ -61,14 +66,29 @@ function unclip(fontFamily: unknown, fontSize: number, lineHeight: number, lang 
   return { lineHeight: natural, marginTop: pull, marginBottom: pull };
 }
 
+/**
+ * A line height smaller than the font's own height (`leading` prop): iOS and Android keep the descent and cut the
+ * extra from the top of every line, so the glyphs sit (natural − leading) / 2 higher than Figma's even half-leading.
+ * Push the text back down by that much (the box keeps its height), so a centred multi-line label is truly centred.
+ */
+function tighten(fontFamily: unknown, fontSize: number, leading: number, lang = 'en'): TextStyle {
+  const m = metricsFor(String(fontFamily), lang);
+  const natural = m ? Math.ceil((m.ascent + m.descent) * fontSize) : leading;
+  const shift = Math.max(0, natural - leading) / 2;
+  return { lineHeight: leading, marginTop: shift, marginBottom: -shift };
+}
+
 /** The only text component screens should use — style and color always come from tokens. */
-export function Text({ variant = 'Body/M', color = 'fg/default', style, ...rest }: Props) {
+export function Text({ variant = 'Body/M', color = 'fg/default', leading, style, ...rest }: Props) {
   const { color: c } = useTheme();
   const { i18n } = useTranslation();
   const base = text[variant];
   const locale = localeFont(base.fontFamily, i18n.language);
   const lang = i18n.language;
-  const fit = base.fontSize && base.lineHeight
+  const family = locale?.fontFamily ?? base.fontFamily;
+  const fit = leading != null && base.fontSize
+    ? tighten(family, base.fontSize, leading, lang)
+    : base.fontSize && base.lineHeight
     ? unclip(locale?.fontFamily ?? base.fontFamily, base.fontSize, base.lineHeight, lang)
     : null;
   return <RNText maxFontSizeMultiplier={fontScaleMax(base.fontSize)} {...rest} style={[base, locale, fit, { color: c(color) }, style]} />;

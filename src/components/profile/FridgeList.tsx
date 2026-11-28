@@ -7,7 +7,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } fro
 import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { addFridge, removeFridge, setFridgeZone, useFridge, type FridgeItem, type FridgeZone } from '../../lib/fridge';
-import { addShopping, moveCheckedToFridge, removeShopping, toggleShopping, useShopping, type ShoppingItem } from '../../lib/shopping';
+import { addShopping, removeShopping, useShopping, type ShoppingItem } from '../../lib/shopping';
 import { matchRecipes } from '../../lib/ingredientMatch';
 import { fetchRecipeCandidates, type RecipeCandidate } from '../../services/foods';
 import { elevation, radius, space, useTheme } from '../../theme';
@@ -26,8 +26,6 @@ const CARD = 140;
 
 /** Long-press this long, then drag a chip to another box. */
 const HOLD_MS = 300;
-/** A long press that moves less than this (pt) is a plain long press — shopping memo: delete. */
-const STILL = 8;
 
 type Host = ComponentRef<typeof View>;
 type Rect = { x: number; y: number; w: number; h: number };
@@ -39,18 +37,17 @@ function DragChip({ dragging, onDragStart, onDragMove, onDragEnd, ...chip }: Com
   dragging: boolean;
   onDragStart: (e: DragEvent) => void;
   onDragMove: (e: DragEvent) => void;
-  onDragEnd: (e: DragEvent, moved: number) => void;
+  onDragEnd: (e: DragEvent) => void;
 }) {
-  const start = useRef({ x: 0, y: 0 });
   // The gesture may keep its first callbacks — always call the latest handlers.
   const h = useRef({ onDragStart, onDragMove, onDragEnd });
   h.current = { onDragStart, onDragMove, onDragEnd };
   const pan = usePanGesture({
     activateAfterLongPress: HOLD_MS,
     runOnJS: true,
-    onActivate: (e) => { start.current = { x: e.absoluteX, y: e.absoluteY }; h.current.onDragStart(e); },
+    onActivate: (e) => h.current.onDragStart(e),
     onUpdate: (e) => h.current.onDragMove(e),
-    onDeactivate: (e) => h.current.onDragEnd(e, Math.hypot(e.absoluteX - start.current.x, e.absoluteY - start.current.y)),
+    onDeactivate: (e) => h.current.onDragEnd(e),
   });
   return (
     <GestureDetector gesture={pan}>
@@ -74,7 +71,6 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
   const { color } = useTheme();
   const items = useFridge();
   const shopping = useShopping();
-  const checked = shopping.filter((i) => i.checked).length;
   const [zone, setZone] = useState<Target>(focusShopping ? 'shopping' : 'fridge');
   useEffect(() => { if (focusShopping) setZone('shopping'); }, [focusShopping]);
   const [name, setName] = useState('');
@@ -133,17 +129,13 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
     const z = boxAt(e.absoluteX, e.absoluteY);
     if (z !== overRef.current) { setOver(z); if (z) Haptics.selectionAsync().catch(() => undefined); }
   };
-  const dragEnd = (e: DragEvent, moved: number) => {
+  const dragEnd = (e: DragEvent) => {
     const d = dragRef.current;
     setDrag(null);
     setOver(null);
     if (!d) return;
     const to = boxAt(e.absoluteX, e.absoluteY);
-    if (!to || to === d.from) {
-      // Held without moving: the shopping memo's long press still deletes.
-      if (d.kind === 'shopping' && moved < STILL) { const it = shopping.find((s) => s.id === d.id); if (it) askShopping(it); }
-      return;
-    }
+    if (!to || to === d.from) return;
     if (d.kind === 'fridge') {
       if (to === 'shopping') { removeFridge(d.id); addShopping([{ name: d.name }]); }
       else setFridgeZone(d.id, to);
@@ -159,7 +151,7 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
     borderColor: z === zone ? color('border/focus') : 'transparent',
   }];
 
-  // Shopping memo: tap = check / uncheck, long press (without dragging) → confirm once → remove.
+  // Shopping list: same as the fridge boxes — tap → confirm once → remove.
   const askShopping = (it: ShoppingItem) => Alert.alert(t('fridge.removeAsk', { name: it.name }), undefined, [
     { text: t('common.cancel'), style: 'cancel' },
     { text: t('shopping.remove', { name: it.name }), style: 'destructive', onPress: () => removeShopping(it.id) },
@@ -183,8 +175,8 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
               onPress={() => setZone(z)}
               style={[styles.zone, on ? { backgroundColor: color('bg/inverse') } : { backgroundColor: color('bg/subtle'), borderWidth: 1, borderColor: color('border/default') }]}
             >
-              {/* Zone · Shopping memo 956:12335: two lines, Button/M with line height 16 (→ 32 in the 48 box), centred. */}
-              <Text variant="Button/M" color={on ? 'fg/inverse' : 'fg/default'} numberOfLines={z === 'shopping' ? 2 : 1} style={[styles.zoneLabel, z === 'shopping' && styles.zoneLabelTwoLine]}>
+              {/* Zone · Shopping list 956:12335: two lines, Button/M with line height 16 (→ 32 in the 48 box), centred. */}
+              <Text variant="Button/M" color={on ? 'fg/inverse' : 'fg/default'} numberOfLines={z === 'shopping' ? 2 : 1} leading={z === 'shopping' ? 16 : undefined} style={styles.zoneLabel}>
                 {z === 'shopping' ? t('fridge.shoppingZoneTwoLine') : zoneLabel(z)}
               </Text>
             </Pressable>
@@ -232,12 +224,7 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
       <View ref={(v) => { boxRefs.current.shopping = v; }} style={boxStyle('shopping')}>
         <View style={styles.head}>
           <Text variant="Body/M Strong">{zoneLabel('shopping')}</Text>
-          <Text variant="Body/M Strong" color="fg/muted" style={styles.flex}>{String(shopping.length)}</Text>
-          {checked > 0 ? (
-            <Pressable accessibilityRole="button" onPress={moveCheckedToFridge} hitSlop={space[10]}>
-              <Text variant="Body/S Strong" color="fg/accent">{t('fridge.moveToFridge')}</Text>
-            </Pressable>
-          ) : null}
+          <Text variant="Body/M Strong" color="fg/muted">{String(shopping.length)}</Text>
         </View>
         {shopping.length === 0 ? (
           <Text variant="Body/S" color="fg/muted">{t('fridge.shoppingEmpty')}</Text>
@@ -247,9 +234,8 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
               <DragChip
                 key={it.id}
                 label={it.amount ? `${it.name} ${it.amount}` : it.name}
-                struck={it.checked}
-                accessibilityLabel={it.name}
-                onPress={() => toggleShopping(it.id)}
+                accessibilityLabel={t('shopping.remove', { name: it.name })}
+                onPress={() => askShopping(it)}
                 dragging={drag?.id === it.id}
                 onDragStart={dragStart({ kind: 'shopping', id: it.id, name: it.name, label: it.amount ? `${it.name} ${it.amount}` : it.name, from: 'shopping' })}
                 onDragMove={dragMove}
@@ -308,7 +294,6 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: space[8] },
   flex: { flex: 1 },
   zoneLabel: { textAlign: 'center' },
-  zoneLabelTwoLine: { lineHeight: 16, marginTop: 0, marginBottom: 0 },
   zone: { flex: 1, height: ROW, borderRadius: radius.input, alignItems: 'center', justifyContent: 'center' },
   addBtn: { height: ROW, borderRadius: radius.input },
   // 2 ring (always there, transparent when not picked) + 14 padding = the same 16 inset as before.
