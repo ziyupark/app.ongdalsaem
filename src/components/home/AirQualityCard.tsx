@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { airGrade, barPosition, compareGrades, format, staleHours, type AirCopy, type AirGrade } from '../../lib/airQuality';
+import { airGrade, barPosition, compareGrades, format, type AirCopy, type AirGrade } from '../../lib/airQuality';
 import { loadAirBarGlow } from '../../lib/optionalNative';
 import type { AirState } from '../../lib/useAir';
 import { elevation, gradients, radius, space, useTheme } from '../../theme';
@@ -80,7 +80,6 @@ export function AirQualityCard({ copy, lang, air, onAllowLocation, allowing, onR
     const g = copy.grades[grade];
     const yGrade = reading.yesterday ? airGrade(reading.yesterday) : null;
     const writing = [g.status, yGrade ? copy.compare[compareGrades(grade, yGrade)] : null].filter(Boolean).join(' ');
-    const stale = staleHours(reading.observedAt, Date.now());
     const value = (v: number | null) => (v == null ? '—' : format(copy.labels.value, { value: Math.round(v) }));
     const p = barPosition(reading) ?? 0;
 
@@ -117,7 +116,6 @@ export function AirQualityCard({ copy, lang, air, onAllowLocation, allowing, onR
 
         <View style={[styles.writing, { backgroundColor: color('bg/default') }]}>
           <Text variant="Body/S" lang={lang}>{writing}</Text>
-          {stale != null ? <Text variant="Caption" color="fg/warning" lang={lang}>{format(copy.states.stale.text, { hours: stale })}</Text> : null}
         </View>
       </View>
     );
@@ -158,7 +156,7 @@ const styles = StyleSheet.create({
   line: { position: 'absolute', left: 0, right: 0, top: AIR_BAR.lineY - AIR_BAR.line / 2, height: AIR_BAR.line, borderRadius: radius.full },
   knob: { position: 'absolute', top: AIR_BAR.lineY - AIR_BAR.knob, width: AIR_BAR.knob * 2, height: AIR_BAR.knob * 2, borderRadius: radius.full, borderWidth: 1, shadowOpacity: 0.55, shadowRadius: 9, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   // Writing box — bg/default, radius sm, padding 6 12 (Figma 6 · 11/6 → nearest tokens).
-  writing: { borderRadius: radius.sm, paddingVertical: space[6], paddingHorizontal: space[12], gap: space[2] },
+  writing: { borderRadius: radius.sm, paddingVertical: space[6], paddingHorizontal: space[12] },
   button: { alignSelf: 'flex-start', maxWidth: '100%' },
   skeleton: { height: 14, width: '60%', borderRadius: radius.sm },
 });

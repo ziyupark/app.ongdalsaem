@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { AIR_GRADES, airGrade, barPosition, compareGrades, gradeAqi, gradePm10, gradePm25, staleHours, type AirCopy } from '../src/lib/airQuality.ts';
+import { AIR_GRADES, airGrade, barPosition, compareGrades, gradeAqi, gradePm10, gradePm25, type AirCopy } from '../src/lib/airQuality.ts';
 
 const COPY_DIR = join(import.meta.dirname, '..', 'src', 'copy');
 const copies = readdirSync(COPY_DIR)
@@ -66,13 +66,6 @@ test('yesterday comparison by grade', () => {
   assert.equal(compareGrades('normal', 'normal'), 'same');
 });
 
-test('stale = more than 3 hours old', () => {
-  const now = Date.UTC(2026, 10, 28, 12);
-  assert.equal(staleHours(now - 3 * 3600_000, now), null);
-  assert.equal(staleHours(now - 3 * 3600_000 - 1, now), 3);
-  assert.equal(staleHours(now - 5.5 * 3600_000, now), 5);
-});
-
 test('bar marker: each grade owns a quarter, the worse pollutant wins, never outside 0–1', () => {
   assert.equal(barPosition({ pm10: 0, pm25: 0 }), 0);
   assert.equal(barPosition({ pm25: 15 }), 0.25);
@@ -103,7 +96,6 @@ for (const { file, copy } of copies) {
     }
     for (const k of ['better', 'worse', 'same'] as const) assert.ok(copy.compare[k], `compare.${k}`);
     for (const k of ['locationDenied', 'noData'] as const) assert.ok(copy.states[k].text && copy.states[k].button, `states.${k}`);
-    assert.ok(copy.states.stale.text.includes('{hours}'), 'states.stale has {hours}');
     for (const k of ['title', 'pm10', 'pm25', 'loading'] as const) assert.ok(copy.labels[k], `labels.${k}`);
     assert.ok(copy.labels.value.includes('{value}'), 'labels.value has {value}');
     assert.ok(copy.labels.basedAt.includes('{time}'), 'labels.basedAt has {time}');

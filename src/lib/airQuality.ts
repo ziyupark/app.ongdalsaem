@@ -10,7 +10,7 @@ export type AirCopy = {
   version: number;
   grades: Record<AirGrade, { label: string; status: string }>;
   compare: Record<AirCompare, string>;
-  states: Record<'locationDenied' | 'noData' | 'stale', { text: string; button: string | null }>;
+  states: Record<'locationDenied' | 'noData', { text: string; button: string | null }>;
   labels: Record<'title' | 'pm10' | 'pm25' | 'value' | 'basedAt' | 'loading', string>;
 };
 
@@ -70,13 +70,6 @@ export function barPosition(r: { pm10?: number | null; pm25?: number | null; aqi
   const p = [valid(r.pm10) ? along(r.pm10, SCALE.pm10) : null, valid(r.pm25) ? along(r.pm25, SCALE.pm25) : null].filter((x): x is number => x != null);
   if (p.length) return Math.max(...p);
   return valid(r.aqi) ? along(r.aqi, SCALE.aqi) : null;
-}
-
-/** Whole hours since the reading when it is more than 3 hours old, else null. */
-export const STALE_AFTER_MS = 3 * 3600_000;
-export function staleHours(observedAt: number, now: number): number | null {
-  const age = now - observedAt;
-  return age > STALE_AFTER_MS ? Math.floor(age / 3600_000) : null;
 }
 
 /** "{hours}" · "{time}" · "{value}" style fills for labels and states. */

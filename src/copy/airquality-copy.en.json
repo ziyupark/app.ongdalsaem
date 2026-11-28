@@ -13,8 +13,7 @@
   },
   "states": {
     "locationDenied": { "text": "Turn on location to see the air in your neighborhood.", "button": "Turn on location" },
-    "noData": { "text": "Air quality can't be loaded right now. Please check again in a moment.", "button": "Try again" },
-    "stale": { "text": "From {hours} hours ago. It may have changed.", "button": null }
+    "noData": { "text": "Air quality can't be loaded right now. Please check again in a moment.", "button": "Try again" }
   },
   "labels": {
     "title": "Air quality",

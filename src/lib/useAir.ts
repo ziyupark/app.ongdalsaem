@@ -8,7 +8,7 @@ import type { Here } from './useHere';
 /**
  * Home air quality card state (docs/05-behavior.md §6.11). Never stays on `loading`: a read that hasn't answered in
  * READ_TIMEOUT becomes `error` (noData), unless the last good reading for this place is on the device — then that one
- * is shown (the card marks it stale when it is more than 3 hours old).
+ * is shown.
  * off = no device location (permission denied, or a city chosen in 9.7) → the locationDenied state.
  */
 export type AirState =
