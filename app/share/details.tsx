@@ -19,7 +19,7 @@ import { FieldHead, FlowTopBar } from '../../src/components/share/FlowTopBar';
 import { Text } from '../../src/components/Text';
 import { Toggle } from '../../src/components/Toggle';
 import { getShareDraft, loadCustomMoods, resetShareDraft, saveCustomMoods, updateShareDraft, useShareDraft } from '../../src/lib/shareDraft';
-import { CUSTOM_MOOD_ICON, LANDSCAPES, MEAL_TAGS, MOOD_TAGS, mealTagFor } from '../../src/lib/tags';
+import { COOKING_METHODS, CUSTOM_MOOD_ICON, LANDSCAPES, MEAL_TAGS, MOOD_TAGS, mealTagFor } from '../../src/lib/tags';
 import { photoMoment } from '../../src/lib/time';
 import { displayTemp } from '../../src/lib/prefs';
 import { hasLocationPermission, reverseGeocodeCity, type Coordinates } from '../../src/services/location';
@@ -262,6 +262,17 @@ export default function ShareDetails() {
               ))}
             </View>
           </View>
+
+          {d.type === 'home' ? (
+            <View style={styles.group}>
+              <FieldHead title={t('share.cookingMethod')} hint={t('share.optional')} />
+              <View style={styles.chips}>
+                {COOKING_METHODS.map((m) => (
+                  <Chip key={m.key} label={t(`cookingMethod.${m.key}`)} icon={m.icon} selected={d.cookingMethods.includes(m.key)} onPress={() => updateShareDraft({ cookingMethods: toggleIn(d.cookingMethods, m.key) })} />
+                ))}
+              </View>
+            </View>
+          ) : null}
 
           {d.type === 'home' ? (
             <View style={styles.group}>

@@ -4,7 +4,8 @@ import { clashes, type DietPrefs } from '../lib/allergens';
 import type { Meal } from '../lib/meals';
 import { supabase } from '../lib/supabase';
 import { WEATHER_MOODS, type WeatherMood } from '../theme';
-import { countOf, toPerson, type Person, type Row } from './foods';
+import { asCookingMethods } from '../lib/tags';
+import { countOf, readWithMethods, toPerson, type Person, type Row } from './foods';
 
 export type PoolDish = {
   id: string;
@@ -21,6 +22,8 @@ export type PoolDish = {
   creator: Person;
   /** Ingredient names — diet & allergy check (Today's pick). */
   ingredients: string[];
+  /** 8.2 Cooking methods (foods.cooking_methods) — the Home air quality card's menus. */
+  methods: string[];
 };
 
 type Place = { city?: string | null; neighborhood?: string | null };
@@ -29,7 +32,7 @@ export type Ctx = { mood?: WeatherMood | null; tempC?: number | null; place?: Pl
 const POOL_DAYS = 60;
 const POOL_LIMIT = 300;
 const SELECT =
-  'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, city, neighborhood, created_at, ingredients, ' +
+  'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, city, neighborhood, created_at, ingredients, cooking_methods, ' +
   'likes(count), creator:profiles!creator_id(id, display_name, username, avatar_url)';
 
 const asMood = (v: unknown): WeatherMood | null => (typeof v === 'string' && (WEATHER_MOODS as readonly string[]).includes(v) ? (v as WeatherMood) : null);
@@ -37,14 +40,14 @@ const asMood = (v: unknown): WeatherMood | null => (typeof v === 'string' && (WE
 /** Recent public dishes that recommendations choose from. */
 export async function fetchPool(): Promise<PoolDish[]> {
   const since = new Date(Date.now() - POOL_DAYS * 86400_000).toISOString();
-  const { data, error } = await supabase
+  const { data, error } = await readWithMethods((sel) => supabase
     .from('foods')
-    .select(SELECT)
+    .select(sel(SELECT))
     .eq('visibility', 'everyone')
     .eq('status', 'published')
     .gte('created_at', since)
     .order('created_at', { ascending: false })
-    .limit(POOL_LIMIT);
+    .limit(POOL_LIMIT));
   if (error) throw error;
   return (data as Row[])
     .filter((r) => r.image_url)
@@ -62,6 +65,7 @@ export async function fetchPool(): Promise<PoolDish[]> {
       createdAt: new Date(r.created_at),
       creator: toPerson(r.creator),
       ingredients: Array.isArray(r.ingredients) ? (r.ingredients as Row[]).map((i) => String(i?.name ?? '')).filter(Boolean) : [],
+      methods: asCookingMethods(r.cooking_methods),
     }));
 }
 

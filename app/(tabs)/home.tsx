@@ -8,6 +8,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, ScreenWash } from '../../src/components/ScreenHeader';
 import { goTab, TabBar, useTabBarScroll, useTabFocusEffect } from '../../src/components/TabBar';
 import { LocationCard } from '../../src/components/home/Cards';
+import { AirQualityCard } from '../../src/components/home/AirQualityCard';
+import { airCopyFor } from '../../src/copy';
+import { airGrade, allowedMethodKeys, rankMenus, timeSlotAt, type AirLine } from '../../src/lib/airQuality';
+import { useAir } from '../../src/lib/useAir';
+import { useAirLine } from '../../src/lib/useAirLine';
 import { FeedLoader } from '../../src/components/home/FeedLoader';
 import { FeedPost, type FeedPostData } from '../../src/components/home/FeedPost';
 import { HomeSkeleton } from '../../src/components/home/HomeSkeleton';
@@ -46,10 +51,14 @@ export default function HomeScreen() {
   usePrefs(); // re-render on °C / °F change
   const [realPosts, setRealPosts] = useState<FeedPostData[]>([]);
   const [pool, setPool] = useState<PoolDish[]>([]);
+  // The pool answered at least once (or failed) — the air quality line waits for it (at most a few seconds).
+  const [poolReady, setPoolReady] = useState(false);
   // Feed (and the picks pool) failed — offline / server error. With no posts on screen, the feed shows Try again.
   const [feedFailed, setFeedFailed] = useState(false);
   const [feedAttempt, setFeedAttempt] = useState(0);
-  useTabFocusEffect(useCallback(() => { fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)); }, [feedAttempt]));
+  useTabFocusEffect(useCallback(() => {
+    fetchPool().then(setPool).catch((e) => console.warn('[home] pool', e)).finally(() => setPoolReady(true));
+  }, [feedAttempt]));
   useTabFocusEffect(
     useCallback(() => {
       let alive = true;
@@ -169,6 +178,32 @@ export default function HomeScreen() {
     router.push('/share/pick');
   };
 
+  // Air quality card (§6.11): grade from PM10 / PM2.5 → a line from src/copy for this grade · time slot, with the most
+  // popular dish nearby whose cooking methods fit the grade. Copy = Korean only for now, in every app language.
+  const { copy: airCopy, lang: airLang } = airCopyFor(i18n.language);
+  const { air, retry: retryAir } = useAir(here);
+  const grade = air.status === 'ready' ? airGrade(air.reading) : null;
+  const airSlot = timeSlotAt(now, airCopy.timeSlots);
+  const menus = useMemo(
+    () => (grade
+      ? rankMenus(pool.map((d) => ({ id: d.id, name: d.name, methods: d.methods, acorns: d.acorns, neighborhood: d.neighborhood, city: d.city, createdAt: +d.createdAt })), allowedMethodKeys(airCopy, grade), place)
+      : []),
+    [pool, grade, airCopy, ready?.city, ready?.district], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+  const airLine = useAirLine(airCopy, grade, airSlot, menus, poolReady);
+  const onAirAction = (l: AirLine) => {
+    switch (l.action) {
+      case 'recipe':
+        if (l.dish) router.push(`/dish/${l.dish.id}`);
+        else router.push({ pathname: '/tag/[tag]', params: { tag: 'method:simmer' } });
+        return;
+      case 'shopping': goTab('profile', { tab: 'diary', focus: 'shopping', at: String(Date.now()) }); return;
+      case 'pantry': goTab('profile', { tab: 'diary', focus: 'pantry', at: String(Date.now()) }); return;
+      case 'neighbors': router.push({ pathname: '/nearby-feed', params: { area: 'near' } }); return;
+      case 'byMethod': router.push({ pathname: '/tag/[tag]', params: { tag: 'method:simmer' } }); return;
+    }
+  };
+
   // Feed (Block · feed 123:3261 — no title / chips): posts from today's weather. Same weather family only
   // (rain · snow · clear · grey); closest first — same weather → nearer temperature → newer. Without weather: newest.
   const posts = (() => {
@@ -243,6 +278,17 @@ export default function HomeScreen() {
                 onRefresh={refreshPicks}
                 onSlotPress={(s) => onSlot(slots.indexOf(s))}
               />
+              <View style={styles.airGap} />
+              <AirQualityCard
+                copy={airCopy}
+                lang={airLang}
+                air={air}
+                line={airLine}
+                onAllowLocation={allowLocation}
+                allowing={allowing}
+                onRetry={retryAir}
+                onAction={onAirAction}
+              />
             </View>
             {feed}
           </View>
@@ -273,6 +319,8 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   // Body under ScreenHeader (withWeather: its 18 bottom = title → Weather card).
   px: { paddingHorizontal: space[20] },
+  // Weather card → 12 → Air quality card.
+  airGap: { height: space[12] },
   // Block · feed 123:3261: padding-top 24, no gap — posts are spaced by their own 18 bottom padding.
   feed: { paddingTop: space[24] },
 });

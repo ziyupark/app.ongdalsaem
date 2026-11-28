@@ -3,6 +3,7 @@ import {
   Clock, Coffee, Cookie, CookingPot, Fish, Home, Leaf, Moon, Soup, Sparkles, Star, ThermometerSnowflake, ThermometerSun,
   Users, Utensils, Zap, type LucideIcon,
   Building2, Mountain, TreePine, Waves, Wheat, Droplets,
+  ChefHat, Flame, Haze,
 } from '../components/icons/ongdal';
 import { mealAt } from './meals';
 
@@ -38,6 +39,24 @@ export const LANDSCAPES = [
   { key: 'countryside', icon: Wheat },
   { key: 'city', icon: Building2 },
 ] as const satisfies readonly { key: string; icon: LucideIcon }[];
+
+/**
+ * How the dish is cooked (8.2 Details, optional, several, Home-cooked only) — stored in foods.cooking_methods.
+ * The Home air quality card picks dishes by these (docs/05-behavior.md §6.11).
+ */
+export const COOKING_METHODS = [
+  { key: 'grill', icon: Flame },
+  { key: 'stirfry', icon: ChefHat },
+  { key: 'panfry', icon: Utensils },
+  { key: 'simmer', icon: Soup },
+  { key: 'steam', icon: Haze },
+  { key: 'boil', icon: Droplets },
+  { key: 'quick', icon: Zap },
+] as const satisfies readonly { key: string; icon: LucideIcon }[];
+export type CookingMethod = (typeof COOKING_METHODS)[number]['key'];
+const METHOD_KEYS = new Set<string>(COOKING_METHODS.map((m) => m.key));
+/** Only known keys (the DB check allows these seven). */
+export const asCookingMethods = (v: unknown): CookingMethod[] => (Array.isArray(v) ? (v.filter((k) => typeof k === 'string' && METHOD_KEYS.has(k)) as CookingMethod[]) : []);
 
 /** Onboarding taste step — preset tags people can like (same keys as dishes' mood_tags / meal_type). */
 export const TASTE_TAGS = [

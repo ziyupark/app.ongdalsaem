@@ -21,6 +21,10 @@ type Props = {
   accessibilityLabel?: string;
   /** Small count pill right of the label (7.1 "Add to shopping" n) — bg/inverse · fg/inverse, radius full. */
   badge?: number;
+  /** Long labels (a dish name inside): the label wraps and the button grows taller instead of cutting it. */
+  wrap?: boolean;
+  /** The label's language when it isn't the app's (Text `lang`). */
+  lang?: string;
 };
 
 // Button 6:192 — height L 56 / M 46 / S 36, radius full, Disabled = 40% opacity.
@@ -41,7 +45,7 @@ const TONE: Record<Variant, { bg?: ColorToken; fg: ColorToken; border?: ColorTok
   White: { bg: 'static/white', fg: 'static/ink' }, // stays white in dark mode, so its ink must stay dark too
 };
 
-export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, disabled, loading, style, accessibilityLabel, badge }: Props) {
+export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, disabled, loading, style, accessibilityLabel, badge, wrap, lang }: Props) {
   const { color } = useTheme();
   const s = SIZE[size];
   const tone = TONE[variant];
@@ -56,6 +60,7 @@ export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, 
       style={({ pressed }) => [
         styles.base,
         { height: s.height, paddingHorizontal: s.paddingHorizontal, backgroundColor: tone.bg ? color(tone.bg) : 'transparent' },
+        wrap ? { height: 'auto', minHeight: s.height, paddingVertical: space[8] } : null,
         tone.border ? { borderWidth: tone.borderWidth ?? 1.5, borderColor: color(tone.border) } : null,
         variant === 'White' ? elevation['Elevation/2 Raised'] : null,
         variant === 'Glass' ? styles.clip : null,
@@ -75,7 +80,7 @@ export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, 
       ) : (
         <>
           {icon ? <Icon icon={icon} size={s.icon} color={tone.fg} /> : null}
-          <Text variant={s.text} color={tone.fg}>{label}</Text>
+          <Text variant={s.text} color={tone.fg} lang={lang} style={wrap ? styles.wrapLabel : undefined}>{label}</Text>
           {badge != null ? (
             <View style={[styles.badge, { backgroundColor: color('bg/inverse') }]}>
               <Text variant="Caption Strong" color="fg/inverse">{String(badge)}</Text>
@@ -90,6 +95,7 @@ export function Button({ label, onPress, variant = 'Primary', size = 'L', icon, 
 const styles = StyleSheet.create({
   base: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[8], borderRadius: radius.full },
   disabled: { opacity: 0.4 },
+  wrapLabel: { flexShrink: 1, textAlign: 'center' },
   clip: { overflow: 'hidden' },
   pressed: { opacity: 0.85 },
   dots: { flexDirection: 'row', gap: space[6] },

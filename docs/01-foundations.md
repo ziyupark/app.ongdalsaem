@@ -52,6 +52,10 @@
 | | overlay/scrim-soft | ink 28% | ink 28% | 다이어리 기록일 딤 |
 | | overlay/scrim | ink 45% | ink 45% | 사진 위 태그(Weather/Acorn Tag), 시트 뒤 딤 |
 | | overlay/scrim-strong | ink 55% | ink 55% | 사진 카운터 pill |
+| 대기질(코드 기준) | air/good | `#2F7FD8` | `#6AA8F0` | Air quality card 등급 막대 — 좋음 |
+| | air/normal | `#2F8F4E` | `#5BBF7A` | 보통 |
+| | air/bad | `#E2862B` | `#F5A957` | 나쁨 |
+| | air/very-bad | `#D63A3A` | `#EF6B6B` | 매우나쁨(보라 계열 대신 빨강) |
 | 유리 | glass/surface | white 88% | ink 88% | TabBar·TopBar·Weather Card·Glass IconButton 면(+ Blur 스타일) |
 | | glass/fill | white 12% | white 12% | 사진 위 Glass 버튼 면 |
 | | glass/fill-strong | white 24% | white 24% | 사진 위 Glass 칩 면 |

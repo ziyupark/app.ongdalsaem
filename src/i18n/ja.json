@@ -395,6 +395,7 @@
     "moveDown": "下へ移動",
     "moveTop": "いちばん上へ",
     "landscape": "風景",
+    "cookingMethod": "調理法",
     "saveChanges": "変更を保存",
     "changesSaved": "変更を保存しました",
     "cameraDenied": "料理を撮影するには、設定でカメラへのアクセスを許可してください。",
@@ -1326,6 +1327,15 @@
     "mountain": "山",
     "countryside": "田園",
     "city": "街"
+  },
+  "cookingMethod": {
+    "grill": "焼く",
+    "stirfry": "炒める",
+    "panfry": "フライパン焼き",
+    "simmer": "煮る",
+    "steam": "蒸す",
+    "boil": "ゆでる",
+    "quick": "かんたん料理"
   },
   "nearbyPlaces": {
     "nearby": "近く",

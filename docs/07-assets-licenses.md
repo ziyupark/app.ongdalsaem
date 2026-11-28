@@ -13,6 +13,7 @@
 - **커스텀**: acorn · acorn-color · heart-filled 아이콘, ongdalsaem 워드마크 — 자체 제작(squirrel 얼굴 아이콘은 쓰는 곳이 없어 삭제, 다람쥐 Ongi 일러스트는 별도 가이드). squirrel은 특정 캐릭터·마스코트를 참고하지 않은 기본 도형(원·귀·눈·입)으로 그렸다.
 - **명절 페이지 사진**(4.2 명절 헤더, 99의 4.12 참고): 지금은 다른 요리 사진을 쓴 **자리표시자**. 출시 전 라이선스가 확인된 사진(Unsplash 등)으로 바꾸고 이 목록에 추가한다. 명절 이름·음식 이름은 일반 명사라 저작권 대상이 아니다. 영화·만화 캐릭터(호박 캐릭터, 산타 캐릭터 상품 등)는 그리지 않는다.
 - **국기 이미지**(Flag Tag): Wikimedia Commons 국기 — 퍼블릭 도메인(googlefonts/noto-emoji `third_party/region-flags`의 LICENSE 확인). 상업 사용 가능, 표기 의무 없음(9.8 라이선스 화면에 출처만 적어 둔다).
+- **대기질 데이터**: 같은 OpenWeather 키의 Air Pollution API(무료 플랜 포함) — Home 대기질 카드에 "출처 OpenWeather · {시각} 기준"을 직접 표기하고, 아래 9.8b · 9.8 표기("Weather data by OpenWeather")도 그대로 덮는다.
 - **날씨 데이터 출처 표기**: OpenWeather 무료 플랜은 출처 표기 조건이 있다 — **9.8b** Open-source licenses의 DATA SOURCES와 9.8 하단 캡션에 "Weather data by OpenWeather" 표기(링크 포함).
 - **레퍼런스 앱(Moonly · Hungi 등)**: 구조·아이디어만 참고하고, 화면 배치·문구·아이콘·일러스트를 복제하지 않는다(완전 복사 금지).
 - 라이선스 프레임: [92:2994](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=92-2994)

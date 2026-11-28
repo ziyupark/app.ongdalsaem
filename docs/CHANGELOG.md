@@ -4,6 +4,13 @@
 
 ## v1.8.7 — 2026-11-28 (냉장고 메모)
 
+- **Home 대기질 기반 집밥 추천 카드 추가**(코드 기준, Figma 프레임 없음 — [02-home 4b](04-screens/02-home.md) · 규칙 [§6.11](05-behavior.md)): Weather card 아래 12에 유리 카드 — 등급(좋음 · 보통 · 나쁨 · 매우나쁨, 환경부 기준 · PM10/PM2.5 중 나쁜 쪽) · 4칸 등급 막대 · 미세먼지 · 초미세먼지 농도 · 어제 비교 · 등급 × 시간대 문구(동네 인기 요리를 `{menu}`로, 직전 템플릿 · 메뉴 제외, 없으면 fallback) · 버튼(레시피 · 장보기 · 이웃 집밥 · 있는 재료 · 끓이는 요리) · 출처 · 기준 시각. AQI 숫자는 안 보임. 위치 없음 · 못 읽음 · 3시간 지난 값 = states 문구. 문구는 `src/copy/airquality-copy.ko.json`(한국어만, 모든 앱 언어에서 한국어) — 원본에 `labels` · `sources` · `methods` 묶음을 더함
+- **8.2 Cooking method 칩 줄**(선택 · 여러 개 · Home-cooked만, Landscape 아래): Grill · Stir-fry · Pan-fry · Simmer · Steam · Boil · Quick & easy — DB `foods.cooking_methods`(20261203000000), 문구 `share.cookingMethod` · `cookingMethod.*` 9개 언어
+- **4.2 태그 페이지 = 요리 방식 모음도**: `/tag/method:<key>`(예: `method:simmer`)
+- **6.3 Diary `focus=pantry`**: 대기질 카드 "있는 재료로 찾기" → Diary를 열고 냉장고 · What you can cook now까지 내림
+- **대기질 데이터**: Edge Function `weather`에 kind `air` · `air_history`(OpenWeather Air Pollution, 같은 키 · 캐시 30분 / 6시간, 로그인 · 좌표만)
+- **토큰** `air/good` · `air/normal` · `air/bad` · `air/very-bad`(라이트 · 다크, 보라 없음) · **Button `wrap`**(긴 글자는 줄바꿈하며 높이가 늘어남) · **Text `lang`**(앱과 다른 언어 문구의 글꼴)
+- **테스트** `npm test`: 등급 경계값 · `{menu}` 뒤 조사 · fallback · 연속 중복 없음
 - **맑은 밤하늘 = 별똥별 + 별 RGB 글로**: clear-night · 밤의 clear Weather Mood 모션에 별똥별 추가(동시에 최대 2개, 32° 기울어 오른쪽 위 → 왼쪽 아래, 0.7–1.1초 비행 · 6–14초 쉼, 매번 새 위치, 밀도 ×3 적용 안 함, Reduce Motion에서는 없음). 별마다 뒤에 빨강 · 초록 · 파랑을 차례로 쓰는 흐린 글로(별의 5배, 최대 0.35, 반짝임과 같이 밝아지고 커짐). 색은 `FX_COLOR.starGlow`. cold 서리 반짝임은 그대로
 - **7.1 More from 타일 도토리 탭 = 토글**: Dish Tile 02의 Acorn Tag가 눌리지 않고 타일 전체(게시물 이동)로 넘어가던 것 → 6.1 · 4.5처럼 주고/취소(채운 도토리 · 숫자 즉시 반영, 실패하면 되돌림). 오프라인 사본에서는 탭 안 됨
 - **Weather Mood 입자 3배 · Weather Card까지**: 모든 무드의 비 · 눈 · 진눈깨비 · 빛 입자 · 별 · 바람 줄 개수와 상한 ×3이 기본(`FX_DENSITY` 3 — 전: 1.2 Sign in만 3배, 이제 네 탭 · 7.1도 같음). 네 탭 모션 레이어를 wash(420)와 떼어 **높이 640**(스크롤 이동 · 페이드는 wash와 같이) → 입자가 위쪽에만 몰리지 않고 Weather Card(y 212–520)까지 보이고 384 → 640에서 사라짐. 구름 · 별 · 빛 번짐 위치도 새 높이 비율로 조금 아래로 퍼짐

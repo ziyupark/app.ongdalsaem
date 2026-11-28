@@ -304,6 +304,7 @@ moveUp=上移
 moveDown=下移
 moveTop=移到最上面
 landscape=風景
+cookingMethod=烹調方式
 saveChanges=儲存變更
 changesSaved=已儲存變更
 cameraDenied=請在「設定」中允許取用相機，才能拍下你的料理。
@@ -1004,6 +1005,14 @@ lake=湖畔
 mountain=山上
 countryside=鄉間
 city=城市
+[cookingMethod]
+grill=烤
+stirfry=炒
+panfry=煎
+simmer=煮
+steam=蒸
+boil=水煮
+quick=簡單料理
 [nearbyPlaces]
 nearby=附近
 openNow=營業中

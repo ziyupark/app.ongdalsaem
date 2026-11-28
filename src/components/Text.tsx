@@ -7,6 +7,8 @@ type Props = TextProps & {
   color?: ColorToken;
   /** Tighter line height than the token (multi-line labels, e.g. "Shopping / list" at 16). See `tighten`. */
   leading?: number;
+  /** Text that is in another language than the app (the Korean-only air quality copy) — picks that language's font. */
+  lang?: string;
 };
 
 /** Korean locale: Outfit has no Hangul, so UI text switches to Noto Sans KR (docs/01-foundations.md §2.6, 05-behavior §9.1). */
@@ -79,12 +81,12 @@ function tighten(fontFamily: unknown, fontSize: number, leading: number, lang = 
 }
 
 /** The only text component screens should use — style and color always come from tokens. */
-export function Text({ variant = 'Body/M', color = 'fg/default', leading, style, ...rest }: Props) {
+export function Text({ variant = 'Body/M', color = 'fg/default', leading, lang: textLang, style, ...rest }: Props) {
   const { color: c } = useTheme();
   const { i18n } = useTranslation();
   const base = text[variant];
-  const locale = localeFont(base.fontFamily, i18n.language);
-  const lang = i18n.language;
+  const lang = textLang ?? i18n.language;
+  const locale = localeFont(base.fontFamily, lang);
   const family = locale?.fontFamily ?? base.fontFamily;
   const fit = leading != null && base.fontSize
     ? tighten(family, base.fontSize, leading, lang)

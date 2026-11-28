@@ -26,6 +26,7 @@ interface Dish { id: string; title: string; authorId: string; photos: string[]; 
   dietTags: ('vegan'|'seafood')[];                 // 8.2 Meal 줄의 Vegan · Seafood 칩(선택) — DB foods.meal_type에 함께 저장
   type: 'home'|'travel';                           // 8.2 Type. travel이면 ingredients·steps·kcalTotal 없음 — DB foods.dish_type
   // travel이면 설명 칸(story, ≤150자)이 "Where did you eat it?" 글이 된다. DB foods.place_name은 쓰지 않음(나중에 구조화된 장소용 예약, 항상 null)
+  cookingMethods: ('grill'|'stirfry'|'panfry'|'simmer'|'steam'|'boil'|'quick')[]; // 8.2 Cooking method(선택, 여러 개, Home-cooked만) — Home 대기질 카드 메뉴(05-behavior §6.11). DB foods.cooking_methods(text[], 기본 '{}', 7개 키만 check · GIN 인덱스) — 20261203000000_foods_cooking_methods.sql
   festive?: string;                                // 명절 태그(예: 'festive:halloween', 4.2 명절 헤더) — DB foods.character_tags에 함께 저장
   region: string; country: string; createdAt: string;
   placeNames?: Partial<Record<AppLanguage, { city: string; district?: string }>>; // 지역 이름을 9개 언어로(공유 · 장소 수정 때 저장) — 화면에는 보는 사람의 앱 언어로, 없으면 저장된 city · neighborhood. 표시 전용(필터 · 비교는 city · neighborhood) — DB foods.place_names(20261127000000)
@@ -57,6 +58,7 @@ interface DietPrefs { diet: 'vegetarian'|'vegan'|'pescatarian'|null; allergies: 
 // 식단·알레르기 판정은 기기에서(src/lib/allergens.ts): 고정 항목 = 9개 언어 키워드 사전, 직접 넣은 단어 = 그 단어 자체를 요리 이름 · 재료에서 찾음.
 // DB: supabase/migrations/20261116000000_profile_diet_allergies.sql · 20261129000000_profile_custom_diet_tags.sql
 // DB: supabase/migrations/20261030000000_dish_type_privacy_language.sql — foods(dish_type · place_name(예약) · allow_comments · region_precision) · profiles(언어 · 공개 기본값 · 메시지 · 위치)
+// 대기질(Home Air quality card): DB에 저장하지 않는다 — Edge Function weather(kind air · air_history)가 owm_cache에 30분 · 6시간 캐시. 기기에는 마지막 값(AsyncStorage air.last { key: 좌표 소수 2자리, reading: { pm10, pm25, observedAt, source, yesterday } })과 등급:시간대별 마지막 문구(air.lastLine { "bad:dinner": { templateId, menu } })만
 // Today's pick · 끼니 슬롯은 서버 API 없이 앱이 공개 게시물 풀에서 고른다(src/services/recommend.ts, 규칙 = 05-behavior §6.1 · §6.2). Mood Prompt(기분 입력)는 없다.
 // 취향: profiles.favorite_tags(text[]) — 1.3b Taste에서 저장, Today's pick 취향 보너스에 사용
 // 매일 추천 알림 시간: 기기 prefs.pickTimes("HH:MM" 1–5개, 시각 순, 기본 [07:30], 1.5에서 첫 시간 · 9.4에서 추가) — 푸시 토큰과 함께 서버 push_tokens.pick_times(time[], 1–5개)에 저장(20261108000000_daily_pick_push.sql · 20261130000000_daily_pick_times.sql). pick_time = 첫 시간(옛 빌드 호환). 중복 발송 방지 = last_sent_at(15분 안에 보냈으면 건너뜀). push_tokens의 위치(lat · lon 소수 2자리 ≈ 1 km, city, place)는 알림이 켜져 있는 동안만 둔다 — 끄면 null로 지우고, 다시 켜면 채운다. 계정 삭제 시 행 삭제(auth.users → profiles → push_tokens cascade)

@@ -304,6 +304,7 @@ moveUp=Lên trên
 moveDown=Xuống dưới
 moveTop=Lên đầu
 landscape=Phong cảnh
+cookingMethod=Cách nấu
 saveChanges=Lưu thay đổi
 changesSaved=Đã lưu thay đổi
 cameraDenied=Hãy cho phép truy cập camera trong Cài đặt để chụp món ăn của bạn.
@@ -1004,6 +1005,14 @@ lake=Hồ
 mountain=Núi
 countryside=Đồng quê
 city=Thành phố
+[cookingMethod]
+grill=Nướng
+stirfry=Xào
+panfry=Áp chảo
+simmer=Nấu canh
+steam=Hấp
+boil=Luộc
+quick=Món nhanh
 [nearbyPlaces]
 nearby=gần đây
 openNow=Đang mở cửa

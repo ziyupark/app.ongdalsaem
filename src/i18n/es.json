@@ -398,6 +398,7 @@
     "moveDown": "Bajar",
     "moveTop": "Mover al principio",
     "landscape": "Paisaje",
+    "cookingMethod": "Método de cocción",
     "saveChanges": "Guardar cambios",
     "changesSaved": "Cambios guardados",
     "cameraDenied": "Permite el acceso a la cámara en Ajustes para fotografiar tu plato.",
@@ -1342,6 +1343,15 @@
     "mountain": "Montaña",
     "countryside": "Campo",
     "city": "Ciudad"
+  },
+  "cookingMethod": {
+    "grill": "A la parrilla",
+    "stirfry": "Salteado",
+    "panfry": "A la plancha",
+    "simmer": "Guisado",
+    "steam": "Al vapor",
+    "boil": "Hervido",
+    "quick": "Rápido y fácil"
   },
   "nearbyPlaces": {
     "nearby": "cerca",

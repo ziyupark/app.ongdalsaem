@@ -304,6 +304,7 @@ moveUp=เลื่อนขึ้น
 moveDown=เลื่อนลง
 moveTop=ย้ายไปบนสุด
 landscape=ทิวทัศน์
+cookingMethod=วิธีปรุง
 saveChanges=บันทึกการเปลี่ยนแปลง
 changesSaved=บันทึกการเปลี่ยนแปลงแล้ว
 cameraDenied=อนุญาตให้เข้าถึงกล้องในการตั้งค่าเพื่อถ่ายรูปเมนูของคุณ
@@ -1004,6 +1005,14 @@ lake=ทะเลสาบ
 mountain=ภูเขา
 countryside=ชนบท
 city=เมือง
+[cookingMethod]
+grill=ย่าง
+stirfry=ผัด
+panfry=จี่
+simmer=ต้ม
+steam=นึ่ง
+boil=ลวก
+quick=เมนูง่ายๆ
 [nearbyPlaces]
 nearby=ใกล้ ๆ
 openNow=เปิดอยู่

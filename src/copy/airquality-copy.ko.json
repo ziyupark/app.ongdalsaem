@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "placeholder": "{menu}",
+  "rules": {
+    "josa": "{menu} 바로 뒤에 조사(을/를, 이/가, 은/는, 으로/로)를 붙이지 않는다. 새 문구도 이 규칙을 따른다.",
+    "rotation": "같은 등급·시간대에서 직전에 보여 준 템플릿과 메뉴는 다시 고르지 않는다.",
+    "fallback": "allowedMethods에 맞는 메뉴가 없으면 fallback 문구를 쓴다."
+  },
+  "timeSlots": {
+    "morning": { "label": "아침", "from": "05:00", "to": "10:00" },
+    "lunch":   { "label": "점심", "from": "10:00", "to": "16:00" },
+    "dinner":  { "label": "저녁", "from": "16:00", "to": "21:00" },
+    "night":   { "label": "밤",   "from": "21:00", "to": "05:00" }
+  },
+  "actions": {
+    "recipe":    { "button": "{menu} 레시피", "usesMenu": true },
+    "shopping":  { "button": "장보기 목록 만들기", "usesMenu": false },
+    "neighbors": { "button": "이웃 집밥 보기", "usesMenu": false },
+    "pantry":    { "button": "있는 재료로 찾기", "usesMenu": false },
+    "byMethod":  { "button": "끓이는 요리 보기", "usesMenu": false }
+  },
+  "grades": {
+    "good": {
+      "label": "좋음",
+      "status": "공기가 맑아요.",
+      "allowedMethods": ["굽기", "볶기", "부치기"],
+      "templates": {
+        "morning": [
+          { "id": "good_morning_1", "text": "공기 맑은 아침이에요. 창문 열고 {menu} 어때요?", "action": "recipe" },
+          { "id": "good_morning_2", "text": "환기하기 좋은 아침이에요. 오늘 아침은 {menu}, 어때요?", "action": "recipe" },
+          { "id": "good_morning_3", "text": "공기가 맑아요. 걸어서 장 보고 와서 {menu} 만들어 볼까요?", "action": "shopping" }
+        ],
+        "lunch": [
+          { "id": "good_lunch_1", "text": "환기하기 좋은 날이에요. 미뤄 둔 {menu} 해 볼까요?", "action": "recipe" },
+          { "id": "good_lunch_2", "text": "공기 맑은 점심이에요. 창문 열고 {menu} 만들어 볼까요?", "action": "recipe" },
+          { "id": "good_lunch_3", "text": "냄새 걱정 없는 날이에요. 오늘 점심은 {menu} 어때요?", "action": "recipe" }
+        ],
+        "dinner": [
+          { "id": "good_dinner_1", "text": "공기 맑은 저녁이에요. 창문 열고 {menu} 해 볼까요?", "action": "recipe" },
+          { "id": "good_dinner_2", "text": "환기하기 좋은 저녁이에요. 오늘은 집에서 {menu} 어때요?", "action": "recipe" },
+          { "id": "good_dinner_3", "text": "걸어서 장 보러 가기 좋은 저녁이에요. {menu} 재료부터 골라 볼까요?", "action": "shopping" }
+        ],
+        "night": [
+          { "id": "good_night_1", "text": "공기 맑은 밤이에요. 창문 열고 {menu} 해 볼까요?", "action": "recipe" },
+          { "id": "good_night_2", "text": "환기하기 좋은 밤이에요. 출출하면 {menu} 어때요?", "action": "recipe" },
+          { "id": "good_night_3", "text": "상쾌한 밤이에요. 내일 아침 {menu} 재료를 미리 손질해 둘까요?", "action": "recipe" }
+        ]
+      },
+      "fallback": { "id": "good_fallback", "text": "창문 열고 요리하기 좋은 날이에요.", "action": "neighbors" }
+    },
+    "normal": {
+      "label": "보통",
+      "status": "공기가 괜찮아요.",
+      "allowedMethods": ["*"],
+      "templates": {
+        "morning": [
+          { "id": "normal_morning_1", "text": "무난한 아침이에요. 간단하게 {menu} 어때요?", "action": "recipe" },
+          { "id": "normal_morning_2", "text": "공기가 괜찮아요. 가볍게 {menu} 먹어 볼까요?", "action": "recipe" },
+          { "id": "normal_morning_3", "text": "평범한 아침이에요. 남은 재료로 {menu} 어때요?", "action": "recipe" }
+        ],
+        "lunch": [
+          { "id": "normal_lunch_1", "text": "공기가 괜찮아요. 냉장고 반찬으로 {menu} 어때요?", "action": "recipe" },
+          { "id": "normal_lunch_2", "text": "무난한 점심이에요. 오늘은 {menu} 해 볼까요?", "action": "recipe" },
+          { "id": "normal_lunch_3", "text": "평소처럼 편하게, {menu} 어때요?", "action": "recipe" }
+        ],
+        "dinner": [
+          { "id": "normal_dinner_1", "text": "평범한 저녁이에요. 오늘 저녁은 {menu} 어때요?", "action": "recipe" },
+          { "id": "normal_dinner_2", "text": "공기가 괜찮은 저녁이에요. {menu} 만들어 볼까요?", "action": "recipe" },
+          { "id": "normal_dinner_3", "text": "무난한 저녁이에요. 이웃들이 오늘 만든 집밥 구경해 볼까요?", "action": "neighbors" }
+        ],
+        "night": [
+          { "id": "normal_night_1", "text": "출출한 밤이에요. {menu} 만들어 볼까요?", "action": "recipe" },
+          { "id": "normal_night_2", "text": "평범한 밤이에요. 간단하게 {menu} 어때요?", "action": "recipe" },
+          { "id": "normal_night_3", "text": "무난한 밤이에요. 내일 먹을 {menu} 미리 만들어 둘까요?", "action": "recipe" }
+        ]
+      },
+      "fallback": { "id": "normal_fallback", "text": "오늘은 편하게 집밥 어때요?", "action": "neighbors" }
+    },
+    "bad": {
+      "label": "나쁨",
+      "status": "미세먼지가 나빠요.",
+      "allowedMethods": ["끓이기", "찌기", "삶기"],
+      "templates": {
+        "morning": [
+          { "id": "bad_morning_1", "text": "미세먼지가 나빠요. 창문은 닫고 따뜻한 {menu} 어때요?", "action": "recipe" },
+          { "id": "bad_morning_2", "text": "공기가 탁한 아침이에요. 간단하게 {menu} 어때요?", "action": "recipe" },
+          { "id": "bad_morning_3", "text": "창문 닫고, 오늘 아침은 {menu} 어때요?", "action": "recipe" }
+        ],
+        "lunch": [
+          { "id": "bad_lunch_1", "text": "공기가 탁한 날이에요. 굽는 요리 대신 {menu} 해 볼까요?", "action": "recipe" },
+          { "id": "bad_lunch_2", "text": "미세먼지가 나빠요. 후드 켜고 {menu} 만들어 볼까요?", "action": "recipe" },
+          { "id": "bad_lunch_3", "text": "창문 닫고 냄비 하나로, {menu} 어때요?", "action": "recipe" }
+        ],
+        "dinner": [
+          { "id": "bad_dinner_1", "text": "창문 닫고 후드 켜고, 오늘은 {menu} 어때요?", "action": "recipe" },
+          { "id": "bad_dinner_2", "text": "공기가 탁한 저녁이에요. 굽는 대신 {menu} 해 볼까요?", "action": "recipe" },
+          { "id": "bad_dinner_3", "text": "미세먼지 나쁜 날, 이웃들이 끓인 국물 요리 구경해 보세요.", "action": "neighbors" }
+        ],
+        "night": [
+          { "id": "bad_night_1", "text": "창문은 닫아 두고, 오늘 밤은 따끈한 {menu} 어때요?", "action": "recipe" },
+          { "id": "bad_night_2", "text": "공기가 탁한 밤이에요. 부침개 대신 {menu} 어때요?", "action": "recipe" },
+          { "id": "bad_night_3", "text": "미세먼지가 나빠요. 따뜻한 {menu} 하나로 하루를 마쳐요.", "action": "recipe" }
+        ]
+      },
+      "fallback": { "id": "bad_fallback", "text": "오늘은 끓이는 요리 어때요?", "action": "byMethod" }
+    },
+    "veryBad": {
+      "label": "매우나쁨",
+      "status": "미세먼지가 매우 나빠요.",
+      "allowedMethods": ["끓이기", "간단 요리"],
+      "templates": {
+        "morning": [
+          { "id": "verybad_morning_1", "text": "오늘은 집에만 있어도 괜찮아요. 있는 재료로 {menu} 만들어 볼까요?", "action": "recipe" },
+          { "id": "verybad_morning_2", "text": "미세먼지가 매우 나빠요. 장 보지 않고 {menu} 어때요?", "action": "recipe" },
+          { "id": "verybad_morning_3", "text": "밖에 나가지 않아도 되는 아침 메뉴를 모았어요.", "action": "pantry" }
+        ],
+        "lunch": [
+          { "id": "verybad_lunch_1", "text": "장 보러 나가지 않아도 돼요. 냉장고 재료로 만드는 레시피를 모았어요.", "action": "pantry" },
+          { "id": "verybad_lunch_2", "text": "미세먼지가 매우 나빠요. 남은 재료로 {menu} 어때요?", "action": "recipe" },
+          { "id": "verybad_lunch_3", "text": "오늘은 집에서 쉬어 가요. 간단하게 {menu} 해 볼까요?", "action": "recipe" }
+        ],
+        "dinner": [
+          { "id": "verybad_dinner_1", "text": "바깥은 잠시 잊고, 냄비 하나로 {menu} 어때요?", "action": "recipe" },
+          { "id": "verybad_dinner_2", "text": "미세먼지가 매우 나빠요. 냉장고 속 재료를 고르면 메뉴를 찾아 드려요.", "action": "pantry" },
+          { "id": "verybad_dinner_3", "text": "집에 있는 날, 이웃들의 냉장고 털이 요리를 구경해 보세요.", "action": "neighbors" }
+        ],
+        "night": [
+          { "id": "verybad_night_1", "text": "오늘은 집에서 푹 쉬어요. 따뜻한 {menu} 하나면 충분해요.", "action": "recipe" },
+          { "id": "verybad_night_2", "text": "미세먼지가 매우 나빠요. 있는 재료로 {menu} 어때요?", "action": "recipe" },
+          { "id": "verybad_night_3", "text": "공기 맑아지면 볼 장보기 목록만 미리 적어 둘까요?", "action": "shopping" }
+        ]
+      },
+      "fallback": { "id": "verybad_fallback", "text": "있는 재료로 만드는 레시피를 모았어요.", "action": "pantry" }
+    }
+  },
+  "compare": {
+    "better": "어제 이맘때보다 공기가 맑아졌어요.",
+    "worse": "어제 이맘때보다 공기가 탁해졌어요.",
+    "same": "어제와 비슷해요."
+  },
+  "states": {
+    "locationDenied": { "text": "위치를 켜면 우리 동네 공기에 맞춰 집밥 메뉴를 추천해 드려요.", "button": "위치 켜기" },
+    "noData": { "text": "지금은 대기질 정보를 불러올 수 없어요. 잠시 뒤 다시 확인해 주세요.", "button": "다시 시도" },
+    "stale": { "text": "{hours}시간 전 정보예요. 지금과 다를 수 있어요.", "button": null }
+  },
+  "labels": {
+    "title": "대기질",
+    "pm10": "미세먼지",
+    "pm25": "초미세먼지",
+    "value": "{value}㎍/㎥",
+    "source": "출처 {source}",
+    "basedAt": "{time} 기준",
+    "loading": "우리 동네 공기를 확인하고 있어요."
+  },
+  "sources": { "openweather": "OpenWeather" },
+  "methods": {
+    "grill": "굽기", "stirfry": "볶기", "panfry": "부치기", "simmer": "끓이기",
+    "steam": "찌기", "boil": "삶기", "quick": "간단 요리"
+  }
+}

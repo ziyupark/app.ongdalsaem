@@ -66,6 +66,8 @@ export type ShareDraft = {
   uploadFailed: number | null;
   /** Optional landscape (forest / sea / …). */
   landscape: string | null;
+  /** Optional cooking methods (grill · simmer · …, several) — Home-cooked only. */
+  cookingMethods: string[];
   /** 7.1 "I made this": the recipe post this dish was cooked from (saved as cooked_from_id). */
   cookedFromId: string | null;
   /** Edit mode: the post being edited (null = a new post). Weather, temperature and created_at stay as they were. */
@@ -76,7 +78,7 @@ export type ShareDraft = {
 
 const empty = (): ShareDraft => ({
   photos: [], context: null, contextState: 'idle', type: 'home', name: '', placeName: '', description: '',
-  meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', servings: 2, cookMinutes: null, difficulty: null, placeEdited: false, uploadFailed: null, landscape: null, cookedFromId: null, editId: null, editBefore: [],
+  meals: [], moods: [], isPublic: true, allowComments: true, ingredients: [], steps: [], calories: '', servings: 2, cookMinutes: null, difficulty: null, placeEdited: false, uploadFailed: null, landscape: null, cookingMethods: [], cookedFromId: null, editId: null, editBefore: [],
 });
 
 let draft = empty();

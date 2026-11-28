@@ -304,6 +304,7 @@ moveUp=Naikkan
 moveDown=Turunkan
 moveTop=Pindah ke paling atas
 landscape=Pemandangan
+cookingMethod=Cara memasak
 saveChanges=Simpan perubahan
 changesSaved=Perubahan disimpan
 cameraDenied=Izinkan akses kamera di Pengaturan untuk memotret masakanmu.
@@ -1004,6 +1005,14 @@ lake=Danau
 mountain=Gunung
 countryside=Pedesaan
 city=Kota
+[cookingMethod]
+grill=Panggang
+stirfry=Tumis
+panfry=Goreng wajan
+simmer=Masak berkuah
+steam=Kukus
+boil=Rebus
+quick=Masakan simpel
 [nearbyPlaces]
 nearby=di dekat sini
 openNow=Buka sekarang

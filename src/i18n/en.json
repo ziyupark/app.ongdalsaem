@@ -398,6 +398,7 @@
     "moveDown": "Move down",
     "moveTop": "Move to top",
     "landscape": "Landscape",
+    "cookingMethod": "Cooking method",
     "saveChanges": "Save changes",
     "changesSaved": "Changes saved",
     "cameraDenied": "Allow camera access in Settings to take a photo of your dish.",
@@ -1342,6 +1343,15 @@
     "mountain": "Mountain",
     "countryside": "Countryside",
     "city": "City"
+  },
+  "cookingMethod": {
+    "grill": "Grill",
+    "stirfry": "Stir-fry",
+    "panfry": "Pan-fry",
+    "simmer": "Simmer",
+    "steam": "Steam",
+    "boil": "Boil",
+    "quick": "Quick & easy"
   },
   "nearbyPlaces": {
     "nearby": "nearby",

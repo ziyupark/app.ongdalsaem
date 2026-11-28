@@ -5,7 +5,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { myUserId, supabase } from '../lib/supabase';
 import type { Difficulty, ShareDraft } from '../lib/shareDraft';
 import { geohash } from '../lib/geohash';
-import { temperatureTag } from '../lib/tags';
+import { asCookingMethods, temperatureTag } from '../lib/tags';
 import { asPlaceNames, placeNames, type PlaceNames } from './location';
 import { WEATHER_MOODS, type WeatherMood } from '../theme';
 
@@ -52,6 +52,8 @@ export type Dish = DishSummary & {
   takenAt: Date | null;
   /** 7.1 "I made this": the recipe post it was cooked from. */
   cookedFromId: string | null;
+  /** 8.2 Cooking method keys (grill · simmer · …). [] on older posts. */
+  cookingMethods: string[];
 };
 
 /** Thrown by createDish when one photo keeps failing (8.4). */
@@ -64,11 +66,25 @@ export type Comment = { id: string; body: string; createdAt: Date; author: Perso
 // `!creator_id` / `!user_id`: foods↔profiles also meet through likes/saves/comments, so the direct FK is named.
 export const SUMMARY_SELECT = 'id, name, image_url, weather_condition, temperature_c, mood_tags, meal_type, likes(count)';
 const DISH_SELECT =
-  'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, servings, cook_minutes, difficulty, cooked_from_id, ' +
+  'id, creator_id, name, description, image_url, weather_condition, temperature_c, mood_tags, meal_type, ingredients, steps, calories, servings, cook_minutes, difficulty, cooked_from_id, cooking_methods, ' +
   'city, neighborhood, place_names, country, place_name, created_at, taken_at, dish_type, landscape, allow_comments, visibility, ' +
   'creator:profiles!creator_id(id, display_name, username, avatar_url), food_images(image_url, display_order), likes(count), comments(count), food_eaten_counts(count)';
 
 export type Row = Record<string, any>;
+
+/**
+ * foods.cooking_methods comes with migration 20261203000000. Until it is applied, a select naming it fails with 42703
+ * (unknown column): read once more without it, and leave it out of later selects in this session.
+ */
+let methodsColumn = true;
+export const withMethods = (select: string) => (methodsColumn ? select : select.replace(/,\s*cooking_methods/g, ''));
+export async function readWithMethods<T extends { error: { code?: string; message?: string } | null }>(run: (select: (s: string) => string) => PromiseLike<T>): Promise<T> {
+  const first = await run(withMethods);
+  if (!methodsColumn || first.error?.code !== '42703' || !String(first.error.message ?? '').includes('cooking_methods')) return first;
+  console.warn('[foods] foods.cooking_methods is missing — apply supabase/migrations/20261203000000_foods_cooking_methods.sql');
+  methodsColumn = false;
+  return run(withMethods);
+}
 
 const asMood = (v: unknown): WeatherMood | null => (typeof v === 'string' && (WEATHER_MOODS as readonly string[]).includes(v) ? (v as WeatherMood) : null);
 export const countOf = (v: unknown) => (Array.isArray(v) && v[0] && typeof v[0].count === 'number' ? v[0].count : 0);
@@ -125,6 +141,7 @@ function toDish(r: Row): Dish {
     isPublic: r.visibility === 'everyone',
     type: r.dish_type === 'travel' ? 'travel' : 'home',
     landscape: r.landscape ?? null,
+    cookingMethods: asCookingMethods(r.cooking_methods),
     country: r.country ?? null,
     takenAt: r.taken_at ? new Date(r.taken_at) : null,
   };
@@ -136,13 +153,13 @@ const myId = myUserId;
 
 /** Latest public dishes for the Home feed. */
 export async function fetchFeed(limit = 10): Promise<Dish[]> {
-  const { data, error } = await supabase
+  const { data, error } = await readWithMethods((sel) => supabase
     .from('foods')
-    .select(DISH_SELECT)
+    .select(sel(DISH_SELECT))
     .eq('visibility', 'everyone')
     .eq('status', 'published')
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .limit(limit));
   if (error) throw error;
   return (data as Row[]).map(toDish);
 }
@@ -181,7 +198,7 @@ export async function fetchRecipeCandidates(force = false): Promise<RecipeCandid
 }
 
 export async function fetchDish(id: string): Promise<Dish | null> {
-  const { data, error } = await supabase.from('foods').select(DISH_SELECT).eq('id', id).maybeSingle();
+  const { data, error } = await readWithMethods((sel) => supabase.from('foods').select(sel(DISH_SELECT)).eq('id', id).maybeSingle());
   if (error) throw error;
   return data ? toDish(data as Row) : null;
 }
@@ -458,8 +475,14 @@ export async function createDish(draft: ShareDraft): Promise<string> {
       cook_minutes: draft.type === 'home' ? draft.cookMinutes : null,
       difficulty: draft.type === 'home' ? draft.difficulty : null,
       cooked_from_id: draft.cookedFromId,
+      cooking_methods: draft.type === 'home' ? draft.cookingMethods : [],
     };
     let { error: foodError } = await supabase.from('foods').insert(row);
+    // PGRST204 = unknown column: migration 20261203000000 (cooking_methods) not applied yet — save without it.
+    if (foodError?.code === 'PGRST204' && foodError.message?.includes('cooking_methods')) {
+      delete row.cooking_methods;
+      ({ error: foodError } = await supabase.from('foods').insert(row));
+    }
     // PGRST204 = unknown column: migration 20261106010000 (taken_at · weather_source · neighborhood) not applied yet.
     if (foodError?.code === 'PGRST204') {
       console.warn('[share] foods is missing new columns — apply supabase/migrations/20261106010000_foods_taken_at_source_neighborhood.sql', foodError.message);
@@ -510,6 +533,7 @@ export function editDraftFrom(dish: Dish): Partial<ShareDraft> {
     placeEdited: false,
     uploadFailed: null,
     landscape: dish.landscape,
+    cookingMethods: dish.cookingMethods,
   };
 }
 
@@ -562,6 +586,7 @@ export async function updateDish(foodId: string, draft: ShareDraft): Promise<voi
       servings: draft.type === 'home' ? draft.servings : 2,
       cook_minutes: draft.type === 'home' ? draft.cookMinutes : null,
       difficulty: draft.type === 'home' ? draft.difficulty : null,
+      cooking_methods: draft.type === 'home' ? draft.cookingMethods : [],
     };
     if (draft.placeEdited && ctx) {
       row.city = ctx.place?.city ?? null;
@@ -571,6 +596,11 @@ export async function updateDish(foodId: string, draft: ShareDraft): Promise<voi
       row.place_names = await names;
     }
     let { error: foodError } = await supabase.from('foods').update(row).eq('id', foodId).eq('creator_id', uid);
+    // PGRST204 = unknown column: migration 20261203000000 (cooking_methods) not applied yet.
+    if (foodError?.code === 'PGRST204' && foodError.message?.includes('cooking_methods')) {
+      delete row.cooking_methods;
+      ({ error: foodError } = await supabase.from('foods').update(row).eq('id', foodId).eq('creator_id', uid));
+    }
     // PGRST204 = unknown column: migration 20261127000000 (place_names) not applied yet.
     if (foodError?.code === 'PGRST204' && 'place_names' in row) {
       const { place_names: _n, ...rest } = row;

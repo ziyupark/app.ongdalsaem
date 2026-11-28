@@ -11,7 +11,7 @@ import { ScreenWash, useScreenInk } from '../../src/components/ScreenHeader';
 import { goTab, TabBar, useTabBarScroll, type TabKey } from '../../src/components/TabBar';
 import { Text } from '../../src/components/Text';
 import { useWashScroll } from '../../src/lib/useWashScroll';
-import { fetchByTag, type CardDish } from '../../src/services/community';
+import { fetchByMethod, fetchByTag, type CardDish } from '../../src/services/community';
 import { space, useTheme } from '../../src/theme';
 
 /** Expanded TabBar height (12:182) — same bottom room as 4.1. */
@@ -38,20 +38,23 @@ export default function TagScreen() {
   const [latest, setLatest] = useState<CardDish[] | null>(null);
   const [category, setCategory] = useState<string | null>(null);
   const key = String(tag ?? '').toLowerCase();
+  // `method:<key>` = dishes cooked that way (foods.cooking_methods) instead of a mood tag — Home air quality card.
+  const method = key.startsWith('method:') ? key.slice('method:'.length) : null;
+  const fetchList = (sort: 'popular' | 'latest') => (method ? fetchByMethod(method, sort) : fetchByTag(key, sort));
   const tagLabel = (k: string) => (i18n.exists(`share.moods.${k}`) ? t(`share.moods.${k}`) : k);
-  const label = tagLabel(key);
+  const label = method ? t(`cookingMethod.${method}`) : tagLabel(key);
   // The big #Tag title always shows the English name (like the tab titles); screen readers get the local one.
-  const enLabel = i18n.exists(`share.moods.${key}`) ? en(`share.moods.${key}`) : key;
+  const enLabel = method ? en(`cookingMethod.${method}`) : i18n.exists(`share.moods.${key}`) ? en(`share.moods.${key}`) : key;
   const headline = i18n.exists(`tag.headlines.${key}`) ? t(`tag.headlines.${key}`) : t('tag.overline', { tag: label });
 
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  useEffect(() => { fetchByTag(key, 'popular').then(setAll).catch(() => setFailed(true)); }, [key, attempt]);
-  useEffect(() => { fetchByTag(key, 'latest').then(setLatest).catch(() => setFailed(true)); }, [key, attempt]);
+  useEffect(() => { fetchList('popular').then(setAll).catch(() => setFailed(true)); }, [key, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchList('latest').then(setLatest).catch(() => setFailed(true)); }, [key, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
   const retry = () => { setFailed(false); setAttempt((n) => n + 1); };
 
   const list = latest?.filter((d) => !category || d.moods.includes(category)) ?? null;
-  const categories = useMemo(() => tagCategories(all ?? [], tagLabel, key), [all, key, i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
+  const categories = useMemo(() => tagCategories(all ?? [], tagLabel, method ? '' : key), [all, key, i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
   const sectionTitle = [t('tag.latest'), category ? tagLabel(category) : null].filter(Boolean).join(' · ');
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {

@@ -21,6 +21,12 @@
      - 칸(Meal Slot 131:4278): 높이 hug, padding 8 0 10 — [라벨 Caption Strong(대문자 아님) → 7 → 썸네일 원 **74**] → 3 → **Weather Tag**(배경 없음, 높이 hug 32, padding 5 12 5 9, gap 5: 날씨 아이콘 18 + 기온 Body/L fg/default).
    - 빈 슬롯(아직 아무도 올리지 않은 시간대)은 점선 원 + `+` 36 → 8.1.
    - Mood Prompt(기분 입력)는 홈에 없다.
+4b. **Air quality card — 대기질 기반 집밥 추천**(코드 기준 · Figma 프레임 없음, Weather card 아래 **12**). 규칙 = [§6.11](../05-behavior.md), 문구 = `src/copy/airquality-copy.ko.json`(지금은 한국어만 — 앱 언어와 상관없이 한국어로, 글꼴은 Noto Sans KR).
+   - 면: Weather card와 같은 glass/surface + blur, 1px bg/subtle, Elevation/3, radius 2xl 32 · padding 18 20 16 · gap 12 · 높이 hug(고정 높이 · 줄 수 제한 없음 — 큰 글씨 · 작은 화면에서는 줄바꿈으로 늘어난다).
+   - 위→아래: 머리 줄(`wind` 16 fg/muted + Body/S Strong fg/muted "대기질") → **등급** Title/L "좋음" + Body/M fg/secondary 상태 "공기가 맑아요." → **등급 막대**(4칸 · gap 4 · 높이 6, 지금 등급 칸만 높이 10 · 불투명, 나머지 25 %, 색 `air/good` · `air/normal` · `air/bad` · `air/very-bad`) → **농도**(Caption fg/muted "미세먼지" / Body/M Strong "32㎍/㎥" · "초미세먼지" 같은 모양, 가로 간격 24, 좁으면 다음 줄) → 어제 비교 Body/S fg/secondary(어제 값이 없으면 없음) → 구분선 border/default → **추천 문구** Body/M + Button Outline S(글자가 길면 줄바꿈되며 높이가 늘어남) → 출처 · 기준 시각 Caption fg/muted "출처 OpenWeather · 오후 3:00 기준" (+ 3시간 넘은 값이면 Caption fg/warning "{hours}시간 전 정보예요…").
+   - **AQI 숫자는 보여 주지 않는다.** 등급 · PM10 · PM2.5 농도 · 출처 · 기준 시각만.
+   - 상태: 읽는 중 = 문구 "우리 동네 공기를 확인하고 있어요." + 막대 스켈레톤(최대 10초, 이후 noData) · 기기 위치 없음(권한 거부 · 9.7 도시 선택) = locationDenied 문구 + "위치 켜기"(→ 위치 권한) · 못 읽음 = noData 문구 + "다시 시도". 추천 문구 자리는 요리 풀을 기다리는 동안(최대 6초) 스켈레톤 막대.
+   - 2.5 Location off(도시도 없음) 화면에는 두지 않는다(Location card가 이미 위치를 묻는다). 2.6 날씨 없음이어도 대기질은 따로 읽어 보여 준다.
 5. **Block · feed — 피드** (Weather card 아래, 전체 폭, padding-top 24, 게시물 사이 간격 없음 — 각 Feed Post의 아래 padding 18) — 홈의 중심은 **날씨에 맞는 요리 추천**(Weather card의 끼니 슬롯 + 이 피드). Today’s pick 카드 · Nearby card(Similar Bites)는 없다(2.1 19:191에서 뺌):
    - 피드 헤더 · Similar 칩 줄은 없다. **Feed Post ×N**([§3.3](../02-components.md))만 이어진다.
    - 20개 이상이면 끝에 **Loading more**(16px 원호 스피너 fg/accent + Caption fg/muted `Loading more like this…`).

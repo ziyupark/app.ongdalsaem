@@ -398,6 +398,7 @@
     "moveDown": "아래로",
     "moveTop": "맨 위로",
     "landscape": "풍경",
+    "cookingMethod": "요리 방식",
     "saveChanges": "변경 사항 저장",
     "changesSaved": "변경 사항을 저장했어요",
     "cameraDenied": "요리 사진을 찍으려면 설정에서 카메라 접근을 허용해 주세요.",
@@ -1342,6 +1343,15 @@
     "mountain": "산",
     "countryside": "시골",
     "city": "도시"
+  },
+  "cookingMethod": {
+    "grill": "굽기",
+    "stirfry": "볶기",
+    "panfry": "부치기",
+    "simmer": "끓이기",
+    "steam": "찌기",
+    "boil": "삶기",
+    "quick": "간단 요리"
   },
   "nearbyPlaces": {
     "nearby": "근처",
