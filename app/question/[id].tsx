@@ -24,7 +24,7 @@ const { lineHeight: _lh, ...field } = text['Body/M'];
 
 /**
  * 3.8 Question (469:11388) — question card → answers as Comments (132:4846: avatar 40 · name Body/M Strong · time Caption
- * fg/disabled → body Body/M), oldest first → composer. 3.8b (1242:10038): no answers = one centred Body/S fg/muted line.
+ * fg/disabled → body Body/S), oldest first → composer. 3.8b (1242:10038): no answers = one centred Body/S fg/muted line.
  */
 export default function QuestionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -113,7 +113,7 @@ export default function QuestionScreen() {
                     <Text variant="Body/M Strong" numberOfLines={1} style={styles.shrink}>{a.author.handle ?? a.author.name}</Text>
                     <Text variant="Caption" color="fg/disabled">{timeAgo(a.createdAt, t)}</Text>
                   </View>
-                  <Text variant="Body/M">{a.body}</Text>
+                  <Text variant="Body/S">{a.body}</Text>
                 </View>
               </Pressable>
             )) : <Text variant="Body/S" color="fg/muted" style={styles.empty}>{t('ask.noAnswers')}</Text>}

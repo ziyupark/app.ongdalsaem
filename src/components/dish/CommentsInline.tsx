@@ -86,12 +86,12 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
           <Pressable key={c.id} onLongPress={() => onLong(c)} delayLongPress={350} style={styles.comment}>
             <Avatar url={c.author.avatarUrl} name={c.author.handle ?? c.author.name} />
             <View style={styles.body}>
-              {/* Comment 132:4846 — username (no @) Body/M Strong · time Caption fg/disabled → body Body/M. */}
+              {/* Comment 132:4846 — username (no @) Body/M Strong · time Caption fg/disabled → body Body/S. */}
               <View style={styles.nameRow}>
                 <Text variant="Body/M Strong" numberOfLines={1} style={styles.shrink}>{c.author.handle ?? c.author.name}</Text>
                 <Text variant="Caption" color="fg/disabled">{timeAgo(c.createdAt, t)}</Text>
               </View>
-              <Text variant="Body/M">{c.body}</Text>
+              <Text variant="Body/S">{c.body}</Text>
             </View>
           </Pressable>
         ))}
