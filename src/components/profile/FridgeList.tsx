@@ -263,7 +263,7 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
         )}
       </View>
       {/* What I can cook with what's in the fridge — public recipes ranked by how many of their ingredients I have. */}
-      <View style={[styles.box, { backgroundColor: color('bg/accent-subtle') }]}>
+      <View style={[styles.box, styles.canCookBox, { backgroundColor: color('bg/accent-subtle') }]}>
         {/* Empty (1217:15353): title → 2 → hint, then three dashed placeholder cards (140×190, the size of a real card) in a row that runs off the edge. */}
         <View style={styles.canCookHead}>
           <View style={styles.head}>
@@ -324,6 +324,8 @@ const styles = StyleSheet.create({
   box: { borderRadius: radius.xl, borderWidth: 2, borderColor: 'transparent', padding: space[14], gap: space[12], overflow: 'hidden' },
   cards: { gap: space[8] },
   card: { width: CARD, borderRadius: radius.lg, overflow: 'hidden' },
+  // Right padding 0: the cards run to the box's right edge.
+  canCookBox: { paddingRight: 0 },
   canCookHead: { gap: space[2] },
   // Clipped by the box (overflow hidden) so the third card shows only in part, as in Figma.
   placeholders: { flexDirection: 'row', gap: space[8] },
