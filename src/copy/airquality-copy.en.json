@@ -4,7 +4,7 @@
     "good":    { "label": "Good",           "status": "The air is clear." },
     "normal":  { "label": "Moderate",       "status": "The air is okay." },
     "bad":     { "label": "Unhealthy",      "status": "Fine dust is high." },
-    "veryBad": { "label": "Very unhealthy", "status": "Fine dust is very high." }
+    "veryBad": { "label": "Very Unhealthy", "status": "Fine dust is very high." }
   },
   "compare": {
     "better": "Cleaner than this time yesterday.",

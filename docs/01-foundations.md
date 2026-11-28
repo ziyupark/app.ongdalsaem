@@ -164,8 +164,6 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 
 ### 2.6 타이포그래피
 
-- **Title/XL** — Outfit Medium 37 / 39, −0.6: Home 대기질 카드 등급("Good" · "Unhealthy").
-
 
 | 스타일 | 폰트 | size / line-height | letter-spacing(px) | 비고 |
 |---|---|---|---|---|

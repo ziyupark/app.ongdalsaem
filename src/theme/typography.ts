@@ -40,8 +40,6 @@ export const text = {
   'Display/L': t('Fraunces-Bold', 34, 37, -0.9),
   'Display/M': t('Fraunces-SemiBold', 24, 29, -0.45),
   'Display/Quote': t('Fraunces-SemiBold', 22, 29, -0.5),
-  /** Home air quality card grade ("Good" · "Unhealthy" …) — Figma text style Title/XL. */
-  'Title/XL': t('Outfit-Medium', 37, 39, -0.6),
   'Title/L': t('Outfit-Medium', 22, 27, -0.35),
   'Title/M': t('Outfit-Medium', 18, 18, -0.2),
   'Title/S': t('Outfit-Medium', 16, 21, -0.1),

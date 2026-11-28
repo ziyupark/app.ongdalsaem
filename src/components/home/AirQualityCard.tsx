@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { airGrade, barPosition, compareGrades, format, staleHours, type AirCopy } from '../../lib/airQuality';
+import { airGrade, barPosition, compareGrades, format, staleHours, type AirCopy, type AirGrade } from '../../lib/airQuality';
 import { loadAirBarGlow } from '../../lib/optionalNative';
 import type { AirState } from '../../lib/useAir';
 import { elevation, gradients, radius, space, useTheme } from '../../theme';
@@ -11,7 +11,7 @@ import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Wind } from '../icons/ongdal';
 import { Text } from '../Text';
-import { AIR_BAR, airColorAt } from './airBar';
+import { AIR_BAR, airColorAt, knobX } from './airBar';
 
 type Props = {
   copy: AirCopy;
@@ -24,14 +24,19 @@ type Props = {
 };
 
 const Glow = loadAirBarGlow()?.default ?? null;
-const SQUIRREL = require('../../../assets/brand/squirrel-acorn-3d.png');
-const SQUIRREL_SIZE = 26;
 const STOPS = gradients['Gradient/Air quality'];
+/** Squirrel face per grade (Figma Air Quality Card 1284:1087, exported @3x). */
+const FACE: Record<AirGrade, number> = {
+  good: require('../../../assets/air/good.png'),
+  normal: require('../../../assets/air/normal.png'),
+  bad: require('../../../assets/air/bad.png'),
+  veryBad: require('../../../assets/air/very-bad.png'),
+};
 
 /**
  * Home · Air quality card (Figma Air Quality Card 1284:1087 · docs/04-screens/02-home.md 4b) — under the Weather card,
- * the same glass surface. Head (wind · "Air quality" · "As of 6:00 PM") → divider → grade (Title/XL) beside PM10 · PM2.5
- * → one line (grade status + yesterday) → neon gradient bar with a knob at the reading and the squirrel beside it.
+ * the same glass surface. Head ("Air quality" ··· "As of 6:00 PM") → divider → [squirrel face · grade (Title/L) ··· PM10 ·
+ * PM2.5] → gradient bar with a haloed knob at the reading → one line (status + yesterday) in a bg/default box.
  * No AQI number, no fixed heights, no line limits: text wraps at any size. Every state shows text — never an empty card.
  */
 export function AirQualityCard({ copy, lang, air, onAllowLocation, allowing, onRetry }: Props) {
@@ -78,14 +83,17 @@ export function AirQualityCard({ copy, lang, air, onAllowLocation, allowing, onR
     const stale = staleHours(reading.observedAt, Date.now());
     const value = (v: number | null) => (v == null ? '—' : format(copy.labels.value, { value: Math.round(v) }));
     const p = barPosition(reading) ?? 0;
-    const inner = Math.max(0, barW - AIR_BAR.pad * 2);
-    const knobX = AIR_BAR.pad + inner * p;
 
     return (
-      <>
-        <View style={styles.main}>
+      <View style={styles.main}>
+        <View style={styles.top}>
           <View style={styles.values}>
-            <Text variant="Title/XL" lang={lang} style={styles.grade}>{g.label}</Text>
+            <View style={styles.gradeRow}>
+              <View style={styles.faceBox}>
+                <Image source={FACE[grade]} contentFit="contain" style={styles.face} accessibilityIgnoresInvertColors />
+              </View>
+              <Text variant="Title/L" lang={lang} style={styles.grade}>{g.label}</Text>
+            </View>
             <View style={styles.pm}>
               {([['pm10', reading.pm10], ['pm25', reading.pm25]] as const).map(([k, v]) => (
                 <View key={k} style={styles.value} accessible accessibilityLabel={`${copy.labels[k]} ${value(v)}`}>
@@ -95,23 +103,23 @@ export function AirQualityCard({ copy, lang, air, onAllowLocation, allowing, onR
               ))}
             </View>
           </View>
-          <Text variant="Body/M" lang={lang}>{writing}</Text>
-          {stale != null ? <Text variant="Caption" color="fg/warning" lang={lang}>{format(copy.states.stale.text, { hours: stale })}</Text> : null}
+
+          <View style={styles.bar} onLayout={(e) => setBarW(e.nativeEvent.layout.width)} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            {barW > 0 && Glow ? <Glow width={barW} position={p} /> : null}
+            {barW > 0 && !Glow ? (
+              <>
+                <LinearGradient colors={STOPS.map((s) => s.color) as unknown as [string, string, ...string[]]} locations={STOPS.map((s) => s.offset) as unknown as [number, number, ...number[]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.line} />
+                <View style={[styles.knob, { left: knobX(barW, p) - AIR_BAR.knob, backgroundColor: color('static/white'), borderColor: color('border/default'), shadowColor: airColorAt(p) }]} />
+              </>
+            ) : null}
+          </View>
         </View>
 
-        <View style={styles.bar} onLayout={(e) => setBarW(e.nativeEvent.layout.width)} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          {barW > 0 && Glow ? <Glow width={barW} position={p} /> : null}
-          {barW > 0 && !Glow ? (
-            <>
-              <LinearGradient colors={STOPS.map((s) => s.color) as unknown as [string, string, ...string[]]} locations={STOPS.map((s) => s.offset) as unknown as [number, number, ...number[]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.line} />
-              <View style={[styles.knob, { left: knobX - AIR_BAR.knob, backgroundColor: color('static/white'), borderColor: color('border/default'), shadowColor: airColorAt(p) }]} />
-            </>
-          ) : null}
-          {barW > 0 ? (
-            <Image source={SQUIRREL} contentFit="contain" style={[styles.squirrel, { left: Math.min(barW - SQUIRREL_SIZE, knobX + AIR_BAR.knob + space[2]) }]} />
-          ) : null}
+        <View style={[styles.writing, { backgroundColor: color('bg/default') }]}>
+          <Text variant="Body/S" lang={lang}>{writing}</Text>
+          {stale != null ? <Text variant="Caption" color="fg/warning" lang={lang}>{format(copy.states.stale.text, { hours: stale })}</Text> : null}
         </View>
-      </>
+      </View>
     );
   })();
 
@@ -127,25 +135,30 @@ export function AirQualityCard({ copy, lang, air, onAllowLocation, allowing, onR
 }
 
 const styles = StyleSheet.create({
-  // Figma 1284:906 — glass surface, radius 2xl, padding 18 20 24, gap 12.
-  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: 18, paddingBottom: space[24], gap: space[12], overflow: 'hidden', alignSelf: 'stretch' },
-  // Title (wind · "Air quality") left, "As of 6:00 PM" right — wraps under it when it doesn't fit.
+  // Figma 1284:906 — glass surface, radius 2xl, padding 16 20 20, gap 10.
+  card: { borderRadius: radius['2xl'], borderWidth: 1, paddingHorizontal: space[20], paddingTop: space[16], paddingBottom: space[20], gap: space[10], overflow: 'hidden', alignSelf: 'stretch' },
+  // Title (wind · "Air quality", gap 3) left, "As of 6:00 PM" right — wraps under it when it doesn't fit.
   head: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', columnGap: space[12], rowGap: space[2] },
   title: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   divider: { height: 1, alignSelf: 'stretch' },
   block: { gap: space[8], alignItems: 'flex-start' },
-  main: { gap: space[12] },
-  // Grade left, PM10 · PM2.5 right; the pair moves under the grade when both don't fit ("Very unhealthy", large text).
-  // The grade never breaks inside a word.
-  values: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', columnGap: space[24], rowGap: space[8] },
-  grade: { maxWidth: '100%' },
-  pm: { flexGrow: 1, flexDirection: 'row', justifyContent: 'flex-end', columnGap: space[24] },
+  // [values → 2 → bar] → 4 → writing box.
+  main: { gap: space[4] },
+  top: { gap: space[2] },
+  // Face + grade left, PM10 · PM2.5 right (gap 16); the pair moves under them when both don't fit. The grade wraps
+  // between words ("Very / Unhealthy"), never inside one.
+  values: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', columnGap: space[24], rowGap: space[8] },
+  gradeRow: { flexDirection: 'row', alignItems: 'center', gap: space[6], flexShrink: 1 },
+  faceBox: { width: 54, height: 54, alignItems: 'center', justifyContent: 'center' },
+  face: { width: 48, height: 48 },
+  grade: { flexShrink: 1 },
+  pm: { flexGrow: 1, flexDirection: 'row', justifyContent: 'flex-end', columnGap: space[16] },
   value: { gap: space[2] },
-  // Bar sits right under the line (card gap 12 − 12); the squirrel stands on it, beside the knob.
-  bar: { height: AIR_BAR.height, marginTop: -space[12] },
-  line: { position: 'absolute', left: AIR_BAR.pad, right: AIR_BAR.pad, top: AIR_BAR.lineY - AIR_BAR.line / 2, height: AIR_BAR.line, borderRadius: radius.full },
-  knob: { position: 'absolute', top: AIR_BAR.lineY - AIR_BAR.knob, width: AIR_BAR.knob * 2, height: AIR_BAR.knob * 2, borderRadius: radius.full, borderWidth: 1, shadowOpacity: 0.6, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
-  squirrel: { position: 'absolute', top: AIR_BAR.lineY - AIR_BAR.knob - SQUIRREL_SIZE + 6, width: SQUIRREL_SIZE, height: SQUIRREL_SIZE },
+  bar: { height: AIR_BAR.height },
+  line: { position: 'absolute', left: 0, right: 0, top: AIR_BAR.lineY - AIR_BAR.line / 2, height: AIR_BAR.line, borderRadius: radius.full },
+  knob: { position: 'absolute', top: AIR_BAR.lineY - AIR_BAR.knob, width: AIR_BAR.knob * 2, height: AIR_BAR.knob * 2, borderRadius: radius.full, borderWidth: 1, shadowOpacity: 0.55, shadowRadius: 9, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  // Writing box — bg/default, radius sm, padding 6 12 (Figma 6 · 11/6 → nearest tokens).
+  writing: { borderRadius: radius.sm, paddingVertical: space[6], paddingHorizontal: space[12], gap: space[2] },
   button: { alignSelf: 'flex-start', maxWidth: '100%' },
   skeleton: { height: 14, width: '60%', borderRadius: radius.sm },
 });

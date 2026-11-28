@@ -87,6 +87,7 @@
   | veryBad · Very unhealthy · 매우나쁨 | 151 이상 | 76 이상 | 201 이상 |
   - PM10 · PM2.5 등급이 다르면 **더 나쁜 쪽**. 농도가 하나도 없을 때만 AQI(0–500)를 쓴다(OpenWeather의 1–5 지수는 쓰지 않음). 둘 다 없으면 noData.
 - **문구** = `grades.<등급>.status` + (어제 값이 있으면) `compare.better | worse | same`(등급끼리 비교). 요리 추천 · 메뉴 · 버튼은 없다.
+- **다람쥐 얼굴** = 등급별 그림 4장(`assets/air/good · normal · bad · very-bad.png`, Figma에서 @3x로 내보냄).
 - **막대 위치**(`barPosition`): 등급마다 4분의 1 칸(좋음 0–¼ · 보통 ¼–½ · 나쁨 ½–¾ · 매우나쁨 ¾–1), 칸 안에서는 값에 비례(매우나쁨은 하한의 2배에서 끝, PM10 300 · PM2.5 150). PM10 · PM2.5 중 더 오른쪽. 후광 색 = 그 위치의 그라데이션 색.
 - **예외**: 위치 없음 → `states.locationDenied` · 읽기 실패(10초 안에 답 없음 포함) · 등급을 못 정함 → `states.noData` · 값이 3시간 넘게 지남 → 값과 함께 `states.stale`("{hours}" = 지난 시간, 내림). 어떤 경우에도 빈 카드나 끝나지 않는 로딩은 없다.
 - **문구 파일**: `src/copy/airquality-copy.en.json` · `.ko.json`(앱 언어 → 그 파일, 없으면 en). `npm test`가 두 파일에 카드가 쓰는 문구가 모두 있는지 검사한다. ko 파일에 남아 있는 예전 메뉴 템플릿은 카드가 쓰지 않는다(`{menu}` 뒤 조사 검사만 유지).
