@@ -51,6 +51,9 @@ export default function PostDetail() {
   const cookInk = useScreenInk(0.2);
   const [state, setState] = useState<State>({ kind: 'loading' });
   const [more, setMore] = useState<DishSummary[]>([]);
+  // More from tiles: Acorn Tag = give / take-back toggle (same as 6.1 · 4.5 Dish Tile).
+  const [moreGiven, setMoreGiven] = useState<Set<string>>(new Set());
+  const [moreDelta, setMoreDelta] = useState<Record<string, number>>({});
   // "I made this": who cooked from this recipe · the recipe this one was cooked from.
   const [cookedBy, setCookedBy] = useState<Awaited<ReturnType<typeof fetchCookedFrom>> | null>(null);
   const [recipeAuthor, setRecipeAuthor] = useState<Person | null>(null);
@@ -92,7 +95,13 @@ export default function PostDetail() {
         setCommentCount(dish.comments);
         setEaten(dish.eaten);
         setState({ kind: 'ready', dish });
-        fetchMoreFrom(dish.creator.id, dish.id).then((m) => alive && setMore(m)).catch(() => undefined);
+        fetchMoreFrom(dish.creator.id, dish.id).then(async (m) => {
+          if (!alive) return;
+          setMore(m);
+          setMoreDelta({});
+          const g = await fetchMyMarks(m.map((d) => d.id)).then((x) => x.given).catch(() => new Set<string>());
+          if (alive) setMoreGiven(g);
+        }).catch(() => undefined);
         fetchCookedFrom(dish.id).then((c) => alive && setCookedBy(c)).catch(() => undefined);
         if (dish.cookedFromId) fetchRecipeAuthor(dish.cookedFromId).then((p) => alive && setRecipeAuthor(p)).catch(() => undefined);
         else setRecipeAuthor(null);
@@ -131,6 +140,17 @@ export default function PostDetail() {
       difficulty: dish.difficulty,
     };
   }, [dish, acorns, commentCount, t]);
+
+  const toggleMoreAcorn = (id: string) => {
+    const on = !moreGiven.has(id);
+    const step = on ? 1 : -1;
+    const apply = (sign: number) => {
+      setMoreGiven((s) => { const n = new Set(s); if (on === sign > 0) n.add(id); else n.delete(id); return n; });
+      setMoreDelta((d) => ({ ...d, [id]: (d[id] ?? 0) + step * sign }));
+    };
+    apply(1);
+    setAcorn(id, on).catch(() => apply(-1));
+  };
 
   const toggleAcorn = async () => {
     if (!dish) return;
@@ -307,7 +327,7 @@ export default function PostDetail() {
     <View style={styles.more}>
       <SectionHeader title={t('dish.moreFrom', { name: firstName })} onMore={openAuthor} moreLabel={t('dish.seeAll')} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.moreRow}>
-        {more.map((m) => <DishTile key={m.id} dish={m} width={131} compact onPress={() => router.push(`/dish/${m.id}`)} />)}
+        {more.map((m) => <DishTile key={m.id} dish={m} width={131} compact onPress={() => router.push(`/dish/${m.id}`)} given={moreGiven.has(m.id)} acorns={m.acorns + (moreDelta[m.id] ?? 0)} onAcorn={offline ? undefined : () => toggleMoreAcorn(m.id)} />)}
       </ScrollView>
     </View>
   ) : null;

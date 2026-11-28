@@ -4,6 +4,7 @@
 
 ## v1.8.7 — 2026-11-28 (냉장고 메모)
 
+- **7.1 More from 타일 도토리 탭 = 토글**: Dish Tile 02의 Acorn Tag가 눌리지 않고 타일 전체(게시물 이동)로 넘어가던 것 → 6.1 · 4.5처럼 주고/취소(채운 도토리 · 숫자 즉시 반영, 실패하면 되돌림). 오프라인 사본에서는 탭 안 됨
 - **Weather Mood 입자 3배 · Weather Card까지**: 모든 무드의 비 · 눈 · 진눈깨비 · 빛 입자 · 별 · 바람 줄 개수와 상한 ×3이 기본(`FX_DENSITY` 3 — 전: 1.2 Sign in만 3배, 이제 네 탭 · 7.1도 같음). 네 탭 모션 레이어를 wash(420)와 떼어 **높이 640**(스크롤 이동 · 페이드는 wash와 같이) → 입자가 위쪽에만 몰리지 않고 Weather Card(y 212–520)까지 보이고 384 → 640에서 사라짐. 구름 · 별 · 빛 번짐 위치도 새 높이 비율로 조금 아래로 퍼짐
 - **6.3 "What you can cook now" 새로고침 = Weather Card Refresh 버튼**: `rotate-ccw` 20 fg/secondary 아이콘만 → 32 원 · 1px border/default · 아이콘 16 · **흰 배경 bg/subtle** · 탭마다 회전 400ms · 1초 연타 무시. 두 곳이 공통 `RefreshButton` 사용
 - **7.1 Steps 단계 사이 14 → 8**([601:12668](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=601-12668)): `Recipe Step` 목록 gap 8. 제목 Steps → 목록 14는 그대로. 8.3 미리보기도 같이(공통 `DishRecipe`)
