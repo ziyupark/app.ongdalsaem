@@ -371,6 +371,7 @@ youAte=Você comeu isto
 ateToast=Adicionado ao seu diário · quem cozinhou vai ver que você comeu.
 undo=Desfazer
 deleteCommentTitle=Apagar este comentário?
+editingComment=Editando comentário
 reportCommentTitle=Denunciar este comentário?
 seeAllComments=Ver os {{n}} comentários
 direct=Enviar
@@ -973,6 +974,7 @@ answerPlaceholder=Diga algo carinhoso…
 noAnswers=Nenhuma resposta ainda — os vizinhos estão a caminho.
 missing=Esta pergunta foi encerrada
 reportAnswer=Denunciar esta resposta
+editingAnswer=Editando resposta
 [messages]
 report=Denunciar
 title=Mensagens

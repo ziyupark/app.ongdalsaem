@@ -709,6 +709,13 @@ export async function addAnswer(questionId: string, body: string) {
   if (error) throw error;
 }
 
+/** Edit my own answer's text (RLS: own rows only — 20261202000000). */
+export async function updateAnswer(id: string, body: string) {
+  const { data, error } = await supabase.from('answers').update({ body: body.trim() }).eq('id', id).select('id');
+  if (error) throw error;
+  if (!data?.length) throw new Error('Answer not updated');
+}
+
 export async function deleteAnswer(id: string) {
   const { error } = await supabase.from('answers').delete().eq('id', id);
   if (error) throw error;

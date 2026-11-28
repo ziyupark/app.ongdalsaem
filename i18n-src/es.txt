@@ -371,6 +371,7 @@ youAte=Comiste esto
 ateToast=Añadido a tu diario · quien cocinó verá que lo comiste.
 undo=Deshacer
 deleteCommentTitle=¿Borrar este comentario?
+editingComment=Editando comentario
 reportCommentTitle=¿Denunciar este comentario?
 seeAllComments=Ver los {{n}} comentarios
 direct=Enviar
@@ -973,6 +974,7 @@ answerPlaceholder=Di algo bonito…
 noAnswers=Aún no hay respuestas: los vecinos están en camino.
 missing=Esta pregunta se cerró
 reportAnswer=Denunciar esta respuesta
+editingAnswer=Editando respuesta
 [messages]
 report=Denunciar
 title=Mensajes

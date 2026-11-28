@@ -1,19 +1,19 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowRight, MoreHorizontal } from '../../src/components/icons/ongdal';
 import { MessageCircle } from '../../src/components/icons/ongdal';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar, EmptyState, QuestionCard } from '../../src/components/community/Parts';
 import { LoadError } from '../../src/components/LoadError';
+import { CommentRow, EditingBar } from '../../src/components/dish/CommentRow';
 import { ReportSheet } from '../../src/components/dish/ReportSheet';
 import { Icon } from '../../src/components/Icon';
 import { Text } from '../../src/components/Text';
 import { TopBar } from '../../src/components/TopBar';
-import { timeAgo } from '../../src/lib/time';
 import {
-  addAnswer, deleteAnswer, deleteQuestion, fetchAnswers, fetchQuestion, type Answer, type Question,
+  addAnswer, deleteAnswer, deleteQuestion, fetchAnswers, fetchQuestion, updateAnswer, type Answer, type Question,
 } from '../../src/services/community';
 import { isObjectionable, reportAnswer } from '../../src/services/moderation';
 import { getMyProfile, type MyProfile } from '../../src/services/profile';
@@ -24,7 +24,7 @@ const { lineHeight: _lh, ...field } = text['Body/M'];
 
 /**
  * 3.8 Question (469:11388) — question card → answers as Comments (132:4846: avatar 40 · name Body/M Strong · time Caption
- * fg/disabled → body Body/S), oldest first → composer. 3.8b (1242:10038): no answers = one centred Body/S fg/muted line.
+ * fg/disabled → body Body/S · `more-horizontal`: mine → Edit · Delete, others → Report), oldest first → composer. 3.8b (1242:10038): no answers = one centred Body/S fg/muted line.
  */
 export default function QuestionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -37,6 +37,8 @@ export default function QuestionScreen() {
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [reporting, setReporting] = useState<Answer | null>(null);
+  const [editing, setEditing] = useState<Answer | null>(null);
+  const input = useRef<React.ComponentRef<typeof TextInput>>(null);
 
   const [failed, setFailed] = useState(false);
   const load = useCallback(async () => {
@@ -66,7 +68,9 @@ export default function QuestionScreen() {
     if (!q || !draft.trim() || sending) return;
     setSending(true);
     try {
-      await addAnswer(q.id, draft);
+      if (editing) await updateAnswer(editing.id, draft);
+      else await addAnswer(q.id, draft);
+      setEditing(null);
       setDraft('');
       load();
     } catch (e) {
@@ -78,8 +82,10 @@ export default function QuestionScreen() {
   const answerMenu = (a: Answer) => {
     if (!q) return;
     const opts: { text: string; style?: 'cancel' | 'destructive'; onPress?: () => void }[] = [{ text: t('common.cancel'), style: 'cancel' }];
-    if (a.author.id === me?.id) opts.push({ text: t('dish.delete'), style: 'destructive', onPress: async () => { try { await deleteAnswer(a.id); load(); } catch { Alert.alert(t('settings.saveFailed')); } } });
-    else opts.push({ text: t('report.send'), style: 'destructive', onPress: () => setReporting(a) });
+    if (a.author.id === me?.id) {
+      opts.push({ text: t('post.edit'), onPress: () => { setEditing(a); setDraft(a.body); setTimeout(() => input.current?.focus(), 0); } });
+      opts.push({ text: t('dish.delete'), style: 'destructive', onPress: async () => { try { await deleteAnswer(a.id); if (editing?.id === a.id) { setEditing(null); setDraft(''); } load(); } catch { Alert.alert(t('settings.saveFailed')); } } });
+    } else opts.push({ text: t('report.send'), style: 'destructive', onPress: () => setReporting(a) });
     Alert.alert(a.author.handle ?? a.author.name, undefined, opts);
   };
   const questionMenu = () => {
@@ -106,22 +112,15 @@ export default function QuestionScreen() {
           <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
             <QuestionCard q={q} showImage />
             {answers.length ? answers.map((a) => (
-              <Pressable key={a.id} onLongPress={() => answerMenu(a)} delayLongPress={350} style={styles.answer}>
-                <Avatar url={a.author.avatarUrl} name={a.author.handle ?? a.author.name} size={40} />
-                <View style={styles.flex}>
-                  <View style={styles.aHead}>
-                    <Text variant="Body/M Strong" numberOfLines={1} style={styles.shrink}>{a.author.handle ?? a.author.name}</Text>
-                    <Text variant="Caption" color="fg/disabled">{timeAgo(a.createdAt, t)}</Text>
-                  </View>
-                  <Text variant="Body/S">{a.body}</Text>
-                </View>
-              </Pressable>
+              <CommentRow key={a.id} name={a.author.handle ?? a.author.name} avatarUrl={a.author.avatarUrl} createdAt={a.createdAt} body={a.body} onMore={() => answerMenu(a)} />
             )) : <Text variant="Body/S" color="fg/muted" style={styles.empty}>{t('ask.noAnswers')}</Text>}
           </ScrollView>
+          {editing ? <EditingBar label={t('ask.editingAnswer')} onCancel={() => { setEditing(null); setDraft(''); }} /> : null}
           <View style={[styles.composer, { paddingBottom: Math.max(insets.bottom + space[6], 40), borderTopColor: color('border/default') }]}>
             <Avatar url={me?.avatarUrl ?? null} name={me?.username ?? me?.displayName ?? ''} size={40} />
             <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
               <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
+                ref={input}
                 value={draft}
                 onChangeText={(v) => setDraft(v.slice(0, MAX))}
                 placeholder={t('ask.answerPlaceholder')}
@@ -153,14 +152,9 @@ export default function QuestionScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  flex: { flex: 1, gap: space[2] },
-  shrink: { flexShrink: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   more: { position: 'absolute', right: space[16], top: 15 },
   body: { paddingHorizontal: space[20], paddingTop: space[12], paddingBottom: space[24], gap: space[16] },
-  // Comment 132:4846 — avatar 40 · 10 · [name · 6 · time] → 2 → body.
-  answer: { flexDirection: 'row', alignItems: 'flex-start', gap: space[10] },
-  aHead: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
   empty: { textAlign: 'center' },
   composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingTop: space[10], borderTopWidth: 1 }, // Comment Composer 287:334
   field: { flex: 1, minHeight: 42, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' },

@@ -464,6 +464,7 @@
     "ateToast": "ダイアリーに追加しました · 作った人にあなたが食べたことが伝わります。",
     "undo": "元に戻す",
     "deleteCommentTitle": "このコメントを削除しますか？",
+    "editingComment": "コメントを編集中",
     "reportCommentTitle": "このコメントを報告しますか？",
     "seeAllComments": "コメント{{n}}件をすべて見る",
     "direct": "送る",
@@ -1274,6 +1275,7 @@
     "noAnswers": "まだ回答はありません — ご近所さんがもうすぐ来てくれます。",
     "missing": "この質問は締め切られました",
     "reportAnswer": "この回答を報告",
+    "editingAnswer": "回答を編集中",
     "category": "カテゴリー",
     "required": "必須",
     "editTitle": "質問を編集"

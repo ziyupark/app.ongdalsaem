@@ -38,6 +38,7 @@
 
 ### 7.2 Comments sheet — [26:537](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-537)
 - 뒤 화면 = **실제 7.1**(Hero 사진 · 시트 · Top bar · Action bar, 레이어 "Behind · 7.1 Post detail") + 딤(overlay/scrim) + 바텀시트(핸들): "Comments · 18" → 댓글(Comment 132:4846: Avatar 40 · **username**(@ 없이) Body/M Strong + 시간 Caption fg/disabled → 본문 Body/S) @sora 12m "Made this tonight. Rain + this = perfect." / Jae 1h "The sour-kimchi tip changed everything." / Hana 3h "Saving for the next typhoon day 🌧" → [A] 하단 **Comment Composer**(Avatar 40 + 흰색 입력칸 42 "Say something warm…" + 전송 `arrow-right`). 시트 = **Comments Sheet** 컴포넌트.
+- 댓글 `more-horizontal`(또는 길게 누름) → 내 댓글 = Edit(입력칸에서 고쳐 전송) · Delete(확인), 남의 댓글 = Report → 7.3 흐름(내 게시물이면 Delete도).
 - 댓글을 보는 **유일한 화면**(7.1·피드의 댓글 아이콘에서 연다). 딤 탭 / 시트 드래그 다운 → 이전 화면(Back) · 전송 → 7.1.
 
 ### 7.3 Report / block — [26:595](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=26-595)

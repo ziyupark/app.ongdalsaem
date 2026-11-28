@@ -368,6 +368,7 @@ youAte=你吃過這道
 ateToast=已加入你的日記 · 料理者會知道你吃過了。
 undo=復原
 deleteCommentTitle=要刪除這則留言嗎？
+editingComment=正在編輯留言
 reportCommentTitle=要檢舉這則留言嗎？
 seeAllComments=查看全部 {{n}} 則留言
 direct=傳送
@@ -960,6 +961,7 @@ answerPlaceholder=說點溫暖的話…
 noAnswers=還沒有回答——鄰居們正在路上。
 missing=這個問題已關閉
 reportAnswer=檢舉這則回答
+editingAnswer=正在編輯回答
 [messages]
 report=檢舉
 title=訊息

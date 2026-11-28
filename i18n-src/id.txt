@@ -368,6 +368,7 @@ youAte=Kamu makan ini
 ateToast=Ditambahkan ke diarimu · si pemasak akan tahu kamu memakannya.
 undo=Urungkan
 deleteCommentTitle=Hapus komentar ini?
+editingComment=Mengedit komentar
 reportCommentTitle=Laporkan komentar ini?
 seeAllComments=Lihat semua {{n}} komentar
 direct=Kirim
@@ -960,6 +961,7 @@ answerPlaceholder=Tulis sesuatu yang hangat…
 noAnswers=Belum ada jawaban — tetangga sedang dalam perjalanan.
 missing=Pertanyaan ini sudah ditutup
 reportAnswer=Laporkan jawaban ini
+editingAnswer=Mengedit jawaban
 [messages]
 report=Laporkan
 title=Pesan

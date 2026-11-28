@@ -467,6 +467,7 @@
     "ateToast": "Added to your diary · the cook will see you ate it.",
     "undo": "Undo",
     "deleteCommentTitle": "Delete this comment?",
+    "editingComment": "Editing comment",
     "reportCommentTitle": "Report this comment?",
     "seeAllComments": "See all {{n}} comments",
     "direct": "Send",
@@ -1290,6 +1291,7 @@
     "noAnswers": "No answers yet — neighbors are on their way.",
     "missing": "This question has closed",
     "reportAnswer": "Report this answer",
+    "editingAnswer": "Editing answer",
     "category": "Category",
     "required": "Required",
     "editTitle": "Edit question"

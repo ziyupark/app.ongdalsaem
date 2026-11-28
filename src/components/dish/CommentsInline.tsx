@@ -1,14 +1,14 @@
 import { Image } from 'expo-image';
 import { ArrowRight } from '../icons/ongdal';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
-import { timeAgo } from '../../lib/time';
-import { addComment, deleteComment, fetchComments, type Comment } from '../../services/foods';
+import { addComment, deleteComment, fetchComments, updateComment, type Comment } from '../../services/foods';
 import { isObjectionable, reportComment } from '../../services/moderation';
 import { radius, space, text, useTheme, FONT_SCALE_MAX } from '../../theme';
 import { Icon } from '../Icon';
 import { Text } from '../Text';
+import { CommentRow, EditingBar } from './CommentRow';
 import { ReportSheet } from './ReportSheet';
 
 const MAX_COMMENT = 300;
@@ -23,7 +23,11 @@ type Props = {
   onCountChange?: (n: number) => void;
 };
 
-/** 7.1 Comments (Figma 601:12935, below the action bar): "Comments · n" · list · Comment Composer. Hold a comment to delete / report. */
+/**
+ * 7.1 Comments (Figma 601:12935, below the action bar): "Comments · n" · list · Comment Composer.
+ * Each comment's `more-horizontal` (or hold): mine → Edit (text goes back into the composer) · Delete; others → Report
+ * (+ Delete on my own dish).
+ */
 export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCountChange }: Props) {
   const { color } = useTheme();
   const { t } = useTranslation();
@@ -32,6 +36,8 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [reporting, setReporting] = useState<Comment | null>(null);
+  const [editing, setEditing] = useState<Comment | null>(null);
+  const input = useRef<React.ComponentRef<typeof TextInput>>(null);
 
   const load = useCallback(async () => {
     try {
@@ -51,6 +57,13 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
     if (!body || sending) return;
     setSending(true);
     try {
+      if (editing) {
+        await updateComment(editing.id, body);
+        setItems((p) => (p ?? []).map((x) => (x.id === editing.id ? { ...x, body } : x)));
+        setEditing(null);
+        setDraft('');
+        return;
+      }
       const c = await addComment(foodId, body);
       setDraft('');
       update([c, ...(items ?? [])]);
@@ -61,16 +74,37 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
     }
   };
 
-  const onLong = (c: Comment) => {
-    const canDelete = !!me && (c.author.id === me.id || dishOwnerId === me.id);
-    if (canDelete) {
-      Alert.alert(t('dish.deleteCommentTitle'), undefined, [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('dish.delete'), style: 'destructive', onPress: async () => { try { await deleteComment(c.id); update((items ?? []).filter((x) => x.id !== c.id)); } catch { Alert.alert(t('settings.saveFailed')); } } },
-      ]);
+  const startEdit = (c: Comment) => {
+    setEditing(c);
+    setDraft(c.body);
+    setTimeout(() => input.current?.focus(), 0);
+  };
+  const cancelEdit = () => { setEditing(null); setDraft(''); };
+
+  const remove = (c: Comment) => {
+    Alert.alert(t('dish.deleteCommentTitle'), undefined, [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('dish.delete'), style: 'destructive', onPress: async () => {
+        try {
+          await deleteComment(c.id);
+          if (editing?.id === c.id) cancelEdit();
+          update((items ?? []).filter((x) => x.id !== c.id));
+        } catch { Alert.alert(t('settings.saveFailed')); }
+      } },
+    ]);
+  };
+
+  const onMore = (c: Comment) => {
+    const mine = !!me && c.author.id === me.id;
+    const opts: { text: string; style?: 'cancel' | 'destructive'; onPress?: () => void }[] = [{ text: t('common.cancel'), style: 'cancel' }];
+    if (mine) {
+      opts.push({ text: t('post.edit'), onPress: () => startEdit(c) });
+      opts.push({ text: t('dish.delete'), style: 'destructive', onPress: () => remove(c) });
     } else {
-      setReporting(c);
+      opts.push({ text: t('report.send'), style: 'destructive', onPress: () => setReporting(c) });
+      if (me && dishOwnerId === me.id) opts.push({ text: t('dish.delete'), style: 'destructive', onPress: () => remove(c) });
     }
+    Alert.alert(c.author.handle ?? c.author.name, undefined, opts);
   };
 
   const list = items ?? [];
@@ -83,17 +117,7 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
         <Text variant="Title/M">{t('dish.commentsTitle', { n: list.length })}</Text>
         {items != null && list.length === 0 ? <Text variant="Body/S" color="fg/muted">{t('dish.noComments')}</Text> : null}
         {shown.map((c) => (
-          <Pressable key={c.id} onLongPress={() => onLong(c)} delayLongPress={350} style={styles.comment}>
-            <Avatar url={c.author.avatarUrl} name={c.author.handle ?? c.author.name} />
-            <View style={styles.body}>
-              {/* Comment 132:4846 — username (no @) Body/M Strong · time Caption fg/disabled → body Body/S. */}
-              <View style={styles.nameRow}>
-                <Text variant="Body/M Strong" numberOfLines={1} style={styles.shrink}>{c.author.handle ?? c.author.name}</Text>
-                <Text variant="Caption" color="fg/disabled">{timeAgo(c.createdAt, t)}</Text>
-              </View>
-              <Text variant="Body/S">{c.body}</Text>
-            </View>
-          </Pressable>
+          <CommentRow key={c.id} name={c.author.handle ?? c.author.name} avatarUrl={c.author.avatarUrl} createdAt={c.createdAt} body={c.body} onMore={() => onMore(c)} />
         ))}
         {!all && list.length > PREVIEW ? (
           <Pressable accessibilityRole="button" onPress={() => setAll(true)}>
@@ -101,11 +125,14 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
           </Pressable>
         ) : null}
       </View>
-      {allowComments ? (
+      {allowComments || editing ? (
+        <View style={{ backgroundColor: color('bg/default') }}>
+        {editing ? <EditingBar label={t('dish.editingComment')} onCancel={cancelEdit} /> : null}
         <View style={[styles.composer, { backgroundColor: color('bg/default') }]}>
           <Avatar url={me?.avatarUrl ?? null} name={me?.name ?? ''} />
           <View style={[styles.field, { backgroundColor: color('bg/subtle'), borderColor: color('border/default') }]}>
             <TextInput maxFontSizeMultiplier={FONT_SCALE_MAX}
+              ref={input}
               value={draft}
               onChangeText={setDraft}
               maxLength={MAX_COMMENT}
@@ -120,6 +147,7 @@ export function CommentsInline({ foodId, allowComments, me, dishOwnerId, onCount
           <Pressable accessibilityRole="button" accessibilityLabel={t('dish.sendComment')} disabled={!canSend} onPress={send} hitSlop={space[8]}>
             <Icon icon={ArrowRight} size={22} color={canSend ? 'fg/accent' : 'fg/disabled'} />
           </Pressable>
+        </View>
         </View>
       ) : (
         <View style={styles.off}><Text variant="Body/S" color="fg/muted">{t('dish.commentsOff')}</Text></View>
@@ -148,10 +176,6 @@ function Avatar({ url, name }: { url: string | null; name: string }) {
 
 const styles = StyleSheet.create({
   sheet: { gap: space[16], paddingTop: space[12], paddingHorizontal: space[20], paddingBottom: 18 },
-  comment: { flexDirection: 'row', alignItems: 'flex-start', gap: space[10] },
-  body: { flex: 1, gap: space[2] },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: space[6] },
-  shrink: { flexShrink: 1 },
   avatar: { width: 40, height: 40, borderRadius: radius.full, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   composer: { flexDirection: 'row', alignItems: 'center', gap: space[10], paddingHorizontal: space[20], paddingTop: space[10], paddingBottom: space[20] },
   field: { flex: 1, height: 42, borderRadius: radius.full, borderWidth: 1, paddingHorizontal: space[20], justifyContent: 'center' }, // Comment Composer Field 287:327

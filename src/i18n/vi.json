@@ -464,6 +464,7 @@
     "ateToast": "Đã thêm vào nhật ký · người nấu sẽ thấy bạn đã ăn.",
     "undo": "Hoàn tác",
     "deleteCommentTitle": "Xóa bình luận này?",
+    "editingComment": "Đang sửa bình luận",
     "reportCommentTitle": "Báo cáo bình luận này?",
     "seeAllComments": "Xem tất cả {{n}} bình luận",
     "direct": "Gửi",
@@ -1274,6 +1275,7 @@
     "noAnswers": "Chưa có câu trả lời — hàng xóm đang tới.",
     "missing": "Câu hỏi này đã đóng",
     "reportAnswer": "Báo cáo câu trả lời này",
+    "editingAnswer": "Đang sửa câu trả lời",
     "category": "Danh mục",
     "required": "Bắt buộc",
     "editTitle": "Sửa câu hỏi"

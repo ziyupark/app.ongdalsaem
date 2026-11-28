@@ -467,6 +467,7 @@
     "ateToast": "Añadido a tu diario · quien cocinó verá que lo comiste.",
     "undo": "Deshacer",
     "deleteCommentTitle": "¿Borrar este comentario?",
+    "editingComment": "Editando comentario",
     "reportCommentTitle": "¿Denunciar este comentario?",
     "seeAllComments": "Ver los {{n}} comentarios",
     "direct": "Enviar",
@@ -1290,6 +1291,7 @@
     "noAnswers": "Aún no hay respuestas: los vecinos están en camino.",
     "missing": "Esta pregunta se cerró",
     "reportAnswer": "Denunciar esta respuesta",
+    "editingAnswer": "Editando respuesta",
     "category": "Categoría",
     "required": "Obligatorio",
     "editTitle": "Editar pregunta"

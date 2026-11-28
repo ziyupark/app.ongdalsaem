@@ -336,6 +336,13 @@ export async function addComment(foodId: string, body: string): Promise<Comment>
   return { id: r.id, body: r.body, createdAt: new Date(r.created_at), author: toPerson(r.author, r.user_id), likes: 0, liked: false };
 }
 
+/** Edit my own comment's text (RLS: own rows only — 20261202000000). */
+export async function updateComment(commentId: string, body: string) {
+  const { data, error } = await supabase.from('comments').update({ body: body.trim() }).eq('id', commentId).select('id');
+  if (error) throw error;
+  if (!data?.length) throw new Error('Comment not updated');
+}
+
 export async function deleteComment(commentId: string) {
   const { error } = await supabase.from('comments').delete().eq('id', commentId);
   if (error) throw error;

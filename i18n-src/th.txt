@@ -368,6 +368,7 @@ youAte=คุณกินเมนูนี้
 ateToast=เพิ่มในไดอารี่แล้ว · คนทำจะเห็นว่าคุณกินเมนูนี้
 undo=เลิกทำ
 deleteCommentTitle=ลบความคิดเห็นนี้ไหม?
+editingComment=กำลังแก้ไขความคิดเห็น
 reportCommentTitle=รายงานความคิดเห็นนี้ไหม?
 seeAllComments=ดูความคิดเห็นทั้งหมด {{n}} รายการ
 direct=ส่ง
@@ -960,6 +961,7 @@ answerPlaceholder=พูดอะไรอบอุ่น ๆ…
 noAnswers=ยังไม่มีคำตอบ — เพื่อนบ้านกำลังมา
 missing=คำถามนี้ปิดแล้ว
 reportAnswer=รายงานคำตอบนี้
+editingAnswer=กำลังแก้ไขคำตอบ
 [messages]
 report=รายงาน
 title=ข้อความ

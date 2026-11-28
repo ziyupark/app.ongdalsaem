@@ -467,6 +467,7 @@
     "ateToast": "다이어리에 담았어요 · 요리한 사람에게 알려져요.",
     "undo": "되돌리기",
     "deleteCommentTitle": "이 댓글을 삭제할까요?",
+    "editingComment": "댓글 수정 중",
     "reportCommentTitle": "이 댓글을 신고할까요?",
     "seeAllComments": "댓글 {{n}}개 모두 보기",
     "direct": "보내기",
@@ -1290,6 +1291,7 @@
     "noAnswers": "아직 답변이 없어요 — 이웃들이 오고 있어요.",
     "missing": "마감된 질문이에요",
     "reportAnswer": "이 답변 신고",
+    "editingAnswer": "답변 수정 중",
     "category": "카테고리",
     "required": "필수",
     "editTitle": "질문 수정"

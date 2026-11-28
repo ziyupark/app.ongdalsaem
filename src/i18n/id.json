@@ -464,6 +464,7 @@
     "ateToast": "Ditambahkan ke diarimu · si pemasak akan tahu kamu memakannya.",
     "undo": "Urungkan",
     "deleteCommentTitle": "Hapus komentar ini?",
+    "editingComment": "Mengedit komentar",
     "reportCommentTitle": "Laporkan komentar ini?",
     "seeAllComments": "Lihat semua {{n}} komentar",
     "direct": "Kirim",
@@ -1274,6 +1275,7 @@
     "noAnswers": "Belum ada jawaban — tetangga sedang dalam perjalanan.",
     "missing": "Pertanyaan ini sudah ditutup",
     "reportAnswer": "Laporkan jawaban ini",
+    "editingAnswer": "Mengedit jawaban",
     "category": "Kategori",
     "required": "Wajib",
     "editTitle": "Edit pertanyaan"
