@@ -4,6 +4,7 @@
 
 ## v1.8.7 — 2026-11-28 (냉장고 메모)
 
+- **대기질 출처 = 1.2 Sign in**: 대기질 카드 아래 "출처 OpenWeather · …"를 빼고(카드 = "오후 3:00 기준"만), 1.2 Sign in 약관 문구 아래 Caption fg/muted "Weather & air quality data: OpenWeather"(`signIn.dataSource` 9개 언어). 문구 파일에서 `labels.source` · `sources` 삭제. Figma 1.2 Sign in Block · Button에 같은 줄 추가
 - **Home 대기질 기반 집밥 추천 카드 추가**(코드 기준, Figma 프레임 없음 — [02-home 4b](04-screens/02-home.md) · 규칙 [§6.11](05-behavior.md)): Weather card 아래 12에 유리 카드 — 등급(좋음 · 보통 · 나쁨 · 매우나쁨, 환경부 기준 · PM10/PM2.5 중 나쁜 쪽) · 4칸 등급 막대 · 미세먼지 · 초미세먼지 농도 · 어제 비교 · 등급 × 시간대 문구(동네 인기 요리를 `{menu}`로, 직전 템플릿 · 메뉴 제외, 없으면 fallback) · 버튼(레시피 · 장보기 · 이웃 집밥 · 있는 재료 · 끓이는 요리) · 출처 · 기준 시각. AQI 숫자는 안 보임. 위치 없음 · 못 읽음 · 3시간 지난 값 = states 문구. 문구는 `src/copy/airquality-copy.ko.json`(한국어만, 모든 앱 언어에서 한국어) — 원본에 `labels` · `sources` · `methods` 묶음을 더함
 - **8.2 Cooking method 칩 줄**(선택 · 여러 개 · Home-cooked만, Landscape 아래): Grill · Stir-fry · Pan-fry · Simmer · Steam · Boil · Quick & easy — DB `foods.cooking_methods`(20261203000000), 문구 `share.cookingMethod` · `cookingMethod.*` 9개 언어
 - **4.2 태그 페이지 = 요리 방식 모음도**: `/tag/method:<key>`(예: `method:simmer`)

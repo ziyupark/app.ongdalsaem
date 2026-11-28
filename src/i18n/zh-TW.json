@@ -24,6 +24,7 @@
     "and": "和",
     "privacy": "隱私權政策",
     "legalSuffix": "。",
+    "dataSource": "天氣與空氣品質資料來源：OpenWeather",
     "apple": "使用 Apple 繼續",
     "google": "使用 Google 繼續",
     "error": "登入正在打盹——點一下再試一次。"

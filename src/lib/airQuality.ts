@@ -24,8 +24,7 @@ export type AirCopy = {
   }>;
   compare: Record<AirCompare, string>;
   states: Record<'locationDenied' | 'noData' | 'stale', { text: string; button: string | null }>;
-  labels: Record<'title' | 'pm10' | 'pm25' | 'value' | 'source' | 'basedAt' | 'loading', string>;
-  sources: Record<string, string>;
+  labels: Record<'title' | 'pm10' | 'pm25' | 'value' | 'basedAt' | 'loading', string>;
   /** Cooking method key (foods.cooking_methods) → its label in this language. */
   methods: Record<string, string>;
 };

@@ -24,6 +24,7 @@
     "and": " y la ",
     "privacy": "Política de privacidad",
     "legalSuffix": ".",
+    "dataSource": "Datos del tiempo y la calidad del aire: OpenWeather",
     "apple": "Continuar con Apple",
     "google": "Continuar con Google",
     "error": "El inicio de sesión está echando una siesta. Toca para reintentar."

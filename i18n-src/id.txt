@@ -21,6 +21,7 @@ terms=Ketentuan
 and= dan
 privacy=Kebijakan Privasi
 legalSuffix= kami.
+dataSource=Data cuaca & kualitas udara: OpenWeather
 apple=Lanjutkan dengan Apple
 google=Lanjutkan dengan Google
 error=Proses masuk sedang tidur siang — ketuk untuk mencoba lagi.

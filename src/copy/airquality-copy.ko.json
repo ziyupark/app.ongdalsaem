@@ -148,11 +148,9 @@
     "pm10": "미세먼지",
     "pm25": "초미세먼지",
     "value": "{value}㎍/㎥",
-    "source": "출처 {source}",
     "basedAt": "{time} 기준",
     "loading": "우리 동네 공기를 확인하고 있어요."
   },
-  "sources": { "openweather": "OpenWeather" },
   "methods": {
     "grill": "굽기", "stirfry": "볶기", "panfry": "부치기", "simmer": "끓이기",
     "steam": "찌기", "boil": "삶기", "quick": "간단 요리"

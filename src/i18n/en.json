@@ -24,6 +24,7 @@
     "and": " and ",
     "privacy": "Privacy Policy",
     "legalSuffix": ".",
+    "dataSource": "Weather & air quality data: OpenWeather",
     "apple": "Continue with Apple",
     "google": "Continue with Google",
     "error": "Sign-in is napping — tap to try again."

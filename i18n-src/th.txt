@@ -21,6 +21,7 @@ terms=ข้อกำหนด
 and=และ
 privacy=นโยบายความเป็นส่วนตัว
 legalSuffix=ของเรา
+dataSource=ข้อมูลสภาพอากาศและคุณภาพอากาศ: OpenWeather
 apple=ดำเนินการต่อด้วย Apple
 google=ดำเนินการต่อด้วย Google
 error=ระบบเข้าสู่ระบบงีบอยู่ — แตะเพื่อลองอีกครั้ง

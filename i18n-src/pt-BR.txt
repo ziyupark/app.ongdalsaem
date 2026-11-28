@@ -21,6 +21,7 @@ terms=Termos
 and= e a
 privacy=Política de Privacidade
 legalSuffix=.
+dataSource=Dados de clima e qualidade do ar: OpenWeather
 apple=Continuar com a Apple
 google=Continuar com o Google
 error=O login está tirando um cochilo — toque para tentar de novo.

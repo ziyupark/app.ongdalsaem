@@ -26,7 +26,7 @@ const GRADE_COLOR: Record<AirGrade, ColorToken> = { good: 'air/good', normal: 'a
 /**
  * Home · Air quality card (docs/04-screens/02-home.md 블록 4b) — under the Weather card, the same glass surface.
  * Head (wind icon · "대기질") → grade (Title/L) + status → 4-step grade bar → PM10 · PM2.5 (µg/m³) → yesterday line →
- * divider → home-cooking line + action button → source · measured time (+ stale note). No AQI number, no fixed heights,
+ * divider → home-cooking line + action button → measured time (+ stale note). Source credit = 1.2 Sign in. No AQI number, no fixed heights,
  * no line limits: text wraps at any size (large text · smallest iPhone). Every state shows text — never an empty card.
  */
 export function AirQualityCard({ copy, lang, air, line, onAllowLocation, allowing, onRetry, onAction }: Props) {
@@ -75,7 +75,8 @@ export function AirQualityCard({ copy, lang, air, line, onAllowLocation, allowin
     const stale = staleHours(reading.observedAt, Date.now());
     const time = new Date(reading.observedAt).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' });
     const value = (v: number | null) => (v == null ? '—' : format(copy.labels.value, { value: Math.round(v) }));
-    const footer = [format(copy.labels.source, { source: copy.sources[reading.source] ?? reading.source }), format(copy.labels.basedAt, { time })].join(' · ');
+    // The data source is credited on 1.2 Sign in (signIn.dataSource), not on the card.
+    const footer = format(copy.labels.basedAt, { time });
 
     return (
       <>

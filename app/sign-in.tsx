@@ -213,6 +213,8 @@ export default function SignIn() {
             </>
           )}
         </Text>
+        {/* Weather + air quality data credit (OpenWeather terms) — the Home air quality card doesn't repeat it. */}
+        <Text variant="Caption" color="fg/muted" style={styles.legal}>{t('signIn.dataSource')}</Text>
       </View>
 
       {/* DEV ONLY — not in the design; stripped from release builds. */}
