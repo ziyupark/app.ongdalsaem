@@ -249,12 +249,13 @@ function Twinkles({ spec, w, h, clock, cap }: { spec: TwinkleFx; w: number; h: n
     const r = rng(5);
     return Array.from({ length: Math.min(spec.count, cap) }, () => ({ x: r() * w, y: r() * h * spec.band, size: between(r, spec.size), period: between(r, spec.period), phase: r() }));
   }, [spec, w, h]);
-  return <>{stars.map((s, i) => <Star key={i} {...s} alpha={spec.alpha} color={spec.color} glow={spec.glow} tint={FX_COLOR.starGlow[i % FX_COLOR.starGlow.length]} clock={clock} />)}</>;
+  // Only every other star gets a halo (half as many glows), tinted red / green / blue in turn among those.
+  return <>{stars.map((s, i) => <Star key={i} {...s} alpha={spec.alpha} color={spec.color} glow={i % 2 === 0 ? spec.glow : undefined} tint={FX_COLOR.starGlow[(i / 2) % FX_COLOR.starGlow.length]} clock={clock} />)}</>;
 }
 
 /**
- * Stars are not dimmed at night — they *are* the night. Opacity eases 0.3 ↔ 0.8 over a random 3–6 s. With `glow`, a
- * soft halo in the star's tint (red / green / blue in turn) sits behind it and brightens with the same twinkle.
+ * Stars are not dimmed at night — they *are* the night. Opacity eases 0.3 ↔ 0.8 over a random 3–6 s. With `glow` (every
+ * other star), a faint halo in the star's tint (red / green / blue in turn) sits behind it and brightens with the twinkle.
  */
 function Star({ x, y, size, period, phase, alpha, color, glow, tint, clock }: {
   x: number; y: number; size: number; period: number; phase: number; alpha: [number, number]; color: string;

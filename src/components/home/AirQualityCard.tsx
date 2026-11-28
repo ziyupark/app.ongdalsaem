@@ -23,7 +23,19 @@ type Props = {
   onRetry: () => void;
 };
 
-const Glow = loadAirBarGlow()?.default ?? null;
+/**
+ * The Skia bar, looked up on first render (not at import time): an import-time call breaks when a hot update loads this
+ * file before src/lib/optionalNative.ts, and a build without Skia gets null → the plain fallback bar.
+ */
+let glowLoaded = false;
+let GlowBar: ReturnType<typeof loadAirBarGlow> extends infer M ? (M extends { default: infer C } ? C : never) | null : never = null;
+function glowBar() {
+  if (!glowLoaded) {
+    glowLoaded = true;
+    try { GlowBar = typeof loadAirBarGlow === 'function' ? loadAirBarGlow()?.default ?? null : null; } catch { GlowBar = null; }
+  }
+  return GlowBar;
+}
 const STOPS = gradients['Gradient/Air quality'];
 /** Squirrel face per grade (Figma Air Quality Card 1284:1087, exported @3x). */
 const FACE: Record<AirGrade, number> = {
@@ -42,6 +54,7 @@ const FACE: Record<AirGrade, number> = {
 export function AirQualityCard({ copy, lang, air, onAllowLocation, allowing, onRetry }: Props) {
   const { color } = useTheme();
   const [barW, setBarW] = useState(0);
+  const Glow = glowBar();
   const reading = air.status === 'ready' ? air.reading : null;
   const grade = reading ? airGrade(reading) : null;
   const time = reading ? new Date(reading.observedAt).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) : null;

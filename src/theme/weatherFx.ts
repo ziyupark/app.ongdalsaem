@@ -76,7 +76,7 @@ const rain = (count: number, dur: [number, number], len: [number, number], alpha
 const snow = (count: number, size: [number, number] = [2, 6], alpha: [number, number] = [0.55, 0.95]): FlakeFx => ({ count, size, dur: [8000, 14000], sway: [10, 24], drift: 8, alpha, color: WHITE, soft: true });
 // Clouds: 2–3 translucent layers drifting at different speeds (40 / 60 / 90 s per crossing).
 const clouds = (alpha: number, durs = [40000, 60000, 90000]): PuffFx => ({ y: [0.02, 0.3], w: [0.7, 1.1], h: [0.14, 0.24], durs, alpha, color: WHITE });
-const stars = (count: number): TwinkleFx => ({ count, size: [1.5, 3], period: [3000, 6000], alpha: [0.3, 0.8], color: WHITE, band: 0.45, glow: { scale: 5, alpha: 0.35 } });
+const stars = (count: number): TwinkleFx => ({ count, size: [1.5, 3], period: [3000, 6000], alpha: [0.3, 0.8], color: WHITE, band: 0.45, glow: { scale: 4, alpha: 0.2 } });
 // Shooting stars: 2 at a time at most, each 0.7–1.1 s across, then 6–14 s off → about one every 5 s.
 const meteors: MeteorFx = { count: 2, dur: [700, 1100], rest: [6000, 14000], len: [60, 110], travel: [0.3, 0.45], angle: 32, alpha: 0.85, band: 0.3 };
 // Clear: a few faint light motes rising, 12–20 s per crossing.
