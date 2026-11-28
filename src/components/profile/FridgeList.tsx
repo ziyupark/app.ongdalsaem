@@ -13,6 +13,8 @@ import { fetchRecipeCandidates, type RecipeCandidate } from '../../services/food
 import { elevation, radius, space, useTheme } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
+import { Icon } from '../Icon';
+import { RotateCcw } from '../icons/ongdal';
 import { Input } from '../Input';
 import { Text } from '../Text';
 
@@ -23,6 +25,8 @@ type Target = FridgeZone | 'shopping';
 const TARGETS: Target[] = [...ZONES, 'shopping'];
 const ROW = 48;
 const CARD = 140;
+/** "What you can cook now" shows this many at a time; the refresh button shows the next ones. */
+const PAGE = 5;
 
 /** Long-press this long, then drag a chip to another box. */
 const HOLD_MS = 300;
@@ -85,7 +89,20 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
     fetchRecipeCandidates().then((l) => alive && setRecipes(l)).catch(() => alive && setRecipes([]));
     return () => { alive = false; };
   }, []);
-  const matches = useMemo(() => (recipes ? matchRecipes(items.map((i) => i.name), recipes) : []), [items, recipes]);
+  const ranked = useMemo(() => (recipes ? matchRecipes(items.map((i) => i.name), recipes) : []), [items, recipes]);
+  // Refresh: the next PAGE of the ranked list; after the last one, reload the newest posts and start over.
+  const [page, setPage] = useState(0);
+  const pages = Math.max(1, Math.ceil(ranked.length / PAGE));
+  const at = page % pages;
+  const matches = ranked.slice(at * PAGE, at * PAGE + PAGE);
+  const scroller = useRef<ComponentRef<typeof ScrollView>>(null);
+  const refresh = () => {
+    Haptics.selectionAsync().catch(() => undefined);
+    scroller.current?.scrollTo({ x: 0, animated: false });
+    if (at + 1 < pages) { setPage(at + 1); return; }
+    setPage(0);
+    fetchRecipeCandidates(true).then(setRecipes).catch(() => undefined);
+  };
   const zoneLabel = (z: Target) => t(z === 'fridge' ? 'fridge.fridgeZone' : z === 'freezer' ? 'fridge.freezerZone' : 'fridge.shoppingZone');
 
   // Tap a chip → confirm once → remove.
@@ -249,7 +266,14 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
       <View style={[styles.box, { backgroundColor: color('bg/accent-subtle') }]}>
         {/* Empty (1217:15353): title → 2 → hint, then three dashed placeholder cards (140×190, the size of a real card) in a row that runs off the edge. */}
         <View style={styles.canCookHead}>
-          <Text variant="Body/M Strong">{t('fridge.canCook')}</Text>
+          <View style={styles.head}>
+            <Text variant="Body/M Strong" style={styles.flex}>{t('fridge.canCook')}</Text>
+            {matches.length ? (
+              <Pressable accessibilityRole="button" accessibilityLabel={t('fridge.refreshCook')} onPress={refresh} hitSlop={space[10]} style={({ pressed }) => pressed && styles.pressed}>
+                <Icon icon={RotateCcw} size={20} color="fg/secondary" />
+              </Pressable>
+            ) : null}
+          </View>
           {matches.length === 0 && !(items.length > 0 && recipes == null) ? <Text variant="Body/S" color="fg/muted">{t('fridge.canCookEmpty')}</Text> : null}
         </View>
         {items.length > 0 && recipes == null ? (
@@ -261,7 +285,7 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
             ))}
           </View>
         ) : (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cards}>
+          <ScrollView ref={scroller} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cards}>
             {matches.map((m) => (
               <Pressable key={m.food.id} accessibilityRole="button" onPress={() => router.push(`/dish/${m.food.id}`)} style={[styles.card, { backgroundColor: color('bg/subtle') }]}>
                 {m.food.photo ? (
@@ -307,6 +331,7 @@ const styles = StyleSheet.create({
   photo: { width: CARD, height: 100 },
   cardText: { padding: space[10], gap: space[2] },
   lifted: { opacity: 0.3 },
+  pressed: { opacity: 0.5 },
   ghost: { position: 'absolute', left: 0, top: 0, borderRadius: radius.full },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
 });

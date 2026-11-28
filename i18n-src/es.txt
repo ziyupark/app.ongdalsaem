@@ -1084,6 +1084,7 @@ canCook=Lo que puedes cocinar ahora
 haveCount=Tienes {{have}}/{{total}} ingredientes
 needs=Falta: {{items}}
 canCookEmpty=Encuentra recetas con lo que tienes en la nevera.
+refreshCook=Ver otras recetas
 shoppingZone=Lista de compras
 shoppingZoneTwoLine=Lista de\ncompras
 shoppingEmpty=Tu lista de compras está vacía. Elige Lista de compras arriba y añade lo que necesitas.

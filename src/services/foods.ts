@@ -153,9 +153,9 @@ let candidates: { at: number; list: RecipeCandidate[] } | null = null;
 export function resetRecipeCandidates() {
   candidates = null;
 }
-/** Fridge memo "what can I cook" — the latest 200 public dishes that list ingredients. Cached in memory for 10 min. */
-export async function fetchRecipeCandidates(): Promise<RecipeCandidate[]> {
-  if (candidates && Date.now() - candidates.at < 10 * 60_000) return candidates.list;
+/** Fridge memo "what can I cook" — the latest 200 public dishes that list ingredients. Cached in memory for 10 min (`force` skips it). */
+export async function fetchRecipeCandidates(force = false): Promise<RecipeCandidate[]> {
+  if (!force && candidates && Date.now() - candidates.at < 10 * 60_000) return candidates.list;
   const { data, error } = await supabase
     .from('foods')
     .select('id, name, image_url, ingredients')

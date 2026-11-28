@@ -871,6 +871,7 @@
     "haveCount": "{{have}}/{{total}} ingredients on hand",
     "needs": "Need: {{items}}",
     "canCookEmpty": "Find recipes with what’s in your fridge.",
+    "refreshCook": "Show other recipes",
     "shoppingZone": "Shopping list",
     "shoppingZoneTwoLine": "Shopping\nlist",
     "shoppingEmpty": "Nothing on your shopping list yet. Pick Shopping list above and add what to buy."

@@ -1066,6 +1066,7 @@ canCook=現有食材能做的料理
 haveCount=已有 {{have}}/{{total}} 種食材
 needs=還缺：{{items}}
 canCookEmpty=用冰箱裡的食材找食譜。
+refreshCook=推薦其他料理
 shoppingZone=購物清單
 shoppingZoneTwoLine=購物\n清單
 shoppingEmpty=購物清單還是空的。在上方選擇購物清單，記下要買的東西。

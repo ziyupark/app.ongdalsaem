@@ -65,7 +65,7 @@ const keyOf = (name: string) => {
 export type CookMatch = { food: RecipeCandidate; have: number; total: number; missing: string[] };
 
 /** Score = matched ingredients / recipe ingredients. Only recipes with at least one match · best 5. */
-export function matchRecipes(fridge: string[], recipes: RecipeCandidate[], limit = 5): CookMatch[] {
+export function matchRecipes(fridge: string[], recipes: RecipeCandidate[], limit = Infinity): CookMatch[] {
   const mine = new Set(fridge.map(keyOf).filter(Boolean));
   if (!mine.size) return [];
   return recipes

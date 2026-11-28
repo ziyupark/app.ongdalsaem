@@ -863,6 +863,7 @@
     "haveCount": "Ada {{have}}/{{total}} bahan",
     "needs": "Kurang: {{items}}",
     "canCookEmpty": "Temukan resep dari bahan di kulkasmu.",
+    "refreshCook": "Tampilkan resep lain",
     "shoppingZone": "Catatan belanja",
     "shoppingZoneTwoLine": "Catatan\nbelanja",
     "shoppingEmpty": "Catatan belanja masih kosong. Pilih Catatan belanja di atas dan tulis yang mau dibeli."

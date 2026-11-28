@@ -871,6 +871,7 @@
     "haveCount": "재료 {{have}}/{{total}}개 있음",
     "needs": "부족: {{items}}",
     "canCookEmpty": "냉장고 속 재료로 만들 수 있는 레시피를 찾아보세요.",
+    "refreshCook": "다른 요리 추천",
     "shoppingZone": "장보기 메모",
     "shoppingZoneTwoLine": "장보기\n메모",
     "shoppingEmpty": "장보기 메모가 비어 있어요. 위에서 장보기 메모를 고르고 살 재료를 적어 보세요."

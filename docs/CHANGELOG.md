@@ -5,6 +5,7 @@
 ## v1.8.7 — 2026-11-28 (냉장고 메모)
 
 - **6.3 칸 선택 "Shopping list" 글자 정가운데**: 2줄 행간 16이 Outfit 높이(19)보다 작아 글자가 약 1.5pt 위로 떠 보이던 것 → `Text`에 `leading` 옵션 추가(행간을 줄이면서 잘린 만큼 아래로 내림)
+- **6.3 "What you can cook now" 새로고침**: 제목 줄 오른쪽에 `rotate-ccw` 버튼 → 다음 순위 5개, 끝까지 보면 최신 게시물 다시 불러와 처음부터(전: 상위 5개 고정). 문구 `fridge.refreshCook` 9개 언어 추가
 - **6.3 Shopping list 칩 탭 = 삭제**: 탭 체크/해제 · 길게 눌러 삭제 → Fridge / Freezer와 같이 **탭 → "Remove {name}?" 확인 후 삭제**. 체크가 없어져 "Bought → to the fridge" 버튼 삭제(옮기기는 끌어서 놓기). 문구 `fridge.moveToFridge` 9개 언어 삭제, `toggleShopping` · `moveCheckedToFridge` 삭제
 
 ## v1.8.6 — 2026-11-27 (프로필 · 다이어리 · 냉장고 · 지역 이름 언어)
