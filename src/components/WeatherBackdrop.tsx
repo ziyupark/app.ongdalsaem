@@ -5,7 +5,7 @@ import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue,
 import { scheduleOnRN } from 'react-native-worklets';
 import { WASH_FADE_BY, washScrollY, WEATHER_BG_MAX_HEIGHT, WEATHER_BG_TIMING, WEATHER_FX_HEIGHT, weatherBgFor } from '../lib/weatherBackdrop';
 import { FX_TIMING, useTheme } from '../theme';
-import { MoodGradient } from './MoodGradient';
+import { FadingMoodGradient } from './MoodGradient';
 import { timeOfDayFor, useScreenWeather, useWashLook } from './ScreenHeader';
 import { WeatherMoodLayer } from './WeatherMoodLayer';
 
@@ -27,9 +27,9 @@ export function WeatherBackdrop() {
   const { width } = useWindowDimensions();
   const segments = useSegments();
   const route = weatherBgFor(segments as string[]);
-  const { on, mood, forecast, dev } = useScreenWeather();
+  const { on, mood, forecast, dev, phase, bgKey, backdrop } = useScreenWeather();
   const fxMood = dev?.mood ?? forecast?.mood ?? null;
-  const timeOfDay = dev?.timeOfDay ?? timeOfDayFor(mood, new Date());
+  const timeOfDay = timeOfDayFor(mood, phase);
 
   const shown = !!route && on; // the wash
   const fxShown = shown && !!fxMood; // the motion on top of it
@@ -87,7 +87,8 @@ export function WeatherBackdrop() {
       {on ? (
         <>
           <Animated.View style={[styles.wash, washStyle]}>
-            <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
+            {/* mood family × day / sunset / night — cross-fades over 1 s when either changes */}
+            <FadingMoodGradient id={bgKey} spec={backdrop} opacity={look.opacity} base={look.base} />
           </Animated.View>
           <Animated.View style={[styles.wash, { height: WEATHER_FX_HEIGHT }, fxStyle]}>
             <WeatherMoodLayer

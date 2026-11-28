@@ -14,6 +14,7 @@ import { Navigation } from '../src/components/icons/ongdal';
 import { LaunchBackdrop } from '../src/components/LaunchBackdrop';
 import { Text } from '../src/components/Text';
 import { timeOfDayFor } from '../src/components/ScreenHeader';
+import { skyPhaseAt } from '../src/lib/skyPhase';
 import { signInWithApple, signInWithDevTestAccount, signInWithGoogle, type SignInResult } from '../src/services/auth';
 import { ensureHandle, getMyProfile, needsProfileSetup } from '../src/services/profile';
 import { openLegal } from '../src/lib/legal';
@@ -123,7 +124,7 @@ export default function SignIn() {
   const hero = (f?.icon && WEATHER_3D[f.icon] ? f.icon : f?.mood) ?? 'clear';
   // Sky + motion follow the weather now (clear until it's known, or without location).
   const mood = f?.mood ?? 'clear';
-  const weather = useMemo(() => ({ mood, timeOfDay: timeOfDayFor(mood, new Date()) }), [mood]);
+  const weather = useMemo(() => ({ mood, timeOfDay: timeOfDayFor(mood, skyPhaseAt(Date.now(), f ? { sunrise: f.sunrise, sunset: f.sunset } : null)) }), [mood, f?.sunrise, f?.sunset]);
   const until = f?.until ? t('home.untilLine', { time: f.until.toLocaleTimeString(lang, { hour: 'numeric' }) }) : '';
 
   // Buttons sit 142 above the Home Indicator. Above them, bottom-up: 42 → Weather 3D 156 → (−4) the weather block.

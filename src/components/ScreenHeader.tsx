@@ -9,17 +9,19 @@ import { AppState, Pressable, StyleSheet, useWindowDimensions, View, type ViewPr
 import Animated, { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDevWeather } from '../lib/devWeather';
+import { nextSkyChange, skyPhaseAt, type SkyPhase } from '../lib/skyPhase';
+import type { Forecast } from '../services/weather';
 import { dayPart } from '../lib/meals';
 import { placeLabel, useHere } from '../lib/useHere';
 import { hasUnread } from '../services/activity';
 import { washScrollY } from '../lib/weatherBackdrop';
 import type { WashScroll } from '../lib/useWashScroll';
-import { FX_TIMING, space, useTheme, type TimeOfDay, type WeatherMood } from '../theme';
+import { BACKDROPS, backdropKey, FX_TIMING, space, useTheme, type ColorToken, type TimeOfDay, type WeatherMood } from '../theme';
 import { useWashInk, washOpacity } from '../theme/washInk';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import { Logo } from './Logo';
-import { MoodGradient } from './MoodGradient';
+import { FadingMoodGradient } from './MoodGradient';
 import { Text } from './Text';
 import { WeatherMoodLayer } from './WeatherMoodLayer';
 
@@ -44,18 +46,39 @@ export function useScreenWeather() {
   const dev = useDevWeather();
   const f = here.forecast;
   const off = here.status === 'off' && !here.place?.city && !dev;
-  return { here, forecast: f, on: !off, mood: dev?.mood ?? f?.mood ?? FALLBACK_MOOD, place: placeLabel(here.place) || f?.city || '', off, dev };
+  const mood = dev?.mood ?? f?.mood ?? FALLBACK_MOOD;
+  const phase = useSkyPhase(f, dev?.phase);
+  // Background = mood family × day / sunset / night (sunny_day … snow_night, theme/mood BACKDROPS).
+  const bgKey = backdropKey(mood, phase);
+  return { here, forecast: f, on: !off, mood, phase, bgKey, backdrop: BACKDROPS[bgKey], place: placeLabel(here.place) || f?.city || '', off, dev };
 }
 
-/** Night = a clear-night sky, or the night part of the day (21–5 h) for any other weather. */
-export function timeOfDayFor(mood: WeatherMood, now: Date): TimeOfDay {
-  return mood === 'clear-night' || dayPart(now) === 'night' ? 'night' : 'day';
+/**
+ * Day / sunset / night now (lib/skyPhase) from the reading's sunrise · sunset (06:00 / 18:00 without them). Re-reads at
+ * the next band edge and when the app comes back to the foreground, so the background changes on its own.
+ */
+function useSkyPhase(f: Forecast | null, forced?: SkyPhase): SkyPhase {
+  const [now, setNow] = useState(() => Date.now());
+  const sun = f ? { sunrise: f.sunrise, sunset: f.sunset } : null;
+  useEffect(() => {
+    if (forced) return;
+    const wait = nextSkyChange(Date.now(), sun) - Date.now() + 500;
+    const h = setTimeout(() => setNow(Date.now()), Math.min(Math.max(1000, wait), 2 ** 31 - 1));
+    const sub = AppState.addEventListener('change', (s) => { if (s === 'active') setNow(Date.now()); });
+    return () => { clearTimeout(h); sub.remove(); };
+  }, [now, f?.sunrise, f?.sunset, forced]); // eslint-disable-line react-hooks/exhaustive-deps
+  return forced ?? skyPhaseAt(now, sun);
+}
+
+/** Motion time of day: night = the night phase, or a clear-night sky. */
+export function timeOfDayFor(mood: WeatherMood, phase: SkyPhase): TimeOfDay {
+  return mood === 'clear-night' || phase === 'night' ? 'night' : 'day';
 }
 
 /** Wash ink at a spot `at` (0–1 of the wash height) — for text that sits on the wash below the header (e.g. tabs). */
 export function useScreenInk(at: number) {
-  const { on, mood } = useScreenWeather();
-  return useWashInk(on ? mood : null, at, WASH_OPACITY);
+  const { on, backdrop } = useScreenWeather();
+  return useWashInk(on ? backdrop : null, at, WASH_OPACITY);
 }
 
 /**
@@ -68,8 +91,8 @@ export function useScreenInk(at: number) {
  */
 export function ScreenWash({ wash, local = false, motion = false }: { wash: WashScroll; local?: boolean; motion?: boolean }) {
   const { scheme } = useTheme();
-  const { on, mood } = useScreenWeather();
-  const logoInk = useWashInk(on ? mood : null, 0.12, WASH_OPACITY);
+  const { on, backdrop, bgKey } = useScreenWeather();
+  const logoInk = useWashInk(on ? backdrop : null, 0.12, WASH_OPACITY);
   const look = useWashLook();
   const focused = useSharedValue(false);
   useFocusEffect(useCallback(() => {
@@ -84,7 +107,7 @@ export function ScreenWash({ wash, local = false, motion = false }: { wash: Wash
       <StatusBar style={logoInk ? logoInk.bar : scheme === 'dark' ? 'light' : 'dark'} />
       {local && on ? (
         <Animated.View pointerEvents="none" style={[styles.wash, wash.style]}>
-          <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
+          <FadingMoodGradient id={bgKey} spec={backdrop} opacity={look.opacity} base={look.base} />
           {motion ? <LocalMotion /> : null}
         </Animated.View>
       ) : null}
@@ -95,9 +118,9 @@ export function ScreenWash({ wash, local = false, motion = false }: { wash: Wash
 /** Weather motion inside a pushed screen's own wash — runs only while that screen is focused and the app is active. */
 function LocalMotion() {
   const { width } = useWindowDimensions();
-  const { mood, forecast, dev } = useScreenWeather();
+  const { mood, forecast, dev, phase } = useScreenWeather();
   const fxMood = dev?.mood ?? forecast?.mood ?? null;
-  const timeOfDay = dev?.timeOfDay ?? timeOfDayFor(mood, new Date());
+  const timeOfDay = timeOfDayFor(mood, phase);
   const [focused, setFocused] = useState(false);
   useFocusEffect(useCallback(() => { setFocused(true); return () => setFocused(false); }, []));
   const [active, setActive] = useState(AppState.currentState !== 'background');
@@ -127,8 +150,15 @@ function LocalMotion() {
 /** The package's class typings predate React 19's JSX types — same props, typed as a function component. */
 const MaskedView = MaskedViewBase as unknown as (p: ViewProps & { maskElement: React.ReactElement }) => React.ReactElement;
 
-function WeatherTitle({ a, b, label }: { a: string; b: string; label: string }) {
+function WeatherTitle({ a, b, label, light, frost }: {
+  a: string; b: string; label: string;
+  /** Dark (night) wash: white ink, darker frost. */
+  light?: boolean;
+  /** Frost tint of the second word — the wash ink's `disabled` (steps up to a stronger grey where fg/disabled would vanish, e.g. rainy sunset). */
+  frost?: ColorToken;
+}) {
   const { color } = useTheme();
+  const ink = color(light ? 'fg/on-photo' : 'fg/default');
   const line = (first: object, second: object) => (
     <Text variant="Display/XL" numberOfLines={1} adjustsFontSizeToFit style={first}>
       {a}
@@ -138,11 +168,11 @@ function WeatherTitle({ a, b, label }: { a: string; b: string; label: string }) 
   const clear = { color: 'transparent' };
   return (
     <View accessible accessibilityRole="header" accessibilityLabel={label}>
-      <MaskedView style={styles.glassArea} maskElement={<View style={styles.glassPad}>{line(clear, { color: color('fg/default') })}</View>}>
-        <BlurView intensity={24} tint="light" style={StyleSheet.absoluteFill} />
-        <View style={[StyleSheet.absoluteFill, styles.frost, { backgroundColor: color('fg/disabled') }]} />
+      <MaskedView style={styles.glassArea} maskElement={<View style={styles.glassPad}>{line(clear, { color: ink })}</View>}>
+        <BlurView intensity={24} tint={light ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />
+        <View style={[StyleSheet.absoluteFill, styles.frost, { backgroundColor: color(frost ?? (light ? 'fg/on-photo-tertiary' : 'fg/disabled')) }]} />
       </MaskedView>
-      {line({ color: color('fg/default') }, clear)}
+      {line({ color: ink }, clear)}
     </View>
   );
 }
@@ -171,8 +201,11 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
   const insets = useSafeAreaInsets();
   const { color } = useTheme();
   const { t, i18n } = useTranslation();
-  const { forecast: f, on, mood, place, off, here } = useScreenWeather();
-  const logoInk = useWashInk(on ? mood : null, 0.12, WASH_OPACITY);
+  const { forecast: f, on, mood, place, off, here, backdrop } = useScreenWeather();
+  const logoInk = useWashInk(on ? backdrop : null, 0.12, WASH_OPACITY);
+  // Date · place and the weather title sit about a third of the way down the wash: white on night backgrounds.
+  const textInk = useWashInk(on ? backdrop : null, 0.3, WASH_OPACITY);
+  const light = !!textInk?.light;
   const [unread, setUnread] = useState(false);
   useFocusEffect(useCallback(() => {
     if (right === 'notifications') hasUnread().then(setUnread).catch(() => undefined);
@@ -190,7 +223,7 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
       {backBar && onBack ? (
         <View style={styles.bar}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('common.back')} hitSlop={space[4]} onPress={onBack} style={styles.slotCenter}>
-            <Icon icon={ChevronLeft} size={22} />
+            <Icon icon={ChevronLeft} size={22} color={logoInk?.strong} />
           </Pressable>
           <Logo lockup="Compact" tone={logoInk?.light ? 'light' : 'ink'} />
           <View style={styles.slot} />
@@ -223,8 +256,8 @@ export function ScreenHeader({ right, onBack, onMore, onLogoLongPress, withWeath
           </>
         ) : (
           <>
-            <Text variant="Overline">{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
-            <WeatherTitle a={f ? `${en(`home.titleMood.${mood}`)} ` : ''} b={en(`home.dayPart.${part}`)} label={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} />
+            <Text variant="Overline" color={textInk?.strong ?? 'fg/default'}>{place ? `${dateLabel} · ${place}` : dateLabel}</Text>
+            <WeatherTitle light={light} frost={textInk?.disabled} a={f ? `${en(`home.titleMood.${mood}`)} ` : ''} b={en(`home.dayPart.${part}`)} label={`${f ? `${t(`home.titleMood.${mood}`)} ` : ''}${t(`home.dayPart.${part}`)}`} />
           </>
         )}
       </View>

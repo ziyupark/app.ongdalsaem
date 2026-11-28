@@ -150,6 +150,25 @@ mood:       mood/<key>/top · mood/<key>/base  (18종, §2.4 표)
 
 Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=72-787)
 
+### 2.4b 배경 = Mood 계열 × 시간대 (낮 · 노을 · 밤) — 코드 기준
+
+네 탭 · 7.1 등의 wash는 **Mood 계열 × 시간대** 조합 키로 그린다(`src/theme/mood.ts` `BACKDROPS`, 키 `<계열>_<시간대>`, 예 `sunny_day` · `sunny_sunset` · `sunny_night`). 그리는 방식은 위 Mood 2.0과 같다(위 색 → 55 % 아래 색 → bg/default, 흐린 원 몇 개, 85 %). 미리보기: [mood-phase-preview.png](mood-phase-preview.png) · 앱 개발 메뉴(홈 로고 길게 → Weather mood preview) 맨 위 12칸.
+
+- **시간대**(`src/lib/skyPhase.ts`): **노을** = 일출 · 일몰 앞뒤 1시간 · **낮** = 일출 1시간 후 ~ 일몰 1시간 전 · **밤** = 그 외. 일출 · 일몰 = 날씨 응답(OpenWeather `sys.sunrise · sunset`), 없으면 06:00 / 18:00(기기 시계). 다음 경계 시각에 저절로 바뀌고, 앱이 앞으로 올 때도 다시 계산한다.
+- **계열**(18개 Mood → 4개): 맑음 sunny = clear · clear-night · heat · 흐림 cloudy = cloudy · overcast · fog · dust · windy · 비 rain = drizzle · rain · heavy-rain · shower · thunder · 눈 snow = sleet · flurries · snow · heavy-snow · cold.
+- **색**(위 → 아래):
+
+  | 계열 | 낮 `_day` | 노을 `_sunset` | 밤 `_night` |
+  |---|---|---|---|
+  | 맑음 sunny | `#8EC5FF` → `#E0F2FF` | `#FFB88C` → `#FF8FA3` | `#1E2A5A` → `#3B4A8C` |
+  | 흐림 cloudy | `#B8C4D0` → `#E6EBF0` | `#C9A89A` → `#8E8AA3` | `#2E3440` → `#4C566A` |
+  | 비 rain | `#7F95A8` → `#C3D0DB` | `#9C8A99` → `#5E6B80` | `#1A222D` → `#33404F` |
+  | 눈 snow | `#DDE8F5` → `#FFFFFF` | `#F2D4DC` → `#C8D3EA` | `#2A3350` → `#56628A` |
+
+- **전환**: 키가 바뀌면(시간대 또는 날씨 계열) 새 배경이 1초 동안 위에 페이드 인(`FadingMoodGradient`).
+- **글자 · 아이콘**: 배경 대비로 자동(theme/washInk) — 밤 배경은 흰색 계열(fg/on-photo …). 날씨 모션(WeatherMoodLayer)의 밤 = 밤 시간대(또는 clear-night).
+- 날씨 아이콘 · 3D 아이콘 · 옹이(다람쥐) 그림은 시간대와 상관없이 그대로. 1.1 Splash · 1.2 Sign in 하늘(LAUNCH_SKY)도 그대로.
+
 ### 2.5 Spacing / Radius
 
 ```

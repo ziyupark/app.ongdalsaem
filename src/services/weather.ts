@@ -40,11 +40,14 @@ export type CurrentWeather = {
   icon?: Weather3DKey;
   /** seconds from UTC at that place */
   timezoneOffset?: number;
+  /** Today's sunrise / sunset there (ms) — day / sunset / night of the background (lib/skyPhase). Absent on old caches. */
+  sunrise?: number;
+  sunset?: number;
 };
 
 type OwmResponse = {
   name: string;
-  sys: { country: string };
+  sys: { country: string; sunrise?: number; sunset?: number };
   timezone?: number;
   main: { temp: number; temp_min?: number; temp_max?: number };
   wind?: { speed?: number };
@@ -121,7 +124,11 @@ export async function fetchCurrentWeather(where: Where): Promise<CurrentWeather 
   if (!json?.main || !json.weather) return null;
   try {
     const mood = moodFromOwm(json);
-    return { city: json.name, countryCode: json.sys.country, tempC: Math.round(json.main.temp), mood, icon: iconFromOwm(json, mood), timezoneOffset: json.timezone };
+    const ms = (s?: number) => (typeof s === 'number' && s > 0 ? s * 1000 : undefined);
+    return {
+      city: json.name, countryCode: json.sys.country, tempC: Math.round(json.main.temp), mood, icon: iconFromOwm(json, mood), timezoneOffset: json.timezone,
+      sunrise: ms(json.sys.sunrise), sunset: ms(json.sys.sunset),
+    };
   } catch {
     return null;
   }

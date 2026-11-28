@@ -1,9 +1,9 @@
 // Text over a Weather Mood wash — always readable (WCAG contrast), whatever the weather.
 // Light washes keep the Figma inks (fg/default · fg/secondary · fg/muted · fg/disabled); dark washes
-// (clear-night, thunder, heavy-rain …) switch to the on-photo inks. A weaker ink that falls below its
+// (every night background, rain at sunset …) switch to the on-photo (white) inks. A weaker ink that falls below its
 // minimum steps up to the next stronger one.
 import { useMemo } from 'react';
-import { MOOD_BASE, moods, type WeatherMood } from './mood';
+import { MOOD_BASE, type MoodSpec } from './mood';
 import { useTheme } from './index';
 import type { ColorToken } from './colors';
 
@@ -20,8 +20,7 @@ const lum = ([r, g, b]: RGB) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin
 const contrast = (a: RGB, b: RGB) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 
 /** Wash colour at a height (0 = top, 1 = bottom of the wash), shown at `opacity` over `base` — same stops as MoodGradient. */
-function washColorAt(mood: WeatherMood, at: number, opacity = 1, base = MOOD_BASE): RGB {
-  const spec = moods[mood];
+function washColorAt(spec: MoodSpec, at: number, opacity = 1, base = MOOD_BASE): RGB {
   const b = parse(base).rgb;
   const t = Math.min(1, Math.max(0, at));
   const c = t <= 0.55 ? mix(parse(spec.top).rgb, parse(spec.mid).rgb, t / 0.55) : mix(parse(spec.mid).rgb, b, (t - 0.55) / 0.45);
@@ -56,9 +55,9 @@ const LIGHT: ColorToken[] = ['fg/on-photo', 'fg/on-photo-secondary', 'fg/on-phot
 const MIN = [4.5, 4.5, 2.6, 1.4];
 
 /** Pure version (for lists — no hook). `color` = the theme's token resolver. */
-function washInkFor(mood: WeatherMood, at: number, opacity: number, color: (t: ColorToken) => string, scheme: 'light' | 'dark'): WashInk {
+function washInkFor(spec: MoodSpec, at: number, opacity: number, color: (t: ColorToken) => string, scheme: 'light' | 'dark'): WashInk {
   // The wash fades to this theme's bg/default (light = MOOD_BASE cream) at the opacity it is drawn with (washOpacity).
-  const bg = washColorAt(mood, at, washOpacity(opacity, scheme), color('bg/default'));
+  const bg = washColorAt(spec, at, washOpacity(opacity, scheme), color('bg/default'));
   const on = (tok: ColorToken) => { const p = parse(color(tok)); return contrast(mix(bg, p.rgb, p.a), bg); };
   const ladder = on('fg/default') >= on('fg/on-photo') ? DARK : LIGHT;
   const role = (i: number) => {
@@ -89,7 +88,8 @@ function washInkFor(mood: WeatherMood, at: number, opacity: number, color: (t: C
 export const DARK_WASH_SCALE = 0.4;
 export const washOpacity = (opacity: number, scheme: 'light' | 'dark') => (scheme === 'dark' ? opacity * DARK_WASH_SCALE : opacity);
 
-export function useWashInk(mood: WeatherMood | null | undefined, at = 0.15, opacity = 1): WashInk | null {
+/** `spec` = the background actually drawn (ScreenHeader useScreenWeather → mood × day / sunset / night). */
+export function useWashInk(spec: MoodSpec | null | undefined, at = 0.15, opacity = 1): WashInk | null {
   const { color, scheme } = useTheme();
-  return useMemo(() => (mood ? washInkFor(mood, at, opacity, color, scheme) : null), [mood, at, opacity, color, scheme]);
+  return useMemo(() => (spec ? washInkFor(spec, at, opacity, color, scheme) : null), [spec, at, opacity, color, scheme]);
 }

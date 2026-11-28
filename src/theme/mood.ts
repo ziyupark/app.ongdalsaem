@@ -36,6 +36,39 @@ export const moods: Record<WeatherMood, MoodSpec> = {
   windy: { top: '#BBD6D3', mid: '#DBE5E1', blobs: [b('#86BFBA', .14, .04, .46, .32, .85), b('#E6F1EC', .78, .22, .5, .14, .85)] },
 };
 
+// ── Background by mood family × time of day (docs/01-foundations.md §2.4 시간대) ──────────────────────────────
+// The wash behind the four tabs: 4 families × day / sunset / night = 12 backgrounds, keyed `<family>_<phase>`
+// (sunny_day … snow_night). Same layout as the moods above: top → mid at 55 % → bg/default, plus soft blobs.
+
+export type SkyPhaseKey = 'day' | 'sunset' | 'night';
+export type MoodFamily = 'sunny' | 'cloudy' | 'rain' | 'snow';
+export type BackdropKey = `${MoodFamily}_${SkyPhaseKey}`;
+
+/** Which family each of the 18 moods draws its background from. */
+export const MOOD_FAMILY: Record<WeatherMood, MoodFamily> = {
+  clear: 'sunny', 'clear-night': 'sunny', heat: 'sunny',
+  cloudy: 'cloudy', overcast: 'cloudy', fog: 'cloudy', dust: 'cloudy', windy: 'cloudy',
+  drizzle: 'rain', rain: 'rain', 'heavy-rain': 'rain', shower: 'rain', thunder: 'rain',
+  sleet: 'snow', flurries: 'snow', snow: 'snow', 'heavy-snow': 'snow', cold: 'snow',
+};
+
+export const BACKDROPS: Record<BackdropKey, MoodSpec> = {
+  sunny_day: { top: '#8EC5FF', mid: '#E0F2FF', blobs: [b('#B9DCFF', .18, .04, .42, .34, .5), b('#FFE7A8', .76, .1, .46, .38, .55), b('#FFFFFF', .78, .1, .13, .11, .85)] },
+  sunny_sunset: { top: '#FFB88C', mid: '#FF8FA3', blobs: [b('#FF9E7A', .18, .06, .46, .34, .5), b('#FFD27A', .76, .16, .4, .3, .75), b('#FFF1D6', .76, .16, .1, .08, .8)] },
+  sunny_night: { top: '#1E2A5A', mid: '#3B4A8C', blobs: [b('#2E4A8C', .18, .06, .5, .36, .7), b('#FFD27A', .8, .12, .15, .13, .55), b('#FFE9B8', .8, .12, .05, .045, 1)] },
+  cloudy_day: { top: '#B8C4D0', mid: '#E6EBF0', blobs: [b('#A9B4C0', .84, 0, .46, .34, .7), b('#F6F2EC', .46, .2, .46, .2, .8), b('#E3F0F4', .34, .24, .2, .1, .5)] },
+  cloudy_sunset: { top: '#C9A89A', mid: '#8E8AA3', blobs: [b('#E6B8A0', .8, .04, .46, .34, .55), b('#E9DED8', .4, .2, .46, .2, .35)] },
+  cloudy_night: { top: '#2E3440', mid: '#4C566A', blobs: [b('#3B4252', .5, -.04, .62, .36, .7), b('#5E6A80', .2, .24, .38, .22, .35)] },
+  rain_day: { top: '#7F95A8', mid: '#C3D0DB', blobs: [b('#5E7F9E', .3, -.02, .52, .36, .75), b('#A9C1D3', .86, .22, .34, .26, .6)] },
+  rain_sunset: { top: '#9C8A99', mid: '#5E6B80', blobs: [b('#B98F8C', .3, -.02, .52, .36, .55), b('#D9A890', .86, .18, .3, .22, .4)] },
+  rain_night: { top: '#1A222D', mid: '#33404F', blobs: [b('#0F161F', .3, -.02, .52, .36, .8), b('#3E5266', .86, .22, .34, .26, .4)] },
+  snow_day: { top: '#DDE8F5', mid: '#FFFFFF', blobs: [b('#BBD3EA', .14, .04, .36, .3, .6), b('#FFFFFF', .62, .14, .46, .3, .9)] },
+  snow_sunset: { top: '#F2D4DC', mid: '#C8D3EA', blobs: [b('#FBE3E6', .62, .14, .46, .3, .7), b('#B9C7E6', .14, .04, .36, .3, .5)] },
+  snow_night: { top: '#2A3350', mid: '#56628A', blobs: [b('#3A4568', .14, .04, .36, .3, .7), b('#8E9CC4', .62, .14, .46, .3, .3)] },
+};
+
+export const backdropKey = (mood: WeatherMood, phase: SkyPhaseKey): BackdropKey => `${MOOD_FAMILY[mood]}_${phase}`;
+
 /**
  * Figma `Mood/clear` as drawn on the launch screens (1.1 Splash 1157:10518 · 1.2 Sign in 1207:10884, layer photo:welcome,
  * 390×420): clear-sky blue. Same blob geometry as `moods.clear`; the app-wide `moods.clear` still has the warm values.

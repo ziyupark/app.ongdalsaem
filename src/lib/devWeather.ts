@@ -1,11 +1,12 @@
 import { useSyncExternalStore } from 'react';
-import type { TimeOfDay, WeatherMood } from '../theme';
+import type { WeatherMood } from '../theme';
+import type { SkyPhase } from './skyPhase';
 
 /**
- * Dev only — forces the wash mood and time of day on every screen (app/dev/weather.tsx), so each weather
+ * Dev only — forces the wash mood and day / sunset / night on every screen (app/dev/weather.tsx), so each weather
  * effect can be checked by eye. Never set in release builds; kept in memory only.
  */
-export type DevWeather = { mood: WeatherMood; timeOfDay: TimeOfDay } | null;
+export type DevWeather = { mood: WeatherMood; phase: SkyPhase } | null;
 
 let current: DevWeather = null;
 const listeners = new Set<() => void>();
