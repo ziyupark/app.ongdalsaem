@@ -8,7 +8,7 @@ import Animated, {
 import Svg, { Defs, Ellipse, Path, RadialGradient, Stop } from 'react-native-svg';
 import { scheduleOnRN } from 'react-native-worklets';
 import {
-  FX_CAP, FX_COLOR, FX_FADE_FROM, FX_TIMING, weatherFxFor, withAlpha,
+  FX_CAP, FX_COLOR, FX_DENSITY, FX_FADE_FROM, FX_TIMING, weatherFxFor, withAlpha,
   type FlakeFx, type GlowFx, type GustFx, type PuffFx, type RainFx, type TimeOfDay, type TwinkleFx, type WeatherFxSpec, type WeatherMood,
 } from '../theme';
 
@@ -24,8 +24,8 @@ type Props = {
   /** ms before the very first effect fades in (cold start: after the wash). */
   delay?: number;
   /**
-   * Particle multiplier (default 1): rain, snow, sleet pellets, motes, stars and wind lines — and their caps — ×density.
-   * Clouds / fog banks and the sun glow aren't particles and stay as they are. 1.2 Sign in uses 3.
+   * Particle multiplier (default FX_DENSITY = 3): rain, snow, sleet pellets, motes, stars and wind lines — and their caps — ×density.
+   * Clouds / fog banks and the sun glow aren't particles and stay as they are.
    */
   density?: number;
 };
@@ -44,7 +44,7 @@ type Layer = { key: string; mood: WeatherMood; timeOfDay: TimeOfDay; leaving: bo
  * - Mood change: old effect fades out 800 ms, new fades in 1200 ms. That and the cold start are the only fades here.
  * - Reduce Motion: the clock never runs — one still frame, and no lightning at all.
  */
-export const WeatherMoodLayer = memo(function WeatherMoodLayer({ mood, timeOfDay, running, width, height, delay = 0, density = 1 }: Props) {
+export const WeatherMoodLayer = memo(function WeatherMoodLayer({ mood, timeOfDay, running, width, height, delay = 0, density = FX_DENSITY }: Props) {
   const reduce = useReducedMotion();
   const clock = useSharedValue(0);
   const frame = useFrameCallback((f) => {

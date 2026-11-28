@@ -20,8 +20,14 @@ export const WEATHER_BG_ROUTES: Record<string, { washHeight: number }> = {
   'dev/weather': { washHeight: 420 },
 };
 
-/** Tallest wash — the motion layer is laid out once at this size; the visible height is clipped. */
+/** Tallest wash (start height before the first route is known). */
 export const WEATHER_BG_MAX_HEIGHT = Math.max(...Object.values(WEATHER_BG_ROUTES).map((r) => r.washHeight));
+
+/**
+ * Height of the global motion layer — taller than the wash so the particles run down over the Weather Card
+ * (y 212–520) instead of bunching at the top; they melt away over its bottom 40 % (384 → 640).
+ */
+export const WEATHER_FX_HEIGHT = 640;
 
 export const WEATHER_BG_TIMING = { hide: 300, show: 300, height: 400 } as const;
 

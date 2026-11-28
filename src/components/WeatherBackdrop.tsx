@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { AppState, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { WASH_FADE_BY, washScrollY, WEATHER_BG_MAX_HEIGHT, WEATHER_BG_TIMING, weatherBgFor } from '../lib/weatherBackdrop';
+import { WASH_FADE_BY, washScrollY, WEATHER_BG_MAX_HEIGHT, WEATHER_BG_TIMING, WEATHER_FX_HEIGHT, weatherBgFor } from '../lib/weatherBackdrop';
 import { FX_TIMING, useTheme } from '../theme';
 import { MoodGradient } from './MoodGradient';
 import { timeOfDayFor, useScreenWeather, useWashLook } from './ScreenHeader';
@@ -72,7 +72,11 @@ export function WeatherBackdrop() {
     // Pulled down (overscroll) it stays put; scrolled up it travels with the content.
     transform: [{ translateY: -Math.max(0, washScrollY.value) }],
   }));
-  const fxStyle = useAnimatedStyle(() => ({ opacity: fx.value }));
+  // Motion: its own box (WEATHER_FX_HEIGHT, taller than the wash) so it reaches the Weather Card; same scroll move / fade as the wash.
+  const fxStyle = useAnimatedStyle(() => ({
+    opacity: fx.value * washIn.value * wash.value * interpolate(washScrollY.value, [0, WASH_FADE_BY], [1, 0], Extrapolation.CLAMP),
+    transform: [{ translateY: -Math.max(0, washScrollY.value) }],
+  }));
 
   // Mood for the motion layer: keep the last one while it fades out for 2.6, so it doesn't vanish mid-fade.
   const [layerMood, setLayerMood] = useState(fxMood);
@@ -81,19 +85,21 @@ export function WeatherBackdrop() {
   return (
     <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: color('bg/default') }]}>
       {on ? (
-        <Animated.View style={[styles.wash, washStyle]}>
-          <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
-          <Animated.View style={[StyleSheet.absoluteFill, fxStyle]}>
+        <>
+          <Animated.View style={[styles.wash, washStyle]}>
+            <MoodGradient mood={mood} opacity={look.opacity} base={look.base} />
+          </Animated.View>
+          <Animated.View style={[styles.wash, { height: WEATHER_FX_HEIGHT }, fxStyle]}>
             <WeatherMoodLayer
               mood={layerMood}
               timeOfDay={timeOfDay}
               running={fxRunning && active}
               width={width}
-              height={WEATHER_BG_MAX_HEIGHT}
+              height={WEATHER_FX_HEIGHT}
               delay={FX_TIMING.washIn + FX_TIMING.startDelay}
             />
           </Animated.View>
-        </Animated.View>
+        </>
       ) : null}
     </View>
   );

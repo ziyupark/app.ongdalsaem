@@ -7,8 +7,11 @@ import type { WeatherMood } from './mood';
 /** Particle colours (same in light and dark): white drops / flakes / motes / flash, and the bolt's warm glow. */
 export const FX_COLOR = { white: light['static/white'], boltGlow: '#FFF6C8' } as const;
 
-/** Hard particle limits per effect (performance): rain ≤ 60, snow ≤ 40, everything else ≤ 20. */
+/** Hard particle limits per effect at density 1 (performance): rain ≤ 60, snow ≤ 40, everything else ≤ 20. Scaled by the layer's density. */
 export const FX_CAP = { rain: 60, snow: 40, other: 20 } as const;
+
+/** Default particle multiplier everywhere (tabs · 7.1 · 1.2 Sign in): counts and caps below ×3. */
+export const FX_DENSITY = 3;
 
 /** Where the layer melts into the content: transparent over the bottom 40 % of the wash. */
 export const FX_FADE_FROM = 0.6;

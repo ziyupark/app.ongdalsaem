@@ -4,6 +4,7 @@
 
 ## v1.8.7 — 2026-11-28 (냉장고 메모)
 
+- **Weather Mood 입자 3배 · Weather Card까지**: 모든 무드의 비 · 눈 · 진눈깨비 · 빛 입자 · 별 · 바람 줄 개수와 상한 ×3이 기본(`FX_DENSITY` 3 — 전: 1.2 Sign in만 3배, 이제 네 탭 · 7.1도 같음). 네 탭 모션 레이어를 wash(420)와 떼어 **높이 640**(스크롤 이동 · 페이드는 wash와 같이) → 입자가 위쪽에만 몰리지 않고 Weather Card(y 212–520)까지 보이고 384 → 640에서 사라짐. 구름 · 별 · 빛 번짐 위치도 새 높이 비율로 조금 아래로 퍼짐
 - **6.3 "What you can cook now" 새로고침 = Weather Card Refresh 버튼**: `rotate-ccw` 20 fg/secondary 아이콘만 → 32 원 · 1px border/default · 아이콘 16 · **흰 배경 bg/subtle** · 탭마다 회전 400ms · 1초 연타 무시. 두 곳이 공통 `RefreshButton` 사용
 - **7.1 Steps 단계 사이 14 → 8**([601:12668](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=601-12668)): `Recipe Step` 목록 gap 8. 제목 Steps → 목록 14는 그대로. 8.3 미리보기도 같이(공통 `DishRecipe`)
 - **댓글 · 답 더보기 메뉴**: Comment 이름 줄 오른쪽에 `more-horizontal` 18 fg/muted(Figma 컴포넌트에는 없음, 앱 추가) → 내 댓글 = **Edit** · Delete, 남의 댓글 = **Report**(내 게시물이면 + Delete). 길게 누르기도 같은 메뉴. Edit = 본문을 입력칸에 넣고 위에 "Editing comment / Editing answer" + `x` 취소, 전송 = 저장. 7.1 댓글 · 3.8 답 같이(공통 `CommentRow`). 3.8 답은 이제 수정도 됨. 문구 `dish.editingComment` · `ask.editingAnswer` 9개 언어 추가. DB `20261202000000_edit_own_comments_answers.sql`(본인 행 update RLS — 없어서 수정이 0행이었음)

@@ -6,9 +6,6 @@ import { FX_TIMING, LAUNCH_SKY, useTheme, withAlpha, type TimeOfDay, type Weathe
 import { MoodGradient } from './MoodGradient';
 import { WeatherMoodLayer } from './WeatherMoodLayer';
 
-/** 1.2 Sign in: 3× the weather particles of the tabs (rain, snow, motes, stars, wind lines). */
-const SIGN_IN_DENSITY = 3;
-
 /** Sky height (`photo:welcome` 390×420). */
 const SKY_H = 420;
 
@@ -76,7 +73,7 @@ export function LaunchBackdrop({ weather }: { weather?: { mood: WeatherMood; tim
           </Animated.View>
         ) : null}
         {weather ? (
-          <WeatherMoodLayer mood={weather.mood} timeOfDay={weather.timeOfDay} running={active} width={width} height={SKY_H} delay={FX_TIMING.startDelay} density={SIGN_IN_DENSITY} />
+          <WeatherMoodLayer mood={weather.mood} timeOfDay={weather.timeOfDay} running={active} width={width} height={SKY_H} delay={FX_TIMING.startDelay} />
         ) : null}
         <LinearGradient colors={[withAlpha(ink, 0.18), withAlpha(ink, 0)]} style={styles.scrim} />
       </View>
