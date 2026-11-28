@@ -64,7 +64,7 @@
 - 명절 46개 목록·국기·사진은 `src/lib/holidays.ts`, 날짜(2026–2035)는 `src/lib/holidayDates.ts`(`npm run holidays:dates`로 생성: 음력 · 절기 · 부활절 · 요일 규칙 · 달 기준 명절 · 마타리키 법정일). 이름 · 음식은 9개 언어.
 
 ### 4.2 Tag · #Comfort (v2) — [826:14271](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=826-14271)
-- **태그 페이지 템플릿**(#Spicy · #Vegan · 명절 태그 … 모두 이 화면). **요리 방식 모음**(`/tag/method:<key>`, 예: Home 대기질 카드 "끓이는 요리 보기" → `method:simmer`)도 이 화면 — 게시물 = foods.cooking_methods에 그 방식이 있는 공개 요리, 제목 = `cookingMethod.<key>`(영어 "#Simmer"), 동그란 카테고리는 무드 태그 그대로(코드 기준). 세로 스크롤, 화면 무드 wash 위.
+- **태그 페이지 템플릿**(#Spicy · #Vegan · 명절 태그 … 모두 이 화면). 세로 스크롤, 화면 무드 wash 위.
 - 블록:
   1. **TopBar · Overlay**(높이 52, 좌우 12): 왼쪽 **뒤로**(IconButton Soft 40)만. 공유 버튼 없음.
   2. **#태그** Display/XL(항상 영어, 읽기는 내 언어) — padding 22 20 12.

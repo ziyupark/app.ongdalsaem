@@ -1,32 +1,17 @@
-// Air quality → grade → home-cooking line (docs/05-behavior.md §6.11). Pure logic, no React Native imports, so
-// tests/airQuality.test.ts runs it in plain Node. All words come from src/copy/airquality-copy.<lang>.json.
+// Air quality → grade (docs/05-behavior.md §6.11). Pure logic, no React Native imports, so tests/airQuality.test.ts
+// runs it in plain Node. All words come from src/copy/airquality-copy.<lang>.json.
 
 export const AIR_GRADES = ['good', 'normal', 'bad', 'veryBad'] as const;
 export type AirGrade = (typeof AIR_GRADES)[number];
+export type AirCompare = 'better' | 'worse' | 'same';
 
-export type AirTimeSlot = 'morning' | 'lunch' | 'dinner' | 'night';
-export type AirActionKey = 'recipe' | 'shopping' | 'neighbors' | 'pantry' | 'byMethod';
-export type AirTemplate = { id: string; text: string; action: AirActionKey };
-
-/** Shape of src/copy/airquality-copy.<lang>.json. */
+/** What the card reads from src/copy/airquality-copy.<lang>.json (the Korean file also keeps older, unused sections). */
 export type AirCopy = {
   version: number;
-  placeholder: string;
-  timeSlots: Record<AirTimeSlot, { label: string; from: string; to: string }>;
-  actions: Record<AirActionKey, { button: string; usesMenu: boolean }>;
-  grades: Record<AirGrade, {
-    label: string;
-    status: string;
-    /** Cooking method labels (keys of `methods`' values), or ["*"] for any dish. */
-    allowedMethods: string[];
-    templates: Record<AirTimeSlot, AirTemplate[]>;
-    fallback: AirTemplate;
-  }>;
+  grades: Record<AirGrade, { label: string; status: string }>;
   compare: Record<AirCompare, string>;
   states: Record<'locationDenied' | 'noData' | 'stale', { text: string; button: string | null }>;
   labels: Record<'title' | 'pm10' | 'pm25' | 'value' | 'basedAt' | 'loading', string>;
-  /** Cooking method key (foods.cooking_methods) → its label in this language. */
-  methods: Record<string, string>;
 };
 
 // ------------------------------------------------------------------------------------------- grade
@@ -61,11 +46,30 @@ export function airGrade(r: { pm10?: number | null; pm25?: number | null; aqi?: 
   return valid(r.aqi) ? gradeAqi(r.aqi) : null;
 }
 
-export type AirCompare = 'better' | 'worse' | 'same';
 /** Yesterday at this time vs now, by grade. */
 export function compareGrades(now: AirGrade, yesterday: AirGrade): AirCompare {
   const d = AIR_GRADES.indexOf(now) - AIR_GRADES.indexOf(yesterday);
   return d < 0 ? 'better' : d > 0 ? 'worse' : 'same';
+}
+
+/**
+ * Where the marker sits on the gradient bar, 0–1. Each grade owns a quarter (good 0–¼ · normal ¼–½ · bad ½–¾ ·
+ * very bad ¾–1); inside it the value moves linearly (very bad tops out at twice its lower bound). The worse of PM10 and
+ * PM2.5 wins, as for the grade; AQI only when there are no concentrations.
+ */
+const SCALE = { pm10: [0, 30, 80, 150, 300], pm25: [0, 15, 35, 75, 150], aqi: [0, 50, 100, 200, 400] } as const;
+function along(v: number, s: readonly number[]) {
+  const n = Math.round(v);
+  for (let i = 0; i < 4; i++) {
+    const lo = i === 0 ? s[0] : s[i] + 1;
+    if (n <= s[i + 1] || i === 3) return Math.min(1, (i + Math.max(0, Math.min(1, (n - lo) / (s[i + 1] - lo)))) / 4);
+  }
+  return 1;
+}
+export function barPosition(r: { pm10?: number | null; pm25?: number | null; aqi?: number | null }): number | null {
+  const p = [valid(r.pm10) ? along(r.pm10, SCALE.pm10) : null, valid(r.pm25) ? along(r.pm25, SCALE.pm25) : null].filter((x): x is number => x != null);
+  if (p.length) return Math.max(...p);
+  return valid(r.aqi) ? along(r.aqi, SCALE.aqi) : null;
 }
 
 /** Whole hours since the reading when it is more than 3 hours old, else null. */
@@ -73,94 +77,6 @@ export const STALE_AFTER_MS = 3 * 3600_000;
 export function staleHours(observedAt: number, now: number): number | null {
   const age = now - observedAt;
   return age > STALE_AFTER_MS ? Math.floor(age / 3600_000) : null;
-}
-
-// ------------------------------------------------------------------------------------------- time slot
-
-const minutes = (hhmm: string) => {
-  const [h, m] = hhmm.split(':').map(Number);
-  return h * 60 + (m || 0);
-};
-
-/** The copy's time slot for a local time — `from` inclusive, `to` exclusive; a slot may wrap past midnight (night). */
-export function timeSlotAt(date: Date, slots: AirCopy['timeSlots']): AirTimeSlot {
-  const t = date.getHours() * 60 + date.getMinutes();
-  for (const [key, s] of Object.entries(slots) as [AirTimeSlot, AirCopy['timeSlots'][AirTimeSlot]][]) {
-    const from = minutes(s.from);
-    const to = minutes(s.to);
-    if (from <= to ? t >= from && t < to : t >= from || t < to) return key;
-  }
-  return 'night';
-}
-
-// ------------------------------------------------------------------------------------------- menus
-
-/** Cooking method keys a grade allows, or 'any' (["*"]). Labels are mapped back to keys through `copy.methods`. */
-export function allowedMethodKeys(copy: AirCopy, grade: AirGrade): string[] | 'any' {
-  const labels = copy.grades[grade].allowedMethods;
-  if (labels.includes('*')) return 'any';
-  const byLabel = new Map(Object.entries(copy.methods).map(([k, label]) => [label, k]));
-  return labels.map((l) => byLabel.get(l)).filter((k): k is string => !!k);
-}
-
-export type MenuDish = { id: string; name: string; methods: string[]; acorns: number; neighborhood: string | null; city: string | null; createdAt: number };
-export type MenuPick = { id: string; name: string };
-
-/**
- * Dishes whose cooking methods fit the grade, most popular in my neighborhood first: same ward → same city → elsewhere,
- * then acorns, then newer. One entry per dish name (the most popular one).
- */
-export function rankMenus(dishes: MenuDish[], allowed: string[] | 'any', place?: { city?: string | null; neighborhood?: string | null }): MenuPick[] {
-  const fits = (d: MenuDish) => (allowed === 'any' ? true : d.methods.some((m) => allowed.includes(m)));
-  const near = (d: MenuDish) => (place?.neighborhood && d.neighborhood === place.neighborhood ? 0 : place?.city && d.city === place.city ? 1 : 2);
-  const sorted = dishes.filter((d) => fits(d) && d.name.trim()).sort((a, b) => near(a) - near(b) || b.acorns - a.acorns || b.createdAt - a.createdAt);
-  const seen = new Set<string>();
-  const out: MenuPick[] = [];
-  for (const d of sorted) {
-    const key = d.name.trim().toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push({ id: d.id, name: d.name.trim() });
-  }
-  return out;
-}
-
-// ------------------------------------------------------------------------------------------- line
-
-export type AirLast = { templateId: string; menu: string | null };
-export type AirLine = {
-  templateId: string;
-  text: string;
-  action: AirActionKey;
-  button: string;
-  /** The dish the line names (recipe → its detail). null on fallback. */
-  dish: MenuPick | null;
-};
-
-const fill = (s: string, placeholder: string, menu: string | null) => (menu == null ? s : s.split(placeholder).join(menu));
-
-/**
- * One line for this grade and time slot. Rules (copy.rules): the template and the menu shown last time for the same
- * grade · slot are not picked again; no menu fitting allowedMethods (after that) → the grade's fallback line.
- * The menu = the top of `menus` (already ranked by rankMenus); the template = random among the rest of the slot's 3.
- */
-export function chooseLine(copy: AirCopy, grade: AirGrade, slot: AirTimeSlot, menus: MenuPick[], last: AirLast | null, random: () => number = Math.random): AirLine {
-  const g = copy.grades[grade];
-  const lastMenu = last?.menu?.trim().toLowerCase() ?? null;
-  const dish = menus.find((m) => m.name.trim().toLowerCase() !== lastMenu) ?? null;
-  const pool = g.templates[slot].filter((tpl) => tpl.id !== last?.templateId);
-  const tpl = dish && pool.length ? pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))] : g.fallback;
-  const action = copy.actions[tpl.action];
-  // A template that never names the menu (e.g. "이웃들이 오늘 만든 집밥 구경해 볼까요?") doesn't count as showing it.
-  const names = tpl !== g.fallback && (tpl.text.includes(copy.placeholder) || action.usesMenu);
-  const menu = names ? dish!.name : null;
-  return {
-    templateId: tpl.id,
-    text: fill(tpl.text, copy.placeholder, menu),
-    action: tpl.action,
-    button: action.usesMenu ? fill(action.button, copy.placeholder, menu) : action.button,
-    dish: menu ? dish : null,
-  };
 }
 
 /** "{hours}" · "{time}" · "{value}" style fills for labels and states. */

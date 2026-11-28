@@ -39,6 +39,15 @@ export const gradients = {
     { offset: 0.68, color: '#7A876B' },
     { offset: 1, color: '#A8826D' },
   ],
+  /** linear (left → right) — Home air quality card bar (Figma Air Quality Card 1284:1087; first stop = air/good) */
+  'Gradient/Air quality': [
+    { offset: 0, color: '#2F7FD8' },
+    { offset: 0.24, color: '#24E377' },
+    { offset: 0.5, color: '#FFF01C' },
+    { offset: 0.7, color: '#FFA01C' },
+    { offset: 0.91, color: '#D72C23' },
+    { offset: 1, color: '#690500' },
+  ],
   /** linear — TabBar active icon */
   'Gradient/Dusk': [
     { offset: 0, color: sunset[500] },

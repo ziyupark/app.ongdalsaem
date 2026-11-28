@@ -25,3 +25,13 @@ export function loadPhotoEditor(): typeof import('../components/share/PhotoEdito
     return null;
   }
 }
+
+/** Home air quality bar glow — Skia; null on dev builds without it (the card falls back to a plain gradient line). */
+export function loadAirBarGlow(): typeof import('../components/home/AirBarGlow') | null {
+  try {
+    require('@shopify/react-native-skia');
+    return require('../components/home/AirBarGlow');
+  } catch {
+    return null;
+  }
+}

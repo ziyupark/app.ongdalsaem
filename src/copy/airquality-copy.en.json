@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "grades": {
+    "good":    { "label": "Good",           "status": "The air is clear." },
+    "normal":  { "label": "Moderate",       "status": "The air is okay." },
+    "bad":     { "label": "Unhealthy",      "status": "Fine dust is high." },
+    "veryBad": { "label": "Very unhealthy", "status": "Fine dust is very high." }
+  },
+  "compare": {
+    "better": "Cleaner than this time yesterday.",
+    "worse": "Hazier than this time yesterday.",
+    "same": "About the same as yesterday."
+  },
+  "states": {
+    "locationDenied": { "text": "Turn on location to see the air in your neighborhood.", "button": "Turn on location" },
+    "noData": { "text": "Air quality can't be loaded right now. Please check again in a moment.", "button": "Try again" },
+    "stale": { "text": "From {hours} hours ago. It may have changed.", "button": null }
+  },
+  "labels": {
+    "title": "Air quality",
+    "pm10": "PM10",
+    "pm25": "PM2.5",
+    "value": "{value} µg/m³",
+    "basedAt": "As of {time}",
+    "loading": "Checking the air in your neighborhood…"
+  }
+}

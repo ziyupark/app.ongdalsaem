@@ -4,6 +4,8 @@
 
 ## v1.8.7 — 2026-11-28 (냉장고 메모)
 
+- **대기질 카드 새 디자인 · 요리 추천 삭제**([1284:1087](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=1284-1087)): 머리 줄 "Air quality" ··· "As of 6:00 PM" → 구분선 → 등급 **Title/XL**(새 스타일 Outfit Medium 37/39) + PM10 · PM2.5(안 들어가면 다음 줄 오른쪽) → 문구 = 등급 상태 + 어제 비교 → **네온 그라데이션 막대**(선 3 + 흐린 빛, `Gradient/Air quality`, 흰 손잡이 + 그 자리 색 후광, 다람쥐). 메뉴 · 템플릿 · 버튼(레시피 · 장보기 · 이웃 · 있는 재료 · 끓이는 요리) · 4칸 등급 막대 삭제, `useAirLine` 삭제, 6.3 `focus=pantry` · 4.2 `method:` 페이지 삭제(쓰는 곳 없음). 8.2 Cooking method 칩은 저장만 남김
+- **대기질 문구 영어 추가**: `src/copy/airquality-copy.en.json`(Good · Moderate · Unhealthy · Very unhealthy …) — 앱 언어가 en이 아니고 ko도 아니면 en. 글꼴 = 옹달샘 글꼴(Outfit)
 - **대기질 출처 = 1.2 Sign in**: 대기질 카드 아래 "출처 OpenWeather · …"를 빼고(카드 = "오후 3:00 기준"만), 1.2 Sign in 약관 문구 아래 Caption fg/muted "Weather & air quality data: OpenWeather"(`signIn.dataSource` 9개 언어). 문구 파일에서 `labels.source` · `sources` 삭제. Figma 1.2 Sign in Block · Button에 같은 줄 추가
 - **Home 대기질 기반 집밥 추천 카드 추가**(코드 기준, Figma 프레임 없음 — [02-home 4b](04-screens/02-home.md) · 규칙 [§6.11](05-behavior.md)): Weather card 아래 12에 유리 카드 — 등급(좋음 · 보통 · 나쁨 · 매우나쁨, 환경부 기준 · PM10/PM2.5 중 나쁜 쪽) · 4칸 등급 막대 · 미세먼지 · 초미세먼지 농도 · 어제 비교 · 등급 × 시간대 문구(동네 인기 요리를 `{menu}`로, 직전 템플릿 · 메뉴 제외, 없으면 fallback) · 버튼(레시피 · 장보기 · 이웃 집밥 · 있는 재료 · 끓이는 요리) · 출처 · 기준 시각. AQI 숫자는 안 보임. 위치 없음 · 못 읽음 · 3시간 지난 값 = states 문구. 문구는 `src/copy/airquality-copy.ko.json`(한국어만, 모든 앱 언어에서 한국어) — 원본에 `labels` · `sources` · `methods` 묶음을 더함
 - **8.2 Cooking method 칩 줄**(선택 · 여러 개 · Home-cooked만, Landscape 아래): Grill · Stir-fry · Pan-fry · Simmer · Steam · Boil · Quick & easy — DB `foods.cooking_methods`(20261203000000), 문구 `share.cookingMethod` · `cookingMethod.*` 9개 언어

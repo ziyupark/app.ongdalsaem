@@ -133,11 +133,6 @@ export async function fetchByTag(tag: string, sort: Sort = 'popular', city?: str
   return list(q, sort);
 }
 
-/** 4.2 Tag page for a cooking method (`/tag/method:simmer` — Home air quality card "끓이는 요리 보기"). */
-export async function fetchByMethod(method: string, sort: Sort = 'popular') {
-  return list(publicFoods().contains('cooking_methods', [method.toLowerCase()]), sort);
-}
-
 /**
  * Special day page (4.3 1219:16713) — newest public dishes for a holiday: tagged with it (mood tag = the holiday key, as
  * from its Festive Card) or named after one of its foods (`foods`: names in any language, matched anywhere in the name).

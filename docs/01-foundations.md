@@ -52,7 +52,7 @@
 | | overlay/scrim-soft | ink 28% | ink 28% | 다이어리 기록일 딤 |
 | | overlay/scrim | ink 45% | ink 45% | 사진 위 태그(Weather/Acorn Tag), 시트 뒤 딤 |
 | | overlay/scrim-strong | ink 55% | ink 55% | 사진 카운터 pill |
-| 대기질(코드 기준) | air/good | `#2F7FD8` | `#6AA8F0` | Air quality card 등급 막대 — 좋음 |
+| 대기질 | air/good | `#2F7FD8` | `#6AA8F0` | 대기질 등급 색 — 좋음(`Gradient/Air quality` 첫 색) |
 | | air/normal | `#2F8F4E` | `#5BBF7A` | 보통 |
 | | air/bad | `#E2862B` | `#F5A957` | 나쁨 |
 | | air/very-bad | `#D63A3A` | `#EF6B6B` | 매우나쁨(보라 계열 대신 빨강) |
@@ -102,6 +102,8 @@ mood:       mood/<key>/top · mood/<key>/base  (18종, §2.4 표)
 
 - Mood 그라데이션 스타일 이름: `Mood/clear`, `Mood/clear-night`, `Mood/cloudy`, `Mood/overcast`, `Mood/drizzle`, `Mood/rain`, `Mood/heavy-rain`, `Mood/shower`, `Mood/thunder`, `Mood/sleet`, `Mood/flurries`, `Mood/snow`, `Mood/heavy-snow`, `Mood/fog`, `Mood/dust`, `Mood/heat`, `Mood/cold`, `Mood/windy`.
 - 코드: 레이어 순서 그대로 `background:` 에 여러 겹을 쓴다 — `radial-gradient(ellipse rx ry at cx cy, color a, color a×0.45 55%, transparent)` × 블롭 수, 맨 아래 `linear-gradient(180deg, var(--mood-<key>-top), var(--bg-default))`. React Native는 `react-native-svg`의 RadialGradient 여러 개 또는 `expo-linear-gradient` + 블롭 원(blur 대신 radial 투명도)으로 만든다.
+
+- **Gradient/Air quality**(linear, 왼쪽 → 오른쪽) — Home 대기질 카드 막대: `#2F7FD8` 0 · `#24E377` 24 % · `#FFF01C` 50 % · `#FFA01C` 70 % · `#D72C23` 91 % · `#690500` 100 %(코드 `src/theme/gradients.ts`, 라이트 · 다크 같음).
 
 ### 2.4 Weather mood — 2.0 (메시 느낌 그라데이션)
 
@@ -161,6 +163,9 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 - 컴포넌트 크기는 variant 크기 그대로 사용한다(인스턴스를 임의로 늘리거나 줄이지 않음). Avatar = 24/32/40/56/88만, Button 높이 = L 56 / M 46 / S 36, Chip 높이 36, Tab 높이 43, IconButton = L 48 / M 40, Auth Button 46.
 
 ### 2.6 타이포그래피
+
+- **Title/XL** — Outfit Medium 37 / 39, −0.6: Home 대기질 카드 등급("Good" · "Unhealthy").
+
 
 | 스타일 | 폰트 | size / line-height | letter-spacing(px) | 비고 |
 |---|---|---|---|---|

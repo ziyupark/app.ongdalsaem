@@ -64,20 +64,17 @@ export function ProfileScreen({ userId, showButton = true }: { userId?: string; 
   const f = here.forecast;
   const now: Now | null = f ? { mood: f.mood, icon: f.icon, tempC: f.tempC, hi: f.hi, lo: f.lo, until: f.until } : null;
   const [tab, setTab] = useState<ProfileTab>('dishes');
-  // `?tab=diary&focus=shopping` (7.1 "Added to shopping memo" toast · Home air quality card) → open Diary and scroll
-  // down to the shopping memo. `focus=pantry` (air quality card "있는 재료로 찾기") → Diary, scrolled down to the fridge
-  // and "What you can cook now".
+  // `?tab=diary&focus=shopping` (7.1 "Added to shopping memo" toast) → open Diary and scroll down to the shopping memo.
   const params = useLocalSearchParams<{ tab?: string; focus?: string; at?: string }>();
   const listRef = useRef<FlatList<DishSummary>>(null);
   const focus = isMe && params.tab === 'diary' && params.focus === 'shopping' ? params.at ?? '1' : null;
-  const scrollDown = isMe && params.tab === 'diary' && (params.focus === 'shopping' || params.focus === 'pantry') ? `${params.focus}:${params.at ?? '1'}` : null;
   useEffect(() => {
     if (!isMe || params.tab !== 'diary') return;
     setTab('diary');
-    if (!scrollDown) return;
+    if (!focus) return;
     const h = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 400);
     return () => clearTimeout(h);
-  }, [isMe, params.tab, scrollDown]);
+  }, [isMe, params.tab, focus]);
   const tabs = isMe ? TABS : OTHER_TABS;
   const [following, setFollowing] = useState(false);
   const [lists, setLists] = useState<Partial<Record<ProfileTab, DishSummary[]>>>({});

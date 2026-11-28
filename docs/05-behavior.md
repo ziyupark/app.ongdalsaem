@@ -76,25 +76,20 @@
 - 신고(7.3, 사유 9개): 접수 즉시 신고자 화면에서 숨김(DB 트리거가 hidden_foods 추가) → 사유가 Nudity/sexual · Child safety면 즉시, 서로 다른 신고자 3명 이상이면 전체 공개에서 자동 임시 숨김 → 운영자 24시간 안에 검토 → 유지 / 삭제 / 경고 / 정지, 게시자에게 사유와 이의 제기 방법 통지(2.8 "게시물 조치" 알림 + 이메일, 기록 = moderation_actions). 운영자는 Supabase 대시보드의 moderation_queue(오래된 순, 아동·성적 신고 먼저)로 처리. 불법 콘텐츠(아동 성착취물·불법촬영물)는 즉시 삭제 + 기관 신고, 파일 보관·전달 금지. 상세 = [guides/7.4-report-moderation-guide.pdf](guides/7.4-report-moderation-guide.pdf)
 - 차단: 확인 없이 즉시. 차단한 사람의 게시물·댓글·메시지·팔로우가 양쪽에서 사라지고(팔로우는 DB 트리거로 삭제), 상대에게 알리지 않는다. 4초 Undo 토스트, 관리 = 9.5.
 
-### 6.11 대기질 기반 집밥 추천 (Home Air quality card)
+### 6.11 대기질 카드 (Home Air quality card)
 - **데이터**: OpenWeather Air Pollution(현재 + 어제 같은 시각 ±1시간) — Edge Function `weather`의 kind `air`(캐시 30분) · `air_history`(정시 단위, 캐시 6시간), 로그인한 사용자 · 좌표(소수 2자리)만. 앱은 기기 위치가 있을 때만 읽는다(`src/lib/useAir.ts`, 앱 캐시 30분). 마지막으로 읽은 값은 기기(`air.last`, 같은 좌표일 때만)에 두고, 새로 못 읽으면 그 값을 보여 준다.
 - **등급**(`src/lib/airQuality.ts`) — 농도는 정수로 반올림해 판정(카드에 보이는 숫자와 같게):
   | 등급 | PM10 ㎍/㎥ | PM2.5 ㎍/㎥ | AQI만 있을 때 |
   |---|---|---|---|
-  | 좋음 good | 0–30 | 0–15 | 0–50 |
-  | 보통 normal | 31–80 | 16–35 | 51–100 |
-  | 나쁨 bad | 81–150 | 36–75 | 101–200 |
-  | 매우나쁨 veryBad | 151 이상 | 76 이상 | 201 이상 |
+  | good · Good · 좋음 | 0–30 | 0–15 | 0–50 |
+  | normal · Moderate · 보통 | 31–80 | 16–35 | 51–100 |
+  | bad · Unhealthy · 나쁨 | 81–150 | 36–75 | 101–200 |
+  | veryBad · Very unhealthy · 매우나쁨 | 151 이상 | 76 이상 | 201 이상 |
   - PM10 · PM2.5 등급이 다르면 **더 나쁜 쪽**. 농도가 하나도 없을 때만 AQI(0–500)를 쓴다(OpenWeather의 1–5 지수는 쓰지 않음). 둘 다 없으면 noData.
-  - 어제 비교 = 등급끼리: 더 좋음 `compare.better` · 더 나쁨 `worse` · 같음 `same`.
-- **시간대** = 문구 파일 `timeSlots`(아침 05–10 · 점심 10–16 · 저녁 16–21 · 밤 21–05, 시작 포함 · 끝 제외).
-- **메뉴**: 홈 요리 풀(§6.1과 같은 최근 60일 공개 게시물 300개) 중 `cooking_methods`가 등급의 `allowedMethods`에 하나라도 맞는 요리(보통 = 모든 요리). 순서 = **같은 구 → 같은 도시 → 그 밖**, 그다음 도토리 많은 순 · 최신 순, 같은 이름은 하나만. 맨 위 1개를 `{menu}`에 넣는다.
-  - 방식 열쇠 ↔ 문구 파일 이름: grill 굽기 · stirfry 볶기 · panfry 부치기 · simmer 끓이기 · steam 찌기 · boil 삶기 · quick 간단 요리(`methods`).
-- **문구 고르기**: 등급 · 시간대의 템플릿 3개 중 하나(무작위). 같은 등급 · 시간대에서 **직전에 보여 준 템플릿 id와 메뉴는 제외**(기기 `air.lastLine`에 등급:시간대별로 저장). 제외 후 맞는 메뉴가 없으면 그 등급의 `fallback`. 홈을 열 때(등급이나 시간대가 바뀔 때) 한 번 고르고, 화면이 다시 그려져도 바뀌지 않는다. 요리 풀을 6초 넘게 못 받으면 메뉴 없이 고른다(→ fallback).
-  - `{menu}`를 쓰지 않는 템플릿(예: normal_dinner_3)은 메뉴를 보여 준 것으로 치지 않는다.
-- **버튼**(`actions`): recipe "{menu} 레시피" → 7.1 그 요리 · shopping → 6.3 Diary 장보기 칸(`?tab=diary&focus=shopping`) · neighbors → Our area 목록(`/nearby-feed?area=near`) · pantry → 6.3 Diary 냉장고 + "What you can cook now"(`focus=pantry`, 아래로 스크롤) · byMethod → 4.2 태그 페이지 `method:simmer`(끓이기 요리 모음).
+- **문구** = `grades.<등급>.status` + (어제 값이 있으면) `compare.better | worse | same`(등급끼리 비교). 요리 추천 · 메뉴 · 버튼은 없다.
+- **막대 위치**(`barPosition`): 등급마다 4분의 1 칸(좋음 0–¼ · 보통 ¼–½ · 나쁨 ½–¾ · 매우나쁨 ¾–1), 칸 안에서는 값에 비례(매우나쁨은 하한의 2배에서 끝, PM10 300 · PM2.5 150). PM10 · PM2.5 중 더 오른쪽. 후광 색 = 그 위치의 그라데이션 색.
 - **예외**: 위치 없음 → `states.locationDenied` · 읽기 실패(10초 안에 답 없음 포함) · 등급을 못 정함 → `states.noData` · 값이 3시간 넘게 지남 → 값과 함께 `states.stale`("{hours}" = 지난 시간, 내림). 어떤 경우에도 빈 카드나 끝나지 않는 로딩은 없다.
-- 문구 규칙: `{menu}` 바로 뒤에 조사(을/를 · 이/가 · 은/는 · 으로/로)를 붙이지 않는다 — `npm test`(tests/airQuality.test.ts)가 문구 파일 전체를 검사한다.
+- **문구 파일**: `src/copy/airquality-copy.en.json` · `.ko.json`(앱 언어 → 그 파일, 없으면 en). `npm test`가 두 파일에 카드가 쓰는 문구가 모두 있는지 검사한다. ko 파일에 남아 있는 예전 메뉴 템플릿은 카드가 쓰지 않는다(`{menu}` 뒤 조사 검사만 유지).
 
 ## 9. 접근성 · UX 라이팅
 
