@@ -24,7 +24,7 @@ const { lineHeight: _lh, ...field } = text['Body/M'];
 
 /**
  * 3.8 Question (469:11388) — question card → answers as Comments (132:4846: avatar 40 · name Body/M Strong · time Caption
- * fg/disabled → body Body/S · `more-horizontal`: mine → Edit · Delete, others → Report), oldest first → composer. 3.8b (1242:10038): no answers = one centred Body/S fg/muted line.
+ * fg/disabled → body Body/Comment · `more-horizontal`: mine → Edit · Delete, others → Report), oldest first → composer. 3.8b (1242:10038): no answers = one centred Body/S fg/muted line.
  */
 export default function QuestionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

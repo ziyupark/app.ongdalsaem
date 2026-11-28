@@ -16,7 +16,7 @@ type Props = {
 };
 
 /**
- * Comment 132:4846 — Avatar 40 · 10 · [username (no @) Body/M Strong · 6 · time Caption fg/disabled] → 2 → body Body/S,
+ * Comment 132:4846 — Avatar 40 · 10 · [username (no @) Body/M Strong · 6 · time Caption fg/disabled] → 2 → body Body/Comment (14.8/18),
  * + `more-horizontal` 18 fg/muted on the right of the name row (mine → Edit · Delete, others → Report). Hold = same menu.
  * Used by 7.1 comments and 3.8 answers.
  */
@@ -35,7 +35,7 @@ export function CommentRow({ name, avatarUrl, createdAt, body, onMore }: Props) 
             <Icon icon={MoreHorizontal} size={18} color="fg/muted" />
           </Pressable>
         </View>
-        <Text variant="Body/S">{body}</Text>
+        <Text variant="Body/Comment">{body}</Text>
       </View>
     </Pressable>
   );

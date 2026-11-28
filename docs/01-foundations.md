@@ -190,6 +190,7 @@ Weather Mood 컴포넌트: [72:787](https://www.figma.com/design/GL8f8wHgzzK4GDU
 | Wordmark/Compact | Outfit Medium | 24 / 26 | −0.8 | 헤더용 작은 로고(Logo Compact, 1.2) |
 | Auth label | Outfit Medium | 20 / 24 | −0.2 | Auth Button 제목(버튼 높이의 43%) |
 | Body/Letter | Outfit Regular | 15 / 22 | −0.05 | 1.1b 편지 본문만(Figma에서는 스타일 없는 텍스트) |
+| Body/Comment | Outfit Regular | 14.8 / 18 | 0.13 | 댓글 · 답 본문만(Comment 132:4846, Figma에서는 스타일 없는 텍스트). 색 fg/default |
 | Handwriting | Gaegu Bold | 20 / 24 | 0 | 1.1b 편지 서명만 |
 | Tagline | Outfit | 11 / 14 | 2.4 | UPPERCASE |
 

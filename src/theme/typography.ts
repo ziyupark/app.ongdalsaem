@@ -70,6 +70,8 @@ export const text = {
   'Wordmark/Compact': t('Outfit-Medium', 24, 26, -0.8),
   /** 1.1b letter body only (Figma 436:385 — raw 15/22, not a shared style). */
   'Body/Letter': t('Outfit-Regular', 15, 22, -0.05),
+  /** Comment body only (Comment 132:4846 — raw 14.8/18, +0.13, not a shared style). 7.1 comments · 3.8 answers. */
+  'Body/Comment': t('Outfit-Regular', 14.8, 18, 0.13),
   /** 1.1b letter signature only. */
   Handwriting: t('Gaegu-Bold', 20, 24),
   /** Auth Button · Google — Google Sans Medium, 14/20 at 40 tall scaled to the 44 button (Google branding guidelines). */
