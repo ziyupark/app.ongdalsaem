@@ -52,7 +52,7 @@
 - **칸별 상자** Fridge / Freezer: 재료 칩. 넣은 지 **7일이 넘으면 칩 테두리 fg/accent**. 칩 탭 → "Remove {name}?" 확인 후 삭제. 비었으면 "Nothing in the fridge yet. Add what you just put in."
 - **Shopping list 상자**: 장보기 칩(이름 + 양). 칩 탭 → Fridge / Freezer와 같이 "Remove {name}?" 확인 후 삭제(체크 · "Bought → to the fridge" 없음). 칩을 길게 눌러 끌면 세 상자 사이로 옮긴다(Shopping list → Fridge / Freezer = 냉장고에 추가 후 목록에서 빠짐).
 - **"What you can cook now" 박스**(bg/accent-subtle, **오른쪽 padding 0** — 카드가 상자 오른쪽 끝까지, 제목 줄 · 안내 글은 오른쪽 14 유지): 냉장고 재료로 만들 수 있는 공개 레시피를 **5개씩**(사진 · 이름 · Caption fg/accent "{have}/{total} ingredients on hand" · Caption fg/muted "Need: {부족한 재료 2개}") → 7.1. 만들 수 있는 요리가 없으면(1217:15353): 제목 → 2 → Body/S fg/muted "Find recipes with what’s in your fridge." → 12 → 점선 자리표시 카드 3장(140×190, radius lg 16, bg/default, 0.66 점선 fg/muted, 사이 8 — 셋째 장은 박스에 잘려 일부만 보임)
-  - **새로고침**: 제목 줄 오른쪽 `rotate-ccw` 20(fg/secondary, 추천이 있을 때만) → 다음 순위 5개(카드는 처음으로 스크롤). 마지막 묶음 다음에는 최신 게시물을 다시 불러와(캐시 무시) 1순위부터. 접근성 라벨 `fridge.refreshCook` "Show other recipes"
+  - **새로고침**: 제목 줄 오른쪽 **Weather Card Refresh와 같은 버튼**(32 원 · 1px border/default · `rotate-ccw` 16, 탭마다 아이콘 회전 400ms · 1초 안 연타 무시) + **흰 원 배경 bg/subtle**(추천이 있을 때만) → 다음 순위 5개(카드는 처음으로 스크롤). 마지막 묶음 다음에는 최신 게시물을 다시 불러와(캐시 무시) 1순위부터. 접근성 라벨 `fridge.refreshCook` "Show other recipes"
   - 규칙: 재료 목록이 있는 최신 공개 게시물 200개(10분 캐시)에서, 내 재료와 겹치는 비율 → 겹친 개수 순. 하나도 안 겹치면 제외. 재료 이름은 소문자 · 복수형 · 수식어를 정리해서 비교.
 
 > 설정은 **09 Settings**(9.1 Settings). 프로필의 `settings` 아이콘은 9.1로 간다.

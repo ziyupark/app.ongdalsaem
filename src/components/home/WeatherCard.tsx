@@ -1,15 +1,16 @@
 import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
-import { Plus, RotateCcw } from '../icons/ongdal';
+import { Plus } from '../icons/ongdal';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { elevation, iconRing, radius, space, useTheme, WEATHER_ICON, type Weather3DKey, type WeatherMood } from '../../theme';
+import { elevation, radius, space, useTheme, WEATHER_ICON, type Weather3DKey, type WeatherMood } from '../../theme';
 import type { Meal } from '../../lib/meals';
 import { Icon } from '../Icon';
+import { RefreshButton } from '../RefreshButton';
 import { Text } from '../Text';
 import { WeatherIcon3D } from '../WeatherIcon3D';
 import { useTemp } from '../../lib/prefs';
@@ -40,9 +41,6 @@ export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots
   const { color } = useTheme();
   const { t } = useTranslation();
   const temp = useTemp();
-  const spin = useSharedValue(0);
-  const last = useRef(0);
-  const spinStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${-spin.value * 360}deg` }] }));
 
   // Meal timeline interaction: the bg/muted highlight sits on Now; tapping another slot slides it there (260 ms),
   // then opens that slot's dish. Coming back to Home puts it on Now again.
@@ -69,15 +67,6 @@ export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots
     x.value = withTiming(offset(i), { duration: 260, easing: Easing.inOut(Easing.cubic) }, (done) => { if (done) scheduleOnRN(go); });
   };
 
-  const refresh = () => {
-    const now = Date.now();
-    if (now - last.current < 1000) return; // 1 s guard (docs/05-behavior.md §6.1)
-    last.current = now;
-    spin.value = 0;
-    spin.value = withTiming(1, { duration: 400, easing: Easing.out(Easing.cubic) });
-    onRefresh();
-  };
-
   return (
     <View style={[styles.card, elevation['Elevation/3 Float'], { borderColor: color('bg/subtle') }]}>
       <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
@@ -102,11 +91,7 @@ export function WeatherCard({ tempC, mood, icon, condition, detail, until, slots
       <View style={styles.picks}>
         <View style={styles.head}>
           <Text variant="Overline" color="fg/muted" style={styles.flex}>{picksHead}</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel={t('home.newPicks')} hitSlop={space[6]} onPress={refresh} style={[styles.refresh, { borderColor: color('border/default') }]}>
-            <Animated.View style={spinStyle}>
-              <Icon icon={RotateCcw} size={16} />
-            </Animated.View>
-          </Pressable>
+          <RefreshButton label={t('home.newPicks')} onPress={onRefresh} />
         </View>
         <View style={styles.timeline} onLayout={(e) => setRowW(e.nativeEvent.layout.width)}>
           {slotW ? <Animated.View pointerEvents="none" style={[styles.highlight, { backgroundColor: color('bg/muted') }, highlight]} /> : null}
@@ -169,7 +154,6 @@ const styles = StyleSheet.create({
   // Picks head 329:362 — 32 high.
   head: { height: 32, flexDirection: 'row', alignItems: 'center', gap: space[8] },
   flex: { flex: 1 },
-  refresh: { width: 32, height: 32, borderRadius: radius.full, borderWidth: iconRing, alignItems: 'center', justifyContent: 'center' },
   // The timeline is the card's full width minus 8 a side, so it overhangs the content box by 20 + 1 (border) − 8 = 13.
   timeline: { flexDirection: 'row', gap: space[2], marginHorizontal: -(space[20] + 1 - space[8]) },
   highlight: { position: 'absolute', left: 0, top: 0, bottom: 0, borderRadius: radius.xl },

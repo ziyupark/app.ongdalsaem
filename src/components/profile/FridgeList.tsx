@@ -13,9 +13,8 @@ import { fetchRecipeCandidates, type RecipeCandidate } from '../../services/food
 import { elevation, radius, space, useTheme } from '../../theme';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
-import { Icon } from '../Icon';
-import { RotateCcw } from '../icons/ongdal';
 import { Input } from '../Input';
+import { RefreshButton } from '../RefreshButton';
 import { Text } from '../Text';
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -269,9 +268,7 @@ export function FridgeList({ focusShopping }: { focusShopping?: string | null } 
           <View style={styles.head}>
             <Text variant="Body/M Strong" style={styles.flex}>{t('fridge.canCook')}</Text>
             {matches.length ? (
-              <Pressable accessibilityRole="button" accessibilityLabel={t('fridge.refreshCook')} onPress={refresh} hitSlop={space[10]} style={({ pressed }) => pressed && styles.pressed}>
-                <Icon icon={RotateCcw} size={20} color="fg/secondary" />
-              </Pressable>
+              <RefreshButton label={t('fridge.refreshCook')} onPress={refresh} fill="bg/subtle" />
             ) : null}
           </View>
           {matches.length === 0 && !(items.length > 0 && recipes == null) ? <Text variant="Body/S" color="fg/muted">{t('fridge.canCookEmpty')}</Text> : null}
@@ -334,7 +331,6 @@ const styles = StyleSheet.create({
   photo: { width: CARD, height: 100 },
   cardText: { padding: space[10], gap: space[2] },
   lifted: { opacity: 0.3 },
-  pressed: { opacity: 0.5 },
   ghost: { position: 'absolute', left: 0, top: 0, borderRadius: radius.full },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[8] },
 });
