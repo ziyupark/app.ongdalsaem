@@ -4,6 +4,7 @@
 
 ## v1.8.7 — 2026-11-28 (냉장고 메모)
 
+- **7.1 Steps 단계 사이 14 → 8**([601:12668](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=601-12668)): `Recipe Step` 목록 gap 8. 제목 Steps → 목록 14는 그대로. 8.3 미리보기도 같이(공통 `DishRecipe`)
 - **댓글 · 답 더보기 메뉴**: Comment 이름 줄 오른쪽에 `more-horizontal` 18 fg/muted(Figma 컴포넌트에는 없음, 앱 추가) → 내 댓글 = **Edit** · Delete, 남의 댓글 = **Report**(내 게시물이면 + Delete). 길게 누르기도 같은 메뉴. Edit = 본문을 입력칸에 넣고 위에 "Editing comment / Editing answer" + `x` 취소, 전송 = 저장. 7.1 댓글 · 3.8 답 같이(공통 `CommentRow`). 3.8 답은 이제 수정도 됨. 문구 `dish.editingComment` · `ask.editingAnswer` 9개 언어 추가. DB `20261202000000_edit_own_comments_answers.sql`(본인 행 update RLS — 없어서 수정이 0행이었음)
 - **댓글 본문 Body/M → Body/Comment**(Comment [132:4846](https://www.figma.com/design/GL8f8wHgzzK4GDUffY4NPW/ONGDALSAEM-1.0-%E2%80%94-Design-System---UI?node-id=132-4846)): 새 글자 스타일 **Body/Comment** = Outfit Regular 14.8/18, +0.13(Figma 값 그대로). 색은 Figma `#242424`가 토큰에 없어 fg/default(#1B1C22). 7.1 댓글 · 3.8 질문 답 같이. 아바타 40 · 이름 Body/M Strong · 시간 Caption fg/disabled · 간격 10/6/2는 그대로
 - **6.3 칸 선택 "Shopping list" 글자 정가운데**: 2줄 행간 16이 Outfit 높이(19)보다 작아 글자가 약 1.5pt 위로 떠 보이던 것 → `Text`에 `leading` 옵션 추가(행간을 줄이면서 잘린 만큼 아래로 내림)

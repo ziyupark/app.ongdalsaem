@@ -185,6 +185,7 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
             {dish.steps.length ? (
               <View style={[styles.section, styles.steps, dish.ingredients.length ? styles.afterIngredients : null]}>
                 <Text variant="Title/L">{t('dish.steps')}</Text>
+                <View style={styles.stepList}>
                 {dish.steps.map((s, i) => (
                   <View key={i} style={styles.step}>
                     <View style={[styles.stepNo, { backgroundColor: color('bg/accent-subtle') }]}>
@@ -201,6 +202,7 @@ export function DishRecipe({ dish, onStartTimer, onAddedToShopping }: { dish: Di
                     </View>
                   </View>
                 ))}
+                </View>
               </View>
             ) : null}
             {dish.calories != null ? (
@@ -226,6 +228,7 @@ const styles = StyleSheet.create({
   divider: { height: 1 },
   section: { paddingHorizontal: space[20], gap: space[8] },
   steps: { gap: space[14] },
+  stepList: { gap: space[8] }, // 601:12668 Steps → step 사이 8
   gap32: { marginTop: space[32] },
   afterIngredients: { marginTop: 30 }, // Ingredients 601:12665 padding-bottom 30 → Steps
   warnRow: { paddingBottom: space[16] },
