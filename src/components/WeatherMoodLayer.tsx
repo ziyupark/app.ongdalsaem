@@ -9,7 +9,7 @@ import Svg, { Defs, Ellipse, Path, RadialGradient, Stop } from 'react-native-svg
 import { scheduleOnRN } from 'react-native-worklets';
 import {
   FX_CAP, FX_COLOR, FX_DENSITY, FX_FADE_FROM, FX_TIMING, weatherFxFor, withAlpha,
-  type FlakeFx, type GlowFx, type GustFx, type PuffFx, type RainFx, type TimeOfDay, type TwinkleFx, type WeatherFxSpec, type WeatherMood,
+  type FlakeFx, type GlowFx, type GustFx, type MeteorFx, type PuffFx, type RainFx, type TimeOfDay, type TwinkleFx, type WeatherFxSpec, type WeatherMood,
 } from '../theme';
 
 type Props = {
@@ -34,7 +34,7 @@ type Layer = { key: string; mood: WeatherMood; timeOfDay: TimeOfDay; leaving: bo
 
 /**
  * Weather Mood animation layer — slow, quiet motion over the mood wash (rain, snow, lightning, drifting clouds,
- * fog, wind, stars, breathing sun glow). Mounted once in the global WeatherBackdrop (and on 1.2 Sign in, LaunchBackdrop); ignores touches and melts away
+ * fog, wind, stars with faint red / green / blue halos, shooting stars, breathing sun glow). Mounted once in the global WeatherBackdrop (and on 1.2 Sign in, LaunchBackdrop); ignores touches and melts away
  * over the bottom 40 %.
  *
  * Every particle is a pure function of one clock (ms), advanced by a frame callback: pausing stops the callback, so
@@ -42,7 +42,7 @@ type Layer = { key: string; mood: WeatherMood; timeOfDay: TimeOfDay; leaving: bo
  * mood × size (useMemo) and never reshuffle on re-render. Only transform / opacity are animated (UI thread).
  *
  * - Mood change: old effect fades out 800 ms, new fades in 1200 ms. That and the cold start are the only fades here.
- * - Reduce Motion: the clock never runs — one still frame, and no lightning at all.
+ * - Reduce Motion: the clock never runs — one still frame, and no lightning or shooting stars at all.
  */
 export const WeatherMoodLayer = memo(function WeatherMoodLayer({ mood, timeOfDay, running, width, height, delay = 0, density = FX_DENSITY }: Props) {
   const reduce = useReducedMotion();
@@ -115,6 +115,7 @@ const Effect = memo(function Effect({ mood, timeOfDay, w, h, clock, still, densi
       {spec.glow ? <Glow spec={spec.glow} w={w} h={h} clock={clock} /> : null}
       {spec.puffs ? <Puffs spec={spec.puffs} w={w} h={h} seed={seed} dim={dim} clock={clock} /> : null}
       {spec.twinkle ? <Twinkles spec={spec.twinkle} w={w} h={h} clock={clock} cap={cap.other} /> : null}
+      {spec.meteors && !still ? <Meteors spec={spec.meteors} w={w} h={h} clock={clock} /> : null}
       {spec.motes ? <Flakes spec={spec.motes} w={w} h={h} seed={13} dim={dim} clock={clock} cap={cap.other} /> : null}
       {spec.rain ? <Rain spec={spec.rain} w={w} h={h} dim={dim} clock={clock} cap={cap.rain} /> : null}
       {spec.pellets ? <Flakes spec={spec.pellets} w={w} h={h} seed={7} dim={dim} clock={clock} cap={cap.other} /> : null}
@@ -248,16 +249,89 @@ function Twinkles({ spec, w, h, clock, cap }: { spec: TwinkleFx; w: number; h: n
     const r = rng(5);
     return Array.from({ length: Math.min(spec.count, cap) }, () => ({ x: r() * w, y: r() * h * spec.band, size: between(r, spec.size), period: between(r, spec.period), phase: r() }));
   }, [spec, w, h]);
-  return <>{stars.map((s, i) => <Star key={i} {...s} alpha={spec.alpha} color={spec.color} clock={clock} />)}</>;
+  return <>{stars.map((s, i) => <Star key={i} {...s} alpha={spec.alpha} color={spec.color} glow={spec.glow} tint={FX_COLOR.starGlow[i % FX_COLOR.starGlow.length]} clock={clock} />)}</>;
 }
 
-/** Stars are not dimmed at night — they *are* the night. Opacity eases 0.3 ↔ 0.8 over a random 3–6 s. */
-function Star({ x, y, size, period, phase, alpha, color, clock }: { x: number; y: number; size: number; period: number; phase: number; alpha: [number, number]; color: string; clock: Clock }) {
+/**
+ * Stars are not dimmed at night — they *are* the night. Opacity eases 0.3 ↔ 0.8 over a random 3–6 s. With `glow`, a
+ * soft halo in the star's tint (red / green / blue in turn) sits behind it and brightens with the same twinkle.
+ */
+function Star({ x, y, size, period, phase, alpha, color, glow, tint, clock }: {
+  x: number; y: number; size: number; period: number; phase: number; alpha: [number, number]; color: string;
+  glow?: TwinkleFx['glow']; tint: string; clock: Clock;
+}) {
   const style = useAnimatedStyle(() => {
     const k = 0.5 - 0.5 * Math.cos(Math.PI * 2 * loop(clock.value, period, phase));
     return { opacity: alpha[0] + (alpha[1] - alpha[0]) * k };
   });
-  return <Animated.View style={[styles.abs, { left: x, top: y, width: size, height: size, borderRadius: size / 2, backgroundColor: color }, style]} />;
+  const halo = useAnimatedStyle(() => {
+    const k = 0.5 - 0.5 * Math.cos(Math.PI * 2 * loop(clock.value, period, phase));
+    return { opacity: (glow?.alpha ?? 0) * (0.25 + 0.75 * k), transform: [{ scale: 0.85 + 0.3 * k }] };
+  });
+  const d = glow ? size * glow.scale : 0;
+  return (
+    <>
+      {glow ? (
+        <Animated.View style={[styles.abs, { left: x + size / 2 - d / 2, top: y + size / 2 - d / 2, width: d, height: d }, halo]}>
+          <SoftEllipse w={d} h={d} color={tint} alpha={1} core={0.25} />
+        </Animated.View>
+      ) : null}
+      <Animated.View style={[styles.abs, { left: x, top: y, width: size, height: size, borderRadius: size / 2, backgroundColor: color }, style]} />
+    </>
+  );
+}
+
+// ── shooting stars ─────────────────────────────────────────────────────────
+
+function Meteors({ spec, w, h, clock }: { spec: MeteorFx; w: number; h: number; clock: Clock }) {
+  const list = useMemo(() => {
+    const r = rng(17);
+    return Array.from({ length: spec.count }, (_, i) => ({
+      seed: i + 1, dur: between(r, spec.dur), rest: between(r, spec.rest), len: between(r, spec.len), travel: between(r, spec.travel) * w, phase: r(),
+    }));
+  }, [spec, w]);
+  return <>{list.map((m, i) => <Meteor key={i} {...m} w={w} h={h} angle={spec.angle} alpha={spec.alpha} band={spec.band} clock={clock} />)}</>;
+}
+
+/** Cheap per-pass random 0…1 (worklet), so each pass of a meteor starts somewhere new. */
+function hash(n: number) {
+  'worklet';
+  const v = Math.sin(n * 12.9898) * 43758.5453;
+  return v - Math.floor(v);
+}
+
+/**
+ * One streak: a thin tail fading to transparent behind a bright head, flying down-left at `angle`°. Visible for `dur`,
+ * then off for `rest`. Opacity rises and falls over the pass (sin), and melts with the layer mask.
+ */
+function Meteor({ seed, dur, rest, len, travel, phase, w, h, angle, alpha, band, clock }: {
+  seed: number; dur: number; rest: number; len: number; travel: number; phase: number; w: number; h: number; angle: number; alpha: number; band: number; clock: Clock;
+}) {
+  const cycle = dur + rest;
+  const rad = (angle * Math.PI) / 180;
+  const dx = -Math.cos(rad);
+  const dy = Math.sin(rad);
+  const style = useAnimatedStyle(() => {
+    const v = clock.value / cycle + phase;
+    const pass = Math.floor(v);
+    const t = ((v - pass) * cycle) / dur; // 0→1 while flying, >1 while resting
+    if (t >= 1) return { opacity: 0 };
+    const sx = w * (0.35 + 0.65 * hash(pass * 7 + seed)); // starts right of centre-ish, flies left
+    const sy = h * band * hash(pass * 13 + seed * 3);
+    const hx = sx + dx * travel * t;
+    const hy = sy + dy * travel * t;
+    return {
+      opacity: alpha * Math.sin(Math.PI * Math.min(1, t * 1.15)) * maskAt(hy / h),
+      // the tail's centre sits half a length behind the head, then the box is turned to the flight direction
+      transform: [{ translateX: hx - (dx * len) / 2 - len / 2 }, { translateY: hy - (dy * len) / 2 - 1 }, { rotate: `${180 - angle}deg` }],
+    };
+  });
+  return (
+    <Animated.View style={[styles.abs, { width: len, height: 2 }, style]}>
+      <LinearGradient colors={[withAlpha(FX_COLOR.white, 0), withAlpha(FX_COLOR.white, 0.35), FX_COLOR.white]} locations={[0, 0.6, 1]} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={styles.tail} />
+      <View style={styles.head} />
+    </Animated.View>
+  );
 }
 
 // ── clouds / fog / heat haze ───────────────────────────────────────────────
@@ -382,4 +456,6 @@ function zigzag(len: number) {
 const styles = StyleSheet.create({
   box: { position: 'absolute', left: 0, top: 0, overflow: 'hidden' },
   abs: { position: 'absolute', left: 0, top: 0 },
+  tail: { position: 'absolute', left: 0, right: 0, top: 0.25, height: 1.5, borderRadius: 1 },
+  head: { position: 'absolute', right: -0.5, top: -0.5, width: 3, height: 3, borderRadius: 1.5, backgroundColor: FX_COLOR.white },
 });
